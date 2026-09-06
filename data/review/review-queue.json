@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-stratified-review-queue",
-  "generatedAt": "2026-09-06T08:07:34.082Z",
+  "generatedAt": "2026-09-06T09:01:10.582Z",
   "samplingPolicy": {
     "method": "deterministic-greedy-facet-balancing",
     "dimensions": [
@@ -15,7 +15,7 @@
     "excludes": "Signals already represented by a sanitized assessment.",
     "semantics": "A review worklist, not a random or prevalence-representative sample."
   },
-  "availableUnreviewed": 124,
+  "availableUnreviewed": 125,
   "selected": 24,
   "candidates": [
     {
@@ -288,8 +288,39 @@
         "punycode",
         "unicode-confusable"
       ],
-      "candidateAgeBand": "0-1d",
+      "candidateAgeBand": "2-7d",
       "firstSeen": "2026-09-04T08:20:31.184Z"
+    },
+    {
+      "signalId": "9fd081ed66b4b1cd1ea5",
+      "recordPath": "/signals/9fd081ed66b4b1cd1ea5/",
+      "brand": "DPD",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "85-94",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-exact-token",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-09-06T08:55:08.376Z"
+    },
+    {
+      "signalId": "74a34aa5a01e9ed77fb6",
+      "recordPath": "/signals/74a34aa5a01e9ed77fb6/",
+      "brand": "Revolut",
+      "sources": [
+        "URLScan"
+      ],
+      "scoreBand": "95-100",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-domain-match"
+      ],
+      "candidateAgeBand": "8-30d",
+      "firstSeen": "2026-08-21T07:33:48.367Z"
     },
     {
       "signalId": "c6aa5e7478ddc6aa82f3",
@@ -308,8 +339,8 @@
       "firstSeen": "2026-08-31T17:17:44.735Z"
     },
     {
-      "signalId": "74a34aa5a01e9ed77fb6",
-      "recordPath": "/signals/74a34aa5a01e9ed77fb6/",
+      "signalId": "b2a74041369ff0a25a50",
+      "recordPath": "/signals/b2a74041369ff0a25a50/",
       "brand": "Revolut",
       "sources": [
         "URLScan"
@@ -320,7 +351,7 @@
         "brand-domain-match"
       ],
       "candidateAgeBand": "8-30d",
-      "firstSeen": "2026-08-21T07:33:48.367Z"
+      "firstSeen": "2026-08-21T09:45:07.660Z"
     },
     {
       "signalId": "89a0feb1001f207e2d53",
@@ -339,40 +370,8 @@
       "firstSeen": "2026-09-01T16:35:17.663Z"
     },
     {
-      "signalId": "b2a74041369ff0a25a50",
-      "recordPath": "/signals/b2a74041369ff0a25a50/",
-      "brand": "Revolut",
-      "sources": [
-        "URLScan"
-      ],
-      "scoreBand": "95-100",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-domain-match"
-      ],
-      "candidateAgeBand": "8-30d",
-      "firstSeen": "2026-08-21T09:45:07.660Z"
-    },
-    {
-      "signalId": "03695559b9daf05d0e7e",
-      "recordPath": "/signals/03695559b9daf05d0e7e/",
-      "brand": "DPD",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "85-94",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-exact-token",
-        "different-tld",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-09-04T14:20:33.882Z"
-    },
-    {
-      "signalId": "43349e25703ae7344924",
-      "recordPath": "/signals/43349e25703ae7344924/",
+      "signalId": "667743b73f8b7090e53e",
+      "recordPath": "/signals/667743b73f8b7090e53e/",
       "brand": "DHL",
       "sources": [
         "CertStream"
@@ -381,10 +380,11 @@
       "evidenceTier": "name-only",
       "reasonCodes": [
         "brand-exact-token",
+        "multiple-hyphens",
         "suspicious-context"
       ],
-      "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-08-31T03:50:26.022Z"
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-09-04T15:05:03.177Z"
     },
     {
       "signalId": "dfa947674ec7493deaad",
