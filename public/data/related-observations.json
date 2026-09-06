@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-related-observations",
-  "generatedAt": "2026-09-06T21:20:44.152Z",
+  "generatedAt": "2026-09-06T21:46:05.815Z",
   "semantics": "Shared evidence is a bounded association between public observations. It is not campaign, operator, malware, infrastructure ownership, or threat-actor attribution.",
   "nodes": [
     {
@@ -35,6 +35,11 @@
       "clusterId": "a6fe8dca2662705a"
     },
     {
+      "signalId": "80f05e606f123a994d99",
+      "domain": "tracking-dhl-express[.]com",
+      "clusterId": "f885b9abb2406494"
+    },
+    {
       "signalId": "8a33e886d54f4668e5a6",
       "domain": "ohlbctpn[.]xn--tl2mobile-b4ab[.]fr",
       "clusterId": "37c6a4e077409a25"
@@ -58,6 +63,11 @@
       "signalId": "e86f606e9f0cc3c28a51",
       "domain": "5aedlradc0o0cowi[.]delivery-dhl-uae[.]com",
       "clusterId": "a6fe8dca2662705a"
+    },
+    {
+      "signalId": "e8c51b512066afdf798b",
+      "domain": "tracking-dhlexpress[.]com",
+      "clusterId": "f885b9abb2406494"
     }
   ],
   "edges": [
@@ -70,6 +80,42 @@
         {
           "type": "certificate-sha256",
           "value": "806f6ab0aa2ecc3ba3932c4bd708d10e96cb07ed6c485d72ab2ed97559e90b33"
+        }
+      ]
+    },
+    {
+      "id": "42effaf5eb2ac4275004",
+      "source": "80f05e606f123a994d99",
+      "target": "e8c51b512066afdf798b",
+      "strength": "corroborated-supporting",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "172[.]236[.]104[.]157"
+        },
+        {
+          "type": "dns-a",
+          "value": "172[.]236[.]104[.]43"
+        },
+        {
+          "type": "dns-a",
+          "value": "172[.]238[.]172[.]122"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns1[.]parklogictestns1[.]com"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns2[.]parklogictestns1[.]com"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns3[.]parklogictestns1[.]com"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns4[.]parklogictestns1[.]com"
         }
       ]
     },
