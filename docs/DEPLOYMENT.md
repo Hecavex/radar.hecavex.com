@@ -4,9 +4,13 @@ This is the HECAVEX maintainer runbook for the production service at [radar.heca
 
 ## Source and data cutover
 
-The checked-in migration uses protected source `main` and data-only `radar-data`. This section is an activation runbook, not a statement that the owner has completed the cutover or enabled settings. Do not disable collectors, shorten their windows or grant a blanket Actions source-protection bypass.
+The checked-in migration uses protected source `main` and data-only `radar-data`. This section is an activation runbook, not a statement that the owner has completed the cutover or enabled settings. Do not leave collectors disabled, shorten their windows or grant a blanket Actions source-protection bypass.
+
+Once the migration PR has passed its current-head checks, record the enabled workflow inventory and briefly pause new writer, cadence-relay and deployment dispatches for the cutover. Let existing collection windows and queued legacy deployments finish. Do not cancel a running collector to make the migration faster. Recheck the final source head and preserve any generated updates that landed while draining. Record the maintenance interval honestly rather than filling its coverage gap.
 
 After the migration PR is merged, the owner initializes the data branch from the **exact final merge SHA**, using that revision's trusted helper. The helper must preserve generated data arriving before the merge, not a stale rehearsal seed. The owner separately applies source PR/check protection and verifies the first real data write, fresh-source snapshot and exact live release. A missing data branch fails closed until initialization. Rehearsals belong in disposable repositories and cannot substitute for production verification.
+
+Immediately recheck that remote `main` still equals that merge SHA after bootstrap. Enable snapshot sync and deployment for the first validated publication, then restore every previously enabled workflow and its unchanged cadence. Verify a normal complete collector window writes only to `radar-data` under enforced source checks, and verify the resulting source/data pair on the live release. If cutover fails before the source merge, restore the recorded workflow states. If it fails after the merge, keep the last served release intact and repair the new data boundary before resuming writers. Never force old generated state over newer observations or leave a maintenance pause undocumented.
 
 The owner-only bootstrap interface is:
 
