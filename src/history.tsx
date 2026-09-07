@@ -7,15 +7,16 @@ import "./styles.css";
 
 const root = document.getElementById("root");
 if (!root) throw new Error("Missing Radar history root.");
+const language = document.documentElement.lang === "lt" ? "lt" : "en";
 const bootstrap = root.dataset.historyBootstrap;
 if (bootstrap) {
   void decodeHistoryBootstrap(bootstrap).then(({ history, renderedAt, totalSignals }) => {
-    hydrateRoot(root, <StrictMode><HistoryApp initialHistory={history} initialNow={renderedAt} initialTotal={totalSignals} /></StrictMode>);
+    hydrateRoot(root, <StrictMode><HistoryApp language={language} initialHistory={history} initialNow={renderedAt} initialTotal={totalSignals} /></StrictMode>);
     delete root.dataset.historyBootstrap;
     root.dataset.hydrated = "true";
   });
 } else {
   root.replaceChildren();
-  createRoot(root).render(<StrictMode><HistoryApp /></StrictMode>);
+  createRoot(root).render(<StrictMode><HistoryApp language={language} /></StrictMode>);
   root.dataset.hydrated = "client-rendered";
 }

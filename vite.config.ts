@@ -126,6 +126,8 @@ function staticPagePlugin() {
           "/": "radar",
           "/history/index.html": "history",
           "/history/": "history",
+          "/lt/istorija/index.html": "history",
+          "/lt/istorija/": "history",
           "/brands/index.html": "brands",
           "/brands/": "brands",
           "/methodology/index.html": "methodology",
@@ -301,7 +303,7 @@ function dynamicRoutesPlugin() {
       parseEventArtifact(readJson(eventsPath), new Set(allSignals.keys()));
       const nodesById = new Map(related.nodes.map((node) => [node.signalId, node]));
       const sitemapUrls = new Set<string>([
-        "/", "/changes/", "/history/", "/brands/", "/trends/", "/associations/", "/tools/",
+        "/", "/changes/", "/history/", "/lt/istorija/", "/brands/", "/trends/", "/associations/", "/tools/",
         "/dataset/", "/methodology/", "/docs/", "/lt/", "/lt/pokyciai/", "/lt/prekes-zenklai/",
         "/lt/tendencijos/", "/lt/sasajos/", "/lt/irankiai/", "/lt/duomenys/", "/lt/metodologija/",
         "/lt/dokumentacija/",
@@ -428,6 +430,7 @@ export default defineConfig({
       input: {
         radar: fileURLToPath(new URL("./index.html", import.meta.url)),
         history: fileURLToPath(new URL("./history/index.html", import.meta.url)),
+        ltHistory: fileURLToPath(new URL("./lt/istorija/index.html", import.meta.url)),
         brands: fileURLToPath(new URL("./brands/index.html", import.meta.url)),
         methodology: fileURLToPath(new URL("./methodology/index.html", import.meta.url)),
         documentation: fileURLToPath(new URL("./docs/index.html", import.meta.url)),

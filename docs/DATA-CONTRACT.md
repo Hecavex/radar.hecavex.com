@@ -469,6 +469,11 @@ event are omitted and counted in `omittedZeroDays`; consumers can derive expecte
 `collectorSchedule`. The series measures Radar activity under the coverage printed beside it, not Lithuanian phishing
 prevalence or total incident volume.
 
+`countingMethodVersion: 2` classifies a reobservation only when its timestamp is strictly later than retained
+first-publication provenance, falling back to the inventory's `firstSeen`, matching event-feed semantics. A paired
+publication observation is excluded; absent earlier provenance remains unclassified. Version 1 subtracted distinct
+observed IDs separately each UTC day and undercounted returning observations. See [the versioned correction](TRENDS-CORRECTIONS.md).
+
 `public/data/quality-metrics.json` describes only the bounded public analyst-review sample for a window of at most 365 days.
 It reports sanitized dated positive, negative, inconclusive and retracted outcomes and facets, coverage among eligible
 signals represented in public history, first-observation-to-review latency when supportable, and current exported

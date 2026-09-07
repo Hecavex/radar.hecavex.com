@@ -129,7 +129,7 @@ function distance(left: string, right: string): number {
   return align(left, right).reduce((total, item) => total + (item.kind === "same" ? 0 : 1), 0);
 }
 
-export function compareToOfficialDomain(observedValue: string, brand: BrandEntry | undefined): DomainComparison | null {
+export function compareToOfficialDomain(observedValue: string, brand: BrandEntry | undefined, language: "en" | "lt" = "en"): DomainComparison | null {
   if (!brand?.officialDomains.length) return null;
   const observedDomain = refang(observedValue);
   const officialDomain = [...brand.officialDomains]
@@ -138,16 +138,17 @@ export function compareToOfficialDomain(observedValue: string, brand: BrandEntry
   const observedUnicode = domainToUnicode(observedDomain);
   const operations = align(officialUnicode, observedUnicode);
   const observations: string[] = [];
+  const lt = language === "lt";
   const officialTld = officialDomain.split(".").at(-1);
   const observedTld = observedDomain.split(".").at(-1);
-  if (officialTld !== observedTld) observations.push(`Top-level domain changed from .${officialTld} to .${observedTld}.`);
-  if (observedDomain.includes("xn--")) observations.push("The observed name contains an internationalized punycode label.");
+  if (officialTld !== observedTld) observations.push(lt ? `Aukščiausio lygio domenas pakeistas iš .${officialTld} į .${observedTld}.` : `Top-level domain changed from .${officialTld} to .${observedTld}.`);
+  if (observedDomain.includes("xn--")) observations.push(lt ? "Stebėtame pavadinime yra tarptautinio vardo punycode žyma." : "The observed name contains an internationalized punycode label.");
   const added = operations.filter((item) => item.kind === "added").map((item) => item.observed).join("");
-  if (added) observations.push(`Added characters include “${added.slice(0, 32)}”.`);
+  if (added) observations.push(lt ? `Pridėti ženklai: „${added.slice(0, 32)}“.` : `Added characters include “${added.slice(0, 32)}”.`);
   const changed = operations.filter((item) => item.kind === "changed").length;
-  if (changed) observations.push(`${changed} character substitution${changed === 1 ? "" : "s"} separate the closest official domain.`);
+  if (changed) observations.push(lt ? `Palyginti su artimiausiu oficialiu domenu, pakeistų ženklų: ${changed}.` : `${changed} character substitution${changed === 1 ? "" : "s"} separate the closest official domain.`);
   if (observedDomain.split(".").length > officialDomain.split(".").length) {
-    observations.push("The observed hostname contains additional labels or subdomains.");
+    observations.push(lt ? "Stebėtame prieglobos varde yra papildomų žymų arba subdomenų." : "The observed hostname contains additional labels or subdomains.");
   }
   return {
     officialDomain,

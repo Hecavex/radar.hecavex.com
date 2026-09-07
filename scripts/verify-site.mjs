@@ -29,6 +29,7 @@ const pages = [
   { path: "/", marker: "Sampled discovery, not continuous monitoring" },
   { path: "/lt/", marker: "Atrankinis aptikimas, o ne nuolatinė stebėsena" },
   { path: "/history/", marker: "Candidate history" },
+  { path: "/lt/istorija/", marker: "Kandidatų istorija" },
   { path: "/brands/", marker: "Reviewed Lithuanian brand registry" },
   { path: "/changes/", marker: "What changed" },
   { path: "/lt/pokyciai/", marker: "Kas pasikeitė" },
@@ -678,7 +679,7 @@ function verifyBuiltHtml() {
     fragmentIdsByPath.set(path, ids);
     return ids;
   };
-  const expectedHtmlCount = 20 + (signalIds.size * 2) + (brands.entries.length * 2);
+  const expectedHtmlCount = 21 + (signalIds.size * 2) + (brands.entries.length * 2);
   assert(htmlFiles.length === expectedHtmlCount, `Expected ${expectedHtmlCount} static HTML entries, found ${htmlFiles.length}.`);
   assert(!htmlFiles.some((path) => relative(output, path).startsWith(`templates${sep}`)), "Build output still exposes route templates.");
   assert(!existsSync(join(output, "signals", "index.html")), "Build output creates a soft-404 landing page at /signals/.");
@@ -701,6 +702,7 @@ function verifyBuiltHtml() {
     tag?.match(new RegExp(`(?:^|\\s)${name}="([^"]*)"`, "u"))?.[1] ?? null;
   const localizedStaticRoutePairs = [
     ["/", "/lt/"],
+    ["/history/", "/lt/istorija/"],
     ["/changes/", "/lt/pokyciai/"],
     ["/brands/", "/lt/prekes-zenklai/"],
     ["/trends/", "/lt/tendencijos/"],
@@ -970,6 +972,7 @@ function verifyBuiltHtml() {
       ["/", "Overview"],
       ["/lt/", "Apžvalga"],
       ["/history/", "Changes"],
+      ["/lt/istorija/", "Pokyčiai"],
       ["/changes/", "Changes"],
       ["/lt/pokyciai/", "Pokyčiai"],
       ["/brands/", "Brands"],
@@ -1094,7 +1097,7 @@ function verifyBuiltHtml() {
       assert(payload?.snapshot?.dataset === "live", `${route} hydration snapshot is not the live public dataset.`);
       assert(Number.isInteger(payload?.renderedAt), `${route} hydration snapshot has no stable render timestamp.`);
       assert(!historyBootstrap, `${route} embeds history data in the live dashboard.`);
-    } else if (route === "/history/") {
+    } else if (route === "/history/" || route === "/lt/istorija/") {
       assert(historyBootstrap, `${route} has no embedded history artifact.`);
       assert(!/[<>&"]/u.test(historyBootstrap), `${route} history artifact is not safely attribute-encoded.`);
       const payload = JSON.parse(decodeURIComponent(historyBootstrap));
@@ -2390,7 +2393,7 @@ async function verifyInBrowser(healthOnly = false) {
             : true;
           const signalTable = document.querySelector(".signal-table");
           const signalTableRect = signalTable?.getBoundingClientRect();
-          const hostNames = [...document.querySelectorAll(".signal-table .host-name")];
+          const hostNames = [...document.querySelectorAll(".signal-table .host-name, .signal-table .hosting-unknown")];
           const longestHost = hostNames.sort((left, right) => (right.textContent?.length ?? 0) - (left.textContent?.length ?? 0))[0];
           const hostingCellRect = longestHost?.closest("td")?.getBoundingClientRect();
           const hostStyle = longestHost ? getComputedStyle(longestHost) : null;
