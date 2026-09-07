@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import pytest
+from jsonschema import Draft202012Validator
 
 from hecavex_radar.daily_trends import build_daily_trends
 from hecavex_radar.event_feeds import _classify_events
 from hecavex_radar.models import RawSignal
 from hecavex_radar.normalize import prepare_signal
+from hecavex_radar.public_schemas import DAILY_TRENDS_SCHEMA
 from hecavex_radar.safety import safe_reference_url, safe_screenshot_url
 
 
@@ -57,3 +59,17 @@ def test_trends_reobservations_match_feed_across_midnight_and_unknown_provenance
         item["type"] == "reobservation" for item in classified
     )
     assert trends["countingMethodVersion"] == 2
+    Draft202012Validator(DAILY_TRENDS_SCHEMA).validate(trends)
+
+
+def test_corrected_trends_schema_preserves_historical_contract_and_rejects_partial_metadata() -> None:
+    trends = build_daily_trends([], [], [], {}, "2026-09-07T12:00:00.000Z", days=2)
+    validator = Draft202012Validator(DAILY_TRENDS_SCHEMA)
+    validator.validate(trends)
+    legacy = {key: value for key, value in trends.items()
+              if key not in {"countingMethodVersion", "reobservationSemantics"}}
+    validator.validate(legacy)
+    assert list(validator.iter_errors({**legacy, "countingMethodVersion": 2}))
+    assert list(validator.iter_errors({**trends, "countingMethodVersion": 3}))
+    assert list(validator.iter_errors({**trends, "reobservationSemantics": ""}))
+    assert list(validator.iter_errors({**trends, "unexpectedMetadata": True}))
