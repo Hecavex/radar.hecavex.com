@@ -4599,6 +4599,21 @@ td time {
   font-size: .82rem;
 }
 
+.trend-cutoff {
+  margin-bottom: 1.25rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--blue);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: .8rem;
+}
+
+.trend-cutoff strong { color: var(--text); }
+.trend-cutoff p { margin: .45rem 0 0; }
+.trend-cutoff--delayed,
+.trend-cutoff--unknown { border-left-color: var(--amber); }
+
 .trend-chart {
   border: 1px solid var(--line);
 }
@@ -4621,7 +4636,8 @@ td time {
 .trend-row time,
 .trend-row small { color: var(--faint); font: .59rem var(--mono); }
 .trend-date span {
-  width: max-content;
+  width: fit-content;
+  max-width: 100%;
   padding: .12rem .28rem;
   border: 1px solid var(--amber);
   color: var(--amber);

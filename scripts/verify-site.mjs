@@ -9,6 +9,7 @@ import axe from "axe-core";
 import { JSDOM } from "jsdom";
 import { chromium } from "playwright-core";
 import { preview } from "vite";
+import { maximumOutputBytes, verifyDeploymentCapacity } from "./deployment-capacity.mjs";
 
 const root = resolve(import.meta.dirname, "..");
 const output = join(root, "dist");
@@ -63,21 +64,12 @@ function mobileNavigationForPath(path) {
 const stixBundleRawBytes = 2 * 1024 * 1024;
 const signalDetailFileRawBytes = 16 * 1024;
 const signalDetailSetRawBytes = 3 * 1024 * 1024;
-const outputCapacityBudgets = {
-  signalHtmlBytes: 12 * 1024 * 1024,
-  brandHtmlBytes: 4 * 1024 * 1024,
-  pairedStaticDataHtmlBytes: 8 * 1024 * 1024,
-  remainingOutputBytes: 8 * 1024 * 1024,
-};
 const performanceBudgets = {
   htmlGzip: 512 * 1024,
   javascriptFileGzip: 225 * 1024,
   stylesheetFileGzip: 48 * 1024,
   scriptAndStyleGzip: 320 * 1024,
   publicDataFileGzip: 1024 * 1024,
-  // This limits the complete static Pages artifact, not a visitor download.
-  // Per-page and compressed asset budgets below remain the user-facing guardrails.
-  totalOutputBytes: 32 * 1024 * 1024,
 };
 
 function verifyLayoutSourceContract() {
@@ -1125,6 +1117,9 @@ function verifyBuiltHtml() {
       if (route === "/trends/" || route === "/lt/tendencijos/") {
         assert(payload?.trends?.dataset === "radar-daily-trends", `${route} does not embed the canonical daily trends artifact.`);
         assert(document.querySelector(".trend-method-note"), `${route} omits the schedule and listening explanation.`);
+        const cutoff = document.querySelector(".trend-cutoff time");
+        assert(cutoff?.getAttribute("datetime") === payload.trends.generatedAt, `${route} omits its precise data cutoff.`);
+        assert(cutoff?.textContent?.includes("UTC"), `${route} does not label the cutoff timezone.`);
         const trendRows = [...document.querySelectorAll(".trend-row")];
         assert(trendRows.length === payload.trends.series.length, `${route} does not render every daily trend row.`);
         const isLithuanian = route.startsWith("/lt/");
@@ -1144,6 +1139,9 @@ function verifyBuiltHtml() {
           assert(listeningCopy.includes(isLithuanian ? "planinė riba" : "planned ceiling"), `${route} trend row omits the planned listening ceiling.`);
           assert(row.classList.contains("trend-row--partial") === trend.partialDay, `${route} trend row misstates partial UTC-day status.`);
           assert(Boolean(row.querySelector(".trend-date span")) === trend.partialDay, `${route} trend row omits its visible partial UTC-day label.`);
+          const renderDate = new Date(payload.renderedAt).toISOString().slice(0, 10);
+          const dayState = !trend.partialDay ? "complete" : trend.date === renderDate ? "partial" : "incomplete";
+          assert(row.getAttribute("data-day-state") === dayState, `${route} confuses the saved partial day with the current UTC day.`);
           const additionalAttempts = Math.max(0, trend.collectorCoverage.recordedAttempts - trend.collectorCoverage.scheduledSlots);
           assert(Boolean(row.querySelector(".trend-metrics em")) === (additionalAttempts > 0), `${route} trend row misstates additional collection attempts.`);
           if (trend.collectorCoverage.recordedSchedulePercent === null) {
@@ -1975,10 +1973,6 @@ function verifySyndicationFeeds() {
 function verifyPerformanceBudgets(signalDetails) {
   const files = walk(output);
   const totalBytes = files.reduce((total, path) => total + statSync(path).size, 0);
-  assert(
-    totalBytes <= performanceBudgets.totalOutputBytes,
-    `Built output is ${totalBytes} bytes; budget is ${performanceBudgets.totalOutputBytes}.`,
-  );
 
   const compressed = (path) => gzipSync(readFileSync(path), { level: 9 }).byteLength;
   const compressedSizes = (paths) => paths.map((path) => ({ path: relative(output, path), size: compressed(path) }));
@@ -2056,16 +2050,7 @@ function verifyPerformanceBudgets(signalDetails) {
     pairedStaticDataHtmlBytes: sumRawBytes(pairedStaticDataHtmlFiles),
     remainingOutputBytes: sumRawBytes(files.filter((path) => !capacityClassifiedFiles.has(path))),
   };
-  const maximumCapacityBytes = Object.values(outputCapacityBudgets).reduce((total, bytes) => total + bytes, 0);
-  const classifiedOutputBytes = Object.values(capacity).reduce((total, bytes) => total + bytes, 0);
-  assert(
-    maximumCapacityBytes === performanceBudgets.totalOutputBytes,
-    `Output capacity allocations total ${maximumCapacityBytes} bytes instead of the ${performanceBudgets.totalOutputBytes}-byte tree gate.`,
-  );
-  assert(classifiedOutputBytes === totalBytes, "Output capacity classes do not cover the complete production tree exactly once.");
-  for (const [name, bytes] of Object.entries(capacity)) {
-    assert(bytes <= outputCapacityBudgets[name], `${name} uses ${bytes} bytes; capacity is ${outputCapacityBudgets[name]}.`);
-  }
+  verifyDeploymentCapacity(totalBytes, capacity);
   return {
     totalBytes,
     html: largest(htmlSizes),
@@ -2075,7 +2060,7 @@ function verifyPerformanceBudgets(signalDetails) {
     publicData: largest(dataSizes),
     signalDetailBytes: signalDetails.totalBytes,
     capacity,
-    maximumCapacityBytes,
+    maximumCapacityBytes: maximumOutputBytes,
   };
 }
 
@@ -2128,6 +2113,42 @@ async function fulfillAnalyticsScript(route) {
     headers: { "access-control-allow-origin": "*" },
     body: "",
   });
+}
+
+async function verifyTrendCutoff(browser, origin) {
+  const trends = JSON.parse(readFileSync(join(output, "data", "daily-trends.json"), "utf8"));
+  const context = await browser.newContext({ viewport: { width: 390, height: 900 }, timezoneId: "Pacific/Auckland" });
+  const page = await context.newPage();
+  await page.route("https://static.cloudflareinsights.com/beacon.min.js", fulfillAnalyticsScript);
+  try {
+    for (const [path, incompleteLabel, delayedLabel] of [
+      ["/trends/", "Incomplete at cutoff", "Update delayed."],
+      ["/lt/tendencijos/", "Nepilna suvestinės diena", "Atnaujinimas vėluoja."],
+    ]) {
+      await page.clock.setFixedTime(Date.parse(trends.generatedAt));
+      await page.goto(`${origin}${path}`, { waitUntil: "networkidle" });
+      await page.locator(".trend-cutoff--current").waitFor();
+      const metricsAtCutoff = await page.locator(".trend-metrics").allTextContents();
+      const countsAtCutoff = await page.locator(".trend-signal-count").allTextContents();
+      const datesAtCutoff = await page.locator(".trend-date time").allTextContents();
+
+      await page.clock.setFixedTime(Date.parse(trends.generatedAt) + 2 * 86_400_000);
+      await page.reload({ waitUntil: "networkidle" });
+      await page.locator(".trend-cutoff--delayed").waitFor();
+      assert((await page.locator(".trend-cutoff").textContent()).includes(delayedLabel), `${path} hides a stale artifact behind the original render time.`);
+      assert(await page.locator(".trend-cutoff time").getAttribute("datetime") === trends.generatedAt, `${path} replaces the data cutoff with browser time.`);
+      const partialRows = page.locator(".trend-row--partial");
+      for (const row of await partialRows.all()) {
+        assert(await row.getAttribute("data-day-state") === "incomplete", `${path} calls a historical cutoff the current partial UTC day.`);
+        assert(await row.locator(".trend-date span").textContent() === incompleteLabel, `${path} omits the localized historical partial-day warning.`);
+      }
+      assert(JSON.stringify(await page.locator(".trend-metrics").allTextContents()) === JSON.stringify(metricsAtCutoff), `${path} rewrites saved denominators or coverage as the artifact ages.`);
+      assert(JSON.stringify(await page.locator(".trend-signal-count").allTextContents()) === JSON.stringify(countsAtCutoff), `${path} invents discovery counts after the cutoff.`);
+      assert(JSON.stringify(await page.locator(".trend-date time").allTextContents()) === JSON.stringify(datesAtCutoff), `${path} invents zero-day rows after the cutoff.`);
+    }
+  } finally {
+    await context.close();
+  }
 }
 
 async function verifyAccessibility(browser, origin, width) {
@@ -2258,6 +2279,7 @@ async function verifyInBrowser() {
   const browser = await chromium.launch({ executablePath, headless: true, args: ["--no-sandbox"] });
 
   try {
+    await verifyTrendCutoff(browser, origin);
     for (const width of widths) {
       const context = await browser.newContext({ viewport: { width, height: 900 } });
       const page = await context.newPage();
@@ -2705,11 +2727,11 @@ if (verificationPhase !== "browser") {
       `${performance.executableBytes} bytes gzip JavaScript/CSS total; ` +
       `${performance.publicData.path} ${performance.publicData.size} bytes gzip (largest public JSON); ` +
       `${performance.signalDetailBytes} bytes across signal-detail sidecars; ` +
-      `${performance.capacity.signalHtmlBytes}/${outputCapacityBudgets.signalHtmlBytes} signal HTML bytes; ` +
-      `${performance.capacity.brandHtmlBytes}/${outputCapacityBudgets.brandHtmlBytes} brand HTML bytes; ` +
-      `${performance.capacity.pairedStaticDataHtmlBytes}/${outputCapacityBudgets.pairedStaticDataHtmlBytes} paired static-data HTML bytes; ` +
-      `${performance.capacity.remainingOutputBytes}/${outputCapacityBudgets.remainingOutputBytes} remaining bytes; ` +
-      `${performance.maximumCapacityBytes} bytes maximum allocated capacity.\n`,
+      `${performance.capacity.signalHtmlBytes} signal HTML bytes; ` +
+      `${performance.capacity.brandHtmlBytes} brand HTML bytes; ` +
+      `${performance.capacity.pairedStaticDataHtmlBytes} paired static-data HTML bytes; ` +
+      `${performance.capacity.remainingOutputBytes} remaining bytes; ` +
+      `${performance.maximumCapacityBytes} bytes maximum deployment capacity.\n`,
   );
 }
 

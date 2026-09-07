@@ -14,9 +14,11 @@ The Python publisher separately limits each public live/history JSON artifact to
 | Each signal-detail sidecar | 16 KiB raw | 2,450 bytes raw |
 | All signal-detail sidecars | 3 MiB raw | 163,337 bytes raw across 128 files |
 | STIX 2.1 Bundle | 2 MiB raw | 175,943 bytes raw |
-| Entire uncompressed `dist/` tree | 32 MiB | 16,475,175 bytes |
+| Entire uncompressed `dist/` tree | 256 MiB | 16,475,175 bytes |
 
-The verifier partitions every byte in the production tree exactly once into four raw deployment-capacity classes. Bilingual signal pages receive 12 MiB, bilingual brand pages 4 MiB, the data-heavy changes, trends, associations, tools, and dataset route pairs 8 MiB, and every remaining file 8 MiB. The four ceilings sum exactly to the authoritative 32 MiB tree gate. Consequently, new signals, brands, routes, and larger embedded bootstraps consume a finite checked allocation instead of escaping a fixed-file estimate; any tree that passes all four class ceilings is proven to fit the deployment gate even as dynamic page counts grow.
+The verifier accounts for every byte in four diagnostic groups: bilingual signal pages, bilingual brand pages, the changes/trends/associations/tools/dataset route pairs, and all remaining files. These groups share one 256 MiB deployment limit. Individual groups have no separate aggregate ceiling. Per-response compressed budgets above still apply to every generated page and measured asset, so additional retained records do not raise the amount allowed in an individual response.
+
+On 7 September 2026 this replaces the former 32 MiB artifact limit and fixed 12/4/8/8 MiB group allocations. Deployments had stopped when ordinary retained signal pages reached 13,484,134 bytes, despite small individual responses and a complete artifact below 32 MiB. Each retained signal produces separate English and Lithuanian routes. A 12 MiB aggregate cap therefore acted as an accidental limit on archive size. The 256 MiB operating limit gives the archive eight times the previous whole-site storage allowance while preserving a finite deployment gate. It is a storage allowance, not a visitor download budget or a promise that unlimited retention will fit. Existing record, JSON, sidecar, gzip, accessibility, and schema limits remain enforced.
 
 Baseline measured on 2026-08-30 with the checked-in datasets and level-9 gzip:
 
@@ -29,12 +31,12 @@ Baseline measured on 2026-08-30 with the checked-in datasets and level-9 gzip:
 | All JavaScript and CSS | 186,064 bytes gzip |
 | Largest public JSON (`data/radar.stix.json`) | 16,088 bytes gzip |
 | Signal-detail sidecars | 163,337 bytes across 128 files |
-| Signal-page capacity | 7,773,715 / 12,582,912 bytes |
-| Brand-page capacity | 1,882,642 / 4,194,304 bytes |
-| Paired static-data page capacity | 3,591,805 / 8,388,608 bytes |
-| Remaining-output capacity | 3,227,013 / 8,388,608 bytes |
+| Signal-page bytes | 7,773,715 bytes |
+| Brand-page bytes | 1,882,642 bytes |
+| Paired static-data page bytes | 3,591,805 bytes |
+| Remaining-output bytes | 3,227,013 bytes |
 
-Hashed asset names may change when their content changes; the verification output records the current largest file on every run. Sidecars are fetched only when requested and are not embedded into HTML, while every generated page and sidecar still belongs to exactly one raw capacity class. The separately measured complete `dist/` tree must also remain below 32 MiB.
+Hashed asset names may change when their content changes. The verification output records the current largest file and aggregate groups on every run. Sidecars are fetched only when requested and are not embedded into HTML. Every generated page and sidecar belongs to exactly one measured group, and the complete `dist/` tree must stay within 256 MiB. Regression checks cover growth past both former limits, rejection above the new whole-site limit, and missing or double-counted bytes.
 
 The HTML allowance covers the no-JavaScript, safely encoded snapshot used for hydration. The combined script/style gate is the primary interaction-cost guard. Font files remain covered by the total-output budget and separate integrity/size checks.
 

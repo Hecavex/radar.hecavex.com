@@ -1,9 +1,11 @@
 /* global URL, console, structuredClone */
 
 import { readFile } from "node:fs/promises";
+import assert from "node:assert/strict";
 
 import { parseSnapshot } from "../src/lib/data.ts";
 import { parseCollectionHealth } from "../src/lib/collectionHealth.ts";
+import { trendDayState, trendFreshness } from "../src/lib/trendFreshness.ts";
 
 const readJson = async (relative) => JSON.parse(await readFile(new URL(relative, import.meta.url), "utf8"));
 const snapshots = [
@@ -74,4 +76,14 @@ for (const [label, attemptPatch] of invalidCollectionHealth) {
   if (!rejected) throw new Error(`The browser loader accepted ${label}.`);
 }
 
-console.log("Validated live snapshot v2 compatibility, exact collection-health scheduling provenance, and unsupported-version rejection in the browser loader.");
+const historicalTrends = { generatedAt: "2026-09-05T21:14:00.000Z" };
+const partialRow = { date: "2026-09-05", partialDay: true };
+assert.equal(trendFreshness(historicalTrends, Date.parse("2026-09-05T23:14:00.000Z")), "current");
+assert.equal(trendFreshness(historicalTrends, Date.parse("2026-09-05T23:14:00.001Z")), "delayed");
+assert.equal(trendFreshness(historicalTrends, Date.parse("2026-09-07T10:00:00.000Z")), "delayed");
+assert.equal(trendFreshness({ generatedAt: "invalid" }, Date.now()), "unknown");
+assert.equal(trendDayState(partialRow, Date.parse("2026-09-05T23:59:59.999Z")), "partial");
+assert.equal(trendDayState(partialRow, Date.parse("2026-09-06T00:00:00.000Z")), "incomplete");
+assert.equal(trendDayState({ ...partialRow, partialDay: false }, Date.parse("2026-09-07T10:00:00.000Z")), "complete");
+
+console.log("Validated live snapshot v2 compatibility, exact collection-health scheduling provenance, unsupported-version rejection, and UTC trend cutoff freshness.");
