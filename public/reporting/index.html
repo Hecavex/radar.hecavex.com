@@ -12,6 +12,7 @@
   <body>
     <main>
       <header>
+        <a href="/dataset/">← Return to Radar dataset</a>
         <p class="eyebrow">HECAVEX RADAR / LOCAL TOOL</p>
         <h1>Prepare a reviewed-candidate evidence pack</h1>
         <p class="lede">Load generated Radar JSON files. The page accepts only an active analyst-confirmed assessment, builds a bounded report manifest, and never sends it.</p>
@@ -23,6 +24,16 @@
           <li>Free-form notes and original filenames are excluded to reduce accidental PII disclosure.</li>
           <li>Optional evidence stays local; only ordinal labels, sizes, media types, and SHA-256 enter the pack.</li>
         </ul>
+      </section>
+      <section aria-labelledby="inputs-title" class="boundary">
+        <h2 id="inputs-title">Advanced maintainer utility — English only</h2>
+        <p>This form requires a completed, active analyst-confirmed assessment. An empty assessments list means there are no usable reviewed candidates; manually adding a candidate is not an assessment. Do not invent a decision to use this form.</p>
+        <ol>
+          <li>Save the <a href="/data/radar.json" download>public Radar snapshot (radar.json)</a>.</li>
+          <li>Save the sanitized <a href="https://github.com/Hecavex/radar.hecavex.com/blob/main/data/review/public-decisions.json" rel="noreferrer noopener">data/review/public-decisions.json</a> from the matching release. Follow the <a href="https://github.com/Hecavex/radar.hecavex.com/blob/main/docs/REVIEW-WORKFLOW.md" rel="noreferrer noopener">maintainer review workflow</a>.</li>
+          <li>Open the corresponding permanent Radar signal record and save its “Signal JSON” link: <code>/data/signals/ID-prefix/ID.json</code>, where ID-prefix is the first two characters of the stable signal ID.</li>
+        </ol>
+        <p>These are explicit navigation/download links. Selecting files performs only local validation; the tool never fetches inputs automatically.</p>
       </section>
       <form id="pack-form" novalidate>
         <div class="field-grid">

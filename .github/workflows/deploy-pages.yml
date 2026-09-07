@@ -33,6 +33,7 @@ jobs:
     outputs:
       should_deploy: ${{ steps.freshness.outputs.should_deploy }}
       revision: ${{ steps.freshness.outputs.revision }}
+      data_revision: ${{ steps.data.outputs.data_revision }}
     permissions:
       contents: read
       pages: read
@@ -42,50 +43,32 @@ jobs:
         with:
           ref: main
           fetch-depth: 0
-      - name: Ignore stale or unchanged completions
+      - name: Materialize allowlisted operational data with trusted source tooling
+        id: data
+        run: |
+          python -m hecavex_radar.data_branch materialize --repository . --branch radar-data \
+            --view operational --state-file "${RUNNER_TEMP}/radar-data-base.json" \
+            --github-output "${GITHUB_OUTPUT}"
+      - name: Reject stale source or unproven writer completions
         id: freshness
         env:
           EXPECTED_SHA: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.event.client_payload.head_sha }}
-          TRIGGER_WORKFLOW: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.name || github.event.client_payload.source_workflow }}
+          TRIGGER_DATA_SHA: ${{ github.event.client_payload.data_revision || '' }}
+          SOURCE_SHA: ${{ steps.data.outputs.source_revision }}
+          DATA_SHA: ${{ steps.data.outputs.data_revision }}
+          PUBLICATION_SOURCE_SHA: ${{ steps.data.outputs.publication_source_revision }}
         shell: bash
         run: |
-          should_deploy=true
-          actual_sha="$(git rev-parse HEAD)"
-          echo "revision=${actual_sha}" >> "${GITHUB_OUTPUT}"
-          if ! git merge-base --is-ancestor "${EXPECTED_SHA}" "${actual_sha}"; then
-            echo "The triggering revision is no longer an ancestor of main."
-            should_deploy=false
-          elif [[ "${actual_sha}" != "${EXPECTED_SHA}" ]]; then
-            unexpected_paths="$(git diff --name-only "${EXPECTED_SHA}..${actual_sha}" | grep -Ev \
-              '^(data/(certstream|ct-search|enrichment|urlscan|history)/|data/coverage/brand-coverage\.json$|data/review/review-queue\.json$|public/data/)' || true)"
-            if [[ -n "${unexpected_paths}" ]]; then
-              echo "Newer main contains code or configuration that this upstream run did not validate:"
-              echo "${unexpected_paths}"
-              should_deploy=false
-            fi
+          set -euo pipefail
+          args=()
+          if [[ "${GITHUB_EVENT_NAME}" == "repository_dispatch" ]]; then
+            args+=(--trigger-data "${TRIGGER_DATA_SHA}")
           fi
-          if [[ "${should_deploy}" == "true" && "${TRIGGER_WORKFLOW}" == "CI" ]]; then
-            parent_sha="$(git rev-parse "${EXPECTED_SHA}^")"
-            material_paths="$(git diff --name-only "${parent_sha}..${EXPECTED_SHA}" | grep -Ev \
-              '^(data/(certstream|ct-search|enrichment|urlscan|history)/|data/coverage/brand-coverage\.json$|data/review/review-queue\.json$|public/data/)' || true)"
-            if [[ -z "${material_paths}" ]]; then
-              echo "The validated commit contains only collector state; the hourly snapshot will publish it."
-              should_deploy=false
-            fi
-          elif [[ "${should_deploy}" == "true" && "${TRIGGER_WORKFLOW}" == "Sync radar snapshot" ]]; then
-            if [[ "${actual_sha}" == "${EXPECTED_SHA}" ]] ||
-              git diff --quiet "${EXPECTED_SHA}..${actual_sha}" -- public/data/; then
-              echo "The sync completed without changing public Radar data; deployment is unnecessary."
-              should_deploy=false
-            fi
-          elif [[ "${should_deploy}" == "true" && "${TRIGGER_WORKFLOW}" == "Collect CertStream candidates" ]]; then
-            if [[ "${actual_sha}" == "${EXPECTED_SHA}" ]] ||
-              git diff --quiet "${EXPECTED_SHA}..${actual_sha}" -- public/data/collection-health.json; then
-              echo "The collection completed without changing public health data; deployment is unnecessary."
-              should_deploy=false
-            fi
-          fi
-          echo "should_deploy=${should_deploy}" >> "${GITHUB_OUTPUT}"
+          python -m hecavex_radar.publication_selection \
+            --source "${SOURCE_SHA}" --data "${DATA_SHA}" \
+            --publication-source "${PUBLICATION_SOURCE_SHA}" --expected-source "${EXPECTED_SHA}" "${args[@]}"
+          echo "revision=${SOURCE_SHA}" >> "${GITHUB_OUTPUT}"
+          echo "should_deploy=true" >> "${GITHUB_OUTPUT}"
       - name: Set up Node.js
         if: steps.freshness.outputs.should_deploy == 'true'
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
@@ -100,6 +83,8 @@ jobs:
       - name: Verify and build static site
         if: steps.freshness.outputs.should_deploy == 'true'
         env:
+          RADAR_SOURCE_REVISION: ${{ steps.data.outputs.source_revision }}
+          RADAR_DATA_REVISION: ${{ steps.data.outputs.data_revision }}
           HECAVEX_ANALYTICS_TOKEN: ${{ vars.HECAVEX_ANALYTICS_TOKEN }}
         run: pnpm check:frontend
       - name: Verify public deployment metadata
@@ -218,15 +203,31 @@ jobs:
       id-token: write
       contents: read
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5
       - name: Check out the exact deployed verification code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ needs.build.outputs.revision }}
           persist-credentials: false
+      - name: Materialize the exact selected data, not its executable tree
+        env:
+          DATA_SHA: ${{ needs.build.outputs.data_revision }}
+        run: |
+          python -m hecavex_radar.data_branch materialize --repository . --branch radar-data \
+            --view operational --revision "${DATA_SHA}" --state-file "${RUNNER_TEMP}/radar-deploy-data.json"
+      - name: Refuse source or data superseded while building
+        env:
+          SOURCE_SHA: ${{ needs.build.outputs.revision }}
+          DATA_SHA: ${{ needs.build.outputs.data_revision }}
+        run: |
+          python -m hecavex_radar.publication_selection --source "${SOURCE_SHA}" --data "${DATA_SHA}" \
+            --publication-source "${SOURCE_SHA}" --expected-source "${SOURCE_SHA}"
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5
       - name: Verify live release identity and bilingual data freshness
         env:
           EXPECTED_REVISION: ${{ needs.build.outputs.revision }}
-        run: python -m hecavex_radar.live_smoke --expected-revision "${EXPECTED_REVISION}"
+          EXPECTED_DATA_REVISION: ${{ needs.build.outputs.data_revision }}
+        run: |
+          python -m hecavex_radar.live_smoke --expected-revision "${EXPECTED_REVISION}" \
+            --expected-data-revision "${EXPECTED_DATA_REVISION}"

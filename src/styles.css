@@ -3546,6 +3546,43 @@ td time {
   }
 }
 
+@media (max-width: 760px) {
+  /* Keep the table's accessible headers while grouping related card values. */
+  .table-scroll .signal-table td {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .35rem .6rem;
+    padding: .55rem .8rem;
+  }
+
+  .table-scroll .signal-table td::before,
+  .table-scroll .signal-table .indicator-cell > span {
+    display: none;
+  }
+
+  .table-scroll .signal-table .indicator-cell > div {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .table-scroll .signal-table .source-chips,
+  .table-scroll .signal-table .first-seen,
+  .table-scroll .signal-table .country {
+    margin: 0;
+  }
+
+  .table-scroll .signal-table .indicator-cell button:not(.candidate-link),
+  .table-scroll .signal-table .signal-deep-link {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+  }
+
+  .table-scroll .signal-table .record-link {
+    min-height: 2.75rem;
+  }
+}
+
 @media (max-width: 680px) {
   .hero {
     grid-template-columns: 1fr;

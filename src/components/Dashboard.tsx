@@ -22,8 +22,9 @@ export function Dashboard({ snapshot, now = Date.now(), language = "en", refresh
   const [urlStateReady, setUrlStateReady] = useState(false);
   const summary = useMemo(() => dashboardMetrics(snapshot), [snapshot]);
   const filteredSignals = useMemo(() => sortSignals(filterSignals(snapshot.signals, filters, now), filters.sort), [snapshot.signals, filters, now]);
-  const syncAgeMs = Math.max(0, now - Date.parse(snapshot.lastSuccessfulSyncAt));
-  const isStale = refreshError !== null || syncAgeMs > 2 * 60 * 60 * 1000;
+  const syncAgeMs = now - Date.parse(snapshot.lastSuccessfulSyncAt);
+  const invalidClock = !Number.isFinite(syncAgeMs) || syncAgeMs < -60_000;
+  const isStale = refreshError !== null || invalidClock || syncAgeMs > 2 * 60 * 60 * 1000;
   const dayAgo = now - 86_400_000;
   const newToday = snapshot.signals.filter((signal) => Date.parse(signal.firstSeen) >= dayAgo).length;
   const reobservedToday = snapshot.signals.filter((signal) => Date.parse(signal.firstSeen) < dayAgo && Date.parse(signal.lastSeen) >= dayAgo).length;
@@ -83,7 +84,8 @@ export function Dashboard({ snapshot, now = Date.now(), language = "en", refresh
                   ? (isStale ? "Suvestinės sinchronizavimas vėluoja" : "Suvestinė atnaujinta")
                   : (isStale ? "Snapshot sync delayed" : "Snapshot current")}
             </small>
-            <strong>{relativeTime(snapshot.lastSuccessfulSyncAt, now)}</strong>
+            <strong>{invalidClock ? (lt ? "Nežinomas arba ateities laikas" : "Unknown or future timestamp") : relativeTime(snapshot.lastSuccessfulSyncAt, now)}</strong>
+            <button type="button" className="button" onClick={() => window.location.reload()}>{lt ? "Atnaujinti suvestinę" : "Refresh snapshot"}</button>
             <span>{lt ? `Paskutinis sėkmingas sinchronizavimas ${dateTime(snapshot.lastSuccessfulSyncAt)} Lietuvos laiku` : `Last successful sync ${dateTime(snapshot.lastSuccessfulSyncAt)} UTC`}</span>
             <span>{lt ? `Duomenys pasikeitė ${relativeTime(snapshot.generatedAt, now)}` : `Data changed ${relativeTime(snapshot.generatedAt, now)}`}</span>
             {refreshError ? <span>{lt ? "Atnaujinimo įspėjimas" : "Refresh warning"}: {refreshError}</span> : null}

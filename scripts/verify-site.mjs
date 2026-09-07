@@ -29,6 +29,7 @@ const pages = [
   { path: "/", marker: "Sampled discovery, not continuous monitoring" },
   { path: "/lt/", marker: "Atrankinis aptikimas, o ne nuolatinė stebėsena" },
   { path: "/history/", marker: "Candidate history" },
+  { path: "/lt/istorija/", marker: "Kandidatų istorija" },
   { path: "/brands/", marker: "Reviewed Lithuanian brand registry" },
   { path: "/changes/", marker: "What changed" },
   { path: "/lt/pokyciai/", marker: "Kas pasikeitė" },
@@ -210,8 +211,6 @@ function verifyDeploymentTopology() {
   const snapshotPublisher = readFileSync(join(root, "hecavex_radar", "sync.py"), "utf8");
   const stixPublisher = readFileSync(join(root, "hecavex_radar", "stix.py"), "utf8");
   const viteConfig = readFileSync(join(root, "vite.config.ts"), "utf8");
-  const botGeneratedPathBoundary =
-    "data/(certstream|ct-search|enrichment|urlscan|history)/|data/coverage/brand-coverage\\.json$|data/review/review-queue\\.json$|public/data/";
 
   assert(
     /workflows:\s*\["CI"\]/u.test(deploy),
@@ -236,22 +235,22 @@ function verifyDeploymentTopology() {
     "Pages deployment no longer limits each upstream workflow to its approved trigger semantics.",
   );
   assert(
-    deploy.includes('git diff --quiet "${EXPECTED_SHA}..${actual_sha}" -- public/data/') &&
-      deploy.includes("public/data/collection-health.json") &&
+    deploy.includes("hecavex_radar.data_branch materialize") &&
+      deploy.includes("--view operational") &&
+      deploy.includes("publication_source_revision") &&
+      deploy.includes("hecavex_radar.publication_selection") &&
+      deploy.includes("--trigger-data") &&
+      deploy.includes("--expected-data-revision") &&
+      deploy.includes("Refuse source or data superseded while building") &&
       deploy.includes("test -f dist/404.html") &&
-      deploy.includes("test -f dist/data/radar.stix.json") &&
       deploy.includes("test -f dist/data/feed-manifest.json") &&
+      deploy.includes("test -f dist/data/radar.stix.json") &&
       deploy.includes("test -f dist/data/pipeline-health.json") &&
       deploy.includes("test -f dist/data/related-observations.json") &&
       deploy.includes("test -f dist/data/schemas/radar-v2.schema.json") &&
       deploy.includes("! grep -Fq 'Allow: /data/radar.stix.json' dist/robots.txt") &&
-      deploy.includes("git merge-base --is-ancestor") &&
-      deploy.includes("data/(certstream|ct-search|enrichment|urlscan|history)/") &&
-      deploy.includes("data/coverage/brand-coverage\\.json$") &&
-      deploy.includes("data/review/review-queue\\.json$") &&
-      deploy.includes("public/data/") &&
-      deploy.split(botGeneratedPathBoundary).length === 3,
-    "Pages deployment freshness checks no longer cover every staged public-data boundary.",
+      !deploy.includes("ref: radar-data"),
+    "Pages must bind current trusted source to exact allowlisted data and reject stale selections.",
   );
   assert(!/^\s{2}workflow_dispatch:/mu.test(deploy), "Pages deployment must not bypass CI through manual dispatch.");
   assert(
@@ -331,27 +330,10 @@ function verifyDeploymentTopology() {
       sync.includes('client_payload[head_sha]=${SOURCE_SHA}'),
     "Writer notification or relay-dispatched schedule telemetry semantics drifted.",
   );
-  const collectorGitAdds = collector.match(/^\s+git add -- .*$/gmu) ?? [];
-  assert(
-    collectorGitAdds.length === 1 &&
-      collectorGitAdds[0].trim() === "git add -- data/certstream public/data/collection-health.json",
-    "CertStream collector stages files outside its archive and public-health boundaries.",
-  );
-  assert(
-    collector.includes("data/coverage/brand-coverage\\.json$") &&
-      collector.includes("data/review/review-queue\\.json$"),
-    "CertStream collector cannot preserve a completed attempt across concurrent snapshot-derived metadata.",
-  );
-  const hunterGitAdds = hunter.match(/^\s+git add -- .*$/gmu) ?? [];
-  assert(
-    hunterGitAdds.length === 1 && hunterGitAdds[0].trim() === "git add -- data/urlscan",
-    "URLScan hunter stages files outside its archive boundary.",
-  );
-  const assetHunterGitAdds = assetHunter.match(/^\s+git add -- .*$/gmu) ?? [];
-  assert(
-    assetHunterGitAdds.length === 1 && assetHunterGitAdds[0].trim() === "git add -- data/urlscan",
-    "Official asset hunter stages files outside its URLScan archive boundary.",
-  );
+  for (const [workflow, writer] of [[collector, "certstream"], [hunter, "urlscan"], [assetHunter, "brand-assets"]]) {
+    assert(workflow.includes(`--writer ${writer}`) && workflow.includes("hecavex_radar.data_branch publish"),
+      `${writer} must use the centralized data-only writer boundary.`);
+  }
   assert(
     assetHunter.includes('cron: "47 3,15 * * *"') &&
       assetHunter.includes("group: radar-archive-writer") &&
@@ -408,7 +390,7 @@ function verifyDeploymentTopology() {
   assert(
     ctSearch.includes('cron: "43 * * * *"') &&
       ctSearch.includes("group: radar-certstream-writer") &&
-      ctSearch.includes("git add -- data/ct-search data/certstream") &&
+      ctSearch.includes("--writer ct-search") &&
       ctSearch.includes("CT_SEARCH_REPLAY_IDS") &&
       ctSearch.includes("CT_SEARCH_REPLAY_ROWS") &&
       ctSearch.includes("if: always()"),
@@ -418,41 +400,18 @@ function verifyDeploymentTopology() {
     domainContext.includes('cron: "13 1,7,13,19 * * *"') &&
       domainContext.includes("group: radar-archive-writer") &&
       domainContext.includes("vars.DOMAIN_CONTEXT_RUN_BUDGET_SECONDS") &&
-      domainContext.includes("git add -- data/enrichment/domain-context.json") &&
+      domainContext.includes("--writer domain-context") &&
       domainContext.includes("if: always()"),
     "DNS/RDAP context schedule, serialization, or durable state publication drifted.",
   );
-  for (const [name, workflow] of [
-    ["CertStream collection", collector],
-    ["URLScan hunt", hunter],
-    ["official asset hunt", assetHunter],
-    ["checkpointed CT search", ctSearch],
-    ["DNS/RDAP context", domainContext],
-  ]) {
-    assert(
-      workflow.includes('base_sha="$(git rev-parse HEAD^)"') &&
-        workflow.includes("git fetch --no-tags origin main") &&
-        workflow.includes('[[ "${upstream_sha}" != "${base_sha}" ]]') &&
-        workflow.includes("data/(certstream|ct-search|enrichment|urlscan|history)/|public/data/") &&
-        workflow.includes("Code or configuration changed after checkout") &&
-        workflow.includes("git rebase origin/main") &&
-        !workflow.includes("git pull --rebase origin main"),
-      `${name} does not restrict generated-output rebases to reviewed data-only paths.`,
-    );
+  for (const [name, workflow] of [["collector", collector], ["URLScan", hunter], ["assets", assetHunter],
+    ["CT search", ctSearch], ["domain context", domainContext], ["snapshot", sync]]) {
+    assert(workflow.includes("hecavex_radar.data_branch materialize") &&
+      workflow.includes("hecavex_radar.data_branch publish") && workflow.includes("--state-file") &&
+      workflow.includes("if: github.ref == 'refs/heads/main'") &&
+      !workflow.includes("HEAD:main") && !workflow.includes("git rebase"),
+      `${name} must publish only through source-owned data transport.`);
   }
-  assert(
-    sync.includes('base_sha="$(git rev-parse HEAD^)"') &&
-      sync.includes("python -m hecavex_radar.publication") &&
-      sync.includes("git fetch --no-tags origin main") &&
-      sync.includes('[[ "${upstream_sha}" != "${base_sha}" ]]') &&
-      sync.includes("data/(certstream|ct-search|enrichment|urlscan|review)/") &&
-      sync.includes("Source inputs changed while this snapshot was being built") &&
-      sync.includes("public/data/collection-health\\.json") &&
-      sync.includes("Code or configuration changed after checkout") &&
-      sync.includes("git rebase origin/main") &&
-      !sync.includes("git pull --rebase origin main"),
-    "snapshot synchronization does not invalidate stale source inputs while allowing only volatile health rebases.",
-  );
   assert(
     ci.includes('- "data/certstream/**"') &&
       ci.includes('- "data/ct-search/**"') &&
@@ -461,36 +420,10 @@ function verifyDeploymentTopology() {
       !ci.includes('- "public/data/**"'),
     "CI path filters no longer ignore only archive-only collection changes.",
   );
-  assert(
-    sync.includes("public/data/radar.json") &&
-      sync.includes("public/data/radar.stix.json") &&
-      sync.includes("public/data/radar-reviewed.stix.json") &&
-      sync.includes("public/data/radar.index.json") &&
-      sync.includes("public/data/radar-shards") &&
-      sync.includes("public/data/history.json") &&
-      sync.includes("git add -A -- public/data/history-parts") &&
-      sync.includes("public/data/changes.json") &&
-      sync.includes("public/data/events.json") &&
-      sync.includes("public/data/events.atom.xml") &&
-      sync.includes("public/data/events.rss.xml") &&
-      sync.includes("public/data/events.feed.json") &&
-      sync.includes("public/data/brand-feeds.json") &&
-      sync.includes("public/data/brands") &&
-      sync.includes("public/data/daily-trends.json") &&
-      sync.includes("public/data/quality-metrics.json") &&
-      sync.includes("public/data/pipeline-health.json") &&
-      sync.includes("public/data/related-observations.json") &&
-      sync.includes("public/data/feed-manifest.json") &&
-      sync.includes("public/data/schemas") &&
-      sync.includes("public/data/signals") &&
-      sync.includes("public/data/*.sha256") &&
-      sync.includes("data/history") &&
-      sync.includes("python -m hecavex_radar.quality_artifacts") &&
-      sync.includes("data/coverage/brand-coverage.json") &&
-      sync.includes("data/review/review-queue.json") &&
-      sync.includes("RADAR_STIX_OUTPUT: public/data/radar.stix.json"),
-    "Snapshot synchronization does not stage the STIX projection, sidecars, history, and live snapshot atomically.",
-  );
+  assert(sync.includes("--writer snapshot") && sync.includes("python -m hecavex_radar.publication") &&
+    sync.includes("python -m hecavex_radar.quality_artifacts") &&
+    ci.includes("materialize-fixture") && ci.includes("9cd9e14af1dd6046f6fbb88e90775e1c406ae59f"),
+    "Atomic publication or immutable isolated source-CI fixture drifted.");
   for (const setting of [
     "RADAR_HISTORY_DETAIL_DAYS",
     "RADAR_HISTORY_SUMMARY_DAYS",
@@ -678,7 +611,7 @@ function verifyBuiltHtml() {
     fragmentIdsByPath.set(path, ids);
     return ids;
   };
-  const expectedHtmlCount = 20 + (signalIds.size * 2) + (brands.entries.length * 2);
+  const expectedHtmlCount = 21 + (signalIds.size * 2) + (brands.entries.length * 2);
   assert(htmlFiles.length === expectedHtmlCount, `Expected ${expectedHtmlCount} static HTML entries, found ${htmlFiles.length}.`);
   assert(!htmlFiles.some((path) => relative(output, path).startsWith(`templates${sep}`)), "Build output still exposes route templates.");
   assert(!existsSync(join(output, "signals", "index.html")), "Build output creates a soft-404 landing page at /signals/.");
@@ -701,6 +634,7 @@ function verifyBuiltHtml() {
     tag?.match(new RegExp(`(?:^|\\s)${name}="([^"]*)"`, "u"))?.[1] ?? null;
   const localizedStaticRoutePairs = [
     ["/", "/lt/"],
+    ["/history/", "/lt/istorija/"],
     ["/changes/", "/lt/pokyciai/"],
     ["/brands/", "/lt/prekes-zenklai/"],
     ["/trends/", "/lt/tendencijos/"],
@@ -970,6 +904,7 @@ function verifyBuiltHtml() {
       ["/", "Overview"],
       ["/lt/", "Apžvalga"],
       ["/history/", "Changes"],
+      ["/lt/istorija/", "Pokyčiai"],
       ["/changes/", "Changes"],
       ["/lt/pokyciai/", "Pokyčiai"],
       ["/brands/", "Brands"],
@@ -1094,7 +1029,7 @@ function verifyBuiltHtml() {
       assert(payload?.snapshot?.dataset === "live", `${route} hydration snapshot is not the live public dataset.`);
       assert(Number.isInteger(payload?.renderedAt), `${route} hydration snapshot has no stable render timestamp.`);
       assert(!historyBootstrap, `${route} embeds history data in the live dashboard.`);
-    } else if (route === "/history/") {
+    } else if (route === "/history/" || route === "/lt/istorija/") {
       assert(historyBootstrap, `${route} has no embedded history artifact.`);
       assert(!/[<>&"]/u.test(historyBootstrap), `${route} history artifact is not safely attribute-encoded.`);
       const payload = JSON.parse(decodeURIComponent(historyBootstrap));
@@ -2390,7 +2325,7 @@ async function verifyInBrowser(healthOnly = false) {
             : true;
           const signalTable = document.querySelector(".signal-table");
           const signalTableRect = signalTable?.getBoundingClientRect();
-          const hostNames = [...document.querySelectorAll(".signal-table .host-name")];
+          const hostNames = [...document.querySelectorAll(".signal-table .host-name, .signal-table .hosting-unknown")];
           const longestHost = hostNames.sort((left, right) => (right.textContent?.length ?? 0) - (left.textContent?.length ?? 0))[0];
           const hostingCellRect = longestHost?.closest("td")?.getBoundingClientRect();
           const hostStyle = longestHost ? getComputedStyle(longestHost) : null;

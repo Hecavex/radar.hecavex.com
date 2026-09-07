@@ -52,7 +52,7 @@ const lithuanianNavigation: Array<{ label: string; href: string; pages: SitePage
 const alternateRoutes: Record<SitePage, { en: string; lt: string }> = {
   radar: { en: "/", lt: "/lt/" },
   changes: { en: "/changes/", lt: "/lt/pokyciai/" },
-  history: { en: "/history/", lt: "/lt/pokyciai/" },
+  history: { en: "/history/", lt: "/lt/istorija/" },
   brands: { en: "/brands/", lt: "/lt/prekes-zenklai/" },
   brand: { en: "/brands/", lt: "/lt/prekes-zenklai/" },
   trends: { en: "/trends/", lt: "/lt/tendencijos/" },
@@ -163,10 +163,10 @@ export function SiteHeader({ currentPage, language = "en", alternateHref }: {
         <PortfolioNavigation className="portfolio-navigation" language={language} />
 
         <details className="mobile-navigation" data-mobile-navigation ref={navigationRef} onToggle={(event) => setNavigationOpen(event.currentTarget.open)}>
-          <summary aria-label={navigationOpen ? "Close navigation menu" : "Open navigation menu"}>
+          <summary aria-label={language === "lt" ? (navigationOpen ? "Užverti naršymo meniu" : "Atverti naršymo meniu") : (navigationOpen ? "Close navigation menu" : "Open navigation menu")}>
             <Menu className="menu-open-icon" aria-hidden="true" />
             <X className="menu-close-icon" aria-hidden="true" />
-            <span>Menu</span>
+            <span>{language === "lt" ? "Meniu" : "Menu"}</span>
           </summary>
           <div className="mobile-navigation-panel">
             <div className="mobile-navigation-column">
@@ -178,7 +178,7 @@ export function SiteHeader({ currentPage, language = "en", alternateHref }: {
               <SourceLink className="mobile-source-link" onNavigate={closeNavigation} />
             </div>
             <div className="mobile-navigation-column">
-              <span className="navigation-label">HECAVEX network</span>
+              <span className="navigation-label">{language === "lt" ? "HECAVEX tinklas" : "HECAVEX network"}</span>
               <PortfolioNavigation className="mobile-portfolio-navigation" language={language} onNavigate={closeNavigation} />
             </div>
           </div>

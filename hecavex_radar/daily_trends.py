@@ -138,16 +138,17 @@ def _attempt_time(row: Mapping[str, object]) -> datetime | None:
 
 
 def _daily_discovery(
-    events: Sequence[Mapping[str, object]], evidence_by_signal: Mapping[str, str]
+    events: Sequence[Mapping[str, object]], evidence_by_signal: Mapping[str, str],
+    first_publications_by_signal: Mapping[str, str],
 ) -> dict[str, object]:
     observations = [event for event in events if event.get("eventType") == "observation"]
     transitions = [event for event in events if event.get("eventType") == "status-transition"]
-    observed_signals = {
-        signal_id
+    reobservations = sum(
+        str(event.get("observedAt", "")) > first_publications_by_signal[identifier]
         for event in observations
-        for signal_id in [event.get("signalId")]
-        if isinstance(signal_id, str)
-    }
+        for identifier in [str(event.get("signalId", ""))]
+        if identifier in first_publications_by_signal
+    )
     first_publications = 0
     for event in transitions:
         reasons = event.get("reasonCodes")
@@ -183,7 +184,7 @@ def _daily_discovery(
         "events": len(events),
         "uniqueSignals": len(by_signal),
         "observations": len(observations),
-        "reobservations": max(0, len(observations) - len(observed_signals)),
+        "reobservations": reobservations,
         "firstPublications": first_publications,
         "statusChanges": status_changes,
         "facetSampleSize": len(by_signal),
@@ -245,6 +246,25 @@ def build_daily_trends(
     first_day = generated.date() - timedelta(days=days - 1)
     expected_interval, expected_listening, schedule_source = _collector_schedule(pipeline_health)
     evidence_by_signal = _signal_evidence(signal_inventory)
+    # As in the event feed, explicit first publication takes precedence over
+    # inventory firstSeen. No provenance means no invented reobservation.
+    first_seen = {
+        str(signal["id"]): str(signal["firstSeen"])
+        for signal in signal_inventory
+        if isinstance(signal.get("id"), str) and _timestamp(signal.get("firstSeen")) is not None
+    }
+    publications: dict[str, str] = {}
+    for event in history_events:
+        observed = _event_time(event)
+        reasons = event.get("reasonCodes")
+        identifier = event.get("signalId")
+        if (observed is not None and observed <= generated and isinstance(identifier, str)
+                and event.get("eventType") == "status-transition"
+                and event.get("previousStatus") is None
+                and isinstance(reasons, list) and "first-publication" in reasons):
+            stamp = str(event["observedAt"])
+            publications[identifier] = min(publications.get(identifier, stamp), stamp)
+    first_seen.update(publications)
 
     events_by_day: dict[str, list[Mapping[str, object]]] = {}
     for event in history_events:
@@ -306,7 +326,7 @@ def build_daily_trends(
                         expected_interval,
                         expected_listening,
                     ),
-                    "discovery": _daily_discovery(day_events, evidence_by_signal),
+                    "discovery": _daily_discovery(day_events, evidence_by_signal, first_seen),
                 }
             )
         current += timedelta(days=1)
@@ -314,6 +334,12 @@ def build_daily_trends(
     return {
         "schemaVersion": 1,
         "dataset": "radar-daily-trends",
+        "countingMethodVersion": 2,
+        "reobservationSemantics": (
+            "Version 2: observations strictly after retained first-publication provenance, falling back to "
+            "inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. "
+            "This corrects version 1, which subtracted each day's distinct observed IDs."
+        ),
         "generatedAt": generated_at,
         "retentionDays": days,
         "from": first_day.isoformat(),

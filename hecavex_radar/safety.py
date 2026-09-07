@@ -207,13 +207,14 @@ def safe_screenshot_url(value: object) -> str | None:
         return None
     try:
         parsed = urlsplit(cleaned)
+        port = parsed.port
     except ValueError:
         return None
     if (
         parsed.scheme.lower() != "https"
         or parsed.username is not None
         or parsed.password is not None
-        or parsed.port is not None
+        or port is not None
         or not parsed.hostname
     ):
         return None
@@ -231,6 +232,7 @@ def safe_reference_url(value: object) -> str | None:
         return None
     try:
         parsed = urlsplit(cleaned)
+        port = parsed.port
     except ValueError:
         return None
     if (
@@ -238,7 +240,7 @@ def safe_reference_url(value: object) -> str | None:
         or parsed.hostname != "urlscan.io"
         or parsed.username is not None
         or parsed.password is not None
-        or parsed.port is not None
+        or port is not None
         or parsed.query
         or parsed.fragment
         or not URLSCAN_REPORT_PATH.fullmatch(parsed.path)

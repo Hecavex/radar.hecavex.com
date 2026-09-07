@@ -24,6 +24,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
+      # Source-only relay: workflow-run metadata determines cadence. Data is
+      # materialized by the dispatched writer, never checked out as code here.
       - name: Dispatch one due snapshot sync
         env:
           GH_TOKEN: ${{ github.token }}

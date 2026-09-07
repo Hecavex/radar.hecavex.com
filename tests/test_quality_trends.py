@@ -244,7 +244,9 @@ def test_daily_trends_put_collector_coverage_beside_discovery_counts() -> None:
     assert discovery["events"] == 3
     assert discovery["uniqueSignals"] == 1
     assert discovery["observations"] == 2
-    assert discovery["reobservations"] == 1
+    # The retained first-publication transition is at 02:00: the paired
+    # observation is not a reobservation, and the earlier event cannot be one.
+    assert discovery["reobservations"] == 0
     assert discovery["firstPublications"] == 1
     assert discovery["byBrand"] == {"Revolut": 1}
     assert discovery["byEvidenceTier"] == {"corroborated": 1}

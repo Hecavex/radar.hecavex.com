@@ -6,7 +6,7 @@ const publicationToleranceMs = 2 * 60 * 60 * 1000;
 
 export function trendFreshness(trends: Pick<DailyTrends, "generatedAt">, now: number): "current" | "delayed" | "unknown" {
   const cutoff = Date.parse(trends.generatedAt);
-  if (!Number.isFinite(cutoff) || !Number.isFinite(now)) return "unknown";
+  if (!Number.isFinite(cutoff) || !Number.isFinite(now) || cutoff > now + 60_000) return "unknown";
   return now - cutoff > publicationToleranceMs ? "delayed" : "current";
 }
 
