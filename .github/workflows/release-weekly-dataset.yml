@@ -10,7 +10,11 @@ on:
         required: false
         type: string
       source_sha:
-        description: "Optional full 40-character main-branch commit containing that immutable snapshot"
+        description: "Legacy backfill: full main-branch snapshot commit; cannot be combined with data_sha"
+        required: false
+        type: string
+      data_sha:
+        description: "Optional full radar-data publication commit; otherwise select latest coherent publication"
         required: false
         type: string
       correction_revision:
@@ -41,12 +45,36 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
+      - name: Select publication blobs without executing the data branch
+        id: data
+        env:
+          LEGACY_SOURCE_SHA: ${{ inputs.source_sha || '' }}
+          REQUESTED_DATA_SHA: ${{ inputs.data_sha || '' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -n "${LEGACY_SOURCE_SHA}" && -n "${REQUESTED_DATA_SHA}" ]]; then
+            echo "::error::Choose either legacy source_sha or data_sha, never both."
+            exit 1
+          fi
+          if [[ -z "${LEGACY_SOURCE_SHA}" ]]; then
+            args=()
+            if [[ -n "${REQUESTED_DATA_SHA}" ]]; then
+              args+=(--revision "${REQUESTED_DATA_SHA}")
+            fi
+            python -m hecavex_radar.data_branch materialize --repository . --branch radar-data \
+              --view publication --state-file "${RUNNER_TEMP}/radar-release-data.json" \
+              --github-output "${GITHUB_OUTPUT}" "${args[@]}"
+          fi
+
       - name: Select the ISO-week release
         id: release
         env:
           GH_TOKEN: ${{ github.token }}
           REQUESTED_RELEASE_WEEK: ${{ inputs.release_week || '' }}
           REQUESTED_SOURCE_SHA: ${{ inputs.source_sha || '' }}
+          REQUESTED_DATA_SHA: ${{ inputs.data_sha || '' }}
+          SELECTED_DATA_SHA: ${{ steps.data.outputs.data_revision || '' }}
           CORRECTION_REVISION: ${{ inputs.correction_revision || '' }}
         shell: bash
         run: |
@@ -56,7 +84,15 @@ jobs:
             echo "::error::Trusted tooling checkout does not match the triggering main commit."
             exit 1
           fi
-          source_sha="${REQUESTED_SOURCE_SHA:-${trusted_sha}}"
+          source_sha="${REQUESTED_SOURCE_SHA:-${SELECTED_DATA_SHA}}"
+          if [[ ! "${source_sha}" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "::error::Selected data must identify one full commit."
+            exit 1
+          fi
+          if [[ -n "${REQUESTED_DATA_SHA}" && "${source_sha}" != "${REQUESTED_DATA_SHA}" ]]; then
+            echo "::error::data_sha must itself be a coherent publication commit, not an intermediate writer commit."
+            exit 1
+          fi
           if [[ -n "${REQUESTED_SOURCE_SHA}" ]]; then
             if [[ ! "${REQUESTED_SOURCE_SHA}" =~ ^[0-9a-f]{40}$ ]]; then
               echo "::error::source_sha must be one full lowercase 40-character commit SHA."
@@ -163,9 +199,12 @@ jobs:
                 echo "::error::Immutable ${tag} does not target one auditable commit SHA."
                 exit 1
               fi
-              target_status="$(gh api "repos/${GITHUB_REPOSITORY}/compare/${target_commitish}...main" --jq '.status')"
-              if [[ "${target_status}" != "ahead" && "${target_status}" != "identical" ]]; then
-                echo "::error::Immutable ${tag} does not target an ancestor of main."
+              # Existing releases may target legacy main data or the dedicated
+              # data branch. Neither target is ever checked out or executed.
+              git fetch --no-tags origin main radar-data
+              if ! git merge-base --is-ancestor "${target_commitish}" origin/main &&
+                ! git merge-base --is-ancestor "${target_commitish}" origin/radar-data; then
+                echo "::error::Immutable ${tag} does not target an approved source/data history."
                 exit 1
               fi
               target_week="$(
@@ -178,7 +217,7 @@ jobs:
                 echo "::error::Immutable ${tag} targets snapshot week ${target_week}, not ${release_week}."
                 exit 1
               fi
-              if [[ -n "${REQUESTED_SOURCE_SHA}" && "${target_commitish}" != "${source_sha}" ]]; then
+              if [[ ( -n "${REQUESTED_SOURCE_SHA}" || -n "${REQUESTED_DATA_SHA}" ) && "${target_commitish}" != "${source_sha}" ]]; then
                 echo "::error::Immutable ${tag} targets ${target_commitish}, not requested source ${source_sha}."
                 exit 1
               fi

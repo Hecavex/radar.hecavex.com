@@ -211,8 +211,6 @@ function verifyDeploymentTopology() {
   const snapshotPublisher = readFileSync(join(root, "hecavex_radar", "sync.py"), "utf8");
   const stixPublisher = readFileSync(join(root, "hecavex_radar", "stix.py"), "utf8");
   const viteConfig = readFileSync(join(root, "vite.config.ts"), "utf8");
-  const botGeneratedPathBoundary =
-    "data/(certstream|ct-search|enrichment|urlscan|history)/|data/coverage/brand-coverage\\.json$|data/review/review-queue\\.json$|public/data/";
 
   assert(
     /workflows:\s*\["CI"\]/u.test(deploy),
@@ -237,22 +235,22 @@ function verifyDeploymentTopology() {
     "Pages deployment no longer limits each upstream workflow to its approved trigger semantics.",
   );
   assert(
-    deploy.includes('git diff --quiet "${EXPECTED_SHA}..${actual_sha}" -- public/data/') &&
-      deploy.includes("public/data/collection-health.json") &&
+    deploy.includes("hecavex_radar.data_branch materialize") &&
+      deploy.includes("--view operational") &&
+      deploy.includes("publication_source_revision") &&
+      deploy.includes("hecavex_radar.publication_selection") &&
+      deploy.includes("--trigger-data") &&
+      deploy.includes("--expected-data-revision") &&
+      deploy.includes("Refuse source or data superseded while building") &&
       deploy.includes("test -f dist/404.html") &&
-      deploy.includes("test -f dist/data/radar.stix.json") &&
       deploy.includes("test -f dist/data/feed-manifest.json") &&
+      deploy.includes("test -f dist/data/radar.stix.json") &&
       deploy.includes("test -f dist/data/pipeline-health.json") &&
       deploy.includes("test -f dist/data/related-observations.json") &&
       deploy.includes("test -f dist/data/schemas/radar-v2.schema.json") &&
       deploy.includes("! grep -Fq 'Allow: /data/radar.stix.json' dist/robots.txt") &&
-      deploy.includes("git merge-base --is-ancestor") &&
-      deploy.includes("data/(certstream|ct-search|enrichment|urlscan|history)/") &&
-      deploy.includes("data/coverage/brand-coverage\\.json$") &&
-      deploy.includes("data/review/review-queue\\.json$") &&
-      deploy.includes("public/data/") &&
-      deploy.split(botGeneratedPathBoundary).length === 3,
-    "Pages deployment freshness checks no longer cover every staged public-data boundary.",
+      !deploy.includes("ref: radar-data"),
+    "Pages must bind current trusted source to exact allowlisted data and reject stale selections.",
   );
   assert(!/^\s{2}workflow_dispatch:/mu.test(deploy), "Pages deployment must not bypass CI through manual dispatch.");
   assert(

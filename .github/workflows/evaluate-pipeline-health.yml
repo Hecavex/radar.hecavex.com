@@ -15,6 +15,7 @@ concurrency:
 
 jobs:
   evaluate:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -29,19 +30,30 @@ jobs:
           python-version: "3.12"
       - name: Evaluate aggregate repository health
         id: health
+        continue-on-error: true
         shell: bash
         run: |
+          set +e
+          python -m hecavex_radar.data_branch materialize --repository . --branch radar-data \
+            --view operational --state-file "${RUNNER_TEMP}/radar-health-data.json" &&
           python -m hecavex_radar.health_sentinel \
             --repository . \
             --json-output "${RUNNER_TEMP}/radar-health.json" \
             --markdown-output "${RUNNER_TEMP}/radar-health.md" \
             --github-output "${GITHUB_OUTPUT}"
+          health_status="$?"
+          set -e
+          if [[ "${health_status}" != "0" ]]; then
+            printf '# Radar pipeline health\n\nStatus: degraded\n\nSelected data or evaluation unavailable; inspect this run.\n' > "${RUNNER_TEMP}/radar-health.md"
+            echo 'unhealthy=true' >> "${GITHUB_OUTPUT}"
+          fi
           printf '\nLatest evaluation: https://github.com/%s/actions/runs/%s\n' \
             "${GITHUB_REPOSITORY}" "${GITHUB_RUN_ID}" >> "${RUNNER_TEMP}/radar-health.md"
+          exit "${health_status}"
       - name: Reconcile one health issue
         env:
           GH_TOKEN: ${{ github.token }}
-          HEALTH_UNHEALTHY: ${{ steps.health.outputs.unhealthy }}
+          HEALTH_UNHEALTHY: ${{ steps.health.outputs.unhealthy || 'true' }}
           TITLE: "Radar pipeline health"
           LABEL: "radar-health"
         shell: bash
@@ -83,3 +95,6 @@ jobs:
                 --comment "All aggregate Radar pipeline health checks recovered."
             done < <(jq -r '.[] | select(.state == "OPEN") | .number' <<<"${matching}")
           fi
+      - name: Fail after reconciliation when selected data or evaluation failed
+        if: steps.health.outcome == 'failure'
+        run: exit 1

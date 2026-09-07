@@ -187,12 +187,23 @@ def _write_report(path: Path, report: dict[str, object]) -> None:
     path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
+def matches_release_identity(release: dict[str, object], source: str, data: str | None = None) -> bool:
+    """Retain legacy source-only checks; dual-revision deployment checks fail closed."""
+    if (release.get("schemaVersion") != 1 or release.get("repository") != "Hecavex/radar.hecavex.com"
+            or release.get("revision") != source):
+        return False
+    if "sourceRevision" in release and release["sourceRevision"] != source:
+        return False
+    return data is None or (release.get("sourceRevision") == source and release.get("dataRevision") == data)
+
+
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Verify the deployed Radar publication against checked-in main data.")
+    parser = argparse.ArgumentParser(description="Verify the deployed Radar publication against selected data blobs.")
     parser.add_argument("--repository", type=Path, default=Path.cwd())
     parser.add_argument("--base-url", default=DEFAULT_BASE_URL)
     parser.add_argument("--grace-minutes", type=int, default=DEFAULT_GRACE_MINUTES)
     parser.add_argument("--expected-revision", help="Require this exact deployed build commit after Pages rollout.")
+    parser.add_argument("--expected-data-revision", help="Require this exact selected data commit after Pages rollout.")
     parser.add_argument("--json-output", type=Path)
     parser.add_argument("--markdown-output", type=Path)
     parser.add_argument("--github-output", type=Path)
@@ -202,6 +213,11 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     if options.expected_revision and not re.fullmatch(r"[a-f0-9]{40}", options.expected_revision):
         print("Expected release revision must be a full Git commit ID.", file=sys.stderr)
+        return 2
+    if options.expected_data_revision and (
+        not options.expected_revision or not re.fullmatch(r"[a-f0-9]{40}", options.expected_data_revision)
+    ):
+        print("Expected data revision requires full source and data commit IDs.", file=sys.stderr)
         return 2
 
     expected_path = options.repository.resolve() / "public" / "data" / "feed-manifest.json"
@@ -217,10 +233,9 @@ def main(argv: list[str] | None = None) -> int:
         if options.expected_revision:
             status, body = _fetch(options.base_url, "/.well-known/hecavex-release.json", 4096, nonce)
             release = _json_object(body, "Live release identity")
-            if status != 200 or release != {
-                "schemaVersion": 1, "repository": "Hecavex/radar.hecavex.com",
-                "revision": options.expected_revision,
-            }:
+            if status != 200 or not matches_release_identity(
+                release, options.expected_revision, options.expected_data_revision,
+            ):
                 findings.append("The live release identity does not match the deployed build revision.")
         for attempt in range(2):
             publication_nonce = f"{nonce}-publication-{attempt + 1}"

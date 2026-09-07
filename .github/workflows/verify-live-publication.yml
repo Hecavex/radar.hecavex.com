@@ -34,6 +34,8 @@ jobs:
         shell: bash
         run: |
           set +e
+          python -m hecavex_radar.data_branch materialize --repository . --branch radar-data \
+            --view publication --state-file "${RUNNER_TEMP}/radar-live-data.json" &&
           python -m hecavex_radar.live_smoke \
             --repository . \
             --json-output "${RUNNER_TEMP}/radar-live-smoke.json" \

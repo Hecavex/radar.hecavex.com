@@ -17,6 +17,13 @@ const relatedPath = fileURLToPath(new URL("./public/data/related-observations.js
 const publicDataPath = fileURLToPath(new URL("./public/data", import.meta.url));
 const outputPath = fileURLToPath(new URL("./dist", import.meta.url));
 const releaseRevision = execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim();
+const releaseDataRevision = process.env.RADAR_DATA_REVISION?.trim() || null;
+if (releaseDataRevision && !/^[a-f0-9]{40}$/.test(releaseDataRevision)) {
+  throw new Error("RADAR_DATA_REVISION must identify one exact selected data commit.");
+}
+if (process.env.RADAR_SOURCE_REVISION && process.env.RADAR_SOURCE_REVISION !== releaseRevision) {
+  throw new Error("The selected source revision differs from the trusted build checkout.");
+}
 const cloudflareAnalyticsScript = "https://static.cloudflareinsights.com/beacon.min.js";
 const cloudflareAnalyticsToken = process.env.HECAVEX_ANALYTICS_TOKEN?.trim() ?? "";
 if (cloudflareAnalyticsToken && !/^[a-f\d]{32}$/i.test(cloudflareAnalyticsToken)) {
@@ -276,6 +283,7 @@ function dynamicRoutesPlugin() {
       mkdirSync(resolve(outputPath, ".well-known"), { recursive: true });
       writeFileSync(resolve(outputPath, ".well-known/hecavex-release.json"), JSON.stringify({
         schemaVersion: 1, repository: "Hecavex/radar.hecavex.com", revision: releaseRevision,
+        sourceRevision: releaseRevision, dataRevision: releaseDataRevision,
       }) + "\n");
       const related = parseRelatedObservations(readJson(relatedPath));
       const currentById = new Map(snapshot.signals.map((signal) => [signal.id, signal]));

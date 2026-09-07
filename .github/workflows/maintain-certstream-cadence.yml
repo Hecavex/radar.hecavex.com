@@ -29,6 +29,7 @@ jobs:
     timeout-minutes: 5
     environment: radar-certstream-cadence
     steps:
+      # Cadence policy is reviewed main code; generated radar-data is not executable.
       - name: Check out trusted cadence policy
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:

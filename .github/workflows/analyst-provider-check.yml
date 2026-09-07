@@ -17,6 +17,7 @@ concurrency:
 
 jobs:
   check:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -49,6 +50,10 @@ jobs:
         run: |
           python -m pip install --disable-pip-version-check --require-hashes -r requirements/automation-runtime-py312.lock
           python -m pip install --disable-pip-version-check --no-deps --no-build-isolation .
+      - name: Read allowlisted current signal data using main tooling
+        run: |
+          python -m hecavex_radar.data_branch materialize --repository . --branch radar-data \
+            --view operational --state-file "${RUNNER_TEMP}/radar-provider-data.json"
       - name: Query optional provider context without publishing the result
         env:
           VIRUSTOTAL_API_KEY: ${{ secrets.VIRUSTOTAL_API_KEY }}
