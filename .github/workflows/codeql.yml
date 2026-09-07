@@ -1,0 +1,50 @@
+name: CodeQL source
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "37 4 * * 1"
+  workflow_dispatch:
+
+# Match default setup's analysis permissions; never grant repository writes.
+permissions:
+  actions: read
+  contents: read
+  packages: read
+  security-events: write
+
+jobs:
+  analyze:
+    name: Analyze (${{ matrix.language }})
+    # Default setup excluded fork PRs. Data-only refs must never become source.
+    if: >-
+      (github.event_name == 'pull_request' && github.base_ref == 'main' &&
+       github.head_ref != 'radar-data' && github.event.pull_request.head.repo.full_name == github.repository) ||
+      (github.event_name != 'pull_request' && github.ref == 'refs/heads/main')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [actions, javascript-typescript, python]
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@fddeee1a7ece751b577e409a89057319e3172939 # v4
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: none
+          # Preserve the default query suite and remote-only threat model.
+          config: |
+            disable-default-queries: false
+            threat-models: []
+      - name: Analyze source
+        uses: github/codeql-action/analyze@fddeee1a7ece751b577e409a89057319e3172939 # v4
+        with:
+          category: /language:${{ matrix.language }}
