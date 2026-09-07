@@ -21,6 +21,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
       - name: Set up Python
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
@@ -38,6 +40,13 @@ jobs:
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: 22
+      - name: Select coherent immutable data fixture
+        run: |
+          # Data blobs only; code, workflows and reviewed configuration remain this source revision.
+          python -m hecavex_radar.data_branch materialize-fixture --repository . --revision 9cd9e14af1dd6046f6fbb88e90775e1c406ae59f
+          # Derived quality belongs to this isolated source-CI fixture, never live operational state.
+          python -m hecavex_radar.quality_artifacts
+          python -m hecavex_radar.quality_artifacts --check
       - name: Enable pnpm
         run: corepack enable && corepack prepare pnpm@10.34.5 --activate
       - name: Install dependencies

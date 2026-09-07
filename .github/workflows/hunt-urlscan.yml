@@ -15,6 +15,7 @@ concurrency:
 
 jobs:
   hunt:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -32,6 +33,13 @@ jobs:
           cache-dependency-path: |
             pyproject.toml
             requirements/automation-runtime-py312.lock
+      - name: Materialize trusted operational data
+        id: data
+        run: >-
+          python -m hecavex_radar.data_branch materialize --repository .
+          --state-file "${{ runner.temp }}/radar-data-base.json"
+          --github-output "$GITHUB_OUTPUT"
+
       - name: Install Python dependencies
         run: |
           python -m pip install --disable-pip-version-check --require-hashes -r requirements/automation-runtime-py312.lock
@@ -77,45 +85,17 @@ jobs:
         run: python -m hecavex_radar.urlscan
       - name: Commit validated public archive updates
         id: commit
-        if: always()
+        if: always() && steps.data.outcome == 'success'
         continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
-          git add -- data/urlscan
-          if git diff --cached --quiet; then
-            echo "No URLScan archive changes."
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "data: update URLScan observations"
           gh auth setup-git
-          base_sha="$(git rev-parse HEAD^)"
-          for attempt in 1 2 3 4; do
-            git fetch --no-tags origin main
-            upstream_sha="$(git rev-parse origin/main)"
-            if [[ "${upstream_sha}" != "${base_sha}" ]]; then
-              unexpected_paths="$(git diff --name-only "${base_sha}..${upstream_sha}" | grep -Ev \
-                '^(data/(certstream|ct-search|enrichment|urlscan|history)/|public/data/)' || true)"
-              if [[ -n "${unexpected_paths}" ]]; then
-                echo "Code or configuration changed after checkout; refusing older-revision output:" >&2
-                echo "${unexpected_paths}" >&2
-                exit 1
-              fi
-              git rebase origin/main
-              base_sha="${upstream_sha}"
-            fi
-            if git push origin HEAD:main; then
-              exit 0
-            fi
-            if [[ "${attempt}" -eq 4 ]]; then
-              echo "URLScan publication lost four push races." >&2
-              exit 1
-            fi
-            sleep $((attempt * 2))
-          done
+          python -m hecavex_radar.data_branch publish --repository . \
+            --state-file "${{ runner.temp }}/radar-data-base.json" \
+            --writer urlscan --message "data: publish urlscan state" \
+            --github-output "$GITHUB_OUTPUT"
       - name: Propagate hunt or publication failure
         if: always() && (steps.hunt.outcome != 'success' || steps.commit.outcome != 'success')
         shell: bash

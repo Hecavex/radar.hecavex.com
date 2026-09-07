@@ -330,27 +330,10 @@ function verifyDeploymentTopology() {
       sync.includes('client_payload[head_sha]=${SOURCE_SHA}'),
     "Writer notification or relay-dispatched schedule telemetry semantics drifted.",
   );
-  const collectorGitAdds = collector.match(/^\s+git add -- .*$/gmu) ?? [];
-  assert(
-    collectorGitAdds.length === 1 &&
-      collectorGitAdds[0].trim() === "git add -- data/certstream public/data/collection-health.json",
-    "CertStream collector stages files outside its archive and public-health boundaries.",
-  );
-  assert(
-    collector.includes("data/coverage/brand-coverage\\.json$") &&
-      collector.includes("data/review/review-queue\\.json$"),
-    "CertStream collector cannot preserve a completed attempt across concurrent snapshot-derived metadata.",
-  );
-  const hunterGitAdds = hunter.match(/^\s+git add -- .*$/gmu) ?? [];
-  assert(
-    hunterGitAdds.length === 1 && hunterGitAdds[0].trim() === "git add -- data/urlscan",
-    "URLScan hunter stages files outside its archive boundary.",
-  );
-  const assetHunterGitAdds = assetHunter.match(/^\s+git add -- .*$/gmu) ?? [];
-  assert(
-    assetHunterGitAdds.length === 1 && assetHunterGitAdds[0].trim() === "git add -- data/urlscan",
-    "Official asset hunter stages files outside its URLScan archive boundary.",
-  );
+  for (const [workflow, writer] of [[collector, "certstream"], [hunter, "urlscan"], [assetHunter, "brand-assets"]]) {
+    assert(workflow.includes(`--writer ${writer}`) && workflow.includes("hecavex_radar.data_branch publish"),
+      `${writer} must use the centralized data-only writer boundary.`);
+  }
   assert(
     assetHunter.includes('cron: "47 3,15 * * *"') &&
       assetHunter.includes("group: radar-archive-writer") &&
@@ -407,7 +390,7 @@ function verifyDeploymentTopology() {
   assert(
     ctSearch.includes('cron: "43 * * * *"') &&
       ctSearch.includes("group: radar-certstream-writer") &&
-      ctSearch.includes("git add -- data/ct-search data/certstream") &&
+      ctSearch.includes("--writer ct-search") &&
       ctSearch.includes("CT_SEARCH_REPLAY_IDS") &&
       ctSearch.includes("CT_SEARCH_REPLAY_ROWS") &&
       ctSearch.includes("if: always()"),
@@ -417,41 +400,18 @@ function verifyDeploymentTopology() {
     domainContext.includes('cron: "13 1,7,13,19 * * *"') &&
       domainContext.includes("group: radar-archive-writer") &&
       domainContext.includes("vars.DOMAIN_CONTEXT_RUN_BUDGET_SECONDS") &&
-      domainContext.includes("git add -- data/enrichment/domain-context.json") &&
+      domainContext.includes("--writer domain-context") &&
       domainContext.includes("if: always()"),
     "DNS/RDAP context schedule, serialization, or durable state publication drifted.",
   );
-  for (const [name, workflow] of [
-    ["CertStream collection", collector],
-    ["URLScan hunt", hunter],
-    ["official asset hunt", assetHunter],
-    ["checkpointed CT search", ctSearch],
-    ["DNS/RDAP context", domainContext],
-  ]) {
-    assert(
-      workflow.includes('base_sha="$(git rev-parse HEAD^)"') &&
-        workflow.includes("git fetch --no-tags origin main") &&
-        workflow.includes('[[ "${upstream_sha}" != "${base_sha}" ]]') &&
-        workflow.includes("data/(certstream|ct-search|enrichment|urlscan|history)/|public/data/") &&
-        workflow.includes("Code or configuration changed after checkout") &&
-        workflow.includes("git rebase origin/main") &&
-        !workflow.includes("git pull --rebase origin main"),
-      `${name} does not restrict generated-output rebases to reviewed data-only paths.`,
-    );
+  for (const [name, workflow] of [["collector", collector], ["URLScan", hunter], ["assets", assetHunter],
+    ["CT search", ctSearch], ["domain context", domainContext], ["snapshot", sync]]) {
+    assert(workflow.includes("hecavex_radar.data_branch materialize") &&
+      workflow.includes("hecavex_radar.data_branch publish") && workflow.includes("--state-file") &&
+      workflow.includes("if: github.ref == 'refs/heads/main'") &&
+      !workflow.includes("HEAD:main") && !workflow.includes("git rebase"),
+      `${name} must publish only through source-owned data transport.`);
   }
-  assert(
-    sync.includes('base_sha="$(git rev-parse HEAD^)"') &&
-      sync.includes("python -m hecavex_radar.publication") &&
-      sync.includes("git fetch --no-tags origin main") &&
-      sync.includes('[[ "${upstream_sha}" != "${base_sha}" ]]') &&
-      sync.includes("data/(certstream|ct-search|enrichment|urlscan|review)/") &&
-      sync.includes("Source inputs changed while this snapshot was being built") &&
-      sync.includes("public/data/collection-health\\.json") &&
-      sync.includes("Code or configuration changed after checkout") &&
-      sync.includes("git rebase origin/main") &&
-      !sync.includes("git pull --rebase origin main"),
-    "snapshot synchronization does not invalidate stale source inputs while allowing only volatile health rebases.",
-  );
   assert(
     ci.includes('- "data/certstream/**"') &&
       ci.includes('- "data/ct-search/**"') &&
@@ -460,36 +420,10 @@ function verifyDeploymentTopology() {
       !ci.includes('- "public/data/**"'),
     "CI path filters no longer ignore only archive-only collection changes.",
   );
-  assert(
-    sync.includes("public/data/radar.json") &&
-      sync.includes("public/data/radar.stix.json") &&
-      sync.includes("public/data/radar-reviewed.stix.json") &&
-      sync.includes("public/data/radar.index.json") &&
-      sync.includes("public/data/radar-shards") &&
-      sync.includes("public/data/history.json") &&
-      sync.includes("git add -A -- public/data/history-parts") &&
-      sync.includes("public/data/changes.json") &&
-      sync.includes("public/data/events.json") &&
-      sync.includes("public/data/events.atom.xml") &&
-      sync.includes("public/data/events.rss.xml") &&
-      sync.includes("public/data/events.feed.json") &&
-      sync.includes("public/data/brand-feeds.json") &&
-      sync.includes("public/data/brands") &&
-      sync.includes("public/data/daily-trends.json") &&
-      sync.includes("public/data/quality-metrics.json") &&
-      sync.includes("public/data/pipeline-health.json") &&
-      sync.includes("public/data/related-observations.json") &&
-      sync.includes("public/data/feed-manifest.json") &&
-      sync.includes("public/data/schemas") &&
-      sync.includes("public/data/signals") &&
-      sync.includes("public/data/*.sha256") &&
-      sync.includes("data/history") &&
-      sync.includes("python -m hecavex_radar.quality_artifacts") &&
-      sync.includes("data/coverage/brand-coverage.json") &&
-      sync.includes("data/review/review-queue.json") &&
-      sync.includes("RADAR_STIX_OUTPUT: public/data/radar.stix.json"),
-    "Snapshot synchronization does not stage the STIX projection, sidecars, history, and live snapshot atomically.",
-  );
+  assert(sync.includes("--writer snapshot") && sync.includes("python -m hecavex_radar.publication") &&
+    sync.includes("python -m hecavex_radar.quality_artifacts") &&
+    ci.includes("materialize-fixture") && ci.includes("9cd9e14af1dd6046f6fbb88e90775e1c406ae59f"),
+    "Atomic publication or immutable isolated source-CI fixture drifted.");
   for (const setting of [
     "RADAR_HISTORY_DETAIL_DAYS",
     "RADAR_HISTORY_SUMMARY_DAYS",

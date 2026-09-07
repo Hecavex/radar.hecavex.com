@@ -48,6 +48,13 @@ jobs:
           cache-dependency-path: |
             pyproject.toml
             requirements/automation-runtime-py312.lock
+      - name: Materialize trusted operational data
+        id: data
+        run: >-
+          python -m hecavex_radar.data_branch materialize --repository .
+          --state-file "${{ runner.temp }}/radar-data-base.json"
+          --github-output "$GITHUB_OUTPUT"
+
       - name: Initialize public collection health when due
         id: cadence
         run: python -m hecavex_radar.collection_health begin-if-due
@@ -111,44 +118,17 @@ jobs:
           CERTSTREAM_COLLECTOR_OUTCOME: ${{ steps.collector.outcome }}
         run: python -m hecavex_radar.collection_health finalize
       - name: Commit the attempt atomically
-        if: always() && steps.cadence.outputs.due == 'true' && steps.health.outcome == 'success'
+        id: commit
+        if: always() && steps.cadence.outputs.due == 'true' && steps.health.outcome == 'success' && steps.data.outcome == 'success'
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
-          git add -- data/certstream public/data/collection-health.json
-          if git diff --cached --quiet; then
-            echo "No collection changes to commit."
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "data: record CertStream collection attempt"
           gh auth setup-git
-          base_sha="$(git rev-parse HEAD^)"
-          for attempt in 1 2 3 4; do
-            git fetch --no-tags origin main
-            upstream_sha="$(git rev-parse origin/main)"
-            if [[ "${upstream_sha}" != "${base_sha}" ]]; then
-              unexpected_paths="$(git diff --name-only "${base_sha}..${upstream_sha}" | grep -Ev \
-                '^(data/(certstream|ct-search|enrichment|urlscan|history)/|public/data/|data/coverage/brand-coverage\.json$|data/review/review-queue\.json$)' || true)"
-              if [[ -n "${unexpected_paths}" ]]; then
-                echo "Code or configuration changed after checkout; refusing older-revision output:" >&2
-                echo "${unexpected_paths}" >&2
-                exit 1
-              fi
-              git rebase origin/main
-              base_sha="${upstream_sha}"
-            fi
-            if git push origin HEAD:main; then
-              exit 0
-            fi
-            if [[ "${attempt}" -eq 4 ]]; then
-              echo "CertStream publication lost four push races." >&2
-              exit 1
-            fi
-            sleep $((attempt * 2))
-          done
+          python -m hecavex_radar.data_branch publish --repository . \
+            --state-file "${{ runner.temp }}/radar-data-base.json" \
+            --writer certstream --message "data: publish certstream state" \
+            --github-output "$GITHUB_OUTPUT"
       - name: Fail an unsuccessful collection attempt
         if: always() && steps.cadence.outputs.due == 'true'
         env:
@@ -171,7 +151,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           REPOSITORY: ${{ github.repository }}
           SOURCE_CONCLUSION: ${{ job.status }}
-          SOURCE_SHA: ${{ github.sha }}
+          SOURCE_SHA: ${{ steps.data.outputs.source_revision }}
+          DATA_SHA: ${{ steps.commit.outputs.data_revision || (steps.cadence.outputs.due == 'false' && steps.data.outputs.data_revision) || '' }}
           SOURCE_RUN_ID: ${{ github.run_id }}
           SOURCE_REF: ${{ github.ref_name }}
         shell: bash
@@ -191,4 +172,6 @@ jobs:
             -f "client_payload[source_run_id]=${SOURCE_RUN_ID}" \
             -f "client_payload[source_ref]=${SOURCE_REF}" \
             -f "client_payload[collection_outcome]=${collection_outcome}" \
-            -f "client_payload[head_sha]=${SOURCE_SHA}"
+            -f "client_payload[head_sha]=${SOURCE_SHA}" \
+            -f "client_payload[source_revision]=${SOURCE_SHA}" \
+            -f "client_payload[data_revision]=${DATA_SHA}"
