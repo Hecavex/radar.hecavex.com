@@ -26,6 +26,14 @@
     }
   },
   "additionalProperties": false,
+  "dependentRequired": {
+    "countingMethodVersion": [
+      "reobservationSemantics"
+    ],
+    "reobservationSemantics": [
+      "countingMethodVersion"
+    ]
+  },
   "required": [
     "schemaVersion",
     "dataset",
@@ -47,6 +55,14 @@
     },
     "dataset": {
       "const": "radar-daily-trends"
+    },
+    "countingMethodVersion": {
+      "const": 2
+    },
+    "reobservationSemantics": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 600
     },
     "generatedAt": {
       "type": "string",
