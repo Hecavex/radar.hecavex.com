@@ -40,7 +40,15 @@ hecavex-coverage-ledger --generated-at 2026-08-26T12:00:00.000Z
 
 The ledger explains bounded collection and review coverage for every registry entry. A zero-signal value never means zero phishing.
 
-The normal snapshot synchronization regenerates both artifacts using the snapshot's own canonical timestamp, then immediately verifies a byte-for-byte deterministic rebuild. CI runs the same verification. Per-brand CT state distinguishes completed, backlogged, failed, and never-attempted queries from their persisted query outcome and result cursor. URLScan's candidate cursor is scheduler-wide and therefore appears only under `globalCollectorState`; it is never repeated as if it described an individual brand.
+The normal snapshot synchronization regenerates both artifacts using the snapshot's own canonical timestamp, then immediately verifies a byte-for-byte deterministic rebuild. CI runs deterministic verification against its coherent fixture rather than the latest independently advancing collector state. Per-brand CT state distinguishes completed, backlogged, failed, and never-attempted queries from their persisted query outcome and result cursor. URLScan's candidate cursor is scheduler-wide and therefore appears only under `globalCollectorState`; it is never repeated as if it described an individual brand.
+
+## Source/data handling for local review
+
+Registry changes, proposals and `data/review/public-decisions.json` remain reviewed source changes on `main`. Generated-data publishers cannot change them. The private SQLite ledger remains outside both branches.
+
+For current review inputs, use trusted source tooling to materialize the validated `publication` view of `radar-data` into a disposable source checkout as documented in [Deployment](DEPLOYMENT.md#source-and-data-cutover). Do not check out or execute data-branch code. Record the selected source and data revisions with private review evidence. A plain source checkout can contain historical snapshots and must not be assumed current.
+
+The generated review queue and coverage ledger belong to the data branch. Snapshot sync rebuilds and verifies them from its exact inputs. Source CI instead materializes a pinned coherent fixture and derives temporary quality artifacts for that source revision. That test fixture is not a public assessment or an operational publication. Keep imported generated files out of a review PR.
 
 ## Commands
 
@@ -160,5 +168,7 @@ Before committing an export:
 3. Confirm subtree scope is necessary; prefer exact scope.
 4. Search the diff for private notes, names, credentials, tokens, email addresses, and case references.
 5. Run `pnpm check`.
+6. Submit only the intentional sanitized export and any reviewed source changes through the source PR gate. Do not commit materialized generated data or private review evidence.
+7. After merge, a fresh snapshot sync must consume the new source revision before Pages can publish it.
 
 The version 3 public file contains only deterministic decision IDs, defanged domains and URLs, scope, resolved brand, controlled reason and evidence codes, observation/admission/review/expiry times, matcher and optional analyst scores, Lithuanian relevance, and explicit review/revocation state. Synchronization fails closed if the file is malformed, cross-brand, future-dated, oversized, duplicated, missing its assessment admission envelope, or if a new manual candidate is inconsistent with the current matcher. A dated assessment preserves the canonical brand and exact public observation recorded at review time; later matcher changes do not erase the historical decision, while its admission digest, domain, deterministic signal ID, evidence codes, and timestamps remain strictly validated. Version 2 is read only as an empty-assessment migration shape. Inspect `public/data/radar-reviewed.stix.json` as part of the publication diff whenever an assessment changes.

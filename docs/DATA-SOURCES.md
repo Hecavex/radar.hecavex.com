@@ -2,6 +2,12 @@
 
 These are the sources and provenance boundaries of the HECAVEX-operated [radar.hecavex.com](https://radar.hecavex.com) service. Source operators define their own access, attribution, rate, and redistribution terms. Apache-2.0 licenses original Radar software, not third-party data or HECAVEX operation.
 
+## Repository provenance
+
+After the explicit source/data cutover, the paths in this document refer to generated state materialized from `radar-data` into a trusted `main` checkout, except source-owned registry, matcher and review inputs. Relative source-tree links may show retained historical data, not the latest operational state. Use an exact data revision for reproduction or the public service distributions for published data.
+
+The source-owned boundary validates the data manifest inventory before use. Its operational view selects the latest collector state. Its publication view selects the latest snapshot marker commit. The marker identifies the source revision and input data revision, while trusted release tooling records the selected data commit separately. These identifiers establish input/code identity, not provider completeness, permission, benignness or analyst confirmation. See [Architecture](ARCHITECTURE.md#source-and-data-trust-boundary) for ownership and [Deployment](DEPLOYMENT.md#source-and-data-cutover) for activation requirements. The presence of this documentation does not establish a completed production cutover.
+
 ## Certificate Transparency
 
 CertStream emits Certificate Transparency log updates over a websocket. The collector reads certificate DNS names, rejects official domains, applies the public Lithuanian-brand heuristic, and archives only matching defanged domains. It does not retrieve or browse those domains.
