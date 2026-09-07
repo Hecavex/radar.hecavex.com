@@ -3,6 +3,7 @@
 import json
 import shutil
 import socket
+from contextlib import suppress
 from pathlib import Path
 
 import pytest
@@ -31,10 +32,8 @@ def test_offline_fixture_refuses_dns_even_if_publisher_swallows_error(
     monkeypatch.setattr(offline_publication, "fixture_cutoff", lambda _: None)
 
     def attempt_dns(**kwargs: object) -> None:
-        try:
+        with suppress(AssertionError):
             socket.getaddrinfo("must-not-resolve.invalid", 443)
-        except AssertionError:
-            pass
 
     monkeypatch.setattr(offline_publication, "synchronize", attempt_dns)
     monkeypatch.setattr(offline_publication, "validate_publication", lambda *args, **kwargs: None)
