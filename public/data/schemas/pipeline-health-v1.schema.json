@@ -1,0 +1,744 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://radar.hecavex.com/data/schemas/pipeline-health-v1.schema.json",
+  "title": "HECAVEX Radar rolling pipeline health v1",
+  "type": "object",
+  "$defs": {
+    "counter": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 2000000000
+    },
+    "timestampOrNull": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+    },
+    "sourceStates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "CertStream",
+        "URLScan",
+        "HECAVEX"
+      ],
+      "properties": {
+        "CertStream": {
+          "enum": [
+            "healthy",
+            "partial",
+            "skipped"
+          ]
+        },
+        "URLScan": {
+          "enum": [
+            "healthy",
+            "partial",
+            "skipped"
+          ]
+        },
+        "HECAVEX": {
+          "enum": [
+            "healthy",
+            "partial",
+            "skipped"
+          ]
+        }
+      }
+    },
+    "sourceRecords": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "CertStream": {
+          "$ref": "#/$defs/counter"
+        },
+        "URLScan": {
+          "$ref": "#/$defs/counter"
+        },
+        "HECAVEX": {
+          "$ref": "#/$defs/counter"
+        }
+      }
+    },
+    "certstreamSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "generatedAt",
+        "lastSuccessAt",
+        "freshness",
+        "latestAttempt"
+      ],
+      "properties": {
+        "generatedAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+        },
+        "lastSuccessAt": {
+          "$ref": "#/$defs/timestampOrNull"
+        },
+        "freshness": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "referenceAt",
+            "ageSeconds"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "current",
+                "stale",
+                "unavailable"
+              ]
+            },
+            "referenceAt": {
+              "$ref": "#/$defs/timestampOrNull"
+            },
+            "ageSeconds": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0,
+              "maximum": 31536000
+            }
+          }
+        },
+        "latestAttempt": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "startedAt",
+                "endedAt",
+                "outcome",
+                "listeningSeconds",
+                "messages",
+                "dnsNames",
+                "matches",
+                "newRecords"
+              ],
+              "properties": {
+                "startedAt": {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+                },
+                "endedAt": {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+                },
+                "outcome": {
+                  "enum": [
+                    "healthy-empty",
+                    "healthy-matches",
+                    "no-input",
+                    "partial",
+                    "failed"
+                  ]
+                },
+                "listeningSeconds": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 86400
+                },
+                "messages": {
+                  "$ref": "#/$defs/counter"
+                },
+                "dnsNames": {
+                  "$ref": "#/$defs/counter"
+                },
+                "matches": {
+                  "$ref": "#/$defs/counter"
+                },
+                "newRecords": {
+                  "$ref": "#/$defs/counter"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "urlscanSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "generatedAt",
+        "configured",
+        "lastOutcome",
+        "lastAttemptAt",
+        "checkpointCoverage"
+      ],
+      "properties": {
+        "generatedAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+        },
+        "configured": {
+          "type": "boolean"
+        },
+        "lastOutcome": {
+          "enum": [
+            "skipped-not-configured",
+            "completed",
+            "budget-limited",
+            "failed"
+          ]
+        },
+        "lastFailureCode": {
+          "enum": [
+            "unknown",
+            "state-capacity",
+            "state-invalid",
+            "provider-rate-limit",
+            "provider-error"
+          ]
+        },
+        "lastAttemptAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+        },
+        "checkpointCoverage": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "queries",
+            "complete",
+            "partial",
+            "backlog",
+            "oldestBacklogProgressAt"
+          ],
+          "properties": {
+            "queries": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 256
+            },
+            "complete": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 256
+            },
+            "partial": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 256
+            },
+            "backlog": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 256
+            },
+            "oldestBacklogProgressAt": {
+              "$ref": "#/$defs/timestampOrNull"
+            }
+          }
+        }
+      }
+    },
+    "ctSearchSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "generatedAt",
+        "latestRun"
+      ],
+      "properties": {
+        "generatedAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+        },
+        "provider": {
+          "const": "crt.sh"
+        },
+        "providerHealth": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "lastSuccessAt",
+            "lastAttemptAt",
+            "lastFailureCodes",
+            "consecutiveFailures",
+            "degradedSince",
+            "nextAttemptAt"
+          ],
+          "properties": {
+            "lastSuccessAt": {
+              "$ref": "#/$defs/timestampOrNull"
+            },
+            "lastAttemptAt": {
+              "$ref": "#/$defs/timestampOrNull"
+            },
+            "degradedSince": {
+              "$ref": "#/$defs/timestampOrNull"
+            },
+            "nextAttemptAt": {
+              "$ref": "#/$defs/timestampOrNull"
+            },
+            "consecutiveFailures": {
+              "$ref": "#/$defs/counter"
+            },
+            "lastFailureCodes": {
+              "type": "array",
+              "maxItems": 8,
+              "uniqueItems": true,
+              "items": {
+                "enum": [
+                  "provider-timeout",
+                  "provider-http",
+                  "provider-network",
+                  "invalid-response",
+                  "validation",
+                  "internal"
+                ]
+              }
+            }
+          }
+        },
+        "latestRun": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "startedAt",
+            "endedAt",
+            "outcome",
+            "queriesAttempted",
+            "queriesCompleted",
+            "queriesBacklogged",
+            "rowsProcessed",
+            "dnsNames",
+            "matches",
+            "newRecords",
+            "failureCodes"
+          ],
+          "properties": {
+            "startedAt": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+            },
+            "endedAt": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+            },
+            "outcome": {
+              "enum": [
+                "completed",
+                "partial",
+                "failed",
+                "deferred-backoff"
+              ]
+            },
+            "failureCodes": {
+              "type": "array",
+              "maxItems": 8,
+              "uniqueItems": true,
+              "items": {
+                "enum": [
+                  "provider-timeout",
+                  "provider-http",
+                  "provider-network",
+                  "invalid-response",
+                  "validation",
+                  "internal"
+                ]
+              }
+            },
+            "queriesAttempted": {
+              "$ref": "#/$defs/counter"
+            },
+            "queriesCompleted": {
+              "$ref": "#/$defs/counter"
+            },
+            "queriesBacklogged": {
+              "$ref": "#/$defs/counter"
+            },
+            "rowsProcessed": {
+              "$ref": "#/$defs/counter"
+            },
+            "dnsNames": {
+              "$ref": "#/$defs/counter"
+            },
+            "matches": {
+              "$ref": "#/$defs/counter"
+            },
+            "newRecords": {
+              "$ref": "#/$defs/counter"
+            }
+          }
+        }
+      }
+    },
+    "domainContextSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "generatedAt",
+        "latestRun",
+        "recordCount"
+      ],
+      "properties": {
+        "generatedAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+        },
+        "recordCount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 25000
+        },
+        "latestRun": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "startedAt",
+            "endedAt",
+            "outcome",
+            "attempted",
+            "completed"
+          ],
+          "properties": {
+            "startedAt": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+            },
+            "endedAt": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+            },
+            "outcome": {
+              "enum": [
+                "completed",
+                "partial",
+                "failed",
+                "empty"
+              ]
+            },
+            "attempted": {
+              "$ref": "#/$defs/counter"
+            },
+            "completed": {
+              "$ref": "#/$defs/counter"
+            }
+          }
+        }
+      }
+    },
+    "collectionOutcomes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "healthy-empty": {
+          "$ref": "#/$defs/counter"
+        },
+        "healthy-matches": {
+          "$ref": "#/$defs/counter"
+        },
+        "no-input": {
+          "$ref": "#/$defs/counter"
+        },
+        "partial": {
+          "$ref": "#/$defs/counter"
+        },
+        "failed": {
+          "$ref": "#/$defs/counter"
+        }
+      }
+    },
+    "sourceCounts": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "CertStream": {
+          "$ref": "#/$defs/counter"
+        },
+        "URLScan": {
+          "$ref": "#/$defs/counter"
+        },
+        "HECAVEX": {
+          "$ref": "#/$defs/counter"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "dataset",
+    "generatedAt",
+    "privacy",
+    "current",
+    "windows"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "dataset": {
+      "const": "radar-pipeline-health"
+    },
+    "generatedAt": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+    },
+    "privacy": {
+      "const": "Aggregate counters only; no candidate names or detector payloads."
+    },
+    "current": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "publishedSignals",
+        "sourceStates",
+        "sourceRecords",
+        "certstream",
+        "urlscan",
+        "ctSearch",
+        "domainContext"
+      ],
+      "properties": {
+        "publishedSignals": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 25000
+        },
+        "sourceStates": {
+          "$ref": "#/$defs/sourceStates"
+        },
+        "sourceRecords": {
+          "$ref": "#/$defs/sourceRecords"
+        },
+        "certstream": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/certstreamSummary"
+            }
+          ]
+        },
+        "urlscan": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/urlscanSummary"
+            }
+          ]
+        },
+        "ctSearch": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/ctSearchSummary"
+            }
+          ]
+        },
+        "domainContext": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/domainContextSummary"
+            }
+          ]
+        }
+      }
+    },
+    "windows": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "hours",
+          "from",
+          "to",
+          "collection",
+          "screening",
+          "enrichment",
+          "publication"
+        ],
+        "properties": {
+          "hours": {
+            "enum": [
+              24,
+              168
+            ]
+          },
+          "from": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+          },
+          "to": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+          },
+          "collection": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "scheduledSlots",
+              "recordedAttempts",
+              "healthyAttempts",
+              "recordedSchedulePercent",
+              "listeningCoveragePercent",
+              "scheduledListeningCeilingPercent",
+              "expectedListeningSeconds",
+              "listeningSeconds",
+              "messages",
+              "dnsNames",
+              "outcomes"
+            ],
+            "properties": {
+              "scheduledSlots": {
+                "$ref": "#/$defs/counter"
+              },
+              "recordedAttempts": {
+                "$ref": "#/$defs/counter"
+              },
+              "healthyAttempts": {
+                "$ref": "#/$defs/counter"
+              },
+              "expectedListeningSeconds": {
+                "$ref": "#/$defs/counter"
+              },
+              "messages": {
+                "$ref": "#/$defs/counter"
+              },
+              "dnsNames": {
+                "$ref": "#/$defs/counter"
+              },
+              "recordedSchedulePercent": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "listeningCoveragePercent": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "scheduledListeningCeilingPercent": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "listeningSeconds": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 604800
+              },
+              "outcomes": {
+                "$ref": "#/$defs/collectionOutcomes"
+              }
+            }
+          },
+          "screening": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "matches",
+              "newArchiveRecords",
+              "firstPublications",
+              "bySource"
+            ],
+            "properties": {
+              "matches": {
+                "$ref": "#/$defs/counter"
+              },
+              "newArchiveRecords": {
+                "$ref": "#/$defs/counter"
+              },
+              "firstPublications": {
+                "$ref": "#/$defs/counter"
+              },
+              "bySource": {
+                "$ref": "#/$defs/sourceCounts"
+              }
+            }
+          },
+          "enrichment": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "observations",
+              "uniqueSignals",
+              "page",
+              "network",
+              "assessment",
+              "certificate",
+              "dns",
+              "rdap"
+            ],
+            "properties": {
+              "observations": {
+                "$ref": "#/$defs/counter"
+              },
+              "uniqueSignals": {
+                "$ref": "#/$defs/counter"
+              },
+              "page": {
+                "$ref": "#/$defs/counter"
+              },
+              "network": {
+                "$ref": "#/$defs/counter"
+              },
+              "assessment": {
+                "$ref": "#/$defs/counter"
+              },
+              "certificate": {
+                "$ref": "#/$defs/counter"
+              },
+              "dns": {
+                "$ref": "#/$defs/counter"
+              },
+              "rdap": {
+                "$ref": "#/$defs/counter"
+              }
+            }
+          },
+          "publication": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "events",
+              "observations",
+              "statusTransitions",
+              "uniqueSignals"
+            ],
+            "properties": {
+              "events": {
+                "$ref": "#/$defs/counter"
+              },
+              "observations": {
+                "$ref": "#/$defs/counter"
+              },
+              "statusTransitions": {
+                "$ref": "#/$defs/counter"
+              },
+              "uniqueSignals": {
+                "$ref": "#/$defs/counter"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

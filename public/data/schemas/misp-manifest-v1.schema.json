@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://radar.hecavex.com/data/schemas/misp-manifest-v1.schema.json",
+  "title": "Reviewed-only MISP feed manifest",
+  "type": "object",
+  "minProperties": 0,
+  "maxProperties": 1,
+  "propertyNames": {
+    "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+  },
+  "additionalProperties": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "Orgc",
+      "date",
+      "info",
+      "analysis",
+      "threat_level_id",
+      "timestamp",
+      "integrity:sha256"
+    ],
+    "properties": {
+      "Orgc": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "uuid"
+        ],
+        "properties": {
+          "name": {
+            "const": "HECAVEX"
+          },
+          "uuid": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+          }
+        }
+      },
+      "date": {
+        "type": "string",
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+      },
+      "info": {
+        "const": "HECAVEX Radar analyst-reviewed phishing domains"
+      },
+      "analysis": {
+        "const": "2"
+      },
+      "threat_level_id": {
+        "const": "2"
+      },
+      "timestamp": {
+        "type": "string",
+        "pattern": "^[0-9]{1,12}$"
+      },
+      "integrity:sha256": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$"
+      }
+    }
+  }
+}

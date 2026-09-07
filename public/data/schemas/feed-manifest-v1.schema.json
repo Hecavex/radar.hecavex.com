@@ -1,0 +1,176 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://radar.hecavex.com/data/schemas/feed-manifest-v1.schema.json",
+  "title": "HECAVEX Radar feed manifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "dataset",
+    "generatedAt",
+    "generator",
+    "sourceFetchedAt",
+    "counts",
+    "artifacts"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "dataset": {
+      "const": "radar-feed-manifest"
+    },
+    "generatedAt": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+    },
+    "generator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "version",
+        "revision"
+      ],
+      "properties": {
+        "name": {
+          "const": "hecavex-radar"
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "revision": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[a-f0-9]{40}$"
+        }
+      }
+    },
+    "sourceFetchedAt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "CertStream",
+        "URLScan",
+        "HECAVEX"
+      ],
+      "properties": {
+        "CertStream": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+            }
+          ]
+        },
+        "URLScan": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+            }
+          ]
+        },
+        "HECAVEX": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+            }
+          ]
+        }
+      }
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "completeSignals",
+        "dashboardSignals",
+        "dashboardOmitted",
+        "artifacts"
+      ],
+      "properties": {
+        "completeSignals": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 25000
+        },
+        "dashboardSignals": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 25000
+        },
+        "dashboardOmitted": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 25000
+        },
+        "artifacts": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 25000
+        }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 512,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "mediaType",
+          "schema",
+          "bytes",
+          "sha256"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "pattern": "^/data/[A-Za-z0-9_-][A-Za-z0-9._-]*(?:/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$"
+          },
+          "mediaType": {
+            "enum": [
+              "application/json",
+              "application/stix+json",
+              "application/feed+json",
+              "application/atom+xml",
+              "application/rss+xml"
+            ]
+          },
+          "schema": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 2048
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        }
+      }
+    }
+  }
+}

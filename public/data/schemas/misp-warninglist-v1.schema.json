@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://radar.hecavex.com/data/schemas/misp-warninglist-v1.schema.json",
+  "title": "Reviewed official-domain MISP warning list",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "name",
+    "version",
+    "description",
+    "type",
+    "matching_attributes",
+    "list"
+  ],
+  "properties": {
+    "name": {
+      "const": "HECAVEX reviewed official domains for Lithuania-facing brands"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 20000000,
+      "maximum": 99999999
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "type": {
+      "const": "hostname"
+    },
+    "matching_attributes": {
+      "const": [
+        "domain",
+        "hostname",
+        "url",
+        "domain|ip"
+      ]
+    },
+    "list": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 10000,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+(?:(?:[a-z]{2,63}|xn--[a-z0-9-]{2,59}))$",
+        "maxLength": 253
+      }
+    }
+  }
+}

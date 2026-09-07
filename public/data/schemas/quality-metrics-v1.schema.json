@@ -1,0 +1,252 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://radar.hecavex.com/data/schemas/quality-metrics-v1.schema.json",
+  "title": "HECAVEX Radar public quality metrics v1",
+  "type": "object",
+  "$defs": {
+    "count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 2000000000
+    },
+    "countMap": {
+      "type": "object",
+      "maxProperties": 64,
+      "additionalProperties": {
+        "$ref": "#/$defs/count"
+      }
+    },
+    "metric": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "dataset",
+    "generatedAt",
+    "window",
+    "semantics",
+    "reviewSample",
+    "reviewCoverage",
+    "reviewLatencyHours",
+    "currentExclusions",
+    "precision",
+    "privacy"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "dataset": {
+      "const": "radar-quality-metrics"
+    },
+    "generatedAt": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+    },
+    "window": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "days",
+        "from",
+        "to"
+      ],
+      "properties": {
+        "days": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 365
+        },
+        "from": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+        },
+        "to": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+        }
+      }
+    },
+    "semantics": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "reviewSample": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "assessments",
+        "uniqueSignals",
+        "outcomes",
+        "byBrand",
+        "bySource",
+        "sourceLinkedAssessments",
+        "byEvidence",
+        "byDispositionReason",
+        "byDetectionReason"
+      ],
+      "properties": {
+        "assessments": {
+          "$ref": "#/$defs/count"
+        },
+        "uniqueSignals": {
+          "$ref": "#/$defs/count"
+        },
+        "sourceLinkedAssessments": {
+          "$ref": "#/$defs/count"
+        },
+        "outcomes": {
+          "$ref": "#/$defs/countMap"
+        },
+        "byBrand": {
+          "$ref": "#/$defs/countMap"
+        },
+        "bySource": {
+          "$ref": "#/$defs/countMap"
+        },
+        "byEvidence": {
+          "$ref": "#/$defs/countMap"
+        },
+        "byDispositionReason": {
+          "$ref": "#/$defs/countMap"
+        },
+        "byDetectionReason": {
+          "$ref": "#/$defs/countMap"
+        }
+      }
+    },
+    "reviewCoverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "eligiblePublishedSignals",
+        "assessedSignals",
+        "percent",
+        "scope"
+      ],
+      "properties": {
+        "eligiblePublishedSignals": {
+          "$ref": "#/$defs/count"
+        },
+        "assessedSignals": {
+          "$ref": "#/$defs/count"
+        },
+        "percent": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 100
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 400
+        }
+      }
+    },
+    "reviewLatencyHours": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sampleSize",
+        "median",
+        "p90",
+        "minimum",
+        "maximum",
+        "scope"
+      ],
+      "properties": {
+        "sampleSize": {
+          "$ref": "#/$defs/count"
+        },
+        "median": {
+          "$ref": "#/$defs/metric"
+        },
+        "p90": {
+          "$ref": "#/$defs/metric"
+        },
+        "minimum": {
+          "$ref": "#/$defs/metric"
+        },
+        "maximum": {
+          "$ref": "#/$defs/metric"
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 400
+        }
+      }
+    },
+    "currentExclusions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sampleSize",
+        "exact",
+        "subdomainPolicies",
+        "byReason",
+        "scope"
+      ],
+      "properties": {
+        "sampleSize": {
+          "$ref": "#/$defs/count"
+        },
+        "exact": {
+          "$ref": "#/$defs/count"
+        },
+        "subdomainPolicies": {
+          "$ref": "#/$defs/count"
+        },
+        "byReason": {
+          "$ref": "#/$defs/countMap"
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 400
+        }
+      }
+    },
+    "precision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "available",
+        "sampleSize",
+        "estimatePercent",
+        "reason"
+      ],
+      "properties": {
+        "available": {
+          "const": false
+        },
+        "sampleSize": {
+          "const": 0
+        },
+        "estimatePercent": {
+          "type": "null"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        }
+      }
+    },
+    "privacy": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 400
+    }
+  }
+}

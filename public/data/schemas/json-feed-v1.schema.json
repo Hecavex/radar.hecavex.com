@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://radar.hecavex.com/data/schemas/json-feed-v1.schema.json",
+  "title": "HECAVEX Radar JSON Feed 1.1 profile",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "version",
+    "title",
+    "items"
+  ],
+  "properties": {
+    "version": {
+      "const": "https://jsonfeed.org/version/1.1"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "home_page_url": {
+      "type": "string",
+      "pattern": "^https://radar\\.hecavex\\.com/[A-Za-z0-9_./-]*$"
+    },
+    "feed_url": {
+      "type": "string",
+      "pattern": "^https://radar\\.hecavex\\.com/data/[A-Za-z0-9_./-]+$"
+    },
+    "language": {
+      "const": "en"
+    },
+    "items": {
+      "type": "array",
+      "maxItems": 1000,
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": [
+          "id",
+          "url",
+          "title",
+          "content_text",
+          "date_published",
+          "tags"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^urn:hecavex-radar:event:[a-f0-9]{32}$"
+          },
+          "url": {
+            "type": "string",
+            "pattern": "^https://radar\\.hecavex\\.com/signals/[a-f0-9]{20}/$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 700
+          },
+          "content_text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1500
+          },
+          "date_published": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+          },
+          "tags": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            }
+          }
+        }
+      }
+    }
+  }
+}

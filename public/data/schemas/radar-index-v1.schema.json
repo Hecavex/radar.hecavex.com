@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://radar.hecavex.com/data/schemas/radar-index-v1.schema.json",
+  "title": "HECAVEX Radar shard index v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "dataset",
+    "generatedAt",
+    "signalCount",
+    "dashboardSignalCount",
+    "shards"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "dataset": {
+      "const": "radar-signal-index"
+    },
+    "generatedAt": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+    },
+    "signalCount": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 25000
+    },
+    "dashboardSignalCount": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 25000
+    },
+    "shards": {
+      "type": "array",
+      "maxItems": 1000,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "number",
+          "path",
+          "signals",
+          "bytes",
+          "sha256",
+          "firstSignalId",
+          "lastSignalId"
+        ],
+        "properties": {
+          "number": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "path": {
+            "type": "string",
+            "pattern": "^/data/radar-shards/[0-9]{4}\\.json$"
+          },
+          "signals": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 262144
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "firstSignalId": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{20}$"
+          },
+          "lastSignalId": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{20}$"
+          }
+        }
+      }
+    }
+  }
+}
