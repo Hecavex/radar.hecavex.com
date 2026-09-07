@@ -1114,12 +1114,20 @@ DAILY_TRENDS_SCHEMA: Final[dict[str, object]] = {
         "percent": {"type": ["number", "null"], "minimum": 0, "maximum": 100},
     },
     "additionalProperties": False,
+    # Historical unversioned v1 publications remain valid. Corrected counting
+    # metadata is an additive, paired contract, not an artifact schema rewrite.
+    "dependentRequired": {
+        "countingMethodVersion": ["reobservationSemantics"],
+        "reobservationSemantics": ["countingMethodVersion"],
+    },
     "required": [
         "schemaVersion", "dataset", "generatedAt", "retentionDays", "from", "to", "semantics",
         "facetSemantics", "seriesSemantics", "omittedZeroDays", "collectorSchedule", "series", "privacy",
     ],
     "properties": {
         "schemaVersion": {"const": 1}, "dataset": {"const": "radar-daily-trends"},
+        "countingMethodVersion": {"const": 2},
+        "reobservationSemantics": {"type": "string", "minLength": 1, "maxLength": 600},
         "generatedAt": {"type": "string", "pattern": TIMESTAMP_PATTERN},
         "retentionDays": {"type": "integer", "minimum": 1, "maximum": 365},
         "from": {"type": "string", "format": "date"}, "to": {"type": "string", "format": "date"},
