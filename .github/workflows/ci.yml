@@ -44,6 +44,8 @@ jobs:
         run: |
           # Data blobs only; code, workflows and reviewed configuration remain this source revision.
           python -m hecavex_radar.data_branch materialize-fixture --repository . --revision 9cd9e14af1dd6046f6fbb88e90775e1c406ae59f
+          # Regenerate all artifacts and schema copies at that fixed input cutoff, with sockets blocked.
+          python -m hecavex_radar.offline_publication
           # Derived quality belongs to this isolated source-CI fixture, never live operational state.
           python -m hecavex_radar.quality_artifacts
           python -m hecavex_radar.quality_artifacts --check

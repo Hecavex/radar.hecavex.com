@@ -473,8 +473,8 @@ def _run_source(label: str, operation: Callable[[], SourceResult]) -> SourceResu
         return None
 
 
-def synchronize() -> Path:
-    sync_time = datetime.now(UTC)
+def synchronize(*, sync_time: datetime | None = None) -> Path:
+    sync_time = sync_time or datetime.now(UTC)
     now = sync_time.isoformat(timespec="milliseconds").replace("+00:00", "Z")
     target = _output_path()
     registry = load_brand_registry()
