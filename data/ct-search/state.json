@@ -1,27 +1,31 @@
 {
   "dataset": "ct-search-state",
-  "generatedAt": "2026-09-07T13:00:25.855Z",
+  "generatedAt": "2026-09-07T19:24:10.690Z",
   "latestRun": {
     "dnsNames": 0,
-    "endedAt": "2026-09-07T13:00:25.855Z",
-    "failureCodes": [],
+    "endedAt": "2026-09-07T19:24:10.690Z",
+    "failureCodes": [
+      "provider-http"
+    ],
     "matches": 0,
     "newRecords": 0,
-    "outcome": "completed",
-    "queriesAttempted": 6,
+    "outcome": "partial",
+    "queriesAttempted": 2,
     "queriesBacklogged": 0,
-    "queriesCompleted": 6,
+    "queriesCompleted": 1,
     "rowsProcessed": 0,
-    "startedAt": "2026-09-07T12:59:27.869Z"
+    "startedAt": "2026-09-07T19:23:43.055Z"
   },
   "provider": "crt.sh",
   "providerHealth": {
-    "consecutiveFailures": 0,
-    "degradedSince": null,
-    "lastAttemptAt": "2026-09-07T13:00:25.855Z",
-    "lastFailureCodes": [],
+    "consecutiveFailures": 1,
+    "degradedSince": "2026-09-07T19:23:43.055Z",
+    "lastAttemptAt": "2026-09-07T19:24:10.690Z",
+    "lastFailureCodes": [
+      "provider-http"
+    ],
     "lastSuccessAt": "2026-09-07T13:00:25.855Z",
-    "nextAttemptAt": null
+    "nextAttemptAt": "2026-09-07T19:29:10.690Z"
   },
   "queries": {
     "brand:artea": {
@@ -373,15 +377,15 @@
       "lastEntryAt": null,
       "lastId": 0,
       "lastOutcome": "completed",
-      "lastRunAt": "2026-09-04T11:46:26.514Z",
+      "lastRunAt": "2026-09-07T19:23:43.055Z",
       "term": "urbobankas"
     },
     "brand:venipak": {
       "brand": "Venipak",
       "lastEntryAt": null,
       "lastId": 0,
-      "lastOutcome": "completed",
-      "lastRunAt": "2026-09-04T11:46:26.514Z",
+      "lastOutcome": "failed",
+      "lastRunAt": "2026-09-07T19:23:43.055Z",
       "term": "venipak"
     },
     "brand:vinted": {
@@ -393,6 +397,6 @@
       "term": "vinted"
     }
   },
-  "queryCursor": 43,
+  "queryCursor": 45,
   "schemaVersion": 1
 }
