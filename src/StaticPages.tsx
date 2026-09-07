@@ -64,7 +64,26 @@ export function ChangesPage({ data, language = "en" }: { data: StaticPageData; l
     />
     <section className="feed-strip" aria-label={lt ? "Pokyčių srautai" : "Change feeds"}><div><Rss aria-hidden="true" /><span>{lt ? "Prenumeruoti neatsisiunčiant visos suvestinės" : "Subscribe without polling the full snapshot"}</span></div><a href="/data/events.atom.xml">Atom</a><a href="/data/events.rss.xml">RSS</a><a href="/data/events.feed.json">{lt ? "JSON srautas" : "JSON Feed"}</a><a href="/data/events.json">{lt ? "Įvykių JSON" : "Event JSON"}</a></section>
     <section className="event-section" aria-labelledby="events-title"><div className="section-heading"><div><p className="eyebrow">{lt ? "Publikavimo žurnalas" : "Publication log"}</p><h2 id="events-title">{lt ? "Naujausi įvykiai" : "Recent events"}</h2></div><p><strong>{data.events.events.length}</strong> {lt ? `įkelta · ${data.events.window.days} dienų langas` : `loaded · ${data.events.window.days}-day window`}</p></div>
-      <div className="filter-shell"><label>{lt ? "Įvykio tipas" : "Event type"}<select value={type} onChange={(event) => { setType(event.target.value); setPage(1); }}><option value="all">{lt ? "Visi tipai" : "All types"}</option>{Object.entries(typeLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label><label>{lt ? "Prekės ženklas" : "Brand"}<select value={brand} onChange={(event) => { setBrand(event.target.value); setPage(1); }}><option value="all">{lt ? "Visi prekių ženklai" : "All brands"}</option>{brands.map((value) => <option key={value}>{value}</option>)}</select></label><label>{lt ? "Nuo datos (UTC)" : "Since date (UTC)"}<input type="date" value={since} onChange={(event) => { setSince(event.target.value); setPage(1); }} /></label></div>
+      <div className="filter-shell event-filters">
+        <label>
+          <span>{lt ? "Įvykio tipas" : "Event type"}</span>
+          <select value={type} onChange={(event) => { setType(event.target.value); setPage(1); }}>
+            <option value="all">{lt ? "Visi tipai" : "All types"}</option>
+            {Object.entries(typeLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+          </select>
+        </label>
+        <label>
+          <span>{lt ? "Prekės ženklas" : "Brand"}</span>
+          <select value={brand} onChange={(event) => { setBrand(event.target.value); setPage(1); }}>
+            <option value="all">{lt ? "Visi prekių ženklai" : "All brands"}</option>
+            {brands.map((value) => <option key={value}>{value}</option>)}
+          </select>
+        </label>
+        <label>
+          <span>{lt ? "Nuo datos (UTC)" : "Since date (UTC)"}</span>
+          <input type="date" value={since} onChange={(event) => { setSince(event.target.value); setPage(1); }} />
+        </label>
+      </div>
       <p role="status">{lt ? `Atitinka ${filtered.length}; rodoma ${visible.length}. Įkelta ${data.events.events.length} iš ${data.events.totalAvailable}.` : `${filtered.length} matching; ${visible.length} shown. Loaded ${data.events.events.length} of ${data.events.totalAvailable}.`} {lt ? "Duomenų riba" : "Artifact cutoff"}: {formatEventDateTime(data.events.generatedAt, language)} UTC. {data.events.truncated ? (lt ? "Šaltinio sąrašas sutrumpintas; filtrai taikomi tik įkeltiems įvykiams." : "The upstream list is truncated; filters apply only to loaded events.") : null}</p>
       <ol className="event-list">{visible.map((event) => <li key={event.id}><time dateTime={event.occurredAt}>{formatEventDateTime(event.occurredAt, language)} UTC</time><span className={`event-type ${event.type}`}>{typeLabels[event.type]}</span><div><a href={signalPath(event.signalId, language)}>{event.domain}</a><span>{event.brand} · {event.sources.join(", ")}</span></div>{event.type === "status-change" ? <small>{event.previousStatus} → {event.status}</small> : null}</li>)}</ol>
       <div className="pagination"><button type="button" disabled={page === 1} onClick={() => setPage((value) => value - 1)}>{lt ? "Ankstesnis" : "Previous"}</button><span>{lt ? "Puslapis" : "Page"} {page} / {pages}</span><button type="button" disabled={page === pages} onClick={() => setPage((value) => value + 1)}>{lt ? "Kitas" : "Next"}</button></div>

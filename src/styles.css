@@ -4523,6 +4523,51 @@ td time {
   color: var(--blue);
 }
 
+.event-filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.event-filters label {
+  display: grid;
+  align-content: start;
+  gap: .5rem;
+  min-width: 0;
+}
+
+.event-filters label > span {
+  color: var(--muted);
+  font: 600 .67rem/1.4 var(--mono);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.event-filters select,
+.event-filters input {
+  width: 100%;
+  min-width: 0;
+  min-height: 2.75rem;
+  padding: .65rem .75rem;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: .8rem/1.4 var(--mono);
+}
+
+.event-filters select {
+  cursor: pointer;
+}
+
+.event-filters select:hover,
+.event-filters select:focus-visible,
+.event-filters input:hover,
+.event-filters input:focus-visible {
+  border-color: var(--blue);
+}
+
 .event-list {
   border-top: 1px solid var(--line);
 }
