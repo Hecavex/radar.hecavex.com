@@ -3,6 +3,7 @@ import json
 import subprocess
 import sys
 from datetime import UTC, datetime
+from pathlib import Path
 
 import pytest
 
@@ -22,7 +23,7 @@ def _completed() -> dict:
             "created_at": "2026-09-07T14:33:10Z", "updated_at": "2026-09-07T14:41:43Z"}
 
 
-def test_observed_superseded_zero_job_ghost_allows_one_standard_dispatch() -> None:
+def test_observed_superseded_zero_job_ghost_allows_one_standard_dispatch(capsys: pytest.CaptureFixture[str]) -> None:
     calls = []
 
     def jobs(identifier: int) -> dict:
@@ -31,6 +32,9 @@ def test_observed_superseded_zero_job_ghost_allows_one_standard_dispatch() -> No
 
     assert relay_decision({"workflow_runs": [_completed(), _ghost()]}, now=NOW, load_jobs=jobs) == "dispatch"
     assert calls == [34132479390]
+    output = capsys.readouterr()
+    assert output.out == ""
+    assert "34132479390 created 2026-09-07T14:21:09Z: zero jobs" in output.err
 
 
 @pytest.mark.parametrize("patch", [
@@ -112,6 +116,25 @@ def test_job_reconciliation_budget_fails_closed() -> None:
     assert relay_decision({"workflow_runs": [_completed(), *ghosts]},
                           now=NOW, load_jobs=loader) == "active-owner"
     assert len(calls) == 5
+
+
+def test_reconciliation_preserves_workflow_timeout_single_dispatch_and_due_guard() -> None:
+    repository = Path(__file__).resolve().parents[1]
+    collector = (repository / ".github/workflows/collect-certstream.yml").read_text()
+    relay = (repository / ".github/workflows/maintain-certstream-cadence.yml").read_text()
+    timeout_minutes = int(certstream_cadence.COLLECTOR_TIMEOUT.total_seconds() / 60)
+    assert timeout_minutes == 20
+    assert f"timeout-minutes: {timeout_minutes}" in collector
+    assert 'CERTSTREAM_DURATION_SECONDS: "480"' in collector
+    assert "group: radar-certstream-writer" in collector
+    assert "cancel-in-progress: false" in collector
+    assert "python -m hecavex_radar.collection_health begin-if-due" in collector
+    assert "steps.cadence.outputs.due == 'true'" in collector
+    assert "group: radar-certstream-cadence" in relay
+    assert "environment: radar-certstream-cadence" in relay
+    assert relay.count("gh api --method POST") == 1
+    assert "collect-certstream.yml/dispatches" in relay
+    assert "force-cancel" not in relay and "/cancel" not in relay
 
 
 def test_newer_completed_noop_does_not_take_relay_ownership() -> None:

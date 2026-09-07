@@ -77,6 +77,8 @@ def relay_decision(
                 raise ValueError("Invalid collector jobs response; refusing dispatch.")
             if jobs["total_count"] != 0 or jobs["jobs"]:
                 return "active-owner"
+            print(f"Reconciled superseded queued collector {identifier} created {run['created_at']}: zero jobs.",
+                  file=sys.stderr)
     return "dispatch"
 
 
