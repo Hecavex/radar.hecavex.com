@@ -31,6 +31,7 @@ jobs:
             requirements/automation-ci-py312.lock
       - name: Install Python dependencies
         run: |
+          python scripts/python-locks.py
           python -m pip install --disable-pip-version-check --require-hashes -r requirements/automation-ci-py312.lock
           python -m pip install --disable-pip-version-check --no-deps --no-build-isolation -e .
       - name: Set up Node.js
@@ -43,3 +44,8 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: Verify project
         run: pnpm check
+      - name: Report durable-store headroom
+        run: python -m hecavex_radar.capacity
+      - name: Build the supported retained-history growth fixture
+        if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
+        run: pnpm verify:growth

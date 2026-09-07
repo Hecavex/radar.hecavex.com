@@ -31,7 +31,7 @@ from .normalize import merge_signals, prepare_signal
 from .safety import parse_and_defang_url, refang, safe_reference_url, safe_screenshot_url, stable_id
 from .seeds import IntelligenceSeed, load_intelligence_seeds
 from .signal_detail import archive_record, raw_from_archive_record
-from .urlscan_checkpoint import SearchCheckpointStore, SearchUnavailable
+from .urlscan_checkpoint import CheckpointCapacityError, SearchCheckpointStore, SearchUnavailable
 
 API_ROOT = "https://urlscan.io"
 SEARCH_ENDPOINT = f"{API_ROOT}/api/v1/search/"
@@ -86,6 +86,7 @@ HUNT_STATE_FIELDS = frozenset(
         "selectedCandidates",
         "lastRunAt",
         "lastOutcome",
+        "lastFailureCode",
         "lastSuccessAt",
         "consecutiveFailures",
         "degradedSince",
@@ -95,7 +96,7 @@ HUNT_STATE_FIELDS = frozenset(
     }
 )
 PRE_HEALTH_HUNT_STATE_FIELDS = HUNT_STATE_FIELDS - {
-    "lastSuccessAt", "consecutiveFailures", "degradedSince"
+    "lastSuccessAt", "consecutiveFailures", "degradedSince", "lastFailureCode"
 }
 LEGACY_HUNT_STATE_FIELDS = PRE_HEALTH_HUNT_STATE_FIELDS - {"checkpointCoverage"}
 HUNT_OUTCOMES = frozenset({"skipped-not-configured", "completed", "budget-limited", "failed"})
@@ -1673,6 +1674,8 @@ def _hunt_state_path(root: str | Path) -> Path:
 def _validated_hunt_state(value: object) -> dict[str, Any] | None:
     if not isinstance(value, dict):
         return None
+    failure_code = value.get("lastFailureCode", "unknown" if value.get("lastOutcome") == "failed" else None)
+    value = {key: item for key, item in value.items() if key != "lastFailureCode"}
     if set(value) == LEGACY_HUNT_STATE_FIELDS:
         value = {
             **value,
@@ -1692,7 +1695,15 @@ def _validated_hunt_state(value: object) -> dict[str, Any] | None:
             "consecutiveFailures": 1 if failed else 0,
             "degradedSince": value.get("lastRunAt") if failed else None,
         }
-    if set(value) != HUNT_STATE_FIELDS:
+    if set(value) != HUNT_STATE_FIELDS - {"lastFailureCode"}:
+        return None
+    value["lastFailureCode"] = failure_code
+    allowed_failure_codes = {
+        None, "unknown", "state-capacity", "state-invalid", "provider-rate-limit", "provider-error",
+    }
+    if failure_code not in allowed_failure_codes:
+        return None
+    if (value.get("lastOutcome") == "failed") != (failure_code is not None):
         return None
     integers = (
         "searchRequests",
@@ -1873,6 +1884,7 @@ def _state_for_run(
     last_result_requests: int,
     checkpoint_coverage: dict[str, object] | None = None,
     previous: dict[str, Any] | None = None,
+    failure_code: str = "unknown",
 ) -> dict[str, Any]:
     timestamp = _timestamp(now)
     if outcome == "failed":
@@ -1904,6 +1916,7 @@ def _state_for_run(
         "selectedCandidates": selected_candidates,
         "lastRunAt": timestamp,
         "lastOutcome": outcome,
+        "lastFailureCode": failure_code if outcome == "failed" else None,
         "lastSuccessAt": last_success_at,
         "consecutiveFailures": consecutive_failures,
         "degradedSince": degraded_since,
@@ -1958,6 +1971,7 @@ def main() -> int:
                         now,
                         configured=True,
                         outcome="failed",
+                        failure_code="state-invalid",
                         search_requests=search_used,
                         result_requests=result_used,
                         candidate_cursor=previous_cursor if previous_count else 0,
@@ -2040,6 +2054,7 @@ def main() -> int:
             intelligence_sink=intelligence,
             search_checkpoints=checkpoints,
         )
+        checkpoints.preflight()
         added = write_urlscan_archive(root, signals, now)
         detail_added = write_urlscan_intelligence_archive(root, intelligence, now)
         if checkpoints.dirty:
@@ -2079,6 +2094,11 @@ def main() -> int:
                     now,
                     configured=True,
                     outcome="failed",
+                    failure_code=(
+                        "state-capacity" if isinstance(error, CheckpointCapacityError)
+                        else "provider-rate-limit" if isinstance(error, _URLScanRateLimitError)
+                        else "provider-error"
+                    ),
                     search_requests=requester.search_used,
                     result_requests=requester.result_used,
                     candidate_cursor=previous_cursor if previous_count else 0,

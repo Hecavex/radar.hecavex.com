@@ -60,4 +60,6 @@ The deterministic worklist at `data/review/review-queue.json` balances current p
 
 The corpus is a bounded regression set, not proof that every Lithuanian brand, spelling variation, script combination, or future false positive is covered. New matcher behavior should add both positive and negative cases before it is accepted.
 
+The September 2026 expansion contains 319 explicit cases covering all 46 reviewed registry brands. Every brand has an accepted boundary-delimited lure, a rejected neutral context, and official-domain/subdomain suppression examples. Existing diacritic, confusable, short-alias and collision cases remain. These are regression expectations, not analyst decisions about live candidates and not an estimate of detection precision. This expansion does not change the matcher algorithm or historical candidate scores.
+
 Microsoft documents the suppressed rewrite zones in [Defender for Cloud Apps proxy troubleshooting](https://learn.microsoft.com/en-us/defender-cloud-apps/troubleshooting-proxy-url).

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { IndexedCtHealth } from "./IndexedCtHealth.tsx";
 
 import { formatRelativeTime } from "../lib/format.ts";
 import { formatRelativeTimeLt } from "../lt/formatLt.ts";
@@ -192,6 +193,7 @@ export function CollectionHealth({ now = Date.now(), language = "en" }: { now?: 
         </div>
       </div>
       <p className="collection-health-summary">{lt ? outcomeSummariesLt[attempt.outcome] : attempt.summary}</p>
+      <IndexedCtHealth language={language} />
       <dl className="collection-health-grid">
         <div>
           <dt>{lt ? "Faktinis bandymas" : "Actual attempt"}</dt>

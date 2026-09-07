@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import copy
+import hashlib
+import json
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from urllib.parse import parse_qs, urlsplit
@@ -17,6 +19,47 @@ from hecavex_radar.urlscan import (
 from hecavex_radar.urlscan_checkpoint import SearchCheckpointStore, SearchUnavailable, _sort_token
 
 QUERY = "task.visibility:public AND date:>now-7d AND domain:example"
+
+
+def test_byte_retention_preserves_all_pending_cursors_at_supported_query_count(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.chdir(tmp_path)
+    now = datetime(2026, 9, 7, tzinfo=UTC)
+    store = SearchCheckpointStore.load("data/urlscan/search-checkpoints.json", now=now)
+    store.search(QUERY, 100, "unused", _PagedProvider())
+    seed = next(iter(store.state["queries"].values()))
+    store.state["queries"] = {}
+    for index in range(urlscan_checkpoint.MAXIMUM_QUERIES):
+        key = hashlib.sha256(str(index).encode()).hexdigest()
+        row = copy.deepcopy(seed)
+        row["queryHash"] = key
+        row["updatedAt"] = "2026-07-01T00:00:00.000Z"
+        store.state["queries"][key] = row
+    expected_cursors = {key: row["nextSearchAfter"] for key, row in store.state["queries"].items()}
+    path = store.commit()
+    assert path.stat().st_size <= urlscan_checkpoint.MAXIMUM_STATE_BYTES
+    loaded = SearchCheckpointStore.load(path, now=now)
+    assert len(loaded.state["queries"]) == urlscan_checkpoint.MAXIMUM_QUERIES
+    assert {key: row["nextSearchAfter"] for key, row in loaded.state["queries"].items()} == expected_cursors
+    with pytest.raises(urlscan_checkpoint.CheckpointCapacityError, match="state-capacity"):
+        loaded.search(QUERY + "-another", 100, "unused", lambda *_: pytest.fail("capacity preflight precedes network"))
+    assert loaded.summary()["backlog"] == urlscan_checkpoint.MAXIMUM_QUERIES
+
+
+def test_checkpoint_capacity_is_checked_before_archive_writes(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("URLSCAN_API_KEY", "test-key")
+    monkeypatch.setattr(urlscan, "hunt_urlscan", lambda *_args, **_kwargs: [])
+    def fail_preflight(_self: object) -> None:
+        raise urlscan_checkpoint.CheckpointCapacityError("state-capacity")
+    monkeypatch.setattr(SearchCheckpointStore, "preflight", fail_preflight)
+    monkeypatch.setattr(urlscan, "write_urlscan_archive", lambda *_: pytest.fail("must preflight first"))
+    assert urlscan.main() == 1
+    health = json.loads((tmp_path / "data/urlscan/hunt-state.json").read_text(encoding="utf-8"))
+    assert health["lastFailureCode"] == "state-capacity"
 
 
 def _result(number: int) -> dict[str, object]:

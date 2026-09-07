@@ -1,4 +1,4 @@
-export async function readBoundedJson(response: Response, maximumBytes: number): Promise<unknown> {
+export async function readBoundedBytes(response: Response, maximumBytes: number): Promise<Uint8Array<ArrayBuffer>> {
   if (!Number.isInteger(maximumBytes) || maximumBytes < 1) {
     throw new Error("The JSON byte limit is invalid.");
   }
@@ -39,6 +39,10 @@ export async function readBoundedJson(response: Response, maximumBytes: number):
     bytes.set(chunk, offset);
     offset += chunk.byteLength;
   }
-  const body = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
-  return JSON.parse(body) as unknown;
+  return bytes;
+}
+
+export async function readBoundedJson(response: Response, maximumBytes: number): Promise<unknown> {
+  const bytes = await readBoundedBytes(response, maximumBytes);
+  return JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(bytes)) as unknown;
 }

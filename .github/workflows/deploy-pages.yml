@@ -32,6 +32,7 @@ jobs:
     timeout-minutes: 20
     outputs:
       should_deploy: ${{ steps.freshness.outputs.should_deploy }}
+      revision: ${{ steps.freshness.outputs.revision }}
     permissions:
       contents: read
       pages: read
@@ -50,6 +51,7 @@ jobs:
         run: |
           should_deploy=true
           actual_sha="$(git rev-parse HEAD)"
+          echo "revision=${actual_sha}" >> "${GITHUB_OUTPUT}"
           if ! git merge-base --is-ancestor "${EXPECTED_SHA}" "${actual_sha}"; then
             echo "The triggering revision is no longer an ancestor of main."
             should_deploy=false
@@ -214,7 +216,17 @@ jobs:
     permissions:
       pages: write
       id-token: write
+      contents: read
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5
+      - name: Check out the exact deployed verification code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.build.outputs.revision }}
+          persist-credentials: false
+      - name: Verify live release identity and bilingual data freshness
+        env:
+          EXPECTED_REVISION: ${{ needs.build.outputs.revision }}
+        run: python -m hecavex_radar.live_smoke --expected-revision "${EXPECTED_REVISION}"

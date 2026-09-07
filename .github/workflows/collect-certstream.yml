@@ -166,7 +166,7 @@ jobs:
             exit 1
           fi
       - name: Notify bounded writer completion
-        if: always() && steps.cadence.outputs.due == 'true'
+        if: always()
         env:
           GH_TOKEN: ${{ github.token }}
           REPOSITORY: ${{ github.repository }}
@@ -176,7 +176,7 @@ jobs:
           SOURCE_REF: ${{ github.ref_name }}
         shell: bash
         run: |
-          collection_outcome="$(jq -r '.latestAttempt.outcome // "failed"' public/data/collection-health.json)"
+          collection_outcome="$(jq -r '.latestAttempt.outcome // "failed"' public/data/collection-health.json 2>/dev/null || echo failed)"
           case "${collection_outcome}" in
             healthy-empty|healthy-matches|no-input|partial|failed) ;;
             *) echo "Unexpected collection outcome: ${collection_outcome}" >&2; exit 1 ;;

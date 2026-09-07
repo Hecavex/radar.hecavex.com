@@ -110,6 +110,9 @@ jobs:
             data/history \
             data/coverage/brand-coverage.json \
             data/review/review-queue.json
+          if [[ -d public/data/history-parts ]]; then
+            git add -A -- public/data/history-parts
+          fi
           if git diff --cached --quiet; then
             echo "Snapshot is unchanged."
             exit 0

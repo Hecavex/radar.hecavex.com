@@ -9,8 +9,8 @@ const root = document.getElementById("root");
 if (!root) throw new Error("Missing Radar history root.");
 const bootstrap = root.dataset.historyBootstrap;
 if (bootstrap) {
-  void decodeHistoryBootstrap(bootstrap).then(({ history, renderedAt }) => {
-    hydrateRoot(root, <StrictMode><HistoryApp initialHistory={history} initialNow={renderedAt} /></StrictMode>);
+  void decodeHistoryBootstrap(bootstrap).then(({ history, renderedAt, totalSignals }) => {
+    hydrateRoot(root, <StrictMode><HistoryApp initialHistory={history} initialNow={renderedAt} initialTotal={totalSignals} /></StrictMode>);
     delete root.dataset.historyBootstrap;
     root.dataset.hydrated = "true";
   });

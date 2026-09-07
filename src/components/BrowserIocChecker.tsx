@@ -7,7 +7,7 @@ import {
   Upload,
   XCircle,
 } from "lucide-react";
-import { type ChangeEvent, useMemo, useRef, useState } from "react";
+import { type ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   MAXIMUM_IOC_FILE_BYTES,
@@ -17,6 +17,7 @@ import {
   type IocCheckResult,
 } from "../lib/iocCheck.ts";
 import { formatDateTime } from "../lib/format.ts";
+import { loadHistory } from "../lib/historyData.ts";
 import { formatDateTimeLt } from "../lt/formatLt.ts";
 import type { RadarHistory, RadarSignal } from "../types.ts";
 
@@ -48,17 +49,31 @@ function localizeError(error: string, language: "en" | "lt"): string {
 export type BrowserIocCheckerProps = {
   signals: readonly RadarSignal[];
   history: RadarHistory | null;
+  historyTotal?: number;
   signalHref?: (signalId: string) => string;
   language?: "en" | "lt";
 };
 
 export function BrowserIocChecker({
   signals,
-  history,
+  history: initialHistory,
+  historyTotal = initialHistory?.signals.length ?? 0,
   signalHref = (signalId) => `/signals/${signalId}/`,
   language = "en",
 }: BrowserIocCheckerProps) {
   const lt = language === "lt";
+  const incomplete = historyTotal > (initialHistory?.signals.length ?? 0);
+  const [history, setHistory] = useState(incomplete ? null : initialHistory);
+  const [historyError, setHistoryError] = useState(false);
+  useEffect(() => {
+    if (!incomplete) return;
+    const controller = new AbortController();
+    void loadHistory(controller.signal).then(setHistory).catch(() => {
+      if (!controller.signal.aborted) setHistoryError(true);
+    });
+    return () => controller.abort();
+  }, [incomplete]);
+  const historyReady = !incomplete || history !== null;
   const [input, setInput] = useState("");
   const [submitted, setSubmitted] = useState<ReturnType<typeof parseIocInput> | null>(null);
   const [fileMessage, setFileMessage] = useState<string | null>(null);
@@ -84,6 +99,7 @@ export function BrowserIocChecker({
   const visibleResults = filteredResults.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
 
   const runCheck = () => {
+    if (!historyReady) return;
     const bytes = new TextEncoder().encode(input).byteLength;
     if (bytes > MAXIMUM_IOC_FILE_BYTES) {
       setFileMessage(lt ? `Įvestis viršija ${MAXIMUM_IOC_FILE_BYTES / 1024} KiB.` : `Input is larger than ${MAXIMUM_IOC_FILE_BYTES / 1024} KiB.`);
@@ -150,6 +166,9 @@ export function BrowserIocChecker({
       </div>
 
       <div className="radar-ioc-input">
+        {!historyReady && <p role="status">{historyError
+          ? (lt ? "Visa istorija nepasiekiama. Paieška išjungta, kad nepilni duomenys nebūtų palaikyti sutapimų nebuvimu." : "Complete history is unavailable. Lookup is disabled so incomplete data cannot be mistaken for no match.")
+          : (lt ? "Įkeliama ir tikrinama visa vieša istorija prieš paiešką." : "Loading and verifying complete public history before lookup.")}</p>}
         <label htmlFor="radar-ioc-values">{lt ? "Vienas indikatorius eilutėje" : "One indicator per line"}</label>
         <textarea
           id="radar-ioc-values"
@@ -171,7 +190,7 @@ export function BrowserIocChecker({
           {" "}{lt ? "Priimami HTTP(S), hxxp(s), įprasti neutralizuoti taškai, MD5, SHA-1 ir SHA-256. Tuščios eilutės ir komentarai, prasidedantys #, nepaisomi." : "HTTP(S), hxxp(s), common dot defangs, MD5, SHA-1 and SHA-256 are accepted. Blank and # comment lines are ignored."}
         </p>
         <div className="radar-ioc-actions">
-          <button type="button" className="radar-tool-button radar-tool-button--primary" onClick={runCheck} disabled={!input.trim()}>
+          <button type="button" className="radar-tool-button radar-tool-button--primary" onClick={runCheck} disabled={!input.trim() || !historyReady}>
             <SearchCheck aria-hidden="true" /> {lt ? "Tikrinti vietoje" : "Check locally"}
           </button>
           <label className="radar-tool-button radar-tool-file-button">

@@ -596,6 +596,7 @@ def _public_urlscan_summary(value: object) -> dict[str, object] | None:
     last_attempt_time = _parse_timestamp(last_attempt_at)
     configured = value.get("configured")
     outcome = value.get("lastOutcome")
+    failure_code = value.get("lastFailureCode")
     raw_coverage = value.get("checkpointCoverage")
     if raw_coverage is None:
         raw_coverage = {
@@ -627,13 +628,13 @@ def _public_urlscan_summary(value: object) -> dict[str, object] | None:
         or (oldest is not None and _canonical_public_timestamp(oldest) is None)
     ):
         return None
-    return {
-        "generatedAt": generated_at,
-        "configured": configured,
-        "lastOutcome": outcome,
-        "lastAttemptAt": last_attempt_at,
-        "checkpointCoverage": dict(raw_coverage),
+    summary = {
+        "generatedAt": generated_at, "configured": configured, "lastOutcome": outcome,
+        "lastAttemptAt": last_attempt_at, "checkpointCoverage": dict(raw_coverage),
     }
+    if failure_code in {"unknown", "state-capacity", "state-invalid", "provider-rate-limit", "provider-error"}:
+        summary["lastFailureCode"] = failure_code
+    return summary
 
 
 def build_pipeline_health(
@@ -761,7 +762,7 @@ def build_pipeline_health(
                     "matches",
                     "newRecords",
                 ),
-                allowed_outcomes=frozenset({"completed", "partial", "failed"}),
+                allowed_outcomes=frozenset({"completed", "partial", "failed", "deferred-backoff"}),
                 failure_codes=True,
             ),
             "domainContext": _public_state_summary(
@@ -845,6 +846,11 @@ def _public_state_summary(
     provider = state.get("provider")
     if isinstance(provider, str) and provider in {"crt.sh"}:
         summary["provider"] = provider
+        from .ct_search import _normalize_state, _valid_state
+
+        normalized = _normalize_state(state)
+        if _valid_state(normalized):
+            summary["providerHealth"] = cast(dict[str, object], normalized)["providerHealth"]
     return summary
 
 
@@ -1175,7 +1181,8 @@ def publish_supplemental_artifacts(
 
     effective_history = history
     if effective_history is None:
-        loaded_history = _read_json(repository / PUBLIC_DATA / "history.json", 512 * 1024)
+        from .history import read_public_history
+        loaded_history = read_public_history(repository / PUBLIC_DATA / "history.json")
         effective_history = cast(Mapping[str, object], loaded_history) if isinstance(loaded_history, dict) else {
             "signals": list(complete_signals)
         }
@@ -1345,6 +1352,9 @@ def publish_supplemental_artifacts(
         schema_by_path[relative] = (
             f"{SCHEMA_BASE}json-feed-v1.schema.json" if path.name.endswith(".feed.json") else None
         )
+    from .history_partitions import partition_paths
+    for path in partition_paths(repository / PUBLIC_DATA / "history.json"):
+        schema_by_path[path.relative_to(repository)] = None
     for path in schema_paths:
         schema_by_path[path.relative_to(repository)] = None
     for path in schema_by_path:
@@ -1479,7 +1489,8 @@ def validate_publication(repository: Path, validate_stix: bool = False) -> None:
         or dashboard_ids != complete_ids[: len(dashboard_ids)]
     ):
         raise ValueError("Signal index counts or dashboard-prefix ordering do not match the published signal sets.")
-    history_artifact = _load_required_json(repository / PUBLIC_DATA / "history.json", 512 * 1024)
+    from .history import read_public_history
+    history_artifact = read_public_history(repository / PUBLIC_DATA / "history.json")
     if not isinstance(history_artifact, dict) or not isinstance(history_artifact.get("signals"), list):
         raise ValueError("Public history does not provide a bounded signal collection.")
     history_ids = {
@@ -1595,6 +1606,9 @@ def validate_publication(repository: Path, validate_stix: bool = False) -> None:
             expected_manifest_schemas[feed_reference] = (
                 f"{SCHEMA_BASE}json-feed-v1.schema.json" if field == "jsonFeed" else None
             )
+    from .history_partitions import partition_paths
+    for part in partition_paths(repository / PUBLIC_DATA / "history.json"):
+        expected_manifest_schemas["/" + part.relative_to(repository / "public").as_posix()] = None
     manifest_paths: set[str] = set()
     for raw_artifact in artifacts:
         artifact = cast(dict[str, object], raw_artifact)

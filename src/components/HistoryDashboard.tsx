@@ -9,7 +9,8 @@ const PAGE_SIZE = 25;
 
 const reasonLabel = (value: string) => value.replaceAll("-", " ");
 
-export function HistoryDashboard({ history, now = Date.now() }: { history: RadarHistory; now?: number }) {
+export function HistoryDashboard({ history, now = Date.now(), totalSignals = history.signals.length }: { history: RadarHistory; now?: number; totalSignals?: number }) {
+  const partial = totalSignals > history.signals.length;
   const [query, setQuery] = useState("");
   const [brand, setBrand] = useState("all");
   const [status, setStatus] = useState<SignalStatus | "all">("all");
@@ -66,6 +67,8 @@ export function HistoryDashboard({ history, now = Date.now() }: { history: Radar
         <article className="metric-card"><Archive aria-hidden="true" /><span>Observations retained</span><strong>{formatNumber(observations)}</strong></article>
         <article className="metric-card"><ShieldCheck aria-hidden="true" /><span>Explicit transitions</span><strong>{formatNumber(transitions)}</strong></article>
       </section>
+
+      {partial && <p role="status">Showing a bounded preview of {history.signals.length} of {totalSignals} retained records. Counts and filters above describe the loaded preview. The complete verified history loads in this browser. <a href="/data/history.json">Download the complete history index</a>.</p>}
 
       <section className="signal-section" id="history-records" aria-labelledby="history-records-title">
         <div className="section-heading">

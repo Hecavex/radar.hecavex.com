@@ -20,6 +20,7 @@ from .brands import (
     resolve_brand_name,
     score_domain,
 )
+from .history_partitions import read_document, write_document
 from .models import RadarSignal, ReasonCode, SignalStatus
 from .provenance import normalize_reason_codes
 from .safety import defang_host, stable_id
@@ -450,7 +451,7 @@ def _load_summary(path: Path, now: str) -> HistorySummary:
     try:
         if path.stat().st_size > MAXIMUM_SUMMARY_BYTES:
             raise ValueError("History summary exceeds 12 MiB.")
-        value: Any = json.loads(path.read_text(encoding="utf-8"))
+        value: Any = read_document(path, MAXIMUM_SUMMARY_BYTES)
     except FileNotFoundError:
         return _empty_summary(now)
     except json.JSONDecodeError as error:
@@ -590,14 +591,15 @@ def compact_history(root: str | Path, now: datetime, detail_days: int, summary_d
         signal
         for signal in summary["signals"]
         if (last_seen := _timestamp(signal["lastSeen"])) is not None and last_seen >= summary_cutoff
-    ][:MAXIMUM_SUMMARY_SIGNALS]
+    ]
+    if len(summary["signals"]) > MAXIMUM_SUMMARY_SIGNALS:
+        raise ValueError("Retained history exceeds 25,000 hosts. Refusing silent historical eviction.")
     summary["generatedAt"] = now_text
     existing_summary: object = None
     with suppress(FileNotFoundError, json.JSONDecodeError, OSError):
-        existing_summary = json.loads(summary_path.read_text(encoding="utf-8"))
+        existing_summary = read_document(summary_path, MAXIMUM_SUMMARY_BYTES)
     if _stable_artifact_view(existing_summary) != _stable_artifact_view(summary):
-        body = (json.dumps(summary, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
-        _atomic_write(summary_path, body, MAXIMUM_SUMMARY_BYTES)
+        write_document(summary_path, dict(summary), MAXIMUM_SUMMARY_BYTES, _atomic_write)
     for path in old_files:
         path.unlink(missing_ok=True)
         with suppress(OSError):
@@ -657,7 +659,7 @@ def read_public_history(path: str | Path) -> PublicHistory | None:
     try:
         if target.stat().st_size > MAXIMUM_PUBLIC_BYTES:
             raise ValueError("Public history exceeds 512 KiB.")
-        value: Any = json.loads(target.read_text(encoding="utf-8"))
+        value: Any = read_document(target, MAXIMUM_PUBLIC_BYTES)
     except FileNotFoundError:
         return None
     except json.JSONDecodeError as error:
@@ -708,13 +710,12 @@ def _stable_artifact_view(value: object) -> object:
 
 def _write_public_if_changed(path: Path, payload: PublicHistory) -> None:
     try:
-        existing: object = json.loads(path.read_text(encoding="utf-8"))
+        existing: object = read_document(path, MAXIMUM_PUBLIC_BYTES)
     except (FileNotFoundError, json.JSONDecodeError, OSError):
         existing = None
     if _stable_artifact_view(existing) == _stable_artifact_view(payload):
         return
-    body = (json.dumps(payload, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
-    _atomic_write(path, body, MAXIMUM_PUBLIC_BYTES)
+    write_document(path, dict(payload), MAXIMUM_PUBLIC_BYTES, _atomic_write)
 
 
 def update_history(
@@ -770,8 +771,8 @@ def update_history(
                 "statusTransitions": signal["statusTransitions"],
             }
         )
-        if len(public_signals) >= maximum_signals:
-            break
+        if len(public_signals) > maximum_signals:
+            raise ValueError("Eligible public history exceeds its configured row limit. No rows were silently omitted.")
     now_text = now.astimezone(UTC).isoformat(timespec="milliseconds").replace("+00:00", "Z")
     payload: PublicHistory = {
         "schemaVersion": 1,

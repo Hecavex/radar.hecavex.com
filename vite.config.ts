@@ -1,10 +1,12 @@
 import { fileURLToPath } from "node:url";
+import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, isAbsolute, relative, resolve } from "node:path";
 
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import type { StaticPageData } from "./src/lib/staticPageBootstrap.ts";
+import { historyPreview } from "./src/lib/historyPreview.ts";
 
 const snapshotPath = fileURLToPath(new URL("./public/data/radar.json", import.meta.url));
 const historyPath = fileURLToPath(new URL("./public/data/history.json", import.meta.url));
@@ -14,6 +16,7 @@ const qualityPath = fileURLToPath(new URL("./public/data/quality-metrics.json", 
 const relatedPath = fileURLToPath(new URL("./public/data/related-observations.json", import.meta.url));
 const publicDataPath = fileURLToPath(new URL("./public/data", import.meta.url));
 const outputPath = fileURLToPath(new URL("./dist", import.meta.url));
+const releaseRevision = execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim();
 const cloudflareAnalyticsScript = "https://static.cloudflareinsights.com/beacon.min.js";
 const cloudflareAnalyticsToken = process.env.HECAVEX_ANALYTICS_TOKEN?.trim() ?? "";
 if (cloudflareAnalyticsToken && !/^[a-f\d]{32}$/i.test(cloudflareAnalyticsToken)) {
@@ -187,8 +190,10 @@ function staticPagePlugin() {
           import("./src/prerender.ts"),
         ]);
         const snapshot = parseSnapshot(readJson(snapshotPath));
-        const history = await parseHistory(readJson(historyPath));
+        const history = await parseHistory(readJson(historyPath), async (path) =>
+          new Uint8Array(readFileSync(resolve(dirname(historyPath), path))));
         const renderedAt = Date.parse(page === "history" ? history.generatedAt : snapshot.lastSuccessfulSyncAt);
+        const embeddedHistory = historyPreview(history);
         let staticMarkup: string;
         let bootstrap = "";
         if (staticPage) {
@@ -198,7 +203,8 @@ function staticPagePlugin() {
           ]);
           const data = {
             snapshot,
-            history,
+            history: embeddedHistory,
+            historyTotal: history.signals.length,
             events: parseEventArtifact(readJson(eventsPath), availableSignalIds),
             trends: readJson(trendsPath),
             quality: readJson(qualityPath),
@@ -213,11 +219,11 @@ function staticPagePlugin() {
             ? ` data-radar-bootstrap="${encodeSnapshotBootstrap(snapshot, renderedAt)}"`
             : "";
         } else {
-          staticMarkup = renderPrerenderedPage(page!, snapshot, renderedAt, history, pageLanguage);
+          staticMarkup = renderPrerenderedPage(page!, snapshot, renderedAt, embeddedHistory, pageLanguage, history.signals.length);
           bootstrap = page === "radar"
             ? ` data-radar-bootstrap="${encodeSnapshotBootstrap(snapshot, renderedAt)}"`
             : page === "history"
-              ? ` data-history-bootstrap="${encodeHistoryBootstrap(history, renderedAt)}"`
+              ? ` data-history-bootstrap="${encodeHistoryBootstrap(embeddedHistory, renderedAt, history.signals.length)}"`
               : page === "documentation"
                 ? ` data-page-language="${pageLanguage}"`
               : "";
@@ -263,7 +269,12 @@ function dynamicRoutesPlugin() {
         import("./src/prerender.ts"),
       ]);
       const snapshot = parseSnapshot(readJson(snapshotPath));
-      const history = await parseHistory(readJson(historyPath));
+      const history = await parseHistory(readJson(historyPath), async (path) =>
+        new Uint8Array(readFileSync(resolve(dirname(historyPath), path))));
+      mkdirSync(resolve(outputPath, ".well-known"), { recursive: true });
+      writeFileSync(resolve(outputPath, ".well-known/hecavex-release.json"), JSON.stringify({
+        schemaVersion: 1, repository: "Hecavex/radar.hecavex.com", revision: releaseRevision,
+      }) + "\n");
       const related = parseRelatedObservations(readJson(relatedPath));
       const currentById = new Map(snapshot.signals.map((signal) => [signal.id, signal]));
       const historicalById = new Map(history.signals.map((signal) => [signal.id, signal]));
@@ -371,7 +382,11 @@ function dynamicRoutesPlugin() {
         for (const language of ["en", "lt"] as const) {
           const path = brandPath(brand.brand, language);
           const alternate = brandPath(brand.brand, language === "en" ? "lt" : "en");
-          const data = { brand, generatedAt: snapshot.generatedAt, signals: currentSignals, history: brandHistory, language };
+          const data = {
+            brand, generatedAt: snapshot.generatedAt, signals: currentSignals,
+            history: historyPreview({ ...history, signals: brandHistory }).signals.slice(0, 50),
+            historyTotal: brandHistory.length, language,
+          };
           const description = language === "lt"
             ? `${brand.brand} vieša HECAVEX Radar aptikimo apimtis, naujausi galimo apsimetimo kandidatai ir pokyčių srautai.`
             : `${brand.brand} public HECAVEX Radar detection scope, recent potential impersonation candidates, and change feeds.`;

@@ -6,7 +6,7 @@ from pathlib import Path
 from types import SimpleNamespace
 from typing import cast
 
-from hypothesis import given
+from hypothesis import given, settings
 from hypothesis import strategies as st
 from pytest import MonkeyPatch
 
@@ -87,6 +87,9 @@ def _sources() -> list[RadarSource]:
 
 
 @given(st.integers(min_value=1, max_value=180), st.integers(min_value=4_000, max_value=80_000))
+# This is a deterministic byte-bound property, not a microbenchmark. CPU
+# contention in parallel build/test jobs must not replace its actual assertions.
+@settings(deadline=None)
 def test_dashboard_budget_selects_a_deterministic_prefix(count: int, budget: int) -> None:
     signals = [_signal(number) for number in range(count)]
     try:

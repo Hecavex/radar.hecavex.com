@@ -1315,6 +1315,7 @@ main:not(.state-page) {
 
 .methodology-toc a {
   display: inline-flex;
+  min-height: 24px;
   align-items: center;
   gap: .35rem;
   color: var(--text-soft);
@@ -1614,6 +1615,12 @@ main:not(.state-page) {
   color: var(--text-soft);
   font: 650 .64rem var(--mono);
   text-decoration: none;
+}
+
+.docs-toc a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
 }
 
 .docs-toc a:hover,
@@ -3149,6 +3156,10 @@ td time {
 }
 
 .site-footer nav a {
+  display: inline-flex;
+  min-height: 24px;
+  padding-block: .35rem;
+  align-items: center;
   color: var(--muted);
   font: 500 .62rem var(--mono);
   text-decoration: none;

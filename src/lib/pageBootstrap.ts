@@ -20,6 +20,7 @@ export type BrandPageData = {
   generatedAt: string;
   signals: RadarSignal[];
   history: RadarHistorySignal[];
+  historyTotal?: number;
   language: PageLanguage;
 };
 

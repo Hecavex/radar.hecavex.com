@@ -306,7 +306,7 @@ def _evaluate_ct_search(repository: Path, now: datetime, findings: list[HealthFi
         persistent_failure = True
     else:
         persistent_failure = attempt_age is None or attempt_age > 90 * 60
-    if outcome in {"failed", "partial"} and persistent_failure:
+    if outcome in {"failed", "partial", "deferred-backoff"} and persistent_failure:
         suffix = ",".join(cast(list[str], codes)) if codes else "unclassified-legacy"
         findings.append(
             HealthFinding(

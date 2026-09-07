@@ -35,6 +35,14 @@ class SearchUnavailable(RuntimeError):
     """Signal that a search was not performed and must not advance state."""
 
 
+class CheckpointCapacityError(RuntimeError):
+    """Durable unresolved work cannot fit without losing continuation state."""
+
+
+def _state_body(state: dict[str, Any]) -> str:
+    return json.dumps(state, ensure_ascii=False, separators=(",", ":"), sort_keys=True) + "\n"
+
+
 def _timestamp(value: datetime) -> str:
     aware = value if value.tzinfo is not None else value.replace(tzinfo=UTC)
     return aware.astimezone(UTC).isoformat(timespec="milliseconds").replace("+00:00", "Z")
@@ -276,9 +284,49 @@ class SearchCheckpointStore:
         state["queries"] = {
             key: row
             for key, row in queries.items()
-            if (updated := _parse_timestamp(row["updatedAt"])) is not None and updated >= cutoff
+            if not row["complete"]
+            or ((updated := _parse_timestamp(row["updatedAt"])) is not None and updated >= cutoff)
         }
         return cls(target, state, now)
+
+    def _fit_capacity(self, *, reserve_bytes: int = 0, protected_key: str | None = None) -> None:
+        """Trim replay hints, then completed caches, never unresolved cursors.
+
+        Recent IDs are overlap optimizations, not progress checkpoints. Keep
+        their newest ID where possible. Losing a hint can cause bounded replay,
+        but cannot mark an unprocessed provider page complete.
+        """
+        queries = cast(dict[str, dict[str, Any]], self.state["queries"])
+        ordered = sorted(queries.values(), key=lambda row: (row["updatedAt"], row["queryHash"]))
+        def fits() -> bool:
+            return (
+                len(queries) <= MAXIMUM_QUERIES
+                and len(_state_body(self.state).encode("utf-8")) + reserve_bytes <= MAXIMUM_STATE_BYTES
+            )
+        if fits():
+            return
+        for row in ordered:
+            if len(row["recentIds"]) > 1:
+                row["recentIds"] = row["recentIds"][:1]
+                self.dirty = True
+                if fits():
+                    return
+        for row in ordered:
+            if row["complete"] and row["queryHash"] != protected_key:
+                del queries[row["queryHash"]]
+                self.dirty = True
+                if fits():
+                    return
+        raise CheckpointCapacityError(
+            "state-capacity: unresolved URLScan checkpoints fill the bounded store; "
+            "continuation cursors were preserved."
+        )
+
+    def preflight(self) -> None:
+        """Check final serialization before an archive write can succeed."""
+        self._fit_capacity()
+        if not _valid_state(self.state):
+            raise ValueError("Refusing to write invalid URLScan checkpoint state.")
 
     def search(
         self,
@@ -293,7 +341,19 @@ class SearchCheckpointStore:
             raise ValueError("URLScan searches must be restricted to public scans.")
         page_size = min(MAXIMUM_RESULTS_PER_CALL, max(1, size))
         key = _query_hash(query)
+        # Reserve room for bounded sort cursors and metadata before spending
+        # provider budget. Replay hints can subsequently be compacted to fit.
+        self._fit_capacity(reserve_bytes=4096, protected_key=key)
         queries = cast(dict[str, dict[str, Any]], self.state["queries"])
+        if key not in queries and len(queries) == MAXIMUM_QUERIES:
+            completed = sorted(
+                (row for row in queries.values() if row["complete"]),
+                key=lambda row: (row["updatedAt"], row["queryHash"]),
+            )
+            if not completed:
+                raise CheckpointCapacityError("state-capacity: all URLScan query slots contain unresolved work.")
+            del queries[completed[0]["queryHash"]]
+            self.dirty = True
         previous = queries.get(key)
         previous_ids = set(cast(list[str], previous.get("recentIds", []))) if previous else set()
         try:
@@ -398,11 +458,9 @@ class SearchCheckpointStore:
             "overlapResults": overlap,
             "recentIds": recent_ids,
         }
-        if len(queries) > MAXIMUM_QUERIES:
-            ordered = sorted(queries.values(), key=lambda row: row["updatedAt"], reverse=True)[:MAXIMUM_QUERIES]
-            self.state["queries"] = {row["queryHash"]: row for row in ordered}
         self.state["generatedAt"] = _timestamp(self.now)
         self.dirty = True
+        self._fit_capacity(protected_key=key)
         return unique
 
     def summary(self) -> dict[str, object]:
@@ -422,11 +480,8 @@ class SearchCheckpointStore:
         }
 
     def commit(self) -> Path:
-        if not _valid_state(self.state):
-            raise ValueError("Refusing to write invalid URLScan checkpoint state.")
-        body = json.dumps(self.state, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
-        if len(body.encode("utf-8")) > MAXIMUM_STATE_BYTES:
-            raise ValueError("Refusing to write URLScan checkpoint state larger than 256 KiB.")
+        self.preflight()
+        body = _state_body(self.state)
         target = _bounded_path(self.path)
         target.parent.mkdir(parents=True, exist_ok=True)
         target = _bounded_path(target)

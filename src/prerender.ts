@@ -26,6 +26,7 @@ export function renderPrerenderedPage(
   renderedAt = Date.now(),
   history?: RadarHistory,
   language: SiteLanguage = "en",
+  historyTotal?: number,
 ): string {
   if (page === "radar") {
     return renderToString(
@@ -38,9 +39,10 @@ export function renderPrerenderedPage(
   if (page === "history") {
     if (!history) throw new Error("History data is required to prerender the history page.");
     return renderToString(
-      createElement<{ initialHistory?: RadarHistory; initialNow?: number }>(HistoryApp, {
+      createElement<{ initialHistory?: RadarHistory; initialNow?: number; initialTotal?: number }>(HistoryApp, {
         initialHistory: history,
         initialNow: renderedAt,
+        initialTotal: historyTotal,
       }),
     );
   }

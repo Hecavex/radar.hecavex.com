@@ -23,6 +23,13 @@ def test_versioned_matcher_corpus() -> None:
     assert corpus["unicodeProfile"]["uts46"] == UNICODE_SECURITY_PROFILE["uts46"]
     assert corpus["unicodeProfile"]["uts39"] == UNICODE_SECURITY_PROFILE["uts39"]
     assert len({case["id"] for case in corpus["cases"]}) == len(corpus["cases"])
+    for entry in registry.entries:
+        cases = [case for case in corpus["cases"] if case.get("brand") == entry.brand]
+        assert any(case["expected"]["matched"] for case in cases), entry.brand
+        assert any(case["domain"] == entry.official_domains[0] for case in cases), entry.brand
+        assert any(
+            case["domain"].endswith("-garden.example") and not case["expected"]["matched"] for case in cases
+        ), entry.brand
 
     for case in corpus["cases"]:
         result = score_domain(case["domain"], registry)

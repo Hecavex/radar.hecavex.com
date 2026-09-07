@@ -96,6 +96,7 @@ export type QualityMetrics = {
 export type StaticPageData = {
   snapshot: RadarSnapshot;
   history: RadarHistory;
+  historyTotal?: number;
   events: RadarEventArtifact;
   trends: DailyTrends;
   quality: QualityMetrics;

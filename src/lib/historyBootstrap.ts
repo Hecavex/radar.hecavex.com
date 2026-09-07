@@ -4,11 +4,12 @@ import { parseHistory } from "./historyData.ts";
 export type HistoryBootstrap = {
   history: RadarHistory;
   renderedAt: number;
+  totalSignals: number;
 };
 
-export function encodeHistoryBootstrap(history: RadarHistory, renderedAt: number): string {
+export function encodeHistoryBootstrap(history: RadarHistory, renderedAt: number, totalSignals = history.signals.length): string {
   if (!Number.isInteger(renderedAt) || renderedAt < 0) throw new Error("The prerender timestamp is invalid.");
-  return encodeURIComponent(JSON.stringify({ history, renderedAt }));
+  return encodeURIComponent(JSON.stringify({ history, renderedAt, totalSignals }));
 }
 
 export async function decodeHistoryBootstrap(value: string): Promise<HistoryBootstrap> {
@@ -20,5 +21,10 @@ export async function decodeHistoryBootstrap(value: string): Promise<HistoryBoot
   if (!Number.isInteger(candidate.renderedAt) || (candidate.renderedAt as number) < 0) {
     throw new Error("The embedded history render timestamp is invalid.");
   }
-  return { history: await parseHistory(candidate.history), renderedAt: candidate.renderedAt as number };
+  const history = await parseHistory(candidate.history);
+  const totalSignals = candidate.totalSignals ?? history.signals.length;
+  if (!Number.isInteger(totalSignals) || (totalSignals as number) < history.signals.length || (totalSignals as number) > 25_000) {
+    throw new Error("Invalid embedded history total.");
+  }
+  return { history, renderedAt: candidate.renderedAt as number, totalSignals: totalSignals as number };
 }

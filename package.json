@@ -25,7 +25,8 @@
     "typecheck": "pnpm typecheck:python && pnpm typecheck:frontend",
     "verify:contracts": "node scripts/verify-snapshot-contract.mjs",
     "verify:quality": "python -m hecavex_radar.quality_artifacts --check",
-    "verify:site": "node --test scripts/deployment-capacity.test.mjs && node --expose-gc scripts/verify-site.mjs static && node --expose-gc scripts/verify-site.mjs browser",
+    "verify:growth": "node --experimental-strip-types scripts/verify-history-growth.mjs",
+    "verify:site": "node --experimental-strip-types --test scripts/deployment-capacity.test.mjs scripts/history-partitions.test.mjs scripts/gzip-budget.test.mjs && node --expose-gc scripts/verify-site.mjs static && node --expose-gc scripts/verify-site.mjs browser",
     "validate:publication": "python -m hecavex_radar.publication --stix",
     "check:frontend": "pnpm lint:frontend && pnpm typecheck:frontend && pnpm verify:contracts && pnpm build && pnpm verify:site",
     "check": "pnpm test:python && pnpm lint:python && pnpm typecheck:python && pnpm verify:quality && pnpm check:frontend && pnpm validate:publication"

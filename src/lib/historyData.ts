@@ -6,7 +6,7 @@ import {
   type ReasonCode,
   type SignalStatus,
 } from "../types.ts";
-import { readBoundedJson } from "./boundedJson.ts";
+import { readBoundedBytes, readBoundedJson } from "./boundedJson.ts";
 
 const MAXIMUM_HISTORY_BYTES = 512 * 1024;
 
@@ -127,7 +127,41 @@ const isHistorySignal = async (value: unknown): Promise<boolean> => {
   );
 };
 
-export async function parseHistory(value: unknown): Promise<RadarHistory> {
+type PartReader = (path: string, maximumBytes: number) => Promise<Uint8Array<ArrayBuffer>>;
+
+export async function parseHistory(value: unknown, readPart?: PartReader): Promise<RadarHistory> {
+  if (isRecord(value) && "partitionFormat" in value) {
+    if (!readPart || value.schemaVersion !== 2 || value.partitionFormat !== "hecavex-history-partitions-v1" ||
+      !hasExactKeys(value, [...HISTORY_FIELDS, "partitionFormat", "partitions", "signalCount"]) ||
+      !Array.isArray(value.signals) || value.signals.length !== 0 ||
+      !Number.isInteger(value.signalCount) || (value.signalCount as number) < 0 || (value.signalCount as number) > 25_000 ||
+      !Array.isArray(value.partitions) || value.partitions.length < 1 || value.partitions.length > 512) {
+      throw new Error("Invalid or unsupported history partition index.");
+    }
+    const rows: unknown[] = [];
+    const seen = new Set<string>();
+    for (const part of value.partitions) {
+      if (!isRecord(part) || !hasExactKeys(part, ["path", "bytes", "sha256", "signals"]) ||
+        typeof part.path !== "string" || !/^history-parts\/[a-f0-9]{64}\.json$/.test(part.path) ||
+        !Number.isInteger(part.bytes) || (part.bytes as number) < 1 || (part.bytes as number) > 256 * 1024 ||
+        !Number.isInteger(part.signals) || (part.signals as number) < 1 || (part.signals as number) > 25_000 ||
+        seen.has(part.path)) throw new Error("Invalid history partition descriptor.");
+      seen.add(part.path);
+      const bytes = await readPart(part.path, 256 * 1024);
+      const digest = [...new Uint8Array(await crypto.subtle.digest("SHA-256", bytes))]
+        .map((byte) => byte.toString(16).padStart(2, "0")).join("");
+      if (bytes.byteLength !== part.bytes || digest !== part.sha256 || part.path !== `history-parts/${digest}.json`) {
+        throw new Error("History partition integrity check failed.");
+      }
+      const chunk: unknown = JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(bytes));
+      if (!Array.isArray(chunk) || chunk.length !== part.signals) throw new Error("History partition count mismatch.");
+      rows.push(...chunk);
+      if (rows.length > (value.signalCount as number)) throw new Error("History exceeds its declared total.");
+    }
+    if (rows.length !== value.signalCount) throw new Error("History is incomplete.");
+    value = Object.fromEntries(Object.entries({ ...value, schemaVersion: 1, signals: rows })
+      .filter(([key]) => !["partitionFormat", "partitions", "signalCount"].includes(key)));
+  }
   if (
     !isRecord(value) ||
     !hasExactKeys(value, HISTORY_FIELDS) ||
@@ -162,5 +196,11 @@ export async function loadHistory(signal?: AbortSignal): Promise<RadarHistory> {
     signal,
   });
   if (!response.ok) throw new Error(`History request failed with HTTP ${response.status}.`);
-  return parseHistory(await readBoundedJson(response, MAXIMUM_HISTORY_BYTES));
+  return parseHistory(await readBoundedJson(response, MAXIMUM_HISTORY_BYTES), async (path, maximum) => {
+    const part = await fetch(`/data/${path}`, {
+      cache: "no-store", credentials: "omit", referrerPolicy: "no-referrer", signal,
+    });
+    if (!part.ok) throw new Error(`History partition request failed with HTTP ${part.status}.`);
+    return readBoundedBytes(part, maximum);
+  });
 }

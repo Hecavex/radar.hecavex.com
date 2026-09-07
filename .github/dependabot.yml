@@ -4,6 +4,9 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    ignore:
+      - dependency-name: stix2-validator
+        versions: ["3.3.1"]
     groups:
       python-runtime:
         dependency-type: production

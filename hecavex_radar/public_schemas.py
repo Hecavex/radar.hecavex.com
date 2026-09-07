@@ -369,6 +369,9 @@ PIPELINE_HEALTH_SCHEMA: Final[dict[str, object]] = {
                 "generatedAt": {"type": "string", "pattern": TIMESTAMP_PATTERN},
                 "configured": {"type": "boolean"},
                 "lastOutcome": {"enum": ["skipped-not-configured", "completed", "budget-limited", "failed"]},
+                "lastFailureCode": {"enum": [
+                    "unknown", "state-capacity", "state-invalid", "provider-rate-limit", "provider-error",
+                ]},
                 "lastAttemptAt": {"type": "string", "pattern": TIMESTAMP_PATTERN},
                 "checkpointCoverage": {
                     "type": "object",
@@ -391,6 +394,27 @@ PIPELINE_HEALTH_SCHEMA: Final[dict[str, object]] = {
             "properties": {
                 "generatedAt": {"type": "string", "pattern": TIMESTAMP_PATTERN},
                 "provider": {"const": "crt.sh"},
+                "providerHealth": {
+                    "type": "object",
+                    "additionalProperties": False,
+                    "required": [
+                        "lastSuccessAt", "lastAttemptAt", "lastFailureCodes", "consecutiveFailures",
+                        "degradedSince", "nextAttemptAt",
+                    ],
+                    "properties": {
+                        **{field: {"$ref": "#/$defs/timestampOrNull"} for field in (
+                            "lastSuccessAt", "lastAttemptAt", "degradedSince", "nextAttemptAt",
+                        )},
+                        "consecutiveFailures": {"$ref": "#/$defs/counter"},
+                        "lastFailureCodes": {
+                            "type": "array", "maxItems": 8, "uniqueItems": True,
+                            "items": {"enum": [
+                                "provider-timeout", "provider-http", "provider-network", "invalid-response",
+                                "validation", "internal",
+                            ]},
+                        },
+                    },
+                },
                 "latestRun": {
                     "type": "object",
                     "additionalProperties": False,
@@ -402,7 +426,7 @@ PIPELINE_HEALTH_SCHEMA: Final[dict[str, object]] = {
                     "properties": {
                         "startedAt": {"type": "string", "pattern": TIMESTAMP_PATTERN},
                         "endedAt": {"type": "string", "pattern": TIMESTAMP_PATTERN},
-                        "outcome": {"enum": ["completed", "partial", "failed"]},
+                        "outcome": {"enum": ["completed", "partial", "failed", "deferred-backoff"]},
                         "failureCodes": {
                             "type": "array",
                             "maxItems": 8,

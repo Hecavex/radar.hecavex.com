@@ -278,9 +278,9 @@ function verifyDeploymentTopology() {
       cadence.includes("environment: radar-certstream-cadence") &&
       cadence.includes("github.event.client_payload.source_workflow == 'Collect CertStream candidates'") &&
       cadence.includes("github.event.client_payload.source_ref == 'main'") &&
-      cadence.includes("github.event.client_payload.source_run_id") &&
-      cadence.includes('select(.status != "completed")') &&
-      cadence.includes("select(.id > $source)") &&
+      cadence.includes("python -m hecavex_radar.certstream_cadence") &&
+      cadence.includes("github.event.workflow_run.conclusion != 'success'") &&
+      !cadence.includes("select(.id > $source)") &&
       cadence.includes("/actions/workflows/collect-certstream.yml/dispatches") &&
       cadence.includes("inputs[cadence_relay]=true") &&
       !cadence.includes("contents: write"),
@@ -468,6 +468,7 @@ function verifyDeploymentTopology() {
       sync.includes("public/data/radar.index.json") &&
       sync.includes("public/data/radar-shards") &&
       sync.includes("public/data/history.json") &&
+      sync.includes("git add -A -- public/data/history-parts") &&
       sync.includes("public/data/changes.json") &&
       sync.includes("public/data/events.json") &&
       sync.includes("public/data/events.atom.xml") &&
@@ -653,6 +654,16 @@ function verifyBuiltHtml() {
   );
   const snapshot = JSON.parse(readFileSync(join(output, "data", "radar.json"), "utf8"));
   const history = JSON.parse(readFileSync(join(output, "data", "history.json"), "utf8"));
+  if (history.partitionFormat === "hecavex-history-partitions-v1") {
+    history.signals = history.partitions.flatMap((part) => {
+      assert(/^history-parts\/[a-f0-9]{64}\.json$/u.test(part.path), "Unsafe history partition path.");
+      const bytes = readFileSync(join(output, "data", part.path));
+      assert(bytes.length === part.bytes && createHash("sha256").update(bytes).digest("hex") === part.sha256,
+        "History partition integrity failure.");
+      return JSON.parse(bytes.toString("utf8"));
+    });
+    assert(history.signals.length === history.signalCount, "History partition completeness failure.");
+  }
   const brands = JSON.parse(readFileSync(join(root, "data", "brands-lt.json"), "utf8"));
   const signalIds = new Set([...snapshot.signals, ...history.signals].map((signal) => signal.id));
   const fragmentIdsByPath = new Map();
@@ -2115,6 +2126,42 @@ async function fulfillAnalyticsScript(route) {
   });
 }
 
+async function verifyIndexedCtHealth(browser, origin) {
+  const context = await browser.newContext({ viewport: { width: 390, height: 900 }, bypassCSP: true });
+  const page = await context.newPage();
+  const health = JSON.parse(readFileSync(join(output, "data", "pipeline-health.json"), "utf8"));
+  health.current.ctSearch = {
+    latestRun: { outcome: "deferred-backoff" },
+    providerHealth: { lastAttemptAt: "2026-09-07T09:00:00.000Z", lastSuccessAt: "2026-09-06T08:00:00.000Z",
+      nextAttemptAt: "2026-09-07T13:00:00.000Z", consecutiveFailures: 6 },
+  };
+  await page.route("https://static.cloudflareinsights.com/beacon.min.js", fulfillAnalyticsScript);
+  await page.route("**/data/pipeline-health.json", (route) => route.fulfill({ contentType: "application/json", body: JSON.stringify(health) }));
+  try {
+    for (const [path, label, explanation] of [
+      ["/", "Indexed CT search: Deferred during backoff", "No network request was made in this run."],
+      ["/lt/", "Indeksuota CT paieška: Atidėta iki pakartotinio bandymo", "Šiuo paleidimu tinklo užklausa neatlikta."],
+    ]) {
+      await page.goto(`${origin}${path}`, { waitUntil: "networkidle" });
+      await page.locator(".collection-health-disclosure > summary").click();
+      const details = page.locator(".indexed-ct-health");
+      assert(await details.locator("summary").textContent() === label, `${path} mislabels a no-request backoff run.`);
+      await details.locator("summary").click();
+      assert((await details.innerText()).includes(explanation), `${path} omits the localized no-network explanation.`);
+      assert(await details.locator("time").count() === 3, `${path} hides actual attempt, success or cooldown timing.`);
+      assert(await details.locator("dd").last().textContent() === "6", `${path} changes the actual failure streak.`);
+      assert(await details.evaluate((node) => node.scrollWidth <= node.clientWidth + 1), `${path} overflows indexed CT telemetry on mobile.`);
+      await page.addScriptTag({ content: axe.source });
+      const violations = await page.evaluate(async () => (await globalThis.axe.run(".indexed-ct-health", {
+        runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"] },
+      })).violations.filter((item) => ["serious", "critical"].includes(item.impact)).map((item) => item.id));
+      assert(violations.length === 0, `${path} CT telemetry accessibility failures: ${violations.join(", ")}`);
+    }
+  } finally {
+    await context.close();
+  }
+}
+
 async function verifyTrendCutoff(browser, origin) {
   const trends = JSON.parse(readFileSync(join(output, "data", "daily-trends.json"), "utf8"));
   const context = await browser.newContext({ viewport: { width: 390, height: 900 }, timezoneId: "Pacific/Auckland" });
@@ -2162,7 +2209,7 @@ async function verifyAccessibility(browser, origin, width) {
       const result = await page.evaluate(async () => {
         const report = await globalThis.axe.run(document, {
           resultTypes: ["violations"],
-          runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"] },
+          runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"] },
         });
         return report.violations
           .filter((violation) => violation.impact === "serious" || violation.impact === "critical")
@@ -2228,7 +2275,7 @@ async function verifySignalDialog(browser, origin, width, language) {
     const violations = await page.evaluate(async () => {
       const report = await globalThis.axe.run(document, {
         resultTypes: ["violations"],
-        runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"] },
+        runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"] },
       });
       return report.violations
         .filter((violation) => violation.impact === "serious" || violation.impact === "critical")
@@ -2264,7 +2311,7 @@ function chromeExecutable() {
   return candidates.find((path) => existsSync(path));
 }
 
-async function verifyInBrowser() {
+async function verifyInBrowser(healthOnly = false) {
   const executablePath = chromeExecutable();
   assert(executablePath, "Chrome or Chromium is required for responsive and accessibility verification.");
 
@@ -2279,6 +2326,8 @@ async function verifyInBrowser() {
   const browser = await chromium.launch({ executablePath, headless: true, args: ["--no-sandbox"] });
 
   try {
+    await verifyIndexedCtHealth(browser, origin);
+    if (healthOnly) return;
     await verifyTrendCutoff(browser, origin);
     for (const width of widths) {
       const context = await browser.newContext({ viewport: { width, height: 900 } });
@@ -2706,9 +2755,9 @@ async function verifyInBrowser() {
 }
 
 const verificationPhase = process.argv[2] ?? "all";
-assert(["all", "static", "browser"].includes(verificationPhase), `Unknown verification phase: ${verificationPhase}.`);
+assert(["all", "static", "browser", "health"].includes(verificationPhase), `Unknown verification phase: ${verificationPhase}.`);
 
-if (verificationPhase !== "browser") {
+if (["all", "static"].includes(verificationPhase)) {
   verifyLayoutSourceContract();
   verifyDeploymentTopology();
   verifyPythonAutomationLocks();
@@ -2736,6 +2785,8 @@ if (verificationPhase !== "browser") {
 }
 
 if (verificationPhase !== "static") {
-  await verifyInBrowser();
-  process.stdout.write(`Verified ${pages.length} hydratable static pages at ${widths.join(", ")}px with links, fragments, metadata, CSP, delayed-refresh retention, no-JS content, keyboard navigation, overflow, focus, and accessibility checks.\n`);
+  await verifyInBrowser(verificationPhase === "health");
+  process.stdout.write(verificationPhase === "health"
+    ? "Verified bilingual no-request CT backoff telemetry, actual failure counts, timing and mobile accessibility.\n"
+    : `Verified ${pages.length} hydratable static pages at ${widths.join(", ")}px with links, fragments, metadata, CSP, delayed-refresh retention, no-JS content, keyboard navigation, overflow, focus, and accessibility checks.\n`);
 }

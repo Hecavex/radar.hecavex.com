@@ -43,12 +43,12 @@ DEFAULT_REPLAY_ID_WINDOW = 1_000
 DEFAULT_REPLAY_ROWS = 50
 DEFAULT_PROVIDER_BACKOFF_SECONDS = 5 * 60
 MAXIMUM_PROVIDER_BACKOFF_SECONDS = 6 * 60 * 60
-STATE_OUTCOMES = frozenset({"completed", "partial", "failed"})
+STATE_OUTCOMES = frozenset({"completed", "partial", "failed", "deferred-backoff"})
 FAILURE_CODES = frozenset(
     {"provider-timeout", "provider-http", "provider-network", "invalid-response", "validation", "internal"}
 )
 PROVIDER_HEALTH_FIELDS = frozenset(
-    {"lastSuccessAt", "consecutiveFailures", "degradedSince", "nextAttemptAt"}
+    {"lastSuccessAt", "lastAttemptAt", "lastFailureCodes", "consecutiveFailures", "degradedSince", "nextAttemptAt"}
 )
 ROW_TIMESTAMP = re.compile(r"^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?(?:Z|[+-]\d{2}:?\d{2})?$")
 HEX = re.compile(r"^[a-f\d]+$")
@@ -336,6 +336,8 @@ def _empty_state(now: datetime) -> dict[str, Any]:
         "latestRun": None,
         "providerHealth": {
             "lastSuccessAt": None,
+            "lastAttemptAt": None,
+            "lastFailureCodes": [],
             "consecutiveFailures": 0,
             "degradedSince": None,
             "nextAttemptAt": None,
@@ -370,9 +372,25 @@ def _normalize_state(value: object) -> object:
     legacy_fields = {
         "schemaVersion", "dataset", "provider", "generatedAt", "queryCursor", "queries", "latestRun"
     }
-    if set(value) != legacy_fields:
-        return value
-    return {**value, "providerHealth": _legacy_provider_health(value.get("latestRun"))}
+    normalized = dict(value)
+    if set(value) == legacy_fields:
+        normalized["providerHealth"] = _legacy_provider_health(value.get("latestRun"))
+    health = normalized.get("providerHealth")
+    if isinstance(health, dict) and set(health) == PROVIDER_HEALTH_FIELDS - {"lastAttemptAt", "lastFailureCodes"}:
+        latest = normalized.get("latestRun")
+        latest = latest if isinstance(latest, dict) else {}
+        queries = normalized.get("queries", {})
+        queries = queries if isinstance(queries, dict) else {}
+        times = [row.get("lastRunAt") for row in queries.values() if isinstance(row, dict)]
+        attempted = latest.get("queriesAttempted", 0)
+        if type(attempted) is int and attempted > 0:
+            times.append(latest.get("endedAt"))
+        normalized["providerHealth"] = {
+            **health,
+            "lastAttemptAt": max((cast(str, time) for time in times if _parse_timestamp(time)), default=None),
+            "lastFailureCodes": latest.get("failureCodes", []),
+        }
+    return normalized
 
 
 def _valid_query_state(value: object) -> bool:
@@ -400,12 +418,18 @@ def _valid_provider_health(value: object, generated_at: datetime, latest: object
     last_success = _parse_timestamp(value["lastSuccessAt"])
     degraded_since = _parse_timestamp(value["degradedSince"])
     next_attempt = _parse_timestamp(value["nextAttemptAt"])
+    last_attempt = _parse_timestamp(value["lastAttemptAt"])
     if (
         type(consecutive) is not int
         or not 0 <= consecutive <= 2_000_000_000
         or (value["lastSuccessAt"] is not None and last_success is None)
         or (value["degradedSince"] is not None and degraded_since is None)
         or (value["nextAttemptAt"] is not None and next_attempt is None)
+        or (value["lastAttemptAt"] is not None and last_attempt is None)
+        or (last_attempt is not None and last_attempt > generated_at)
+        or not isinstance(value["lastFailureCodes"], list)
+        or len(value["lastFailureCodes"]) > 8
+        or any(not isinstance(code, str) or code not in FAILURE_CODES for code in value["lastFailureCodes"])
         or (last_success is not None and last_success > generated_at)
         or (degraded_since is not None and degraded_since > generated_at)
         or (
@@ -421,6 +445,8 @@ def _valid_provider_health(value: object, generated_at: datetime, latest: object
     ended_at = _parse_timestamp(latest.get("endedAt"))
     failure_codes = latest.get("failureCodes", [])
     has_failure = latest.get("outcome") == "failed" or bool(failure_codes)
+    if latest.get("outcome") == "deferred-backoff":
+        return consecutive > 0 and latest.get("queriesAttempted") == 0 and not failure_codes
     if has_failure:
         return consecutive > 0
     return consecutive == 0 and ended_at is not None and last_success == ended_at
@@ -611,18 +637,8 @@ def poll(
     }
     failure_codes: set[FailureCode] = set()
     backlog_keys: list[str] = []
-    failed_key: str | None = None
     retry_after_seconds: int | None = None
     cutoff = started - timedelta(days=initial_days)
-
-    if circuit_open:
-        latest = state.get("latestRun")
-        previous_codes = latest.get("failureCodes", []) if isinstance(latest, dict) else []
-        failure_codes.update(
-            cast(list[FailureCode], [code for code in previous_codes if code in FAILURE_CODES])
-        )
-        if not failure_codes:
-            failure_codes.add("internal")
 
     for definition in selected:
         query_state = query_states[definition.key]
@@ -691,7 +707,6 @@ def poll(
             query_state.update({"lastRunAt": _timestamp(started), "lastOutcome": "failed"})
             code = _failure_code(error)
             failure_codes.add(code)
-            failed_key = definition.key
             if isinstance(error, CTSearchRequestError):
                 retry_after_seconds = error.retry_after_seconds
             # One failed provider request trips the run-scoped circuit. This
@@ -700,18 +715,16 @@ def poll(
             break
 
     ended = datetime.now(UTC) if now is None else started
-    if backlog_keys:
-        state["queryCursor"] = next(
-            index for index, definition in enumerate(definitions) if definition.key == backlog_keys[0]
-        )
-    elif failed_key is not None:
-        state["queryCursor"] = next(
-            index for index, definition in enumerate(definitions) if definition.key == failed_key
-        )
-    elif not circuit_open:
-        state["queryCursor"] = (cursor + len(selected)) % max(1, len(definitions))
-    if failure_codes:
-        outcome: Literal["completed", "partial", "failed"] = (
+    if not circuit_open:
+        # Each query retains its own cursor, including failures and backlog.
+        # Rotate after the actual bounded attempts so one slow term cannot
+        # monopolize every retry. A provider error still stops this run.
+        state["queryCursor"] = (cursor + metrics["queriesAttempted"]) % max(1, len(definitions))
+    outcome: Literal["completed", "partial", "failed", "deferred-backoff"]
+    if circuit_open:
+        outcome = "deferred-backoff"
+    elif failure_codes:
+        outcome = (
             "partial" if metrics["queriesCompleted"] else "failed"
         )
     elif backlog_keys:
@@ -727,6 +740,8 @@ def poll(
         backoff_seconds = _provider_backoff_seconds(consecutive_failures, retry_after_seconds)
         updated_provider_health = {
             "lastSuccessAt": provider_health["lastSuccessAt"],
+            "lastAttemptAt": _timestamp(ended),
+            "lastFailureCodes": sorted(failure_codes),
             "consecutiveFailures": consecutive_failures,
             "degradedSince": degraded_since,
             "nextAttemptAt": _timestamp(ended + timedelta(seconds=backoff_seconds)),
@@ -734,6 +749,8 @@ def poll(
     else:
         updated_provider_health = {
             "lastSuccessAt": _timestamp(ended),
+            "lastAttemptAt": _timestamp(ended),
+            "lastFailureCodes": [],
             "consecutiveFailures": 0,
             "degradedSince": None,
             "nextAttemptAt": None,
@@ -777,7 +794,7 @@ def main(arguments: list[str] | None = None) -> int:
     except Exception as error:
         print(f"CT search failed before state publication: {_failure_code(error)}", flush=True)
         return 1
-    return 0 if result["outcome"] in {"completed", "partial"} else 1
+    return 0 if result["outcome"] in {"completed", "partial", "deferred-backoff"} else 1
 
 
 if __name__ == "__main__":

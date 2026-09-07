@@ -664,7 +664,8 @@ def synchronize() -> Path:
     )
     print(f"Updated bounded public history at {history_path.relative_to(Path.cwd())}.", flush=True)
     try:
-        history_value: object = json.loads(history_path.read_text(encoding="utf-8"))
+        from .history import read_public_history
+        history_value: object = read_public_history(history_path)
     except (OSError, UnicodeDecodeError, json.JSONDecodeError) as error:
         raise ValueError("The freshly written public history could not be reloaded safely.") from error
     if not isinstance(history_value, dict):

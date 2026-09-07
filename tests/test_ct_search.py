@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import replace
 from datetime import UTC, datetime, timedelta
 
 from hecavex_radar.brands import BrandEntry, BrandRegistry, score_domain
@@ -213,6 +214,28 @@ def test_provider_failures_are_persisted_as_controlled_codes(tmp_path, monkeypat
     assert "private provider detail" not in str(state)
 
 
+def test_slow_query_retains_checkpoint_without_starving_the_next_brand(tmp_path, monkeypatch) -> None:
+    monkeypatch.chdir(tmp_path)
+    registry = _registry()
+    registry.entries.append(replace(
+        registry.entries[0], brand="Revolut", aliases=["revolut"], fuzzy_aliases=[],
+        official_domains=["revolut.com"], excluded_terms=[],
+    ))
+    started = datetime(2026, 9, 7, 12, tzinfo=UTC)
+    def timeout(_url: str) -> object:
+        raise TimeoutError("controlled synthetic timeout")
+    failed = poll(timeout, now=started, registry=registry, queries_per_run=2)
+    first = read_state()
+    assert failed["queriesAttempted"] == 1
+    assert first["queryCursor"] == 1
+    failed_key = build_queries(registry)[0].key
+    successful = poll(lambda _url: [], now=started + timedelta(minutes=10), registry=registry, queries_per_run=1)
+    second = read_state()
+    assert successful["queriesCompleted"] == 1
+    assert second["queries"][failed_key] == first["queries"][failed_key]
+    assert second["queryCursor"] == 0
+
+
 def test_provider_failure_trips_circuit_and_honors_retry_after(tmp_path, monkeypatch) -> None:
     monkeypatch.chdir(tmp_path)
     started = datetime(2026, 8, 25, 12, 0, tzinfo=UTC)
@@ -230,10 +253,13 @@ def test_provider_failure_trips_circuit_and_honors_retry_after(tmp_path, monkeyp
 
     assert first["queriesAttempted"] == 1
     assert second["queriesAttempted"] == 0
-    assert second["outcome"] == "failed"
+    assert second["outcome"] == "deferred-backoff"
+    assert second["failureCodes"] == []
     assert calls == 1
     assert first_state["providerHealth"] == {
         "lastSuccessAt": None,
+        "lastAttemptAt": "2026-08-25T12:00:00.000Z",
+        "lastFailureCodes": ["provider-http"],
         "consecutiveFailures": 1,
         "degradedSince": "2026-08-25T12:00:00.000Z",
         "nextAttemptAt": "2026-08-25T14:00:00.000Z",

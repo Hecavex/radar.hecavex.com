@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-matcher-regression-corpus",
-  "reviewedAt": "2026-08-30",
+  "reviewedAt": "2026-09-07",
   "safety": "Synthetic reserved-domain examples and reviewed official domains only; no active victim URLs.",
   "unicodeProfile": {
     "uts46": "idna-3.19/nontransitional/std3",
@@ -58,7 +58,7 @@
     {
       "id": "short-alias-neutral-idn-decoration",
       "brand": "SEB",
-      "domain": "chez-seb-et-l\u00e9a.example",
+      "domain": "chez-seb-et-léa.example",
       "expected": {
         "matched": false,
         "rejectionReason": "punycode-is-not-suspicious-context"
@@ -67,7 +67,7 @@
     {
       "id": "short-alias-second-neutral-idn-decoration",
       "brand": "ERGO",
-      "domain": "ergo-k\u00f6ttigen.example",
+      "domain": "ergo-köttigen.example",
       "expected": {
         "matched": false,
         "rejectionReason": "non-alias-unicode-is-not-confusable-evidence"
@@ -76,7 +76,7 @@
     {
       "id": "confusable-substring-outside-exact-alias-token",
       "brand": "SEB",
-      "domain": "seb-se\u13f4foo.example",
+      "domain": "seb-seᏴfoo.example",
       "expected": {
         "matched": false,
         "rejectionReason": "confusable-substring-is-outside-matched-token"
@@ -85,7 +85,7 @@
     {
       "id": "fuzzy-alias-neutral-idn-decoration",
       "brand": "Swedbank",
-      "domain": "swedback-\u017ealias.example",
+      "domain": "swedback-žalias.example",
       "expected": {
         "matched": false,
         "rejectionReason": "fuzzy-match-lacks-reviewed-context"
@@ -116,8 +116,15 @@
       "expected": {
         "matched": true,
         "brand": "Swedbank",
-        "scoreBand": [90, 100],
-        "reasonCodes": ["brand-exact-token", "suspicious-context", "different-tld"]
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
       }
     },
     {
@@ -127,8 +134,15 @@
       "expected": {
         "matched": true,
         "brand": "Vinted",
-        "scoreBand": [90, 100],
-        "reasonCodes": ["brand-exact-token", "suspicious-context", "different-tld"]
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
       }
     },
     {
@@ -138,8 +152,15 @@
       "expected": {
         "matched": true,
         "brand": "ESO",
-        "scoreBand": [85, 100],
-        "reasonCodes": ["brand-exact-token", "suspicious-context", "different-tld"]
+        "scoreBand": [
+          85,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
       }
     },
     {
@@ -158,8 +179,15 @@
       "expected": {
         "matched": true,
         "brand": "Vinted",
-        "scoreBand": [90, 100],
-        "reasonCodes": ["brand-split-token", "suspicious-context", "different-tld"]
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-split-token",
+          "suspicious-context",
+          "different-tld"
+        ]
       }
     },
     {
@@ -169,8 +197,15 @@
       "expected": {
         "matched": true,
         "brand": "Swedbank",
-        "scoreBand": [80, 100],
-        "reasonCodes": ["brand-lookalike-edit", "suspicious-context", "different-tld"]
+        "scoreBand": [
+          80,
+          100
+        ],
+        "reasonCodes": [
+          "brand-lookalike-edit",
+          "suspicious-context",
+          "different-tld"
+        ]
       }
     },
     {
@@ -180,7 +215,10 @@
       "expected": {
         "matched": true,
         "brand": "Swedbank",
-        "scoreBand": [95, 100],
+        "scoreBand": [
+          95,
+          100
+        ],
         "reasonCodes": [
           "brand-exact-token",
           "suspicious-context",
@@ -195,11 +233,14 @@
     {
       "id": "actual-confusable-without-generic-context",
       "brand": "Swedbank",
-      "domain": "swedb\u0430nk.example",
+      "domain": "swedbаnk.example",
       "expected": {
         "matched": true,
         "brand": "Swedbank",
-        "scoreBand": [90, 100],
+        "scoreBand": [
+          90,
+          100
+        ],
         "reasonCodes": [
           "brand-exact-token",
           "punycode",
@@ -213,11 +254,14 @@
     {
       "id": "short-alias-actual-confusable-retained",
       "brand": "DHL",
-      "domain": "\u1e13\u1e2bl.example",
+      "domain": "ḓḫl.example",
       "expected": {
         "matched": true,
         "brand": "DHL",
-        "scoreBand": [80, 90],
+        "scoreBand": [
+          80,
+          90
+        ],
         "reasonCodes": [
           "brand-exact-token",
           "punycode",
@@ -233,7 +277,10 @@
       "expected": {
         "matched": true,
         "brand": "Paysera",
-        "scoreBand": [95, 100],
+        "scoreBand": [
+          95,
+          100
+        ],
         "reasonCodes": [
           "brand-exact-token",
           "suspicious-context",
@@ -252,6 +299,3093 @@
       "expected": {
         "matched": false,
         "rejectionReason": "fuzzy-match-lacks-reviewed-context"
+      }
+    },
+    {
+      "id": "registry-artea-qualified-context",
+      "brand": "Artea",
+      "domain": "login-artea.example",
+      "expected": {
+        "matched": true,
+        "brand": "Artea",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-artea-neutral-name",
+      "brand": "Artea",
+      "domain": "artea-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-artea-official-1",
+      "brand": "Artea",
+      "domain": "artea.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-artea-official-2",
+      "brand": "Artea",
+      "domain": "sb.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-artea-official-subtree",
+      "brand": "Artea",
+      "domain": "login.artea.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-artea-collision-1",
+      "brand": "Artea",
+      "domain": "arte-login.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-name-collision"
+      }
+    },
+    {
+      "id": "registry-artea-collision-2",
+      "brand": "Artea",
+      "domain": "area-login.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-name-collision"
+      }
+    },
+    {
+      "id": "registry-artea-collision-3",
+      "brand": "Artea",
+      "domain": "artex-login.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-name-collision"
+      }
+    },
+    {
+      "id": "registry-artea-collision-4",
+      "brand": "Artea",
+      "domain": "artexa-login.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-name-collision"
+      }
+    },
+    {
+      "id": "registry-artea-collision-5",
+      "brand": "Artea",
+      "domain": "atea-login.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-name-collision"
+      }
+    },
+    {
+      "id": "registry-artea-collision-6",
+      "brand": "Artea",
+      "domain": "cartea-login.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-name-collision"
+      }
+    },
+    {
+      "id": "registry-bta-qualified-context",
+      "brand": "BTA",
+      "domain": "login-bta.example",
+      "expected": {
+        "matched": true,
+        "brand": "BTA",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-bta-neutral-name",
+      "brand": "BTA",
+      "domain": "bta-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-bta-official-1",
+      "brand": "BTA",
+      "domain": "bta.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-bta-official-2",
+      "brand": "BTA",
+      "domain": "bta.lv",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-bta-official-3",
+      "brand": "BTA",
+      "domain": "bta.ee",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-bta-official-4",
+      "brand": "BTA",
+      "domain": "bta.eu",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-bta-official-subtree",
+      "brand": "BTA",
+      "domain": "login.bta.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-bigbank-qualified-context",
+      "brand": "Bigbank",
+      "domain": "login-bigbank.example",
+      "expected": {
+        "matched": true,
+        "brand": "Bigbank",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-bigbank-neutral-name",
+      "brand": "Bigbank",
+      "domain": "bigbank-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-bigbank-official-1",
+      "brand": "Bigbank",
+      "domain": "bigbank.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-bigbank-official-2",
+      "brand": "Bigbank",
+      "domain": "bigbank.eu",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-bigbank-official-3",
+      "brand": "Bigbank",
+      "domain": "bigbank.ee",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-bigbank-official-4",
+      "brand": "Bigbank",
+      "domain": "bigbank.lv",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-bigbank-official-5",
+      "brand": "Bigbank",
+      "domain": "bigbank.fi",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-bigbank-official-6",
+      "brand": "Bigbank",
+      "domain": "bigbank.se",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-bigbank-official-7",
+      "brand": "Bigbank",
+      "domain": "bigbank.bg",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-bigbank-official-8",
+      "brand": "Bigbank",
+      "domain": "bigbank.de",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-bigbank-official-9",
+      "brand": "Bigbank",
+      "domain": "bigbank.at",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-bigbank-official-10",
+      "brand": "Bigbank",
+      "domain": "bigbank.nl",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-bigbank-official-subtree",
+      "brand": "Bigbank",
+      "domain": "login.bigbank.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-bigbank-collision-1",
+      "brand": "Bigbank",
+      "domain": "bigbang-login.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-name-collision"
+      }
+    },
+    {
+      "id": "registry-bite-qualified-context",
+      "brand": "Bitė",
+      "domain": "login-bite.example",
+      "expected": {
+        "matched": true,
+        "brand": "Bitė",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-bite-neutral-name",
+      "brand": "Bitė",
+      "domain": "bite-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-bite-official-1",
+      "brand": "Bitė",
+      "domain": "bite.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-bite-official-2",
+      "brand": "Bitė",
+      "domain": "bite.lv",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-bite-official-3",
+      "brand": "Bitė",
+      "domain": "bitegroup.net",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-bite-official-subtree",
+      "brand": "Bitė",
+      "domain": "login.bite.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-cgates-qualified-context",
+      "brand": "Cgates",
+      "domain": "login-cgates.example",
+      "expected": {
+        "matched": true,
+        "brand": "Cgates",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-cgates-neutral-name",
+      "brand": "Cgates",
+      "domain": "cgates-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-cgates-official-1",
+      "brand": "Cgates",
+      "domain": "cgates.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-cgates-official-2",
+      "brand": "Cgates",
+      "domain": "cgates.tv",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-cgates-official-subtree",
+      "brand": "Cgates",
+      "domain": "login.cgates.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-cgates-collision-1",
+      "brand": "Cgates",
+      "domain": "crates-login.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-name-collision"
+      }
+    },
+    {
+      "id": "registry-citadele-qualified-context",
+      "brand": "Citadele",
+      "domain": "login-citadele.example",
+      "expected": {
+        "matched": true,
+        "brand": "Citadele",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-citadele-neutral-name",
+      "brand": "Citadele",
+      "domain": "citadele-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-citadele-official-1",
+      "brand": "Citadele",
+      "domain": "citadele.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-citadele-official-2",
+      "brand": "Citadele",
+      "domain": "citadele.lv",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-citadele-official-3",
+      "brand": "Citadele",
+      "domain": "citadele.ee",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-citadele-official-4",
+      "brand": "Citadele",
+      "domain": "cblgroup.com",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-citadele-official-subtree",
+      "brand": "Citadele",
+      "domain": "login.citadele.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-citadele-collision-1",
+      "brand": "Citadele",
+      "domain": "citadel-login.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-name-collision"
+      }
+    },
+    {
+      "id": "registry-dhl-qualified-context",
+      "brand": "DHL",
+      "domain": "login-dhl.example",
+      "expected": {
+        "matched": true,
+        "brand": "DHL",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-dhl-neutral-name",
+      "brand": "DHL",
+      "domain": "dhl-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-dhl-official-1",
+      "brand": "DHL",
+      "domain": "dhl.com",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-dhl-official-2",
+      "brand": "DHL",
+      "domain": "mydhl.express",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-dhl-official-subtree",
+      "brand": "DHL",
+      "domain": "login.dhl.com",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-dpd-qualified-context",
+      "brand": "DPD",
+      "domain": "login-dpd.example",
+      "expected": {
+        "matched": true,
+        "brand": "DPD",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-dpd-neutral-name",
+      "brand": "DPD",
+      "domain": "dpd-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-dpd-official-1",
+      "brand": "DPD",
+      "domain": "dpd.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-dpd-official-2",
+      "brand": "DPD",
+      "domain": "dpd.lv",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-dpd-official-3",
+      "brand": "DPD",
+      "domain": "dpd.ee",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-dpd-official-4",
+      "brand": "DPD",
+      "domain": "dpd.com",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-dpd-official-subtree",
+      "brand": "DPD",
+      "domain": "login.dpd.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-epolicija-qualified-context",
+      "brand": "ePolicija",
+      "domain": "login-epolicija.example",
+      "expected": {
+        "matched": true,
+        "brand": "ePolicija",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-epolicija-neutral-name",
+      "brand": "ePolicija",
+      "domain": "epolicija-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-epolicija-official-1",
+      "brand": "ePolicija",
+      "domain": "epolicija.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-epolicija-official-2",
+      "brand": "ePolicija",
+      "domain": "policija.lrv.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-epolicija-official-subtree",
+      "brand": "ePolicija",
+      "domain": "login.epolicija.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-epolicija-collision-1",
+      "brand": "ePolicija",
+      "domain": "policies-login.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-name-collision"
+      }
+    },
+    {
+      "id": "registry-epolicija-collision-2",
+      "brand": "ePolicija",
+      "domain": "politica-login.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-name-collision"
+      }
+    },
+    {
+      "id": "registry-elektrum-qualified-context",
+      "brand": "Elektrum",
+      "domain": "login-elektrum.example",
+      "expected": {
+        "matched": true,
+        "brand": "Elektrum",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-elektrum-neutral-name",
+      "brand": "Elektrum",
+      "domain": "elektrum-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-elektrum-official-1",
+      "brand": "Elektrum",
+      "domain": "elektrum.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-elektrum-official-2",
+      "brand": "Elektrum",
+      "domain": "elektrum.lv",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-elektrum-official-3",
+      "brand": "Elektrum",
+      "domain": "elektrum.ee",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-elektrum-official-subtree",
+      "brand": "Elektrum",
+      "domain": "login.elektrum.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-elektrum-collision-1",
+      "brand": "Elektrum",
+      "domain": "electro-login.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-name-collision"
+      }
+    },
+    {
+      "id": "registry-elektrum-collision-2",
+      "brand": "Elektrum",
+      "domain": "elektro-login.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-name-collision"
+      }
+    },
+    {
+      "id": "registry-elektroniniai-valdzios-vartai-qualified-context",
+      "brand": "Elektroniniai valdžios vartai",
+      "domain": "login-epaslaugos.example",
+      "expected": {
+        "matched": true,
+        "brand": "Elektroniniai valdžios vartai",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-elektroniniai-valdzios-vartai-neutral-name",
+      "brand": "Elektroniniai valdžios vartai",
+      "domain": "epaslaugos-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-elektroniniai-valdzios-vartai-official-1",
+      "brand": "Elektroniniai valdžios vartai",
+      "domain": "epaslaugos.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-elektroniniai-valdzios-vartai-official-subtree",
+      "brand": "Elektroniniai valdžios vartai",
+      "domain": "login.epaslaugos.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-ergo-qualified-context",
+      "brand": "ERGO",
+      "domain": "login-ergo.example",
+      "expected": {
+        "matched": true,
+        "brand": "ERGO",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-ergo-neutral-name",
+      "brand": "ERGO",
+      "domain": "ergo-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-ergo-official-1",
+      "brand": "ERGO",
+      "domain": "ergo.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-ergo-official-2",
+      "brand": "ERGO",
+      "domain": "ergo.lv",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-ergo-official-3",
+      "brand": "ERGO",
+      "domain": "ergo.ee",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-ergo-official-4",
+      "brand": "ERGO",
+      "domain": "ergo.com",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-ergo-official-subtree",
+      "brand": "ERGO",
+      "domain": "login.ergo.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-eso-qualified-context",
+      "brand": "ESO",
+      "domain": "login-eso.example",
+      "expected": {
+        "matched": true,
+        "brand": "ESO",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-eso-neutral-name",
+      "brand": "ESO",
+      "domain": "eso-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-eso-official-1",
+      "brand": "ESO",
+      "domain": "eso.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-eso-official-subtree",
+      "brand": "ESO",
+      "domain": "login.eso.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-e-sveikata-qualified-context",
+      "brand": "E. sveikata",
+      "domain": "login-esveikata.example",
+      "expected": {
+        "matched": true,
+        "brand": "E. sveikata",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-e-sveikata-neutral-name",
+      "brand": "E. sveikata",
+      "domain": "esveikata-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-e-sveikata-official-1",
+      "brand": "E. sveikata",
+      "domain": "esveikata.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-e-sveikata-official-subtree",
+      "brand": "E. sveikata",
+      "domain": "login.esveikata.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-epristatymas-qualified-context",
+      "brand": "ePristatymas",
+      "domain": "login-epristatymas.example",
+      "expected": {
+        "matched": true,
+        "brand": "ePristatymas",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-epristatymas-neutral-name",
+      "brand": "ePristatymas",
+      "domain": "epristatymas-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-epristatymas-official-1",
+      "brand": "ePristatymas",
+      "domain": "epristatymas.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-epristatymas-official-subtree",
+      "brand": "ePristatymas",
+      "domain": "login.epristatymas.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-gjensidige-qualified-context",
+      "brand": "Gjensidige",
+      "domain": "login-gjensidige.example",
+      "expected": {
+        "matched": true,
+        "brand": "Gjensidige",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-gjensidige-neutral-name",
+      "brand": "Gjensidige",
+      "domain": "gjensidige-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-gjensidige-official-1",
+      "brand": "Gjensidige",
+      "domain": "gjensidige.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-gjensidige-official-2",
+      "brand": "Gjensidige",
+      "domain": "gjensidige.lv",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-gjensidige-official-3",
+      "brand": "Gjensidige",
+      "domain": "gjensidige.ee",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-gjensidige-official-4",
+      "brand": "Gjensidige",
+      "domain": "gjensidige.com",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-gjensidige-official-subtree",
+      "brand": "Gjensidige",
+      "domain": "login.gjensidige.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-ignitis-qualified-context",
+      "brand": "Ignitis",
+      "domain": "login-ignitis.example",
+      "expected": {
+        "matched": true,
+        "brand": "Ignitis",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-ignitis-neutral-name",
+      "brand": "Ignitis",
+      "domain": "ignitis-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-ignitis-official-1",
+      "brand": "Ignitis",
+      "domain": "ignitis.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-ignitis-official-2",
+      "brand": "Ignitis",
+      "domain": "ignitis.lv",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-ignitis-official-3",
+      "brand": "Ignitis",
+      "domain": "ignitis.ee",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-ignitis-official-4",
+      "brand": "Ignitis",
+      "domain": "ignitis.pl",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-ignitis-official-5",
+      "brand": "Ignitis",
+      "domain": "ignitis.fi",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-ignitis-official-6",
+      "brand": "Ignitis",
+      "domain": "ignitisgrupe.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-ignitis-official-7",
+      "brand": "Ignitis",
+      "domain": "ignitisgroup.com",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-ignitis-official-subtree",
+      "brand": "Ignitis",
+      "domain": "login.ignitis.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-iki-qualified-context",
+      "brand": "IKI",
+      "domain": "login-iki.example",
+      "expected": {
+        "matched": true,
+        "brand": "IKI",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-iki-neutral-name",
+      "brand": "IKI",
+      "domain": "iki-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-iki-official-1",
+      "brand": "IKI",
+      "domain": "iki.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-iki-official-subtree",
+      "brand": "IKI",
+      "domain": "login.iki.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-lidl-lietuva-qualified-context",
+      "brand": "Lidl Lietuva",
+      "domain": "login-lidl.example",
+      "expected": {
+        "matched": true,
+        "brand": "Lidl Lietuva",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-lidl-lietuva-neutral-name",
+      "brand": "Lidl Lietuva",
+      "domain": "lidl-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-lidl-lietuva-official-1",
+      "brand": "Lidl Lietuva",
+      "domain": "lidl.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-lidl-lietuva-official-2",
+      "brand": "Lidl Lietuva",
+      "domain": "lidl.lv",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-lidl-lietuva-official-3",
+      "brand": "Lidl Lietuva",
+      "domain": "lidl.ee",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-lidl-lietuva-official-4",
+      "brand": "Lidl Lietuva",
+      "domain": "lidl.com",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-lidl-lietuva-official-subtree",
+      "brand": "Lidl Lietuva",
+      "domain": "login.lidl.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-lietuvos-bankas-qualified-context",
+      "brand": "Lietuvos bankas",
+      "domain": "login-lietuvos-bankas.example",
+      "expected": {
+        "matched": true,
+        "brand": "Lietuvos bankas",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-lietuvos-bankas-neutral-name",
+      "brand": "Lietuvos bankas",
+      "domain": "lietuvos-bankas-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-lietuvos-bankas-official-1",
+      "brand": "Lietuvos bankas",
+      "domain": "lb.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-lietuvos-bankas-official-subtree",
+      "brand": "Lietuvos bankas",
+      "domain": "login.lb.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-lietuvos-draudimas-qualified-context",
+      "brand": "Lietuvos draudimas",
+      "domain": "login-lietuvos-draudimas.example",
+      "expected": {
+        "matched": true,
+        "brand": "Lietuvos draudimas",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-lietuvos-draudimas-neutral-name",
+      "brand": "Lietuvos draudimas",
+      "domain": "lietuvos-draudimas-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-lietuvos-draudimas-official-1",
+      "brand": "Lietuvos draudimas",
+      "domain": "ld.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-lietuvos-draudimas-official-subtree",
+      "brand": "Lietuvos draudimas",
+      "domain": "login.ld.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-lietuvos-pastas-qualified-context",
+      "brand": "Lietuvos paštas",
+      "domain": "login-lietuvos-pastas.example",
+      "expected": {
+        "matched": true,
+        "brand": "Lietuvos paštas",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-lietuvos-pastas-neutral-name",
+      "brand": "Lietuvos paštas",
+      "domain": "lietuvos-pastas-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-lietuvos-pastas-official-1",
+      "brand": "Lietuvos paštas",
+      "domain": "post.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-lietuvos-pastas-official-2",
+      "brand": "Lietuvos paštas",
+      "domain": "lietuvospastas.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-lietuvos-pastas-official-subtree",
+      "brand": "Lietuvos paštas",
+      "domain": "login.post.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-lp-express-qualified-context",
+      "brand": "LP EXPRESS",
+      "domain": "login-lp-express.example",
+      "expected": {
+        "matched": true,
+        "brand": "LP EXPRESS",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-lp-express-neutral-name",
+      "brand": "LP EXPRESS",
+      "domain": "lp-express-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-lp-express-official-1",
+      "brand": "LP EXPRESS",
+      "domain": "lpexpress.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-lp-express-official-subtree",
+      "brand": "LP EXPRESS",
+      "domain": "login.lpexpress.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-luminor-qualified-context",
+      "brand": "Luminor",
+      "domain": "login-luminor.example",
+      "expected": {
+        "matched": true,
+        "brand": "Luminor",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-luminor-neutral-name",
+      "brand": "Luminor",
+      "domain": "luminor-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-luminor-official-1",
+      "brand": "Luminor",
+      "domain": "luminor.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-luminor-official-2",
+      "brand": "Luminor",
+      "domain": "luminor.ee",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-luminor-official-3",
+      "brand": "Luminor",
+      "domain": "luminor.lv",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-luminor-official-4",
+      "brand": "Luminor",
+      "domain": "luminor.eu",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-luminor-official-5",
+      "brand": "Luminor",
+      "domain": "luminor.com",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-luminor-official-subtree",
+      "brand": "Luminor",
+      "domain": "login.luminor.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-mano-bankas-qualified-context",
+      "brand": "Mano Bankas",
+      "domain": "login-mano-bankas.example",
+      "expected": {
+        "matched": true,
+        "brand": "Mano Bankas",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-mano-bankas-neutral-name",
+      "brand": "Mano Bankas",
+      "domain": "mano-bankas-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-mano-bankas-official-1",
+      "brand": "Mano Bankas",
+      "domain": "mano.bank",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-mano-bankas-official-subtree",
+      "brand": "Mano Bankas",
+      "domain": "login.mano.bank",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-maxima-qualified-context",
+      "brand": "MAXIMA",
+      "domain": "login-maxima.example",
+      "expected": {
+        "matched": true,
+        "brand": "MAXIMA",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-maxima-neutral-name",
+      "brand": "MAXIMA",
+      "domain": "maxima-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-maxima-official-1",
+      "brand": "MAXIMA",
+      "domain": "maxima.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-maxima-official-2",
+      "brand": "MAXIMA",
+      "domain": "maxima.ee",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-maxima-official-3",
+      "brand": "MAXIMA",
+      "domain": "maxima.lv",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-maxima-official-4",
+      "brand": "MAXIMA",
+      "domain": "maximagrupe.eu",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-maxima-official-subtree",
+      "brand": "MAXIMA",
+      "domain": "login.maxima.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-maxima-collision-1",
+      "brand": "MAXIMA",
+      "domain": "maxime-login.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-name-collision"
+      }
+    },
+    {
+      "id": "registry-maxima-collision-2",
+      "brand": "MAXIMA",
+      "domain": "maximo-login.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-name-collision"
+      }
+    },
+    {
+      "id": "registry-migracijos-departamentas-qualified-context",
+      "brand": "Migracijos departamentas",
+      "domain": "login-migracija.example",
+      "expected": {
+        "matched": true,
+        "brand": "Migracijos departamentas",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-migracijos-departamentas-neutral-name",
+      "brand": "Migracijos departamentas",
+      "domain": "migracija-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-migracijos-departamentas-official-1",
+      "brand": "Migracijos departamentas",
+      "domain": "migracija.lrv.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-migracijos-departamentas-official-2",
+      "brand": "Migracijos departamentas",
+      "domain": "migracija.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-migracijos-departamentas-official-subtree",
+      "brand": "Migracijos departamentas",
+      "domain": "login.migracija.lrv.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-omniva-qualified-context",
+      "brand": "Omniva",
+      "domain": "login-omniva.example",
+      "expected": {
+        "matched": true,
+        "brand": "Omniva",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-omniva-neutral-name",
+      "brand": "Omniva",
+      "domain": "omniva-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-omniva-official-1",
+      "brand": "Omniva",
+      "domain": "omniva.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-omniva-official-2",
+      "brand": "Omniva",
+      "domain": "omniva.ee",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-omniva-official-3",
+      "brand": "Omniva",
+      "domain": "omniva.lv",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-omniva-official-4",
+      "brand": "Omniva",
+      "domain": "omniva.eu",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-omniva-official-subtree",
+      "brand": "Omniva",
+      "domain": "login.omniva.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-omniva-collision-1",
+      "brand": "Omniva",
+      "domain": "omnia-login.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-name-collision"
+      }
+    },
+    {
+      "id": "registry-omniva-collision-2",
+      "brand": "Omniva",
+      "domain": "oniva-login.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-name-collision"
+      }
+    },
+    {
+      "id": "registry-paysera-qualified-context",
+      "brand": "Paysera",
+      "domain": "login-paysera.example",
+      "expected": {
+        "matched": true,
+        "brand": "Paysera",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-paysera-neutral-name",
+      "brand": "Paysera",
+      "domain": "paysera-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-paysera-official-1",
+      "brand": "Paysera",
+      "domain": "paysera.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-paysera-official-2",
+      "brand": "Paysera",
+      "domain": "paysera.com",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-paysera-official-subtree",
+      "brand": "Paysera",
+      "domain": "login.paysera.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-regitra-qualified-context",
+      "brand": "REGITRA",
+      "domain": "login-regitra.example",
+      "expected": {
+        "matched": true,
+        "brand": "REGITRA",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-regitra-neutral-name",
+      "brand": "REGITRA",
+      "domain": "regitra-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-regitra-official-1",
+      "brand": "REGITRA",
+      "domain": "regitra.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-regitra-official-subtree",
+      "brand": "REGITRA",
+      "domain": "login.regitra.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-registru-centras-qualified-context",
+      "brand": "Registrų centras",
+      "domain": "login-registru-centras.example",
+      "expected": {
+        "matched": true,
+        "brand": "Registrų centras",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-registru-centras-neutral-name",
+      "brand": "Registrų centras",
+      "domain": "registru-centras-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-registru-centras-official-1",
+      "brand": "Registrų centras",
+      "domain": "registrucentras.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-registru-centras-official-subtree",
+      "brand": "Registrų centras",
+      "domain": "login.registrucentras.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-revolut-qualified-context",
+      "brand": "Revolut",
+      "domain": "login-revolut.example",
+      "expected": {
+        "matched": true,
+        "brand": "Revolut",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-revolut-neutral-name",
+      "brand": "Revolut",
+      "domain": "revolut-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-revolut-official-1",
+      "brand": "Revolut",
+      "domain": "revolut.com",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-revolut-official-2",
+      "brand": "Revolut",
+      "domain": "revolut.me",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-revolut-official-subtree",
+      "brand": "Revolut",
+      "domain": "login.revolut.com",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-rimi-qualified-context",
+      "brand": "Rimi",
+      "domain": "login-rimi.example",
+      "expected": {
+        "matched": true,
+        "brand": "Rimi",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-rimi-neutral-name",
+      "brand": "Rimi",
+      "domain": "rimi-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-rimi-official-1",
+      "brand": "Rimi",
+      "domain": "rimi.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-rimi-official-2",
+      "brand": "Rimi",
+      "domain": "rimi.ee",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-rimi-official-3",
+      "brand": "Rimi",
+      "domain": "rimi.lv",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-rimi-official-4",
+      "brand": "Rimi",
+      "domain": "rimibaltic.com",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-rimi-official-subtree",
+      "brand": "Rimi",
+      "domain": "login.rimi.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-seb-qualified-context",
+      "brand": "SEB",
+      "domain": "login-seb.example",
+      "expected": {
+        "matched": true,
+        "brand": "SEB",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-seb-neutral-name",
+      "brand": "SEB",
+      "domain": "seb-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-seb-official-1",
+      "brand": "SEB",
+      "domain": "seb.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-seb-official-2",
+      "brand": "SEB",
+      "domain": "seb.se",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-seb-official-3",
+      "brand": "SEB",
+      "domain": "seb.ee",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-seb-official-4",
+      "brand": "SEB",
+      "domain": "seb.lv",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-seb-official-5",
+      "brand": "SEB",
+      "domain": "sebgroup.com",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-seb-official-subtree",
+      "brand": "SEB",
+      "domain": "login.seb.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-skelbiu-lt-qualified-context",
+      "brand": "Skelbiu.lt",
+      "domain": "login-skelbiu.example",
+      "expected": {
+        "matched": true,
+        "brand": "Skelbiu.lt",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-skelbiu-lt-neutral-name",
+      "brand": "Skelbiu.lt",
+      "domain": "skelbiu-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-skelbiu-lt-official-1",
+      "brand": "Skelbiu.lt",
+      "domain": "skelbiu.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-skelbiu-lt-official-subtree",
+      "brand": "Skelbiu.lt",
+      "domain": "login.skelbiu.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-smart-id-qualified-context",
+      "brand": "Smart-ID",
+      "domain": "login-smart-id.example",
+      "expected": {
+        "matched": true,
+        "brand": "Smart-ID",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-smart-id-neutral-name",
+      "brand": "Smart-ID",
+      "domain": "smart-id-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-smart-id-official-1",
+      "brand": "Smart-ID",
+      "domain": "smart-id.com",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-smart-id-official-2",
+      "brand": "Smart-ID",
+      "domain": "skidsolutions.eu",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-smart-id-official-subtree",
+      "brand": "Smart-ID",
+      "domain": "login.smart-id.com",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-smart-id-collision-1",
+      "brand": "Smart-ID",
+      "domain": "smartbid-login.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-name-collision"
+      }
+    },
+    {
+      "id": "registry-smart-id-collision-2",
+      "brand": "Smart-ID",
+      "domain": "smartsd-login.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-name-collision"
+      }
+    },
+    {
+      "id": "registry-smartposti-qualified-context",
+      "brand": "SmartPosti",
+      "domain": "login-smartposti.example",
+      "expected": {
+        "matched": true,
+        "brand": "SmartPosti",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-smartposti-neutral-name",
+      "brand": "SmartPosti",
+      "domain": "smartposti-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-smartposti-official-1",
+      "brand": "SmartPosti",
+      "domain": "smartposti.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-smartposti-official-2",
+      "brand": "SmartPosti",
+      "domain": "smartposti.lv",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-smartposti-official-3",
+      "brand": "SmartPosti",
+      "domain": "smartposti.ee",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-smartposti-official-4",
+      "brand": "SmartPosti",
+      "domain": "smartposti.com",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-smartposti-official-5",
+      "brand": "SmartPosti",
+      "domain": "itella.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-smartposti-official-subtree",
+      "brand": "SmartPosti",
+      "domain": "login.smartposti.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-smartposti-collision-1",
+      "brand": "SmartPosti",
+      "domain": "smartpostbd-login.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-name-collision"
+      }
+    },
+    {
+      "id": "registry-smartposti-collision-2",
+      "brand": "SmartPosti",
+      "domain": "stella-login.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-name-collision"
+      }
+    },
+    {
+      "id": "registry-sodra-qualified-context",
+      "brand": "Sodra",
+      "domain": "login-sodra.example",
+      "expected": {
+        "matched": true,
+        "brand": "Sodra",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-sodra-neutral-name",
+      "brand": "Sodra",
+      "domain": "sodra-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-sodra-official-1",
+      "brand": "Sodra",
+      "domain": "sodra.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-sodra-official-subtree",
+      "brand": "Sodra",
+      "domain": "login.sodra.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-swedbank-qualified-context",
+      "brand": "Swedbank",
+      "domain": "login-swedbank.example",
+      "expected": {
+        "matched": true,
+        "brand": "Swedbank",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-swedbank-neutral-name",
+      "brand": "Swedbank",
+      "domain": "swedbank-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-swedbank-official-1",
+      "brand": "Swedbank",
+      "domain": "swedbank.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-swedbank-official-2",
+      "brand": "Swedbank",
+      "domain": "swedbank.se",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-swedbank-official-3",
+      "brand": "Swedbank",
+      "domain": "swedbank.ee",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-swedbank-official-4",
+      "brand": "Swedbank",
+      "domain": "swedbank.lv",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-swedbank-official-5",
+      "brand": "Swedbank",
+      "domain": "swedbank.com",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-swedbank-official-6",
+      "brand": "Swedbank",
+      "domain": "swedbankgroup.com",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-swedbank-official-7",
+      "brand": "Swedbank",
+      "domain": "swedbankpay.com",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-swedbank-official-subtree",
+      "brand": "Swedbank",
+      "domain": "login.swedbank.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-swedbank-collision-1",
+      "brand": "Swedbank",
+      "domain": "sberbank-login.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-name-collision"
+      }
+    },
+    {
+      "id": "registry-tele2-qualified-context",
+      "brand": "Tele2",
+      "domain": "login-tele2.example",
+      "expected": {
+        "matched": true,
+        "brand": "Tele2",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-tele2-neutral-name",
+      "brand": "Tele2",
+      "domain": "tele2-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-tele2-official-1",
+      "brand": "Tele2",
+      "domain": "tele2.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-tele2-official-2",
+      "brand": "Tele2",
+      "domain": "tele2.com",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-tele2-official-3",
+      "brand": "Tele2",
+      "domain": "tele2.se",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-tele2-official-4",
+      "brand": "Tele2",
+      "domain": "tele2.lv",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-tele2-official-5",
+      "brand": "Tele2",
+      "domain": "tele2.ee",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-tele2-official-6",
+      "brand": "Tele2",
+      "domain": "tele2.kz",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-tele2-official-subtree",
+      "brand": "Tele2",
+      "domain": "login.tele2.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-telia-qualified-context",
+      "brand": "Telia",
+      "domain": "login-telia.example",
+      "expected": {
+        "matched": true,
+        "brand": "Telia",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-telia-neutral-name",
+      "brand": "Telia",
+      "domain": "telia-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-telia-official-1",
+      "brand": "Telia",
+      "domain": "telia.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-telia-official-2",
+      "brand": "Telia",
+      "domain": "telia.com",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-telia-official-3",
+      "brand": "Telia",
+      "domain": "telia.io",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-telia-official-4",
+      "brand": "Telia",
+      "domain": "telia.fi",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-telia-official-5",
+      "brand": "Telia",
+      "domain": "telia.ee",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-telia-official-6",
+      "brand": "Telia",
+      "domain": "telia.no",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-telia-official-7",
+      "brand": "Telia",
+      "domain": "telia.se",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-telia-official-8",
+      "brand": "Telia",
+      "domain": "teliacompany.com",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-telia-official-subtree",
+      "brand": "Telia",
+      "domain": "login.telia.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-telia-collision-1",
+      "brand": "Telia",
+      "domain": "aelia-login.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-name-collision"
+      }
+    },
+    {
+      "id": "registry-unipark-qualified-context",
+      "brand": "UNIPARK",
+      "domain": "login-unipark.example",
+      "expected": {
+        "matched": true,
+        "brand": "UNIPARK",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-unipark-neutral-name",
+      "brand": "UNIPARK",
+      "domain": "unipark-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-unipark-official-1",
+      "brand": "UNIPARK",
+      "domain": "unipark.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-unipark-official-2",
+      "brand": "UNIPARK",
+      "domain": "unipark.eu",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-unipark-official-subtree",
+      "brand": "UNIPARK",
+      "domain": "login.unipark.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-urbo-qualified-context",
+      "brand": "Urbo",
+      "domain": "login-urbo.example",
+      "expected": {
+        "matched": true,
+        "brand": "Urbo",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-urbo-neutral-name",
+      "brand": "Urbo",
+      "domain": "urbo-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-urbo-official-1",
+      "brand": "Urbo",
+      "domain": "urbo.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-urbo-official-2",
+      "brand": "Urbo",
+      "domain": "medbank.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-urbo-official-subtree",
+      "brand": "Urbo",
+      "domain": "login.urbo.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-venipak-qualified-context",
+      "brand": "Venipak",
+      "domain": "login-venipak.example",
+      "expected": {
+        "matched": true,
+        "brand": "Venipak",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-venipak-neutral-name",
+      "brand": "Venipak",
+      "domain": "venipak-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-venipak-official-1",
+      "brand": "Venipak",
+      "domain": "venipak.com",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-venipak-official-subtree",
+      "brand": "Venipak",
+      "domain": "login.venipak.com",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-vinted-qualified-context",
+      "brand": "Vinted",
+      "domain": "login-vinted.example",
+      "expected": {
+        "matched": true,
+        "brand": "Vinted",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-vinted-neutral-name",
+      "brand": "Vinted",
+      "domain": "vinted-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-vinted-official-1",
+      "brand": "Vinted",
+      "domain": "vinted.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-vinted-official-2",
+      "brand": "Vinted",
+      "domain": "vinted.com",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-vinted-official-3",
+      "brand": "Vinted",
+      "domain": "vinted.co.uk",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-vinted-official-4",
+      "brand": "Vinted",
+      "domain": "vintedpay.com",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-vinted-official-subtree",
+      "brand": "Vinted",
+      "domain": "login.vinted.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
+      }
+    },
+    {
+      "id": "registry-vmi-qualified-context",
+      "brand": "VMI",
+      "domain": "login-vmi.example",
+      "expected": {
+        "matched": true,
+        "brand": "VMI",
+        "scoreBand": [
+          90,
+          100
+        ],
+        "reasonCodes": [
+          "brand-exact-token",
+          "suspicious-context",
+          "different-tld"
+        ]
+      }
+    },
+    {
+      "id": "registry-vmi-neutral-name",
+      "brand": "VMI",
+      "domain": "vmi-garden.example",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "brand-string-alone-is-not-suspicious-context"
+      }
+    },
+    {
+      "id": "registry-vmi-official-1",
+      "brand": "VMI",
+      "domain": "vmi.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain"
+      }
+    },
+    {
+      "id": "registry-vmi-official-subtree",
+      "brand": "VMI",
+      "domain": "login.vmi.lt",
+      "expected": {
+        "matched": false,
+        "rejectionReason": "reviewed-official-domain-subtree"
       }
     }
   ]

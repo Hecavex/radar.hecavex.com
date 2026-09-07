@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import sys
 import urllib.error
 import urllib.parse
@@ -16,11 +17,14 @@ MAXIMUM_JSON_BYTES = 2 * 1024 * 1024
 MAXIMUM_HTML_BYTES = 512 * 1024
 DEFAULT_BASE_URL = "https://radar.hecavex.com"
 DEFAULT_GRACE_MINUTES = 30
+DEFAULT_MAXIMUM_SYNC_AGE_MINUTES = 180
 ROUTES = (
     ("/", 200, "en", "https://radar.hecavex.com/"),
     ("/lt/", 200, "lt", "https://radar.hecavex.com/lt/"),
     ("/methodology/", 200, "en", "https://radar.hecavex.com/methodology/"),
     ("/lt/metodologija/", 200, "lt", "https://radar.hecavex.com/lt/metodologija/"),
+    ("/trends/", 200, "en", "https://radar.hecavex.com/trends/"),
+    ("/lt/tendencijos/", 200, "lt", "https://radar.hecavex.com/lt/tendencijos/"),
     ("/radar-live-smoke-not-found", 404, "en", None),
 )
 ATOMIC_PAIR_FINDING = "The live snapshot and feed manifest do not share one atomic synchronization timestamp."
@@ -41,6 +45,10 @@ TRANSITIONAL_PAIR_FINDINGS = frozenset(
         CHECKED_IN_LENGTH_FINDING,
     }
 )
+
+
+def _now() -> datetime:
+    return datetime.now(UTC)
 
 
 def _timestamp(value: object) -> datetime | None:
@@ -88,10 +96,21 @@ def evaluate_publication(
     live_snapshot_payload: bytes,
     *,
     grace_minutes: int = DEFAULT_GRACE_MINUTES,
+    now: datetime | None = None,
+    maximum_sync_age_minutes: int = DEFAULT_MAXIMUM_SYNC_AGE_MINUTES,
 ) -> list[str]:
     findings: list[str] = []
     expected_generated = _timestamp(expected_manifest.get("generatedAt"))
     live_generated = _timestamp(live_manifest.get("generatedAt"))
+    if now is not None and live_generated is not None:
+        age = now.astimezone(UTC) - live_generated
+        if age > timedelta(minutes=maximum_sync_age_minutes):
+            findings.append(
+                "The live synchronization is stale in absolute time, even if it matches the repository: "
+                f"age={int(age.total_seconds() // 60)} minutes, maximum={maximum_sync_age_minutes} minutes."
+            )
+        if age < -timedelta(minutes=5):
+            findings.append("The live synchronization timestamp is unexpectedly in the future.")
     if expected_generated is None:
         findings.append("The checked-in feed manifest has an invalid generatedAt timestamp.")
     if live_generated is None:
@@ -173,12 +192,16 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--repository", type=Path, default=Path.cwd())
     parser.add_argument("--base-url", default=DEFAULT_BASE_URL)
     parser.add_argument("--grace-minutes", type=int, default=DEFAULT_GRACE_MINUTES)
+    parser.add_argument("--expected-revision", help="Require this exact deployed build commit after Pages rollout.")
     parser.add_argument("--json-output", type=Path)
     parser.add_argument("--markdown-output", type=Path)
     parser.add_argument("--github-output", type=Path)
     options = parser.parse_args(argv)
     if not options.base_url.startswith("https://") or not 5 <= options.grace_minutes <= 180:
         print("Live smoke check requires an HTTPS base URL and a 5-180 minute grace period.", file=sys.stderr)
+        return 2
+    if options.expected_revision and not re.fullmatch(r"[a-f0-9]{40}", options.expected_revision):
+        print("Expected release revision must be a full Git commit ID.", file=sys.stderr)
         return 2
 
     expected_path = options.repository.resolve() / "public" / "data" / "feed-manifest.json"
@@ -191,6 +214,14 @@ def main(argv: list[str] | None = None) -> int:
     findings: list[str] = []
     route_results: list[dict[str, object]] = []
     try:
+        if options.expected_revision:
+            status, body = _fetch(options.base_url, "/.well-known/hecavex-release.json", 4096, nonce)
+            release = _json_object(body, "Live release identity")
+            if status != 200 or release != {
+                "schemaVersion": 1, "repository": "Hecavex/radar.hecavex.com",
+                "revision": options.expected_revision,
+            }:
+                findings.append("The live release identity does not match the deployed build revision.")
         for attempt in range(2):
             publication_nonce = f"{nonce}-publication-{attempt + 1}"
             manifest_status, live_manifest_payload = _fetch(
@@ -212,6 +243,7 @@ def main(argv: list[str] | None = None) -> int:
                         live_manifest,
                         live_snapshot_payload,
                         grace_minutes=options.grace_minutes,
+                        now=_now(),
                     )
                 )
             if attempt == 0 and _needs_pair_retry(publication_findings):

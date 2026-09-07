@@ -4,6 +4,9 @@ on:
   repository_dispatch:
     types: [certstream_writer_completed]
   workflow_dispatch:
+  workflow_run:
+    workflows: [Collect CertStream candidates]
+    types: [completed]
 
 permissions:
   actions: write
@@ -18,17 +21,23 @@ jobs:
     if: >-
       github.ref == 'refs/heads/main' &&
       (github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.conclusion != 'success') ||
       (github.event.client_payload.source_workflow == 'Collect CertStream candidates' &&
       github.event.client_payload.source_ref == 'main'))
     runs-on: ubuntu-latest
     timeout-minutes: 5
     environment: radar-certstream-cadence
     steps:
+      - name: Check out trusted cadence policy
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+          persist-credentials: false
       - name: Dispatch one due collection
         env:
           GH_TOKEN: ${{ github.token }}
           REPOSITORY: ${{ github.repository }}
-          SOURCE_RUN_ID: ${{ github.event.client_payload.source_run_id || '0' }}
         shell: bash
         run: |
           runs="$(gh api \
@@ -36,19 +45,14 @@ jobs:
             -H "X-GitHub-Api-Version: 2022-11-28" \
             "/repos/${REPOSITORY}/actions/workflows/collect-certstream.yml/runs?per_page=20")"
 
-          active="$(jq '[.workflow_runs[] | select(.status != "completed")] | length' <<<"${runs}")"
-          if [[ "${active}" -gt 0 ]]; then
+          decision="$(python -m hecavex_radar.certstream_cadence <<<"${runs}")"
+          if [[ "${decision}" == "active-owner" ]]; then
             echo "A CertStream collection is already queued or running; no relay dispatch is needed."
             exit 0
           fi
-
-          if [[ "${SOURCE_RUN_ID}" != "0" ]]; then
-            newer="$(jq --argjson source "${SOURCE_RUN_ID}" \
-              '[.workflow_runs[] | select(.id > $source)] | length' <<<"${runs}")"
-            if [[ "${newer}" -gt 0 ]]; then
-              echo "A newer CertStream run already exists; its completion owns the next relay."
-              exit 0
-            fi
+          if [[ "${decision}" != "dispatch" ]]; then
+            echo "Invalid cadence decision; refusing dispatch." >&2
+            exit 1
           fi
 
           gh api --method POST \

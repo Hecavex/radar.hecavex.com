@@ -1271,8 +1271,10 @@ def _complete_current_signals() -> list[dict[str, object]]:
 
 
 def _history_signals(registry: BrandRegistry) -> list[dict[str, object]]:
-    history = _read_bounded_json(PROJECT_ROOT / "public" / "data" / "history.json", MAXIMUM_HISTORY_BYTES)
-    if history is None:
+    from .history_partitions import read_document
+    try:
+        history = read_document(PROJECT_ROOT / "public" / "data" / "history.json", MAXIMUM_HISTORY_BYTES)
+    except FileNotFoundError:
         return []
     if (
         not isinstance(history, dict)

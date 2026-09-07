@@ -9,15 +9,15 @@ import type { RadarHistory } from "./types.ts";
 
 type LoadState =
   | { status: "loading" }
-  | { status: "ready"; history: RadarHistory; renderedAt: number }
+  | { status: "ready"; history: RadarHistory; renderedAt: number; totalSignals?: number }
   | { status: "error"; message: string };
 
 export function HistoryApp(
-  { initialHistory, initialNow }: { initialHistory?: RadarHistory; initialNow?: number } = {},
+  { initialHistory, initialNow, initialTotal }: { initialHistory?: RadarHistory; initialNow?: number; initialTotal?: number } = {},
 ) {
   const [state, setState] = useState<LoadState>(
     initialHistory
-      ? { status: "ready", history: initialHistory, renderedAt: initialNow ?? Date.now() }
+      ? { status: "ready", history: initialHistory, renderedAt: initialNow ?? Date.now(), totalSignals: initialTotal }
       : { status: "loading" },
   );
   useEffect(() => {
@@ -36,7 +36,7 @@ export function HistoryApp(
       <SiteHeader currentPage="history" />
       {state.status === "loading" && <main className="state-page" id="main-content" aria-live="polite"><Archive className="state-icon pulse" aria-hidden="true" /><p className="eyebrow">Reading archive</p><h1>Loading candidate history</h1></main>}
       {state.status === "error" && <main className="state-page" id="main-content" aria-live="assertive"><AlertTriangle className="state-icon danger" aria-hidden="true" /><p className="eyebrow">History unavailable</p><h1>The history artifact could not be loaded</h1><p>{state.message}</p></main>}
-      {state.status === "ready" && <HistoryDashboard history={state.history} now={state.renderedAt} />}
+      {state.status === "ready" && <HistoryDashboard history={state.history} now={state.renderedAt} totalSignals={state.totalSignals} />}
       <SiteFooter />
     </div>
   );
