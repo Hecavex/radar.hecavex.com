@@ -181,7 +181,8 @@ def test_complete_merged_inventory_capacity_is_checked(repo: Path, monkeypatch: 
 
 @pytest.mark.parametrize("path", ["../data/x.json", "/public/data/x.json", "public/data/../x.json",
                                   "public/data/x.py", ".github/workflows/a.json", "data/brands-lt.json",
-                                  "data/review/public-decisions.json", "public/data/x.json:stream"])
+                                  "data/review/public-decisions.json", "public/data/x.json:stream",
+                                  "public/data/.git/x.json", "public/data/x\ny.json", "public/data/X.json"])
 def test_path_boundary(path: str) -> None:
     assert not transport.allowed(path)
 

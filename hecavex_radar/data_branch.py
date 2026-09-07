@@ -38,6 +38,8 @@ READ_SCOPES = {writer: (("data/certstream/", "public/data/collection-health.json
 
 def allowed(path: str) -> bool:
     parts = PurePosixPath(path).parts
+    if re.fullmatch(r"[a-z0-9][a-z0-9._/-]*", path) is None or any(part.startswith(".") for part in parts):
+        return False
     if not parts or any(part in {".", ".."} for part in parts) or "\\" in path or ":" in path:
         return False
     if PurePosixPath(path).is_absolute() or str(PurePosixPath(path)) != path:
