@@ -46,7 +46,9 @@ jobs:
             -H "X-GitHub-Api-Version: 2022-11-28" \
             "/repos/${REPOSITORY}/actions/workflows/collect-certstream.yml/runs?per_page=20")"
 
-          decision="$(python -m hecavex_radar.certstream_cadence <<<"${runs}")"
+          # Only old, superseded queued runs with a fresh zero-job response can
+          # be reconciled. The collector's serialized persisted due guard remains authoritative.
+          decision="$(python -m hecavex_radar.certstream_cadence --repository "${REPOSITORY}" <<<"${runs}")"
           if [[ "${decision}" == "active-owner" ]]; then
             echo "A CertStream collection is already queued or running; no relay dispatch is needed."
             exit 0
