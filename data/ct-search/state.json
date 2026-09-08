@@ -1,27 +1,31 @@
 {
   "dataset": "ct-search-state",
-  "generatedAt": "2026-09-08T18:59:35.827Z",
+  "generatedAt": "2026-09-08T22:02:03.990Z",
   "latestRun": {
     "dnsNames": 0,
-    "endedAt": "2026-09-08T18:59:35.827Z",
-    "failureCodes": [],
+    "endedAt": "2026-09-08T22:02:03.990Z",
+    "failureCodes": [
+      "provider-http"
+    ],
     "matches": 0,
     "newRecords": 0,
-    "outcome": "completed",
-    "queriesAttempted": 6,
+    "outcome": "failed",
+    "queriesAttempted": 1,
     "queriesBacklogged": 0,
-    "queriesCompleted": 6,
+    "queriesCompleted": 0,
     "rowsProcessed": 0,
-    "startedAt": "2026-09-08T18:59:10.837Z"
+    "startedAt": "2026-09-08T22:02:03.599Z"
   },
   "provider": "crt.sh",
   "providerHealth": {
-    "consecutiveFailures": 0,
-    "degradedSince": null,
-    "lastAttemptAt": "2026-09-08T18:59:35.827Z",
-    "lastFailureCodes": [],
+    "consecutiveFailures": 1,
+    "degradedSince": "2026-09-08T22:02:03.599Z",
+    "lastAttemptAt": "2026-09-08T22:02:03.990Z",
+    "lastFailureCodes": [
+      "provider-http"
+    ],
     "lastSuccessAt": "2026-09-08T18:59:35.827Z",
-    "nextAttemptAt": null
+    "nextAttemptAt": "2026-09-08T22:07:03.990Z"
   },
   "queries": {
     "brand:artea": {
@@ -124,8 +128,8 @@
       "brand": "ERGO",
       "lastEntryAt": null,
       "lastId": 0,
-      "lastOutcome": "completed",
-      "lastRunAt": "2026-09-05T09:21:58.667Z",
+      "lastOutcome": "failed",
+      "lastRunAt": "2026-09-08T22:02:03.599Z",
       "term": "ergodraudimas"
     },
     "brand:esveikata": {
@@ -393,6 +397,6 @@
       "term": "vinted"
     }
   },
-  "queryCursor": 12,
+  "queryCursor": 13,
   "schemaVersion": 1
 }
