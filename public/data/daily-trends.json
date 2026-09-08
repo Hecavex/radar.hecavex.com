@@ -3,7 +3,7 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-09-08T22:42:26.032Z",
+  "generatedAt": "2026-09-08T23:46:52.868Z",
   "retentionDays": 365,
   "from": "2025-09-09",
   "to": "2026-09-08",
@@ -997,43 +997,45 @@
       "date": "2026-09-08",
       "partialDay": true,
       "collectorCoverage": {
-        "windowSeconds": 81746,
-        "scheduledSlots": 90,
-        "recordedAttempts": 6,
-        "healthyAttempts": 6,
-        "recordedSchedulePercent": 6.7,
-        "listeningCoveragePercent": 3.52,
-        "scheduledListeningCeilingPercent": 52.85,
-        "listeningSeconds": 2879.994,
+        "windowSeconds": 85612,
+        "scheduledSlots": 95,
+        "recordedAttempts": 7,
+        "healthyAttempts": 7,
+        "recordedSchedulePercent": 7.4,
+        "listeningCoveragePercent": 3.92,
+        "scheduledListeningCeilingPercent": 53.26,
+        "listeningSeconds": 3359.993,
         "outcomes": {
           "healthy-empty": 5,
-          "healthy-matches": 1
+          "healthy-matches": 2
         }
       },
       "discovery": {
-        "events": 2,
-        "uniqueSignals": 1,
-        "observations": 1,
-        "reobservations": 0,
+        "events": 3,
+        "uniqueSignals": 2,
+        "observations": 2,
+        "reobservations": 1,
         "firstPublications": 1,
         "statusChanges": 0,
-        "facetSampleSize": 1,
-        "evidenceClassifiedSignals": 1,
+        "facetSampleSize": 2,
+        "evidenceClassifiedSignals": 2,
         "byBrand": {
-          "DHL": 1
+          "DHL": 1,
+          "Revolut": 1
         },
         "bySource": {
-          "CertStream": 1
+          "CertStream": 2
         },
         "byEvidenceTier": {
-          "name-only": 1
+          "name-only": 2
         },
         "byReason": {
+          "different-tld": 2,
+          "suspicious-context": 2,
           "brand-exact-token": 1,
-          "different-tld": 1,
+          "brand-joined-affix": 1,
           "first-publication": 1,
-          "multiple-hyphens": 1,
-          "suspicious-context": 1
+          "multiple-hyphens": 1
         }
       }
     }
