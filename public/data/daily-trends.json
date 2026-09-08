@@ -3,14 +3,14 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-09-07T23:57:46.096Z",
+  "generatedAt": "2026-09-08T00:26:41.225Z",
   "retentionDays": 365,
-  "from": "2025-09-08",
-  "to": "2026-09-07",
+  "from": "2025-09-09",
+  "to": "2026-09-08",
   "semantics": "Counts describe Radar discovery and publication activity under the collector coverage shown beside them. They are not a measure of Lithuanian phishing prevalence or total incident volume.",
   "facetSemantics": "Brand, source, evidence and reason facets count unique signals within each UTC day.",
   "seriesSemantics": "The series is sparse. Missing UTC dates inside the stated range mean zero recorded attempts and zero discovery events; consumers can derive scheduled slots from collectorSchedule.",
-  "omittedZeroDays": 345,
+  "omittedZeroDays": 344,
   "collectorSchedule": {
     "expectedIntervalSeconds": 900,
     "expectedListeningSeconds": 480,
@@ -942,15 +942,15 @@
     },
     {
       "date": "2026-09-07",
-      "partialDay": true,
+      "partialDay": false,
       "collectorCoverage": {
-        "windowSeconds": 86266,
-        "scheduledSlots": 95,
+        "windowSeconds": 86400,
+        "scheduledSlots": 96,
         "recordedAttempts": 37,
         "healthyAttempts": 37,
-        "recordedSchedulePercent": 38.9,
-        "listeningCoveragePercent": 20.59,
-        "scheduledListeningCeilingPercent": 52.86,
+        "recordedSchedulePercent": 38.5,
+        "listeningCoveragePercent": 20.56,
+        "scheduledListeningCeilingPercent": 53.33,
         "listeningSeconds": 17759.951,
         "outcomes": {
           "healthy-empty": 29,
@@ -991,6 +991,35 @@
           "punycode": 2,
           "unicode-confusable": 2
         }
+      }
+    },
+    {
+      "date": "2026-09-08",
+      "partialDay": true,
+      "collectorCoverage": {
+        "windowSeconds": 1601,
+        "scheduledSlots": 1,
+        "recordedAttempts": 0,
+        "healthyAttempts": 0,
+        "recordedSchedulePercent": 0.0,
+        "listeningCoveragePercent": 0.0,
+        "scheduledListeningCeilingPercent": 29.98,
+        "listeningSeconds": 0.0,
+        "outcomes": {}
+      },
+      "discovery": {
+        "events": 0,
+        "uniqueSignals": 0,
+        "observations": 0,
+        "reobservations": 0,
+        "firstPublications": 0,
+        "statusChanges": 0,
+        "facetSampleSize": 0,
+        "evidenceClassifiedSignals": 0,
+        "byBrand": {},
+        "bySource": {},
+        "byEvidenceTier": {},
+        "byReason": {}
       }
     }
   ],
