@@ -1,27 +1,31 @@
 {
   "dataset": "ct-search-state",
-  "generatedAt": "2026-09-09T05:20:18.884Z",
+  "generatedAt": "2026-09-09T10:07:56.718Z",
   "latestRun": {
     "dnsNames": 0,
-    "endedAt": "2026-09-09T05:20:18.884Z",
-    "failureCodes": [],
+    "endedAt": "2026-09-09T10:07:56.718Z",
+    "failureCodes": [
+      "provider-http"
+    ],
     "matches": 0,
     "newRecords": 0,
-    "outcome": "completed",
-    "queriesAttempted": 6,
+    "outcome": "failed",
+    "queriesAttempted": 1,
     "queriesBacklogged": 0,
-    "queriesCompleted": 6,
+    "queriesCompleted": 0,
     "rowsProcessed": 0,
-    "startedAt": "2026-09-09T05:19:06.702Z"
+    "startedAt": "2026-09-09T10:07:56.287Z"
   },
   "provider": "crt.sh",
   "providerHealth": {
-    "consecutiveFailures": 0,
-    "degradedSince": null,
-    "lastAttemptAt": "2026-09-09T05:20:18.884Z",
-    "lastFailureCodes": [],
+    "consecutiveFailures": 1,
+    "degradedSince": "2026-09-09T10:07:56.287Z",
+    "lastAttemptAt": "2026-09-09T10:07:56.718Z",
+    "lastFailureCodes": [
+      "provider-http"
+    ],
     "lastSuccessAt": "2026-09-09T05:20:18.884Z",
-    "nextAttemptAt": null
+    "nextAttemptAt": "2026-09-09T10:12:56.718Z"
   },
   "queries": {
     "brand:artea": {
@@ -228,8 +232,8 @@
       "brand": "MAXIMA",
       "lastEntryAt": null,
       "lastId": 28766239921,
-      "lastOutcome": "completed",
-      "lastRunAt": "2026-09-05T16:14:09.340Z",
+      "lastOutcome": "failed",
+      "lastRunAt": "2026-09-09T10:07:56.287Z",
       "term": "maxima"
     },
     "brand:migris": {
@@ -393,6 +397,6 @@
       "term": "vinted"
     }
   },
-  "queryCursor": 25,
+  "queryCursor": 26,
   "schemaVersion": 1
 }
