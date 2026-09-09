@@ -3,7 +3,7 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-09-09T11:27:03.863Z",
+  "generatedAt": "2026-09-09T15:30:06.700Z",
   "retentionDays": 365,
   "from": "2025-09-10",
   "to": "2026-09-09",
@@ -1043,31 +1043,45 @@
       "date": "2026-09-09",
       "partialDay": true,
       "collectorCoverage": {
-        "windowSeconds": 41223,
-        "scheduledSlots": 45,
-        "recordedAttempts": 2,
-        "healthyAttempts": 2,
-        "recordedSchedulePercent": 4.4,
-        "listeningCoveragePercent": 2.33,
-        "scheduledListeningCeilingPercent": 52.4,
-        "listeningSeconds": 959.998,
+        "windowSeconds": 55806,
+        "scheduledSlots": 62,
+        "recordedAttempts": 4,
+        "healthyAttempts": 4,
+        "recordedSchedulePercent": 6.5,
+        "listeningCoveragePercent": 3.44,
+        "scheduledListeningCeilingPercent": 53.33,
+        "listeningSeconds": 1919.995,
         "outcomes": {
-          "healthy-empty": 2
+          "healthy-empty": 3,
+          "healthy-matches": 1
         }
       },
       "discovery": {
-        "events": 0,
-        "uniqueSignals": 0,
-        "observations": 0,
+        "events": 22,
+        "uniqueSignals": 11,
+        "observations": 11,
         "reobservations": 0,
-        "firstPublications": 0,
+        "firstPublications": 11,
         "statusChanges": 0,
-        "facetSampleSize": 0,
-        "evidenceClassifiedSignals": 0,
-        "byBrand": {},
-        "bySource": {},
-        "byEvidenceTier": {},
-        "byReason": {}
+        "facetSampleSize": 11,
+        "evidenceClassifiedSignals": 11,
+        "byBrand": {
+          "Bitė": 10,
+          "DHL": 1
+        },
+        "bySource": {
+          "CertStream": 11
+        },
+        "byEvidenceTier": {
+          "name-only": 11
+        },
+        "byReason": {
+          "brand-exact-token": 11,
+          "different-tld": 11,
+          "first-publication": 11,
+          "suspicious-context": 11,
+          "multiple-hyphens": 9
+        }
       }
     }
   ],
