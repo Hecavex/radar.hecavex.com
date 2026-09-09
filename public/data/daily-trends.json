@@ -3,7 +3,7 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-09-09T22:34:39.914Z",
+  "generatedAt": "2026-09-09T23:29:00.720Z",
   "retentionDays": 365,
   "from": "2025-09-10",
   "to": "2026-09-09",
@@ -1041,44 +1041,47 @@
       "date": "2026-09-09",
       "partialDay": true,
       "collectorCoverage": {
-        "windowSeconds": 81279,
-        "scheduledSlots": 90,
-        "recordedAttempts": 6,
-        "healthyAttempts": 6,
-        "recordedSchedulePercent": 6.7,
-        "listeningCoveragePercent": 3.54,
-        "scheduledListeningCeilingPercent": 53.15,
-        "listeningSeconds": 2879.993,
+        "windowSeconds": 84540,
+        "scheduledSlots": 93,
+        "recordedAttempts": 7,
+        "healthyAttempts": 7,
+        "recordedSchedulePercent": 7.5,
+        "listeningCoveragePercent": 3.97,
+        "scheduledListeningCeilingPercent": 52.8,
+        "listeningSeconds": 3359.992,
         "outcomes": {
           "healthy-empty": 5,
-          "healthy-matches": 1
+          "healthy-matches": 2
         }
       },
       "discovery": {
-        "events": 22,
-        "uniqueSignals": 11,
-        "observations": 11,
-        "reobservations": 0,
+        "events": 23,
+        "uniqueSignals": 12,
+        "observations": 12,
+        "reobservations": 1,
         "firstPublications": 11,
         "statusChanges": 0,
-        "facetSampleSize": 11,
-        "evidenceClassifiedSignals": 11,
+        "facetSampleSize": 12,
+        "evidenceClassifiedSignals": 12,
         "byBrand": {
           "Bitė": 10,
-          "DHL": 1
+          "DHL": 1,
+          "Telia": 1
         },
         "bySource": {
-          "CertStream": 11
+          "CertStream": 12
         },
         "byEvidenceTier": {
-          "name-only": 11
+          "name-only": 12
         },
         "byReason": {
-          "brand-exact-token": 11,
+          "brand-exact-token": 12,
           "different-tld": 11,
           "first-publication": 11,
           "suspicious-context": 11,
-          "multiple-hyphens": 9
+          "multiple-hyphens": 9,
+          "punycode": 1,
+          "unicode-confusable": 1
         }
       }
     }
