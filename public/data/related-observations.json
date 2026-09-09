@@ -1,19 +1,9 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-related-observations",
-  "generatedAt": "2026-09-09T19:47:16.651Z",
+  "generatedAt": "2026-09-09T21:24:59.163Z",
   "semantics": "Shared evidence is a bounded association between public observations. It is not campaign, operator, malware, infrastructure ownership, or threat-actor attribution.",
   "nodes": [
-    {
-      "signalId": "07bdda1bb92c5f543e7b",
-      "domain": "dhl-dhl-express-open-catalog-account[.]westeurope[.]azure[.]privatelink[.]snowflake[.]app",
-      "clusterId": "1877e1f64305a92b"
-    },
-    {
-      "signalId": "5bde7339324a079e18e0",
-      "domain": "dhl-dhl-express-open-catalog-account[.]westeurope[.]azure[.]snowflake[.]app",
-      "clusterId": "1877e1f64305a92b"
-    },
     {
       "signalId": "64f15e71aa29ddb7d63d",
       "domain": "www[.]confirm-revolut[.]es",
@@ -25,19 +15,9 @@
       "clusterId": "f885b9abb2406494"
     },
     {
-      "signalId": "a5450da1bfa504f7a87d",
-      "domain": "revolutbank[.]biz",
-      "clusterId": "5ce827d1d867eaff"
-    },
-    {
       "signalId": "ce47da1a0348d5500d94",
       "domain": "go[.]dhl-support-del[.]com",
       "clusterId": "dc7834e5d856cce3"
-    },
-    {
-      "signalId": "dddb4e0de30d9fc0aad5",
-      "domain": "revolutbank[.]online",
-      "clusterId": "5ce827d1d867eaff"
     },
     {
       "signalId": "e86f606e9f0cc3c28a51",
@@ -51,18 +31,6 @@
     }
   ],
   "edges": [
-    {
-      "id": "63603559ab6ec9e6d3ec",
-      "source": "07bdda1bb92c5f543e7b",
-      "target": "5bde7339324a079e18e0",
-      "strength": "strong",
-      "evidence": [
-        {
-          "type": "certificate-sha256",
-          "value": "806f6ab0aa2ecc3ba3932c4bd708d10e96cb07ed6c485d72ab2ed97559e90b33"
-        }
-      ]
-    },
     {
       "id": "42effaf5eb2ac4275004",
       "source": "80f05e606f123a994d99",
@@ -168,26 +136,6 @@
         {
           "type": "dns-ns",
           "value": "ina3[.]registrar[.]eu"
-        }
-      ]
-    },
-    {
-      "id": "bab15ab9a42344cd9484",
-      "source": "a5450da1bfa504f7a87d",
-      "target": "dddb4e0de30d9fc0aad5",
-      "strength": "corroborated-supporting",
-      "evidence": [
-        {
-          "type": "dns-a",
-          "value": "34[.]117[.]176[.]22"
-        },
-        {
-          "type": "dns-ns",
-          "value": "ns1[.]gofruits[.]co"
-        },
-        {
-          "type": "dns-ns",
-          "value": "ns2[.]gofruits[.]co"
         }
       ]
     }
