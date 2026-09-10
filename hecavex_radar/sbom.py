@@ -208,7 +208,15 @@ def build_sbom(
         manifest: Any = json.loads(release_manifest.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as error:
         raise ValueError("SPDX release manifest is unreadable.") from error
-    if not isinstance(manifest, dict) or manifest.get("tag") != tag or manifest.get("sourceCommit") != commit:
+    if not isinstance(manifest, dict) or manifest.get("tag") != tag:
+        raise ValueError("SPDX release manifest does not match the requested release.")
+    source_commit = manifest.get("sourceCommit")
+    # Dependencies belong to the trusted tooling checkout, not the data-only
+    # publication revision. Older manifests legitimately have only one SHA.
+    tooling_commit = manifest.get("toolingCommit", source_commit)
+    if (not isinstance(source_commit, str) or not SAFE_COMMIT.fullmatch(source_commit)
+            or not isinstance(tooling_commit, str) or not SAFE_COMMIT.fullmatch(tooling_commit)
+            or tooling_commit != commit):
         raise ValueError("SPDX release manifest does not match the requested release.")
     created = _timestamp(manifest.get("snapshotGeneratedAt"))
     project_name, project_version, project_license = _project_metadata(pyproject_path)
