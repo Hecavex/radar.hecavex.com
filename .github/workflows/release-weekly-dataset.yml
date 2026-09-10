@@ -300,6 +300,9 @@ jobs:
 
           from hecavex_radar.publication import validate_publication
 
+          # Import only the installed trusted toolchain before changing the
+          # data-relative validation boundary. The extracted root has no code.
+          os.chdir(os.environ["RELEASE_SOURCE_ROOT"])
           validate_publication(Path(os.environ["RELEASE_SOURCE_ROOT"]), validate_stix=True)
           PY
 
