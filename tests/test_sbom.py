@@ -94,6 +94,34 @@ def _build(paths: dict[str, Path]) -> dict[str, object]:
     )
 
 
+def test_distinct_data_and_tooling_revisions_keep_dependency_identity(tmp_path: Path) -> None:
+    paths = _fixtures(tmp_path)
+    manifest = json.loads(paths["release_manifest"].read_text(encoding="utf-8"))
+    manifest.update(sourceCommit="b" * 40, toolingCommit=COMMIT)
+    paths["release_manifest"].write_text(json.dumps(manifest), encoding="utf-8")
+    value = _build(paths)
+    assert value["documentNamespace"].endswith("/" + COMMIT)
+    assert value["packages"][0]["downloadLocation"].endswith("/" + COMMIT)
+    assert json.loads(paths["release_manifest"].read_text(encoding="utf-8"))["sourceCommit"] == "b" * 40
+
+
+@pytest.mark.parametrize("updates", [
+    {"sourceCommit": "b" * 40},  # A legacy manifest must still match exactly.
+    {"sourceCommit": "b" * 40, "toolingCommit": "c" * 40},
+    {"sourceCommit": "bad", "toolingCommit": COMMIT},
+    {"sourceCommit": None, "toolingCommit": COMMIT},
+    {"sourceCommit": "b" * 40, "toolingCommit": None},
+    {"sourceCommit": "b" * 40, "toolingCommit": COMMIT + "\n"},
+])
+def test_release_identity_mismatch_or_malformed_sha_is_rejected(tmp_path: Path, updates: dict) -> None:
+    paths = _fixtures(tmp_path)
+    manifest = json.loads(paths["release_manifest"].read_text(encoding="utf-8"))
+    manifest.update(updates)
+    paths["release_manifest"].write_text(json.dumps(manifest), encoding="utf-8")
+    with pytest.raises(ValueError, match="does not match"):
+        _build(paths)
+
+
 def test_sbom_covers_release_files_and_both_dependency_ecosystems(tmp_path: Path) -> None:
     paths = _fixtures(tmp_path)
 
