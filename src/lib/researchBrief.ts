@@ -6,6 +6,7 @@ export const researchBriefCopy = {
     title: "Research handoff", intro: "A local summary of this published record, not an assessment or a report submission.",
     preview: "Selectable research brief", copy: "Copy brief", download: "Download plain text", copied: "Brief copied.",
     denied: "Clipboard unavailable. Select the preview text or download it.", downloaded: "Plain-text download prepared.",
+    noScript: "JavaScript is disabled. Select and copy the preview text using your browser controls.",
     unknown: "Not published / unknown", facts: "PUBLISHED FACTS", provenance: "PROVENANCE", questions: "QUESTIONS — NOT FINDINGS",
     signal: "Signal ID", indicator: "Defanged indicator", domain: "Defanged domain", snapshot: "Snapshot UTC",
     first: "First observed UTC", last: "Last observed UTC", status: "Published status", review: "Published review state",
@@ -20,6 +21,7 @@ export const researchBriefCopy = {
     title: "Tyrimo perdavimas", intro: "Vietinė šio viešo įrašo santrauka, o ne vertinimas ar pranešimo siuntimas.",
     preview: "Pažymimas tyrimo tekstas", copy: "Kopijuoti tekstą", download: "Atsisiųsti tekstą", copied: "Tekstas nukopijuotas.",
     denied: "Iškarpinė nepasiekiama. Pažymėkite tekstą arba atsisiųskite jį.", downloaded: "Teksto atsisiuntimas paruoštas.",
+    noScript: "JavaScript išjungtas. Pažymėkite ir nukopijuokite tekstą naršyklės priemonėmis.",
     unknown: "Nepaskelbta / nežinoma", facts: "PASKELBTI FAKTAI", provenance: "KILMĖ", questions: "KLAUSIMAI — NE IŠVADOS",
     signal: "Signalo ID", indicator: "Neutralizuotas indikatorius", domain: "Neutralizuotas domenas", snapshot: "Suvestinė UTC",
     first: "Pirmas stebėjimas UTC", last: "Paskutinis stebėjimas UTC", status: "Paskelbta būsena", review: "Paskelbta peržiūros būsena",
@@ -40,8 +42,12 @@ function timestamp(value: unknown, unknown: string): string {
 function indicator(value: unknown, unknown: string): string {
   if (typeof value !== "string" || !value || value.length > 2048 || /[<>`]/.test(value)
     || [...value].some((character) => character.charCodeAt(0) < 32 || character.charCodeAt(0) === 127)) return unknown;
-  return value.replace(/https?:/gi, (scheme) => scheme.toLowerCase() === "https:" ? "hxxps:" : "hxxp:")
-    .replace(/\[\.\]/g, ".").replace(/\./g, "[.]").replace(/@/g, "[@]").replace(/\]\(/g, "]（");
+  const host = "[a-z0-9-]+(?:\\[\\.\\][a-z0-9-]+)+";
+  const domain = new RegExp(`^${host}$`);
+  const url = new RegExp(`^hxxps?://${host}(?::[0-9]{1,5})?(?:/[A-Za-z0-9%:@!$&'()*+,;=._~\\[\\]/-]*)?$`);
+  // Preserve already-defanged published paths byte for byte (including dots).
+  // Unsupported/unsafe input is unknown, never silently refanged or repaired.
+  return (domain.test(value) || url.test(value)) && !/https?:|\]\(/i.test(value) ? value : unknown;
 }
 
 function published(value: unknown, allowed: readonly string[], unknown: string): string {

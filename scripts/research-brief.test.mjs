@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { readFileSync } from "node:fs";
+import { URL } from "node:url";
 import { buildResearchBrief, researchBriefFilename, safeResearchReference } from "../src/lib/researchBrief.ts";
 
 function fixture(language = "en") {
@@ -66,6 +68,12 @@ test("only bounded exact public URLScan report references are retained", () => {
   }
 });
 
+test("published defanged URL paths are preserved without changing their dots or punctuation", () => {
+  const data = fixture();
+  data.signal.url = "hxxps://candidate[.]example/login.php/path_v1.2/file%20name";
+  assert.ok(buildResearchBrief(data).includes(`Defanged indicator: ${data.signal.url}`));
+});
+
 test("only matching bounded sidecar observations appear, without arbitrary titles or network fields", () => {
   const data = fixture();
   data.detail = { signalId: data.signal.id, observations: [{ source: "URLScan", observedAt: data.generatedAt, page: { title: "DO NOT COPY PRIVATE TITLE" } }] };
@@ -83,4 +91,21 @@ test("large observation lists remain bounded and advertise that bound", () => {
   assert.equal(brief.split(`CertStream / ${data.generatedAt}`).length - 1, 20);
   assert.ok(brief.includes("up to 20"));
   assert.ok(brief.length < 8192);
+});
+
+test("timestamp formatting follows the canonical public schema rather than broader RFC3339", () => {
+  const schema = readFileSync(new URL("../hecavex_radar/public_schemas.py", import.meta.url), "utf8");
+  const declaration = /TIMESTAMP_PATTERN: Final = r"([^"]+)"/.exec(schema);
+  assert.ok(declaration);
+  const pattern = new RegExp(declaration[1]);
+  for (const value of ["2026-09-10T06:00:00Z", "2026-09-10T06:00:00.000+00:00", "2026-09-10T08:00:00.000+02:00"]) {
+    assert.equal(pattern.test(value), false);
+    const data = fixture();
+    data.generatedAt = value;
+    assert.ok(buildResearchBrief(data).includes("Snapshot UTC: Not published / unknown"));
+  }
+  assert.ok(pattern.test(fixture().generatedAt));
+  const data = fixture();
+  data.generatedAt = "2026-02-31T00:00:00.000Z";
+  assert.ok(buildResearchBrief(data).includes("Snapshot UTC: Not published / unknown"));
 });

@@ -2289,6 +2289,16 @@ async function verifyResearchBrief(browser, origin, width, language) {
     assert(readFileSync(await download.path(), "utf8") === value, "Downloaded brief differs from preview.");
     assert(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), "Research brief overflows viewport.");
     assert(unexpectedRequests.length === 0, `Research brief sent unexpected external requests: ${unexpectedRequests.join(", ")}`);
+    const noScriptContext = await browser.newContext({ viewport: { width, height: 900 }, javaScriptEnabled: false });
+    try {
+      const noScriptPage = await noScriptContext.newPage();
+      await noScriptPage.goto(`${origin}${path}`, { waitUntil: "networkidle" });
+      assert(await noScriptPage.locator("#research-brief-preview").inputValue() === value, "No-JS preview lost published facts.");
+      assert(await noScriptPage.locator(".research-brief noscript").isVisible(), "No-JS selection guidance is missing.");
+      assert(!(await noScriptPage.locator(".research-brief-actions").isVisible()), "No-JS page advertises inert action controls.");
+    } finally {
+      await noScriptContext.close();
+    }
     if (process.env.RADAR_RESEARCH_SCREENSHOT_DIR) {
       await page.locator(".research-brief").evaluate((element) => {
         window.scrollTo(0, window.scrollY + element.getBoundingClientRect().top - 140);

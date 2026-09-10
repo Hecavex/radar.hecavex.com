@@ -28,6 +28,7 @@ export function ResearchBrief({ data }: { data: SignalPageData }) {
     <p>{text.intro}</p>
     <label htmlFor="research-brief-preview">{text.preview}</label>
     <textarea id="research-brief-preview" readOnly value={brief} rows={14} spellCheck={false} />
+    <noscript><p>{text.noScript}</p></noscript>
     <div className="research-brief-actions">
       <button className="button" type="button" onClick={() => void copy()}>{text.copy}</button>
       <button className="button" type="button" onClick={download}>{text.download}</button>
