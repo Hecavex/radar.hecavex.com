@@ -2,6 +2,7 @@ import { ExternalLink, Flag, GitCompareArrows, History, Link2, Network, ShieldAl
 import { useState } from "react";
 
 import { SiteFooter } from "./components/SiteFooter.tsx";
+import { ResearchBrief } from "./components/ResearchBrief.tsx";
 import { ContextChanges, CopyableValue, DetailItem, DomainContext, ObservationDetail } from "./components/ScreenshotModal.tsx";
 import { SiteHeader } from "./components/SiteHeader.tsx";
 import { brandPath } from "./lib/brandRegistry.ts";
@@ -134,6 +135,7 @@ export function SignalPage({ data }: { data: SignalPageData }) {
               {connected.length ? <ul className="association-cards">{connected.map(({ edge, other }) => <li key={edge.id}><a href={signalPath(other!.signalId, language)}>{other!.domain}</a><span>{edge.strength.replaceAll("-", " ")}</span><small>{edge.evidence.map((evidence) => evidence.type).join(", ")}</small></li>)}</ul> : <p>{text.noRelated}</p>}
               <p className="boundary-note">{language === "lt" ? "Bendra infrastruktūra ar artefaktai rodo sąsajas, o ne priskyrimą kampanijai ar veikėjui." : "Shared infrastructure or artifacts are associations, not campaign or actor attribution."}</p>
             </section>
+            <ResearchBrief data={data} />
           </div>
 
           <aside className="profile-aside" aria-label={language === "lt" ? "Signalo įrašo veiksmai" : "Signal record controls"}>
