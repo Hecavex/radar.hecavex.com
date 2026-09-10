@@ -13,6 +13,8 @@ permissions:
 concurrency:
   group: github-pages
   cancel-in-progress: false
+  # A later, ineligible completion must not evict a valid pending deployment.
+  queue: max
 
 jobs:
   build:
