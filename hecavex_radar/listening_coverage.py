@@ -23,7 +23,8 @@ def intersects(row: Mapping[str, object], start: datetime, end: datetime) -> boo
                             or (not began and start < stopped <= end)))
 
 
-def coverage_bounds(rows: Sequence[Mapping[str, object]], start: datetime, end: datetime) -> dict[str, object]:
+def coverage_bounds(rows: Sequence[Mapping[str, object]], start: datetime, end: datetime, *,
+                    reported_rows: Sequence[Mapping[str, object]] | None = None) -> dict[str, object]:
     """Bound union duration using connected totals and enclosing attempt intervals.
 
     For each overlap component, sum of guaranteed clipped totals minus maximal
@@ -35,7 +36,15 @@ def coverage_bounds(rows: Sequence[Mapping[str, object]], start: datetime, end: 
     spans: list[tuple[float, float, float, float]] = []
     unknown = 0
     unknown_upper = 0.0
+    # Worker totals follow end-time/count attribution, not interval overlap.
+    # In particular, midnight-ending attempts have zero overlap with the new
+    # day but their count and reported worker total belong to that new day.
     reported = 0.0
+    for row in rows if reported_rows is None else reported_rows:
+        raw, stopped = row.get("listeningSeconds"), stamp(row.get("endedAt"))
+        if (not isinstance(raw, bool) and isinstance(raw, (int, float))
+                and math.isfinite(raw) and raw >= 0 and stopped and start <= stopped < end):
+            reported += raw
     for row in rows:
         raw = row.get("listeningSeconds")
         if isinstance(raw, bool) or not isinstance(raw, (int, float)) or not math.isfinite(raw) or raw < 0:
@@ -43,8 +52,6 @@ def coverage_bounds(rows: Sequence[Mapping[str, object]], start: datetime, end: 
             unknown_upper += window
             continue
         began, stopped = stamp(row.get("collectorStartedAt")), stamp(row.get("endedAt"))
-        if stopped and start <= stopped < end:
-            reported += raw
         if began is None or stopped is None or stopped < began or raw > (stopped - began).total_seconds() + 0.002:
             unknown += 1
             unknown_upper += min(raw, window)

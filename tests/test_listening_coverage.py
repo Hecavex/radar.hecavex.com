@@ -58,3 +58,12 @@ def test_bounds_enclose_every_small_discrete_connection_arrangement():
                                      START + timedelta(seconds=1), START + timedelta(seconds=5))
             actual = len((left | right) & {1, 2, 3, 4})
             assert bounds["lowerSeconds"] <= actual <= bounds["upperSeconds"]
+
+
+def test_midnight_end_preserves_worker_total_without_new_day_coverage():
+    result = build_daily_trends([], [row(-480, 0, 480)], [], {},
+                                "2026-09-10T12:00:00.000Z", days=2)
+    coverage = [day["collectorCoverage"] for day in result["series"]]
+    assert [day["recordedAttempts"] for day in coverage] == [0, 1]
+    assert [day["listeningSeconds"] for day in coverage] == [480, 0]
+    assert [day["coverageBounds"]["reportedWorkerSeconds"] for day in coverage] == [0, 480]

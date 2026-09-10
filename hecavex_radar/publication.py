@@ -691,7 +691,8 @@ def build_pipeline_health(
         window_seconds = hours * 3_600
         expected_slots = max(1, window_seconds // expected_interval)
         healthy_attempts = sum(row.get("outcome") in {"healthy-empty", "healthy-matches"} for row in attempts)
-        bounds = coverage_bounds([row for row in cert_rows if intersects(row, start, end)], start, end)
+        bounds = coverage_bounds([row for row in cert_rows if intersects(row, start, end)], start, end,
+                                 reported_rows=cert_rows)
         listening_seconds = float(str(bounds["lowerSeconds"]))
         windows.append(
             {

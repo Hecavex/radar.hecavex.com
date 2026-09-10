@@ -214,7 +214,7 @@ def _daily_coverage(
         outcome = attempt.get("outcome")
         if isinstance(outcome, str) and outcome in KNOWN_OUTCOMES:
             outcomes.append(outcome)
-    bounds = coverage_bounds(overlapping_attempts, start, end)
+    bounds = coverage_bounds(overlapping_attempts, start, end, reported_rows=attempts)
     listening_seconds = float(str(bounds["lowerSeconds"]))
     return {
         "windowSeconds": window_seconds,
