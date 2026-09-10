@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-stratified-review-queue",
-  "generatedAt": "2026-09-10T07:38:07.031Z",
+  "generatedAt": "2026-09-10T08:38:35.482Z",
   "samplingPolicy": {
     "method": "deterministic-greedy-facet-balancing",
     "dimensions": [
@@ -15,7 +15,7 @@
     "excludes": "Signals already represented by a sanitized assessment.",
     "semantics": "A review worklist, not a random or prevalence-representative sample."
   },
-  "availableUnreviewed": 99,
+  "availableUnreviewed": 100,
   "selected": 24,
   "candidates": [
     {
@@ -259,9 +259,9 @@
       "firstSeen": "2026-08-23T02:00:48.622Z"
     },
     {
-      "signalId": "e154fb4158ff3ade3eee",
-      "recordPath": "/signals/e154fb4158ff3ade3eee/",
-      "brand": "Bitė",
+      "signalId": "82ac361b26c9d6a64539",
+      "recordPath": "/signals/82ac361b26c9d6a64539/",
+      "brand": "ESO",
       "sources": [
         "CertStream"
       ],
@@ -273,7 +273,7 @@
         "suspicious-context"
       ],
       "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-09-09T15:25:25.919Z"
+      "firstSeen": "2026-09-10T08:37:02.045Z"
     },
     {
       "signalId": "74a34aa5a01e9ed77fb6",
@@ -308,26 +308,9 @@
       "firstSeen": "2026-09-05T15:20:04.484Z"
     },
     {
-      "signalId": "74049fe26cfef2c80c4c",
-      "recordPath": "/signals/74049fe26cfef2c80c4c/",
-      "brand": "Revolut",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "95-100",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-joined-affix",
-        "different-tld",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-09-10T07:36:08.494Z"
-    },
-    {
-      "signalId": "9fd081ed66b4b1cd1ea5",
-      "recordPath": "/signals/9fd081ed66b4b1cd1ea5/",
-      "brand": "DPD",
+      "signalId": "e154fb4158ff3ade3eee",
+      "recordPath": "/signals/e154fb4158ff3ade3eee/",
+      "brand": "Bitė",
       "sources": [
         "CertStream"
       ],
@@ -335,10 +318,11 @@
       "evidenceTier": "name-only",
       "reasonCodes": [
         "brand-exact-token",
+        "different-tld",
         "suspicious-context"
       ],
-      "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-09-06T08:55:08.376Z"
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-09-09T15:25:25.919Z"
     },
     {
       "signalId": "b2a74041369ff0a25a50",
@@ -356,9 +340,9 @@
       "firstSeen": "2026-08-21T09:45:07.660Z"
     },
     {
-      "signalId": "a6a1f542302b3b1c8eb9",
-      "recordPath": "/signals/a6a1f542302b3b1c8eb9/",
-      "brand": "Telia",
+      "signalId": "9fd081ed66b4b1cd1ea5",
+      "recordPath": "/signals/9fd081ed66b4b1cd1ea5/",
+      "brand": "DPD",
       "sources": [
         "CertStream"
       ],
@@ -366,11 +350,10 @@
       "evidenceTier": "name-only",
       "reasonCodes": [
         "brand-exact-token",
-        "punycode",
-        "unicode-confusable"
+        "suspicious-context"
       ],
       "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-09-04T08:20:31.184Z"
+      "firstSeen": "2026-09-06T08:55:08.376Z"
     },
     {
       "signalId": "54f4184b3225454a3624",
@@ -390,9 +373,9 @@
       "firstSeen": "2026-09-06T21:55:35.453Z"
     },
     {
-      "signalId": "667743b73f8b7090e53e",
-      "recordPath": "/signals/667743b73f8b7090e53e/",
-      "brand": "DHL",
+      "signalId": "a6a1f542302b3b1c8eb9",
+      "recordPath": "/signals/a6a1f542302b3b1c8eb9/",
+      "brand": "Telia",
       "sources": [
         "CertStream"
       ],
@@ -400,11 +383,28 @@
       "evidenceTier": "name-only",
       "reasonCodes": [
         "brand-exact-token",
-        "multiple-hyphens",
-        "suspicious-context"
+        "punycode",
+        "unicode-confusable"
       ],
       "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-09-04T15:05:03.177Z"
+      "firstSeen": "2026-09-04T08:20:31.184Z"
+    },
+    {
+      "signalId": "74049fe26cfef2c80c4c",
+      "recordPath": "/signals/74049fe26cfef2c80c4c/",
+      "brand": "Revolut",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "95-100",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-joined-affix",
+        "different-tld",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-09-10T07:36:08.494Z"
     }
   ]
 }
