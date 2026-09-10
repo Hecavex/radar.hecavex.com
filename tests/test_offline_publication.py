@@ -10,6 +10,7 @@ import pytest
 
 from hecavex_radar import offline_publication
 from hecavex_radar.offline_publication import regenerate_fixture
+from hecavex_radar.public_schemas import PUBLIC_SCHEMAS
 
 
 def test_fixture_cutoff_uses_observations_not_expiry_and_does_not_advance_on_rebuild(tmp_path: Path) -> None:
@@ -29,6 +30,8 @@ def test_real_offline_sync_validates_newly_derived_publication(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     repository = Path(__file__).resolve().parents[1]
+    original_schemas = {name: (repository / "public/data/schemas" / name).read_bytes()
+                        for name in PUBLIC_SCHEMAS}
     for relative in ("data", "public/data"):
         shutil.copytree(repository / relative, tmp_path / relative)
     monkeypatch.chdir(tmp_path)
@@ -36,6 +39,21 @@ def test_real_offline_sync_validates_newly_derived_publication(
     trends = json.loads((tmp_path / "public/data/daily-trends.json").read_bytes())
     assert trends["countingMethodVersion"] == 2
     assert trends["reobservationSemantics"].startswith("Version 2:")
+    assert all(day["collectorCoverage"]["coverageBounds"]["methodVersion"] == 2
+               for day in trends["series"])
+    for name, schema in PUBLIC_SCHEMAS.items():
+        assert json.loads((tmp_path / "public/data/schemas" / name).read_bytes()) == schema
+        assert (repository / "public/data/schemas" / name).read_bytes() == original_schemas[name]
+
+
+def test_source_ci_regenerates_only_its_fixture_before_publication_validation() -> None:
+    repository = Path(__file__).resolve().parents[1]
+    workflow = (repository / ".github/workflows/ci.yml").read_text(encoding="utf-8")
+    assert workflow.index("data_branch materialize-fixture") < workflow.index(
+        "python -m hecavex_radar.offline_publication") < workflow.index("run: pnpm check")
+    deploy = (repository / ".github/workflows/deploy-pages.yml").read_text(encoding="utf-8")
+    assert "offline_publication" not in deploy
+    assert "--publication-source" in deploy
 
 
 def test_offline_fixture_refuses_dns_even_if_publisher_swallows_error(
