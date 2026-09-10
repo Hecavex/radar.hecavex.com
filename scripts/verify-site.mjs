@@ -272,7 +272,7 @@ function verifyDeploymentTopology() {
       cadence.includes("types: [certstream_writer_completed]") &&
       cadence.includes("actions: write") &&
       cadence.includes("contents: read") &&
-      /^    concurrency:\n      group: radar-certstream-cadence\n      cancel-in-progress: false\n      queue: max/mu.test(cadence) &&
+      /^ {4}concurrency:\n {6}group: radar-certstream-cadence\n {6}cancel-in-progress: false\n {6}queue: max/mu.test(cadence) &&
       !/^concurrency:/mu.test(cadence) &&
       cadence.includes("environment: radar-certstream-cadence") &&
       cadence.includes("github.event.client_payload.source_workflow == 'Collect CertStream candidates'") &&
