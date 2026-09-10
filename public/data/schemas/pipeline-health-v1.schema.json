@@ -644,6 +644,49 @@
                 "minimum": 0,
                 "maximum": 604800
               },
+              "coverageBounds": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "methodVersion",
+                  "lowerSeconds",
+                  "upperSeconds",
+                  "precision",
+                  "unknownAttempts",
+                  "reportedWorkerSeconds"
+                ],
+                "properties": {
+                  "methodVersion": {
+                    "const": 2
+                  },
+                  "lowerSeconds": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 604800
+                  },
+                  "upperSeconds": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 604800
+                  },
+                  "precision": {
+                    "enum": [
+                      "exact",
+                      "bounded",
+                      "unknown"
+                    ]
+                  },
+                  "unknownAttempts": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 2000000
+                  },
+                  "reportedWorkerSeconds": {
+                    "type": "number",
+                    "minimum": 0
+                  }
+                }
+              },
               "outcomes": {
                 "$ref": "#/$defs/collectionOutcomes"
               }
