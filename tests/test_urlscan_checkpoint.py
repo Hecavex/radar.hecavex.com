@@ -21,6 +21,28 @@ from hecavex_radar.urlscan_checkpoint import SearchCheckpointStore, SearchUnavai
 QUERY = "task.visibility:public AND date:>now-7d AND domain:example"
 
 
+def test_query_custody_never_retires_unclassified_pending_work(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    query = 'date:>now-7d AND task.visibility:public AND (task.domain.keyword:"candidate.example")'
+    store = SearchCheckpointStore.load("data/urlscan/search-checkpoints.json", now=datetime(2026, 9, 10, tzinfo=UTC))
+    store.search(query, 100, "unused", _PagedProvider())
+    before = copy.deepcopy(store.state)
+    report = urlscan_checkpoint.audit_ownership(store.state, [query])
+    assert report[0]["queryFamily"] == "exact-domain-batch"
+    assert report[0]["ownership"] == "active-in-supplied-plan"
+    assert urlscan_checkpoint.audit_ownership(store.state, [])[0]["retired"] is False
+    assert store.state == before
+    assert "candidate.example" not in json.dumps(store.state)
+
+
+def test_query_family_recognizes_fixed_builders_only():
+    registry = urlscan.load_brand_registry()
+    assert urlscan_checkpoint.query_family(urlscan.build_domain_query(registry, 7)) == "domain"
+    assert urlscan_checkpoint.query_family(urlscan.build_title_query(registry, 7)) == "title"
+    assert urlscan_checkpoint.query_family(urlscan._public_search_query("hash:" + "a" * 64, 7)) == "hash-pivot"
+    assert urlscan_checkpoint.query_family(QUERY) == "legacy-unclassified"
+
+
 def test_byte_retention_preserves_all_pending_cursors_at_supported_query_count(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
 ) -> None:

@@ -36,6 +36,8 @@ export type DailyTrendRow = {
     listeningCoveragePercent: number | null;
     scheduledListeningCeilingPercent: number | null;
     listeningSeconds: number;
+    coverageBounds?: { methodVersion: 2; lowerSeconds: number; upperSeconds: number;
+      precision: "exact" | "bounded" | "unknown"; unknownAttempts: number; reportedWorkerSeconds: number };
     outcomes: Record<string, number>;
   };
   discovery: {

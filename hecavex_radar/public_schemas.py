@@ -5,6 +5,19 @@ from __future__ import annotations
 from typing import Final
 
 SCHEMA_BASE: Final = "https://radar.hecavex.com/data/schemas/"
+COVERAGE_BOUNDS = {
+    "type": "object", "additionalProperties": False,
+    "required": ["methodVersion", "lowerSeconds", "upperSeconds", "precision", "unknownAttempts",
+                 "reportedWorkerSeconds"],
+    "properties": {
+        "methodVersion": {"const": 2},
+        "lowerSeconds": {"type": "number", "minimum": 0, "maximum": 604800},
+        "upperSeconds": {"type": "number", "minimum": 0, "maximum": 604800},
+        "precision": {"enum": ["exact", "bounded", "unknown"]},
+        "unknownAttempts": {"type": "integer", "minimum": 0, "maximum": 2000000},
+        "reportedWorkerSeconds": {"type": "number", "minimum": 0},
+    },
+}
 TIMESTAMP_PATTERN: Final = r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$"
 HEX20_PATTERN: Final = r"^[a-f0-9]{20}$"
 SHA256_PATTERN: Final = r"^[a-f0-9]{64}$"
@@ -547,6 +560,7 @@ PIPELINE_HEALTH_SCHEMA: Final[dict[str, object]] = {
                             "listeningCoveragePercent": {"type": "number", "minimum": 0, "maximum": 100},
                             "scheduledListeningCeilingPercent": {"type": "number", "minimum": 0, "maximum": 100},
                             "listeningSeconds": {"type": "number", "minimum": 0, "maximum": 604_800},
+                            "coverageBounds": COVERAGE_BOUNDS,
                             "outcomes": {"$ref": "#/$defs/collectionOutcomes"},
                         },
                     },
@@ -835,7 +849,7 @@ RELATED_SCHEMA: Final[dict[str, object]] = {
                     "id": {"type": "string", "pattern": "^[a-f0-9]{20}$"},
                     "source": {"type": "string", "pattern": HEX20_PATTERN},
                     "target": {"type": "string", "pattern": HEX20_PATTERN},
-                    "strength": {"enum": ["strong", "corroborated-supporting"]},
+                    "strength": {"enum": ["strong", "corroborated-supporting", "shared-context"]},
                     "evidence": {
                         "type": "array",
                         "minItems": 1,
@@ -1172,6 +1186,7 @@ DAILY_TRENDS_SCHEMA: Final[dict[str, object]] = {
                                 )
                             },
                             "listeningSeconds": {"type": "number", "minimum": 0, "maximum": 86_400},
+                            "coverageBounds": COVERAGE_BOUNDS,
                             "outcomes": {"$ref": "#/$defs/countMap"},
                         },
                     },

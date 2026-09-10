@@ -1,5 +1,6 @@
 import { fileURLToPath } from "node:url";
 import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, isAbsolute, relative, resolve } from "node:path";
 
@@ -357,6 +358,12 @@ function dynamicRoutesPlugin() {
           const data = {
             signal,
             generatedAt: snapshot.generatedAt,
+            publicationIdentity: {
+              sourceRevision: releaseRevision,
+              dataRevision: releaseDataRevision,
+              manifestSha256: createHash("sha256").update(readFileSync(resolve(publicDataPath, "feed-manifest.json"))).digest("hex"),
+              recordScope: currentById.has(signal.id) ? "snapshot" as const : "history" as const,
+            },
             history: historicalById.get(signal.id) ?? null,
             detail,
             brand: signal.brand ? findBrand(signal.brand) ?? null : null,

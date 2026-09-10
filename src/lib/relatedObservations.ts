@@ -22,7 +22,7 @@ export const RELATION_EVIDENCE_TYPES = [
 ] as const;
 
 export type RelationEvidenceType = (typeof RELATION_EVIDENCE_TYPES)[number];
-export type RelationStrength = "strong" | "corroborated-supporting";
+export type RelationStrength = "strong" | "corroborated-supporting" | "shared-context";
 
 export type RelatedObservationNode = {
   signalId: string;
@@ -177,7 +177,7 @@ function isEdge(value: unknown): value is RelatedObservationEdge {
     typeof value.source === "string" && IDENTIFIER.test(value.source) &&
     typeof value.target === "string" && IDENTIFIER.test(value.target) &&
     value.source !== value.target &&
-    (value.strength === "strong" || value.strength === "corroborated-supporting") &&
+    (value.strength === "strong" || value.strength === "corroborated-supporting" || value.strength === "shared-context") &&
     Array.isArray(value.evidence) &&
     value.evidence.length >= 1 &&
     value.evidence.length <= 8 &&

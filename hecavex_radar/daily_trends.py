@@ -9,6 +9,7 @@ from datetime import UTC, date, datetime, time, timedelta
 from pathlib import Path
 from typing import Any
 
+from .listening_coverage import coverage_bounds, intersects
 from .provenance import REASON_CODES
 
 MAXIMUM_DAYS = 365
@@ -201,19 +202,20 @@ def _daily_coverage(
     window_seconds: int,
     expected_interval: int,
     expected_listening: int,
+    *,
+    start: datetime,
+    end: datetime,
+    overlapping_attempts: Sequence[Mapping[str, object]],
 ) -> dict[str, object]:
     scheduled_slots = window_seconds // expected_interval if expected_interval else 0
     healthy = sum(attempt.get("outcome") in {"healthy-empty", "healthy-matches"} for attempt in attempts)
-    listening_seconds = 0.0
     outcomes: list[str] = []
     for attempt in attempts:
-        raw_listening = attempt.get("listeningSeconds")
-        if isinstance(raw_listening, (int, float)) and not isinstance(raw_listening, bool):
-            listening_seconds += min(86_400.0, max(0.0, float(raw_listening)))
         outcome = attempt.get("outcome")
         if isinstance(outcome, str) and outcome in KNOWN_OUTCOMES:
             outcomes.append(outcome)
-    listening_seconds = round(min(float(window_seconds), listening_seconds), 3)
+    bounds = coverage_bounds(overlapping_attempts, start, end, reported_rows=attempts)
+    listening_seconds = float(str(bounds["lowerSeconds"]))
     return {
         "windowSeconds": window_seconds,
         "scheduledSlots": scheduled_slots,
@@ -225,6 +227,7 @@ def _daily_coverage(
             scheduled_slots * expected_listening, window_seconds
         ),
         "listeningSeconds": listening_seconds,
+        "coverageBounds": bounds,
         "outcomes": _counts(outcomes),
     }
 
@@ -315,7 +318,9 @@ def build_daily_trends(
         # with zero recorded attempts and zero discovery events using the
         # published range and collector schedule. This keeps a full-year static
         # artifact comfortably bounded without hiding coverage gaps.
-        if day_events or day_attempts or current == generated.date():
+        overlaps = [row for row in collection_attempts if row.get("outcome") in KNOWN_OUTCOMES
+                    and intersects(row, start, end)]
+        if day_events or day_attempts or overlaps or current == generated.date():
             series.append(
                 {
                     "date": key,
@@ -325,6 +330,9 @@ def build_daily_trends(
                         window_seconds,
                         expected_interval,
                         expected_listening,
+                        start=start,
+                        end=end,
+                        overlapping_attempts=overlaps,
                     ),
                     "discovery": _daily_discovery(day_events, evidence_by_signal, first_seen),
                 }

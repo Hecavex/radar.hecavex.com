@@ -167,7 +167,7 @@ def test_relationships_require_strong_or_two_supporting_evidence_types() -> None
     strong_pair = (strong_ids[0], strong_ids[1])
     supporting_pair = (supporting_ids[0], supporting_ids[1])
     assert by_pair[strong_pair]["strength"] == "strong"
-    assert by_pair[supporting_pair]["strength"] == "corroborated-supporting"
+    assert by_pair[supporting_pair]["strength"] == "shared-context"
     assert "not campaign" in cast(str, artifact["semantics"]).lower()
 
 
@@ -210,6 +210,7 @@ def test_dns_context_can_form_a_two_family_infrastructure_association() -> None:
     assert len(edges) == 1
     evidence = cast(list[dict[str, str]], edges[0]["evidence"])
     assert {item["type"] for item in evidence} == {"dns-a", "dns-ns"}
+    assert edges[0]["strength"] == "shared-context"
 
 
 def test_relationships_do_not_treat_same_registrable_domain_as_independent_infrastructure() -> None:
