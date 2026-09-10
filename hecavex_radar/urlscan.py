@@ -338,6 +338,11 @@ def _request_json(url: str, api_key: str) -> Any:
         raise RuntimeError(f"URLScan returned HTTP {error.code}.") from error
     except URLError as error:
         raise RuntimeError("URLScan request failed.") from error
+    except TimeoutError as error:
+        # Body reads can raise a bare socket timeout rather than URLError.
+        # Keep optional result retrieval on the existing transient-error path;
+        # search failures still abort without advancing durable checkpoints.
+        raise RuntimeError("URLScan request timed out.") from error
     if len(body) > MAXIMUM_RESPONSE_BYTES:
         raise ValueError("URLScan response exceeds 20 MiB.")
     try:
