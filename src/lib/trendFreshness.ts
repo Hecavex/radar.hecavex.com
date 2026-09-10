@@ -17,3 +17,15 @@ export function trendDayState(row: Pick<DailyTrendRow, "date" | "partialDay">, n
   const today = Number.isFinite(now) ? new Date(now).toISOString().slice(0, 10) : "";
   return row.date === today ? "partial" : "incomplete";
 }
+
+export function trendCollectionState(
+  coverage: Pick<DailyTrendRow["collectorCoverage"], "scheduledSlots" | "recordedAttempts">,
+): "unavailable" | "not-recorded" | "limited" | "recorded" {
+  const { scheduledSlots, recordedAttempts } = coverage;
+  if (!Number.isFinite(scheduledSlots) || !Number.isFinite(recordedAttempts)
+    || scheduledSlots <= 0 || recordedAttempts < 0) return "unavailable";
+  if (recordedAttempts === 0) return "not-recorded";
+  // The same below-half threshold used by the pipeline health sentinel.
+  // This compares attempt counts, not distinct occupied schedule slots.
+  return recordedAttempts * 2 < scheduledSlots ? "limited" : "recorded";
+}

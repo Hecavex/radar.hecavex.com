@@ -8,7 +8,7 @@ import { SiteHeader } from "./components/SiteHeader.tsx";
 import { formatDateTime } from "./lib/format.ts";
 import { signalPath } from "./lib/signalRoutes.ts";
 import type { DailyTrendRow, StaticPageData, StaticPageKind } from "./lib/staticPageBootstrap.ts";
-import { trendDayState, trendFreshness } from "./lib/trendFreshness.ts";
+import { trendCollectionState, trendDayState, trendFreshness } from "./lib/trendFreshness.ts";
 
 export type StaticPageLanguage = "en" | "lt";
 
@@ -100,6 +100,7 @@ function formatTrendNumber(value: number, language: StaticPageLanguage): string 
 function CoverageBar({ row, maximum, language, now }: { row: DailyTrendRow; maximum: number; language: StaticPageLanguage; now: number }) {
   const lt = language === "lt";
   const dayState = trendDayState(row, now);
+  const collectionState = trendCollectionState(row.collectorCoverage);
   const partialLabel = dayState === "partial"
     ? (lt ? "Nepilna UTC diena" : "Partial UTC day")
     : (lt ? "Nepilna suvestinės diena" : "Incomplete at cutoff");
@@ -125,11 +126,15 @@ function CoverageBar({ row, maximum, language, now }: { row: DailyTrendRow; maxi
     ? (lt ? "Planinė riba: nėra duomenų" : "Planned ceiling: unavailable")
     : (lt ? `planinė riba: ${formatTrendNumber(ceiling, language)}%` : `planned ceiling: ${formatTrendNumber(ceiling, language)}%`);
 
-  return <article className={`trend-row${row.partialDay ? " trend-row--partial" : ""}`} data-day-state={dayState}>
+  return <article className={`trend-row${row.partialDay ? " trend-row--partial" : ""}`} data-day-state={dayState} data-collection-state={collectionState}>
     <div className="trend-date"><time dateTime={row.date}>{row.date}</time>{row.partialDay ? <> <span>{partialLabel}</span></> : null}</div>{" "}
     <div className="trend-bars" aria-hidden="true"><progress className="discovery" max={Math.max(1, maximum)} value={row.discovery.uniqueSignals} /><progress className="schedule" max={100} value={completedSchedule ?? 0} /></div>{" "}
     <strong className="trend-signal-count">{lt ? `Unikalūs signalai: ${signals}` : `${signals} unique signals`}</strong>{" "}
-    <div className="trend-metrics"><span>{scheduleLabel}</span>{additionalAttempts > 0 ? <> <em>{lt ? `Papildomi bandymai: ${formatTrendNumber(additionalAttempts, language)}` : `Additional attempts: ${formatTrendNumber(additionalAttempts, language)}`}</em></> : null} <small>{listeningLabel} / {ceilingLabel}</small></div>
+    <div className="trend-metrics"><span>{scheduleLabel}</span>{additionalAttempts > 0 ? <> <em>{lt ? `Papildomi bandymai: ${formatTrendNumber(additionalAttempts, language)}` : `Additional attempts: ${formatTrendNumber(additionalAttempts, language)}`}</em></> : null} <small>{listeningLabel} / {ceilingLabel}</small>
+      {collectionState === "not-recorded" || collectionState === "limited" ? <span className="trend-collection-note">{collectionState === "not-recorded"
+        ? (lt ? "Iki duomenų ribos rinkimo bandymų neužfiksuota" : "No collection attempts recorded through cutoff")
+        : (lt ? "Užfiksuota mažiau nei pusė numatytų bandymų" : "Fewer than half of planned attempts recorded")}</span> : null}
+    </div>
   </article>;
 }
 
@@ -150,6 +155,8 @@ export function TrendsPage({ data, language = "en" }: { data: StaticPageData; la
   const freshness = trendFreshness(data.trends, now);
   const maximum = Math.max(0, ...data.trends.series.map((row) => row.discovery.uniqueSignals));
   const current = data.trends.series.at(-1);
+  const latestCompleteDay = data.trends.series.findLast((row) => !row.partialDay);
+  const latestCompleteState = latestCompleteDay ? trendCollectionState(latestCompleteDay.collectorCoverage) : "unavailable";
   const intervalMinutes = data.trends.collectorSchedule.expectedIntervalSeconds / 60;
   const listeningMinutes = data.trends.collectorSchedule.expectedListeningSeconds / 60;
   return <PageShell currentPage="trends" language={language}>
@@ -163,6 +170,13 @@ export function TrendsPage({ data, language = "en" }: { data: StaticPageData; la
         {freshness === "unknown" ? <p>{lt ? "Duomenų aktualumo nustatyti nepavyko." : "Data freshness could not be determined."}</p> : null}
         {data.trends.series.some((row) => row.partialDay) ? <p>{lt ? "Nepilnos dienos rodikliai apima tik laiką iki šios ribos, net jei ta UTC diena jau pasibaigė." : "Partial-day totals cover only the time before this cutoff, even after that UTC day ends."}</p> : null}
       </div>
+      {latestCompleteDay && (latestCompleteState === "limited" || latestCompleteState === "not-recorded") ? <aside className="trend-collection-warning" aria-label={lt ? "Rinkimo aprėpties ribotumas" : "Collection coverage limitation"}>
+        <strong>{lt ? "Rinkimo spragos riboja palyginimą" : "Collection gaps limit comparisons"}</strong>
+        <p>{lt
+          ? `${latestCompleteDay.date}, naujausią pilną dieną šiuose duomenyse, užfiksuota ${latestCompleteDay.collectorCoverage.recordedAttempts} rinkimo bandymų iš ${latestCompleteDay.collectorCoverage.scheduledSlots} numatytų. Mažiau signalų nebūtinai reiškia mažiau grėsmių. Praleistas klausymosi laikas negali būti atkurtas atgaline data.`
+          : `${latestCompleteDay.date}, the latest complete day in this data, has ${latestCompleteDay.collectorCoverage.recordedAttempts} recorded collection attempts against ${latestCompleteDay.collectorCoverage.scheduledSlots} planned. Fewer signals do not necessarily mean fewer threats. Missed listening time cannot be recovered retrospectively.`}</p>
+        <a href="/data/pipeline-health.json">{lt ? "Rinkimo būklės duomenys (JSON)" : "Collection health data (JSON)"}</a>
+      </aside> : null}
       <div className="trend-legend"><span><i className="discovery" /> {lt ? "unikalūs signalai" : "unique signals"}</span><span><i className="schedule" /> {lt ? "užfiksuoti suplanuoti intervalai" : "scheduled slots recorded"}</span></div>
       <p className="trend-method-note">{lt ? `Grafiko įvykdymas lygina užfiksuotus bandymus su numatytais intervalais. Faktinis klausymosi laikas rodomas greta kiekvienos dienos planinės ribos. Rinktuvas numato ${formatTrendNumber(listeningMinutes, language)} min. klausymąsi kas ${formatTrendNumber(intervalMinutes, language)} min.` : `Schedule completion compares recorded attempts with expected slots. Wall-clock listening is shown beside each day's planned ceiling. The collector plans ${formatTrendNumber(listeningMinutes, language)} listening minutes in every ${formatTrendNumber(intervalMinutes, language)}-minute interval.`}</p>
       <div className="trend-chart">{data.trends.series.map((row) => <CoverageBar key={row.date} row={row} maximum={maximum} language={language} now={now} />)}</div>

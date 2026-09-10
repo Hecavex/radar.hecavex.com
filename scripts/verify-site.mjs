@@ -272,8 +272,8 @@ function verifyDeploymentTopology() {
       cadence.includes("types: [certstream_writer_completed]") &&
       cadence.includes("actions: write") &&
       cadence.includes("contents: read") &&
-      cadence.includes("group: radar-certstream-cadence") &&
-      cadence.includes("cancel-in-progress: true") &&
+      /^    concurrency:\n      group: radar-certstream-cadence\n      cancel-in-progress: false\n      queue: max/mu.test(cadence) &&
+      !/^concurrency:/mu.test(cadence) &&
       cadence.includes("environment: radar-certstream-cadence") &&
       cadence.includes("github.event.client_payload.source_workflow == 'Collect CertStream candidates'") &&
       cadence.includes("github.event.client_payload.source_ref == 'main'") &&
@@ -1088,6 +1088,10 @@ function verifyBuiltHtml() {
           const renderDate = new Date(payload.renderedAt).toISOString().slice(0, 10);
           const dayState = !trend.partialDay ? "complete" : trend.date === renderDate ? "partial" : "incomplete";
           assert(row.getAttribute("data-day-state") === dayState, `${route} confuses the saved partial day with the current UTC day.`);
+          const { recordedAttempts, scheduledSlots } = trend.collectorCoverage;
+          const collectionState = scheduledSlots <= 0 ? "unavailable" : recordedAttempts === 0 ? "not-recorded" : recordedAttempts * 2 < scheduledSlots ? "limited" : "recorded";
+          assert(row.getAttribute("data-collection-state") === collectionState, `${route} misstates the recorded collection gap.`);
+          assert(Boolean(row.querySelector(".trend-collection-note")) === ["limited", "not-recorded"].includes(collectionState), `${route} does not label limited collection beside its signal count.`);
           const additionalAttempts = Math.max(0, trend.collectorCoverage.recordedAttempts - trend.collectorCoverage.scheduledSlots);
           assert(Boolean(row.querySelector(".trend-metrics em")) === (additionalAttempts > 0), `${route} trend row misstates additional collection attempts.`);
           if (trend.collectorCoverage.recordedSchedulePercent === null) {
