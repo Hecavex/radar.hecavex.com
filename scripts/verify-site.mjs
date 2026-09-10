@@ -1082,7 +1082,12 @@ function verifyBuiltHtml() {
           assert(scheduleCopy.includes(isLithuanian ? "interval" : "scheduled slots"), `${route} trend schedule value is not self-describing.`);
           assert(scheduleCopy.includes("/"), `${route} trend schedule omits its recorded and expected attempt counts.`);
           const listeningCopy = row.querySelector(".trend-metrics small")?.textContent ?? "";
-          assert(listeningCopy.includes(isLithuanian ? "Faktinis klausymosi laikas" : "Wall-clock listening"), `${route} trend row omits wall-clock listening.`);
+          const listeningLabel = trend.collectorCoverage.listeningCoveragePercent === null
+            ? (isLithuanian ? "Faktinis klausymosi laikas" : "Wall-clock listening")
+            : trend.collectorCoverage.coverageBounds
+              ? (isLithuanian ? "Klausymosi aprėpties ribos" : "Wall-clock listening bounds")
+              : (isLithuanian ? "Ankstesnis klausymosi įvertis" : "Legacy listening estimate");
+          assert(listeningCopy.includes(listeningLabel), `${route} trend row mislabels bounded or legacy listening.`);
           assert(listeningCopy.includes(isLithuanian ? "planinė riba" : "planned ceiling"), `${route} trend row omits the planned listening ceiling.`);
           assert(row.classList.contains("trend-row--partial") === trend.partialDay, `${route} trend row misstates partial UTC-day status.`);
           assert(Boolean(row.querySelector(".trend-date span")) === trend.partialDay, `${route} trend row omits its visible partial UTC-day label.`);
