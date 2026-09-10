@@ -163,6 +163,7 @@ That gate covers Python and frontend linting and type checks; the production bui
 - [Weekly dataset releases](docs/DATASET-RELEASES.md)
 - [MISP sharing](docs/MISP-SHARING.md)
 - [Private review workflow](docs/REVIEW-WORKFLOW.md)
+- [Bounded ranking evaluation and lifecycle-safe reuse](docs/RESEARCH-EVALUATION.md)
 - [Deployment and schedules](docs/DEPLOYMENT.md)
 - [Performance budgets](docs/PERFORMANCE.md)
 - [Data licensing and attribution](DATA-LICENSE.md)

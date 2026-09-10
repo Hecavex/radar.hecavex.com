@@ -7,6 +7,8 @@ export type PageLanguage = "en" | "lt";
 export type SignalPageData = {
   signal: RadarSignal;
   generatedAt: string;
+  publicationIdentity?: { sourceRevision: string; dataRevision: string | null; manifestSha256: string;
+    recordScope: "snapshot" | "history" };
   history: RadarHistorySignal | null;
   detail: SignalDetail | null;
   brand: BrandEntry | null;

@@ -107,6 +107,9 @@ function CoverageBar({ row, maximum, language, now }: { row: DailyTrendRow; maxi
   const schedule = row.collectorCoverage.recordedSchedulePercent;
   const listening = row.collectorCoverage.listeningCoveragePercent;
   const ceiling = row.collectorCoverage.scheduledListeningCeilingPercent;
+  const bounds = row.collectorCoverage.coverageBounds;
+  const upper = bounds && row.collectorCoverage.windowSeconds > 0
+    ? Math.min(100, 100 * bounds.upperSeconds / row.collectorCoverage.windowSeconds) : null;
   const completedSchedule = schedule === null ? null : Math.min(100, schedule);
   const additionalAttempts = Math.max(
     0,
@@ -121,7 +124,10 @@ function CoverageBar({ row, maximum, language, now }: { row: DailyTrendRow; maxi
     : (lt ? `${formatTrendNumber(completedSchedule, language)}% suplanuotų intervalų · ${attemptRatio}` : `${formatTrendNumber(completedSchedule, language)}% scheduled slots · ${attemptRatio}`);
   const listeningLabel = listening === null
     ? (lt ? "Faktinis klausymosi laikas: nėra duomenų" : "Wall-clock listening: unavailable")
-    : (lt ? `Faktinis klausymosi laikas: ${formatTrendNumber(listening, language)}%` : `Wall-clock listening: ${formatTrendNumber(listening, language)}%`);
+    : bounds && upper !== null
+      ? (lt ? `Klausymosi aprėpties ribos: ${formatTrendNumber(listening, language)}–${formatTrendNumber(upper, language)}%`
+        : `Wall-clock listening bounds: ${formatTrendNumber(listening, language)}–${formatTrendNumber(upper, language)}%`)
+      : (lt ? `Ankstesnis klausymosi įvertis: ${formatTrendNumber(listening, language)}%` : `Legacy listening estimate: ${formatTrendNumber(listening, language)}%`);
   const ceilingLabel = ceiling === null
     ? (lt ? "Planinė riba: nėra duomenų" : "Planned ceiling: unavailable")
     : (lt ? `planinė riba: ${formatTrendNumber(ceiling, language)}%` : `planned ceiling: ${formatTrendNumber(ceiling, language)}%`);

@@ -32,6 +32,7 @@ from .event_feeds import (
     build_event_feeds,
     read_recent_history_events,
 )
+from .listening_coverage import coverage_bounds, intersects
 from .models import RadarSignal, RadarSource, SignalDetail
 from .public_schemas import (
     BRAND_FEEDS_SCHEMA,
@@ -690,11 +691,8 @@ def build_pipeline_health(
         window_seconds = hours * 3_600
         expected_slots = max(1, window_seconds // expected_interval)
         healthy_attempts = sum(row.get("outcome") in {"healthy-empty", "healthy-matches"} for row in attempts)
-        # Multiple manual or retried attempts can overlap the same wall-clock
-        # period. Keep the raw attempt count, but cap time-based coverage at the
-        # window boundary so it remains a coverage measure rather than summed
-        # worker time.
-        listening_seconds = round(min(_numeric_total(attempts, "listeningSeconds"), window_seconds), 3)
+        bounds = coverage_bounds([row for row in cert_rows if intersects(row, start, end)], start, end)
+        listening_seconds = float(str(bounds["lowerSeconds"]))
         windows.append(
             {
                 "hours": hours,
@@ -715,6 +713,7 @@ def build_pipeline_health(
                     ),
                     "expectedListeningSeconds": _counter(attempts, "expectedListeningSeconds"),
                     "listeningSeconds": listening_seconds,
+                    "coverageBounds": bounds,
                     "messages": _counter(attempts, "messages"),
                     "dnsNames": _counter(attempts, "dnsNames"),
                     "outcomes": _aggregate(row.get("outcome") for row in attempts),
@@ -991,7 +990,9 @@ def build_related_observations(
         supporting_families = {SUPPORTING_FAMILY[evidence_type] for evidence_type in supporting_types}
         if not has_strong and len(supporting_families) < 2:
             continue
-        strength = "strong" if has_strong else "corroborated-supporting"
+        # Distinct DNS/network families can come from one commodity service.
+        # Keep the exact shared values inspectable without claiming independence.
+        strength = "strong" if has_strong else "shared-context"
         edge_key = json.dumps([left, right, values], separators=(",", ":"), sort_keys=True)
         candidates.append(
             {

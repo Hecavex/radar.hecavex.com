@@ -16,6 +16,21 @@ function fixture(language = "en") {
   };
 }
 
+test("publication identity is pinned, validated and absent identity stays unknown", () => {
+  for (const language of ["en", "lt"]) {
+    const data = fixture(language);
+    data.publicationIdentity = { sourceRevision: "a".repeat(40), dataRevision: "b".repeat(40),
+      manifestSha256: "c".repeat(64), recordScope: "history" };
+    const brief = buildResearchBrief(data);
+    assert.ok(brief.includes("a".repeat(40)));
+    assert.ok(brief.includes("c".repeat(64)));
+    assert.ok(brief.includes(`https://github.com/Hecavex/radar.hecavex.com/tree/${"b".repeat(40)}/public/data`));
+    data.publicationIdentity.dataRevision = "../../unsafe\nhttps://candidate.example";
+    assert.ok(!buildResearchBrief(data).includes("https://candidate.example"));
+    assert.ok(!buildResearchBrief(data).includes("/tree/"));
+  }
+});
+
 for (const language of ["en", "lt"]) {
   test(`${language}: missing published fields remain unknown without inferred review`, () => {
     const data = fixture(language);

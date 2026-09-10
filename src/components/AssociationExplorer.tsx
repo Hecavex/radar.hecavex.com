@@ -297,7 +297,8 @@ export function AssociationExplorer({
               <select value={strength} onChange={(event) => { setStrength(event.target.value as RelationStrength | "all"); setPage(1); }}>
                 <option value="all">{lt ? "Visi stiprumo lygiai" : "All strengths"}</option>
                 <option value="strong">{lt ? "Tikslūs stiprūs įrodymai" : "Exact strong evidence"}</option>
-                <option value="corroborated-supporting">{lt ? "Papildomai patvirtinantys įrodymai" : "Corroborated supporting"}</option>
+                <option value="shared-context">{lt ? "Bendras kontekstas" : "Shared context"}</option>
+                <option value="corroborated-supporting">{lt ? "Ankstesnio formato kontekstas" : "Legacy supporting context"}</option>
               </select>
             </label>
             <label>
@@ -345,7 +346,7 @@ export function AssociationExplorer({
                   <li key={edge.id}>
                     <div className="radar-association-meta">
                       <span className={`radar-association-strength radar-association-strength--${edge.strength}`}>
-                        {edge.strength === "strong" ? (lt ? "Tikslūs stiprūs įrodymai" : "Exact strong evidence") : (lt ? "Papildomai patvirtinantys įrodymai" : "Corroborated supporting evidence")}
+                        {edge.strength === "strong" ? (lt ? "Tikslūs stiprūs įrodymai" : "Exact strong evidence") : (lt ? "Bendras kontekstas — nepriklausomumas nenustatytas" : "Shared context — independence not established")}
                       </span>
                       <span>{lt ? "Klasteris" : "Cluster"} {source.clusterId}</span>
                       <span>{edge.evidence.length} {lt ? "įrodymų elementai" : `evidence item${edge.evidence.length === 1 ? "" : "s"}`}</span>
@@ -356,6 +357,9 @@ export function AssociationExplorer({
                       <SignalEndpoint node={target} signal={signalsById.get(target.signalId)} signalHref={signalHref} language={language} />
                     </div>
                     <EvidenceList evidence={edge.evidence} language={language} />
+                    {edge.strength !== "strong" ? <p>{lt
+                      ? "DNS ir tinklo reikšmės gali priklausyti tai pačiai bendrai paslaugai. Retumas šiame rinkinyje nereiškia retumo internete."
+                      : "DNS and network values may come from the same shared service. Rarity in this sample does not establish rarity across the Internet."}</p> : null}
                   </li>
                 );
               })}

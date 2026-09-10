@@ -253,7 +253,10 @@ def test_daily_trends_put_collector_coverage_beside_discovery_counts() -> None:
     assert coverage["scheduledSlots"] == 96
     assert coverage["recordedAttempts"] == 2
     assert coverage["healthyAttempts"] == 1
-    assert coverage["listeningSeconds"] == 480.0
+    # Legacy records without collectorStartedAt cannot locate connected time.
+    assert coverage["listeningSeconds"] == 0.0
+    assert coverage["coverageBounds"]["upperSeconds"] == 480.0
+    assert coverage["coverageBounds"]["reportedWorkerSeconds"] == 480.0
     assert series[1]["partialDay"] is True
     assert series[1]["collectorCoverage"]["windowSeconds"] == 43_200
     assert series[1]["discovery"]["byBrand"] == {}
