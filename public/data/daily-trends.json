@@ -3,7 +3,7 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-09-10T18:23:17.929Z",
+  "generatedAt": "2026-09-10T18:38:20.422Z",
   "retentionDays": 365,
   "from": "2025-09-11",
   "to": "2026-09-10",
@@ -1265,56 +1265,57 @@
       "date": "2026-09-10",
       "partialDay": true,
       "collectorCoverage": {
-        "windowSeconds": 66197,
-        "scheduledSlots": 73,
-        "recordedAttempts": 57,
-        "healthyAttempts": 57,
-        "recordedSchedulePercent": 78.1,
-        "listeningCoveragePercent": 41.33,
-        "scheduledListeningCeilingPercent": 52.93,
-        "listeningSeconds": 27359.921,
+        "windowSeconds": 67100,
+        "scheduledSlots": 74,
+        "recordedAttempts": 58,
+        "healthyAttempts": 58,
+        "recordedSchedulePercent": 78.4,
+        "listeningCoveragePercent": 41.49,
+        "scheduledListeningCeilingPercent": 52.94,
+        "listeningSeconds": 27839.92,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 27359.921,
-          "upperSeconds": 27359.922,
+          "lowerSeconds": 27839.92,
+          "upperSeconds": 27839.921,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 27359.922
+          "reportedWorkerSeconds": 27839.921
         },
         "outcomes": {
           "healthy-empty": 45,
-          "healthy-matches": 12
+          "healthy-matches": 13
         }
       },
       "discovery": {
-        "events": 24,
-        "uniqueSignals": 13,
-        "observations": 13,
+        "events": 26,
+        "uniqueSignals": 14,
+        "observations": 14,
         "reobservations": 2,
-        "firstPublications": 11,
+        "firstPublications": 12,
         "statusChanges": 0,
-        "facetSampleSize": 13,
-        "evidenceClassifiedSignals": 13,
+        "facetSampleSize": 14,
+        "evidenceClassifiedSignals": 14,
         "byBrand": {
           "Revolut": 6,
           "ESO": 3,
           "SEB": 2,
           "DHL": 1,
-          "Paysera": 1
+          "Paysera": 1,
+          "Telia": 1
         },
         "bySource": {
-          "CertStream": 13
+          "CertStream": 14
         },
         "byEvidenceTier": {
-          "name-only": 13
+          "name-only": 14
         },
         "byReason": {
-          "suspicious-context": 12,
-          "different-tld": 11,
-          "first-publication": 11,
-          "brand-exact-token": 9,
+          "suspicious-context": 13,
+          "different-tld": 12,
+          "first-publication": 12,
+          "brand-exact-token": 10,
+          "multiple-hyphens": 5,
           "brand-joined-affix": 4,
-          "multiple-hyphens": 4,
           "punycode": 1,
           "unicode-confusable": 1
         }
