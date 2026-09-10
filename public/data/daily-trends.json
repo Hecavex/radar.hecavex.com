@@ -3,7 +3,7 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-09-10T13:38:02.633Z",
+  "generatedAt": "2026-09-10T14:38:20.925Z",
   "retentionDays": 365,
   "from": "2025-09-11",
   "to": "2026-09-10",
@@ -876,7 +876,7 @@
         "firstPublications": 14,
         "statusChanges": 0,
         "facetSampleSize": 17,
-        "evidenceClassifiedSignals": 2,
+        "evidenceClassifiedSignals": 3,
         "byBrand": {
           "Revolut": 6,
           "DHL": 5,
@@ -891,7 +891,7 @@
           "CertStream": 17
         },
         "byEvidenceTier": {
-          "name-only": 2
+          "name-only": 3
         },
         "byReason": {
           "suspicious-context": 17,
@@ -1265,55 +1265,56 @@
       "date": "2026-09-10",
       "partialDay": true,
       "collectorCoverage": {
-        "windowSeconds": 49082,
-        "scheduledSlots": 54,
-        "recordedAttempts": 38,
-        "healthyAttempts": 38,
-        "recordedSchedulePercent": 70.4,
-        "listeningCoveragePercent": 37.16,
-        "scheduledListeningCeilingPercent": 52.81,
-        "listeningSeconds": 18239.949,
+        "windowSeconds": 52700,
+        "scheduledSlots": 58,
+        "recordedAttempts": 42,
+        "healthyAttempts": 42,
+        "recordedSchedulePercent": 72.4,
+        "listeningCoveragePercent": 38.25,
+        "scheduledListeningCeilingPercent": 52.83,
+        "listeningSeconds": 20159.944,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 18239.949,
-          "upperSeconds": 18239.95,
+          "lowerSeconds": 20159.944,
+          "upperSeconds": 20159.945,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 18239.95
+          "reportedWorkerSeconds": 20159.945
         },
         "outcomes": {
-          "healthy-empty": 27,
-          "healthy-matches": 11
+          "healthy-empty": 30,
+          "healthy-matches": 12
         }
       },
       "discovery": {
-        "events": 23,
-        "uniqueSignals": 12,
-        "observations": 12,
-        "reobservations": 1,
+        "events": 24,
+        "uniqueSignals": 13,
+        "observations": 13,
+        "reobservations": 2,
         "firstPublications": 11,
         "statusChanges": 0,
-        "facetSampleSize": 12,
-        "evidenceClassifiedSignals": 12,
+        "facetSampleSize": 13,
+        "evidenceClassifiedSignals": 13,
         "byBrand": {
           "Revolut": 6,
           "ESO": 3,
           "SEB": 2,
-          "DHL": 1
+          "DHL": 1,
+          "Paysera": 1
         },
         "bySource": {
-          "CertStream": 12
+          "CertStream": 13
         },
         "byEvidenceTier": {
-          "name-only": 12
+          "name-only": 13
         },
         "byReason": {
+          "suspicious-context": 12,
           "different-tld": 11,
           "first-publication": 11,
-          "suspicious-context": 11,
           "brand-exact-token": 9,
+          "brand-joined-affix": 4,
           "multiple-hyphens": 4,
-          "brand-joined-affix": 3,
           "punycode": 1,
           "unicode-confusable": 1
         }
