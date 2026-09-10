@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 
 import { parseSnapshot } from "../src/lib/data.ts";
 import { parseCollectionHealth } from "../src/lib/collectionHealth.ts";
-import { trendDayState, trendFreshness } from "../src/lib/trendFreshness.ts";
+import { trendCollectionState, trendDayState, trendFreshness } from "../src/lib/trendFreshness.ts";
 
 const readJson = async (relative) => JSON.parse(await readFile(new URL(relative, import.meta.url), "utf8"));
 const snapshots = [
@@ -86,4 +86,13 @@ assert.equal(trendDayState(partialRow, Date.parse("2026-09-05T23:59:59.999Z")), 
 assert.equal(trendDayState(partialRow, Date.parse("2026-09-06T00:00:00.000Z")), "incomplete");
 assert.equal(trendDayState({ ...partialRow, partialDay: false }, Date.parse("2026-09-07T10:00:00.000Z")), "complete");
 
-console.log("Validated live snapshot v2 compatibility, exact collection-health scheduling provenance, unsupported-version rejection, and UTC trend cutoff freshness.");
+assert.equal(trendCollectionState({ recordedAttempts: 7, scheduledSlots: 96 }), "limited");
+assert.equal(trendCollectionState({ recordedAttempts: 37, scheduledSlots: 96 }), "limited");
+assert.equal(trendCollectionState({ recordedAttempts: 0, scheduledSlots: 4 }), "not-recorded");
+assert.equal(trendCollectionState({ recordedAttempts: 0, scheduledSlots: 0 }), "unavailable");
+assert.equal(trendCollectionState({ recordedAttempts: 48, scheduledSlots: 96 }), "recorded");
+assert.equal(trendCollectionState({ recordedAttempts: 54, scheduledSlots: 96 }), "recorded");
+assert.equal(trendCollectionState({ recordedAttempts: 101, scheduledSlots: 96 }), "recorded");
+assert.equal(trendCollectionState({ recordedAttempts: NaN, scheduledSlots: 96 }), "unavailable");
+
+console.log("Validated snapshot compatibility, collection-health provenance, UTC cutoff freshness and explicit collection-gap states.");

@@ -12,10 +12,6 @@ permissions:
   actions: write
   contents: read
 
-concurrency:
-  group: radar-certstream-cadence
-  cancel-in-progress: true
-
 jobs:
   relay:
     if: >-
@@ -25,6 +21,13 @@ jobs:
       github.event.workflow_run.conclusion != 'success') ||
       (github.event.client_payload.source_workflow == 'Collect CertStream candidates' &&
       github.event.client_payload.source_ref == 'main'))
+    # A skipped successful workflow_run must never cancel the repository_dispatch
+    # handoff waiting on this job's six-minute environment timer. Only admitted
+    # jobs share ownership; preserve both waiting and pending eligible handoffs.
+    concurrency:
+      group: radar-certstream-cadence
+      cancel-in-progress: false
+      queue: max
     runs-on: ubuntu-latest
     timeout-minutes: 5
     environment: radar-certstream-cadence
