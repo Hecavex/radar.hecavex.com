@@ -26,8 +26,15 @@ test("publication identity is pinned, validated and absent identity stays unknow
     assert.ok(brief.includes("c".repeat(64)));
     assert.ok(brief.includes(`https://github.com/Hecavex/radar.hecavex.com/tree/${"b".repeat(40)}/public/data`));
     data.publicationIdentity.dataRevision = "../../unsafe\nhttps://candidate.example";
-    assert.ok(!buildResearchBrief(data).includes("https://candidate.example"));
-    assert.ok(!buildResearchBrief(data).includes("/tree/"));
+    const rejectedIdentityBrief = buildResearchBrief(data);
+    for (const match of rejectedIdentityBrief.matchAll(/https?:\/\/[^\s]+/gu)) {
+      const parsed = new URL(match[0]);
+      assert.ok(["radar.hecavex.com", "hecavex.com"].includes(parsed.hostname));
+      assert.equal(parsed.protocol, "https:");
+      assert.equal(parsed.username, "");
+      assert.equal(parsed.password, "");
+    }
+    assert.ok(!rejectedIdentityBrief.includes("/tree/"));
   }
 });
 
