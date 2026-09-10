@@ -1,6 +1,7 @@
 /* global URL, document, getComputedStyle, navigator, process, setTimeout, window */
 
 import { createHash } from "node:crypto";
+import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join, relative, resolve, sep } from "node:path";
 import { gzipSync } from "node:zlib";
@@ -2237,6 +2238,78 @@ async function verifySignalDialog(browser, origin, width, language) {
   }
 }
 
+async function verifyResearchBrief(browser, origin, width, language) {
+  const context = await browser.newContext({ viewport: { width, height: 900 }, acceptDownloads: true });
+  const page = await context.newPage();
+  const unexpectedRequests = [];
+  await page.route("**/*", async (route) => {
+    const url = new URL(route.request().url());
+    if (url.origin === origin) return route.continue();
+    if (url.href === "https://static.cloudflareinsights.com/beacon.min.js") return fulfillAnalyticsScript(route);
+    unexpectedRequests.push(url.href);
+    return route.abort();
+  });
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, "clipboard", { configurable: true, value: {
+      writeText: async () => { throw new Error("Synthetic clipboard denial"); },
+    } });
+  });
+  try {
+    const snapshot = JSON.parse(readFileSync(join(output, "data/radar.json"), "utf8"));
+    const signal = snapshot.signals[0];
+    const path = `${language === "lt" ? "/lt/signalai" : "/signals"}/${signal.id}/`;
+    await page.goto(`${origin}${path}`, { waitUntil: "networkidle" });
+    const brief = page.locator("#research-brief-preview");
+    const value = await brief.inputValue();
+    assert(value.includes(signal.id) && value.includes(snapshot.generatedAt), "Research handoff lost signal provenance.");
+    assert(value.includes(`https://radar.hecavex.com${path}`), "Research handoff has no canonical localized citation.");
+    assert(await brief.getAttribute("readonly") !== null, "Research preview must not collect private editable input.");
+    await brief.focus();
+    await page.keyboard.press("ControlOrMeta+A");
+    assert(await brief.evaluate((element) => element.selectionEnd === element.value.length), "Preview cannot be selected.");
+    await page.keyboard.press("Tab");
+    const copy = page.getByRole("button", { name: language === "lt" ? "Kopijuoti tekstą" : "Copy brief", exact: true });
+    assert(await copy.evaluate((element) => element === document.activeElement), "Preview does not tab to Copy.");
+    await page.keyboard.press("Enter");
+    await page.getByRole("status").filter({ hasText: language === "lt" ? "Iškarpinė nepasiekiama" : "Clipboard unavailable" }).waitFor();
+    const copied = [];
+    await page.exposeFunction("captureResearchClipboard", (text) => copied.push(text));
+    await page.evaluate(() => {
+      Object.defineProperty(navigator, "clipboard", { configurable: true, value: {
+        writeText: async (text) => globalThis.captureResearchClipboard(text),
+      } });
+    });
+    await copy.click();
+    await page.getByRole("status").filter({ hasText: language === "lt" ? "Tekstas nukopijuotas" : "Brief copied" }).waitFor();
+    assert(copied[0] === value, "Copied brief differs from visible preview.");
+    const downloadPromise = page.waitForEvent("download");
+    await page.getByRole("button", { name: language === "lt" ? "Atsisiųsti tekstą" : "Download plain text", exact: true }).click();
+    const download = await downloadPromise;
+    assert(download.suggestedFilename() === `radar-research-${signal.id}-${language}.txt`, "Unsafe research filename.");
+    assert(readFileSync(await download.path(), "utf8") === value, "Downloaded brief differs from preview.");
+    assert(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), "Research brief overflows viewport.");
+    assert(unexpectedRequests.length === 0, `Research brief sent unexpected external requests: ${unexpectedRequests.join(", ")}`);
+    const noScriptContext = await browser.newContext({ viewport: { width, height: 900 }, javaScriptEnabled: false });
+    try {
+      const noScriptPage = await noScriptContext.newPage();
+      await noScriptPage.goto(`${origin}${path}`, { waitUntil: "networkidle" });
+      assert(await noScriptPage.locator("#research-brief-preview").inputValue() === value, "No-JS preview lost published facts.");
+      assert(await noScriptPage.locator(".research-brief noscript").isVisible(), "No-JS selection guidance is missing.");
+      assert(!(await noScriptPage.locator(".research-brief-actions").isVisible()), "No-JS page advertises inert action controls.");
+    } finally {
+      await noScriptContext.close();
+    }
+    if (process.env.RADAR_RESEARCH_SCREENSHOT_DIR) {
+      await page.locator(".research-brief").evaluate((element) => {
+        window.scrollTo(0, window.scrollY + element.getBoundingClientRect().top - 140);
+      });
+      await page.locator(".research-brief").screenshot({ path: join(process.env.RADAR_RESEARCH_SCREENSHOT_DIR, `radar-research-${language}-${width}.png`) });
+    }
+  } finally {
+    await context.close();
+  }
+}
+
 function chromeExecutable() {
   const candidates = [
     process.env.CHROME_PATH,
@@ -2250,7 +2323,7 @@ function chromeExecutable() {
   return candidates.find((path) => existsSync(path));
 }
 
-async function verifyInBrowser(healthOnly = false) {
+async function verifyInBrowser(healthOnly = false, researchOnly = false) {
   const executablePath = chromeExecutable();
   assert(executablePath, "Chrome or Chromium is required for responsive and accessibility verification.");
 
@@ -2265,6 +2338,12 @@ async function verifyInBrowser(healthOnly = false) {
   const browser = await chromium.launch({ executablePath, headless: true, args: ["--no-sandbox"] });
 
   try {
+    if (researchOnly) {
+      for (const width of [320, 1440]) {
+        for (const language of ["en", "lt"]) await verifyResearchBrief(browser, origin, width, language);
+      }
+      return;
+    }
     await verifyIndexedCtHealth(browser, origin);
     if (healthOnly) return;
     await verifyTrendCutoff(browser, origin);
@@ -2609,6 +2688,10 @@ async function verifyInBrowser(healthOnly = false) {
         await verifySignalDialog(browser, origin, width, "en");
         await verifySignalDialog(browser, origin, width, "lt");
       }
+      if (width === 320 || width === 1440) {
+        await verifyResearchBrief(browser, origin, width, "en");
+        await verifyResearchBrief(browser, origin, width, "lt");
+      }
     }
 
     const delayedContext = await browser.newContext({ viewport: { width: 390, height: 900 } });
@@ -2694,9 +2777,10 @@ async function verifyInBrowser(healthOnly = false) {
 }
 
 const verificationPhase = process.argv[2] ?? "all";
-assert(["all", "static", "browser", "health"].includes(verificationPhase), `Unknown verification phase: ${verificationPhase}.`);
+assert(["all", "static", "browser", "health", "research"].includes(verificationPhase), `Unknown verification phase: ${verificationPhase}.`);
 
 if (["all", "static"].includes(verificationPhase)) {
+  execFileSync(process.execPath, ["--experimental-strip-types", "--test", "scripts/research-brief.test.mjs"], { cwd: root, stdio: "inherit" });
   verifyLayoutSourceContract();
   verifyDeploymentTopology();
   verifyPythonAutomationLocks();
@@ -2724,8 +2808,10 @@ if (["all", "static"].includes(verificationPhase)) {
 }
 
 if (verificationPhase !== "static") {
-  await verifyInBrowser(verificationPhase === "health");
-  process.stdout.write(verificationPhase === "health"
+  await verifyInBrowser(verificationPhase === "health", verificationPhase === "research");
+  process.stdout.write(verificationPhase === "research"
+    ? "Verified bilingual research handoffs at 320/1440px: selectable preview, keyboard, clipboard denial/success, download and no external requests.\n"
+    : verificationPhase === "health"
     ? "Verified bilingual no-request CT backoff telemetry, actual failure counts, timing and mobile accessibility.\n"
     : `Verified ${pages.length} hydratable static pages at ${widths.join(", ")}px with links, fragments, metadata, CSP, delayed-refresh retention, no-JS content, keyboard navigation, overflow, focus, and accessibility checks.\n`);
 }

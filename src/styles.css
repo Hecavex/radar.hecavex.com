@@ -4960,3 +4960,25 @@ td time {
   .trend-signal-count { grid-column: 2; grid-row: 1; }
   .trend-metrics { grid-column: 1 / -1; }
 }
+
+.research-brief { min-width: 0; }
+.research-brief label { display: block; margin-block: 1rem .5rem; font-weight: 600; }
+.research-brief textarea {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  resize: vertical;
+  padding: .75rem;
+  color: var(--text);
+  background: transparent;
+  border: 1px solid var(--line);
+  font: inherit;
+  font-size: .875rem;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.research-brief-actions { display: none; flex-wrap: wrap; gap: .5rem; margin-top: .75rem; }
+#root[data-hydrated="true"] .research-brief-actions { display: flex; }
+.research-brief-actions .button { white-space: normal; min-height: 44px; }
+.research-brief-status { min-height: 1.6em; font-size: .875rem; }
