@@ -1,27 +1,31 @@
 {
   "dataset": "ct-search-state",
-  "generatedAt": "2026-09-10T05:23:29.244Z",
+  "generatedAt": "2026-09-10T10:08:26.314Z",
   "latestRun": {
     "dnsNames": 0,
-    "endedAt": "2026-09-10T05:23:29.244Z",
-    "failureCodes": [],
+    "endedAt": "2026-09-10T10:08:26.314Z",
+    "failureCodes": [
+      "provider-http"
+    ],
     "matches": 0,
     "newRecords": 0,
-    "outcome": "completed",
-    "queriesAttempted": 6,
+    "outcome": "failed",
+    "queriesAttempted": 1,
     "queriesBacklogged": 0,
-    "queriesCompleted": 6,
+    "queriesCompleted": 0,
     "rowsProcessed": 0,
-    "startedAt": "2026-09-10T05:22:55.269Z"
+    "startedAt": "2026-09-10T10:08:25.324Z"
   },
   "provider": "crt.sh",
   "providerHealth": {
-    "consecutiveFailures": 0,
-    "degradedSince": null,
-    "lastAttemptAt": "2026-09-10T05:23:29.244Z",
-    "lastFailureCodes": [],
+    "consecutiveFailures": 1,
+    "degradedSince": "2026-09-10T10:08:25.324Z",
+    "lastAttemptAt": "2026-09-10T10:08:26.314Z",
+    "lastFailureCodes": [
+      "provider-http"
+    ],
     "lastSuccessAt": "2026-09-10T05:23:29.244Z",
-    "nextAttemptAt": null
+    "nextAttemptAt": "2026-09-10T10:13:26.314Z"
   },
   "queries": {
     "brand:artea": {
@@ -356,8 +360,8 @@
       "brand": "Telia",
       "lastEntryAt": null,
       "lastId": 0,
-      "lastOutcome": "completed",
-      "lastRunAt": "2026-09-07T12:59:27.869Z",
+      "lastOutcome": "failed",
+      "lastRunAt": "2026-09-10T10:08:25.324Z",
       "term": "telia"
     },
     "brand:unipark": {
@@ -393,6 +397,6 @@
       "term": "vinted"
     }
   },
-  "queryCursor": 41,
+  "queryCursor": 42,
   "schemaVersion": 1
 }
