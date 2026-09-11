@@ -1,27 +1,31 @@
 {
   "dataset": "ct-search-state",
-  "generatedAt": "2026-09-11T16:54:12.488Z",
+  "generatedAt": "2026-09-11T20:08:39.634Z",
   "latestRun": {
     "dnsNames": 0,
-    "endedAt": "2026-09-11T16:54:12.488Z",
-    "failureCodes": [],
+    "endedAt": "2026-09-11T20:08:39.634Z",
+    "failureCodes": [
+      "provider-http"
+    ],
     "matches": 0,
     "newRecords": 0,
-    "outcome": "completed",
-    "queriesAttempted": 6,
+    "outcome": "failed",
+    "queriesAttempted": 1,
     "queriesBacklogged": 0,
-    "queriesCompleted": 6,
+    "queriesCompleted": 0,
     "rowsProcessed": 0,
-    "startedAt": "2026-09-11T16:53:43.927Z"
+    "startedAt": "2026-09-11T20:08:38.668Z"
   },
   "provider": "crt.sh",
   "providerHealth": {
-    "consecutiveFailures": 0,
-    "degradedSince": null,
-    "lastAttemptAt": "2026-09-11T16:54:12.488Z",
-    "lastFailureCodes": [],
+    "consecutiveFailures": 1,
+    "degradedSince": "2026-09-11T20:08:38.668Z",
+    "lastAttemptAt": "2026-09-11T20:08:39.634Z",
+    "lastFailureCodes": [
+      "provider-http"
+    ],
     "lastSuccessAt": "2026-09-11T16:54:12.488Z",
-    "nextAttemptAt": null
+    "nextAttemptAt": "2026-09-11T20:13:39.634Z"
   },
   "queries": {
     "brand:artea": {
@@ -148,8 +152,8 @@
       "brand": "Ignitis",
       "lastEntryAt": null,
       "lastId": 0,
-      "lastOutcome": "completed",
-      "lastRunAt": "2026-09-09T00:38:47.831Z",
+      "lastOutcome": "failed",
+      "lastRunAt": "2026-09-11T20:08:38.668Z",
       "term": "ignitis"
     },
     "brand:ikilietuva": {
@@ -393,6 +397,6 @@
       "term": "vinted"
     }
   },
-  "queryCursor": 15,
+  "queryCursor": 16,
   "schemaVersion": 1
 }
