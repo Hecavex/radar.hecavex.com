@@ -3,7 +3,7 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-09-11T02:08:19.922Z",
+  "generatedAt": "2026-09-11T02:53:24.646Z",
   "retentionDays": 365,
   "from": "2025-09-12",
   "to": "2026-09-11",
@@ -1321,50 +1321,51 @@
       "date": "2026-09-11",
       "partialDay": true,
       "collectorCoverage": {
-        "windowSeconds": 7699,
-        "scheduledSlots": 8,
-        "recordedAttempts": 9,
-        "healthyAttempts": 9,
+        "windowSeconds": 10404,
+        "scheduledSlots": 11,
+        "recordedAttempts": 12,
+        "healthyAttempts": 12,
         "recordedSchedulePercent": 100.0,
-        "listeningCoveragePercent": 55.79,
-        "scheduledListeningCeilingPercent": 49.88,
-        "listeningSeconds": 4294.934,
+        "listeningCoveragePercent": 55.12,
+        "scheduledListeningCeilingPercent": 50.75,
+        "listeningSeconds": 5734.93,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 4294.934,
-          "upperSeconds": 4294.937,
+          "lowerSeconds": 5734.93,
+          "upperSeconds": 5734.933,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 4319.988
+          "reportedWorkerSeconds": 5759.984
         },
         "outcomes": {
-          "healthy-empty": 8,
-          "healthy-matches": 1
+          "healthy-empty": 10,
+          "healthy-matches": 2
         }
       },
       "discovery": {
-        "events": 2,
-        "uniqueSignals": 1,
-        "observations": 1,
+        "events": 4,
+        "uniqueSignals": 2,
+        "observations": 2,
         "reobservations": 0,
-        "firstPublications": 1,
+        "firstPublications": 2,
         "statusChanges": 0,
-        "facetSampleSize": 1,
-        "evidenceClassifiedSignals": 1,
+        "facetSampleSize": 2,
+        "evidenceClassifiedSignals": 2,
         "byBrand": {
-          "MAXIMA": 1
+          "MAXIMA": 1,
+          "Vinted": 1
         },
         "bySource": {
-          "CertStream": 1
+          "CertStream": 2
         },
         "byEvidenceTier": {
-          "name-only": 1
+          "name-only": 2
         },
         "byReason": {
-          "brand-joined-affix": 1,
-          "different-tld": 1,
-          "first-publication": 1,
-          "suspicious-context": 1
+          "brand-joined-affix": 2,
+          "different-tld": 2,
+          "first-publication": 2,
+          "suspicious-context": 2
         }
       }
     }
