@@ -3,7 +3,7 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-09-12T14:56:07.688Z",
+  "generatedAt": "2026-09-12T15:11:13.977Z",
   "retentionDays": 365,
   "from": "2025-09-13",
   "to": "2026-09-12",
@@ -1379,54 +1379,55 @@
       "date": "2026-09-12",
       "partialDay": true,
       "collectorCoverage": {
-        "windowSeconds": 53767,
-        "scheduledSlots": 59,
-        "recordedAttempts": 60,
-        "healthyAttempts": 60,
+        "windowSeconds": 54673,
+        "scheduledSlots": 60,
+        "recordedAttempts": 61,
+        "healthyAttempts": 61,
         "recordedSchedulePercent": 100.0,
-        "listeningCoveragePercent": 53.56,
-        "scheduledListeningCeilingPercent": 52.67,
-        "listeningSeconds": 28799.92,
+        "listeningCoveragePercent": 53.55,
+        "scheduledListeningCeilingPercent": 52.68,
+        "listeningSeconds": 29279.919,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 28799.92,
-          "upperSeconds": 28799.921,
+          "lowerSeconds": 29279.919,
+          "upperSeconds": 29279.92,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 28799.921
+          "reportedWorkerSeconds": 29279.92
         },
         "outcomes": {
           "healthy-empty": 55,
-          "healthy-matches": 5
+          "healthy-matches": 6
         }
       },
       "discovery": {
-        "events": 12,
-        "uniqueSignals": 6,
-        "observations": 6,
+        "events": 14,
+        "uniqueSignals": 7,
+        "observations": 7,
         "reobservations": 0,
-        "firstPublications": 6,
+        "firstPublications": 7,
         "statusChanges": 0,
-        "facetSampleSize": 6,
-        "evidenceClassifiedSignals": 6,
+        "facetSampleSize": 7,
+        "evidenceClassifiedSignals": 7,
         "byBrand": {
           "ESO": 3,
           "Revolut": 2,
+          "Bigbank": 1,
           "Smart-ID": 1
         },
         "bySource": {
-          "CertStream": 6
+          "CertStream": 7
         },
         "byEvidenceTier": {
-          "name-only": 6
+          "name-only": 7
         },
         "byReason": {
-          "first-publication": 6,
-          "suspicious-context": 6,
+          "first-publication": 7,
+          "suspicious-context": 7,
           "different-tld": 5,
           "brand-exact-token": 4,
           "multiple-hyphens": 4,
-          "brand-joined-affix": 2
+          "brand-joined-affix": 3
         }
       }
     }

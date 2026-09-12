@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-stratified-review-queue",
-  "generatedAt": "2026-09-12T14:26:05.131Z",
+  "generatedAt": "2026-09-12T15:11:13.977Z",
   "samplingPolicy": {
     "method": "deterministic-greedy-facet-balancing",
     "dimensions": [
@@ -15,7 +15,7 @@
     "excludes": "Signals already represented by a sanitized assessment.",
     "semantics": "A review worklist, not a random or prevalence-representative sample."
   },
-  "availableUnreviewed": 92,
+  "availableUnreviewed": 93,
   "selected": 24,
   "candidates": [
     {
@@ -67,9 +67,9 @@
       "firstSeen": "2026-08-22T04:14:27.215Z"
     },
     {
-      "signalId": "3ae9ad0ba99eb74f24f5",
-      "recordPath": "/signals/3ae9ad0ba99eb74f24f5/",
-      "brand": "Paysera",
+      "signalId": "9fa5f17f9ad99d88c34a",
+      "recordPath": "/signals/9fa5f17f9ad99d88c34a/",
+      "brand": "Smart-ID",
       "sources": [
         "CertStream"
       ],
@@ -80,7 +80,7 @@
         "suspicious-context"
       ],
       "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-09-10T14:31:18.070Z"
+      "firstSeen": "2026-09-12T05:36:42.394Z"
     },
     {
       "signalId": "4502818070bb8d9279c1",
@@ -100,37 +100,35 @@
       "firstSeen": "2026-09-07T11:53:06.453Z"
     },
     {
-      "signalId": "71b7af4763ffa22c34dd",
-      "recordPath": "/signals/71b7af4763ffa22c34dd/",
-      "brand": "Smart-ID",
+      "signalId": "543fb6629ad729415188",
+      "recordPath": "/signals/543fb6629ad729415188/",
+      "brand": "Vinted",
       "sources": [
         "URLScan"
       ],
-      "scoreBand": "85-94",
+      "scoreBand": "95-100",
       "evidenceTier": "name-only",
       "reasonCodes": [
         "brand-domain-match"
       ],
       "candidateAgeBand": "8-30d",
-      "firstSeen": "2026-08-21T07:33:13.155Z"
+      "firstSeen": "2026-08-21T10:44:29.723Z"
     },
     {
-      "signalId": "5b0f8b137394c5f88ddf",
-      "recordPath": "/signals/5b0f8b137394c5f88ddf/",
-      "brand": "Vinted",
+      "signalId": "e428cb263164e1eb9363",
+      "recordPath": "/signals/e428cb263164e1eb9363/",
+      "brand": "Bigbank",
       "sources": [
-        "HECAVEX"
+        "CertStream"
       ],
-      "scoreBand": "95-100",
+      "scoreBand": "85-94",
       "evidenceTier": "name-only",
       "reasonCodes": [
-        "brand-exact-token",
-        "different-tld",
-        "manual-review",
+        "brand-joined-affix",
         "suspicious-context"
       ],
-      "candidateAgeBand": "8-30d",
-      "firstSeen": "2026-08-25T11:47:24.305Z"
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-09-12T15:05:10.041Z"
     },
     {
       "signalId": "54b7622ec9c57480f3dc",
@@ -146,22 +144,6 @@
       ],
       "candidateAgeBand": "8-30d",
       "firstSeen": "2026-08-22T07:21:16.259Z"
-    },
-    {
-      "signalId": "9fa5f17f9ad99d88c34a",
-      "recordPath": "/signals/9fa5f17f9ad99d88c34a/",
-      "brand": "Smart-ID",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "85-94",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-joined-affix",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-09-12T05:36:42.394Z"
     },
     {
       "signalId": "a6a1f542302b3b1c8eb9",
@@ -196,9 +178,58 @@
       "firstSeen": "2026-08-22T10:09:17.586Z"
     },
     {
-      "signalId": "543fb6629ad729415188",
-      "recordPath": "/signals/543fb6629ad729415188/",
+      "signalId": "5b0f8b137394c5f88ddf",
+      "recordPath": "/signals/5b0f8b137394c5f88ddf/",
       "brand": "Vinted",
+      "sources": [
+        "HECAVEX"
+      ],
+      "scoreBand": "95-100",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-exact-token",
+        "different-tld",
+        "manual-review",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "8-30d",
+      "firstSeen": "2026-08-25T11:47:24.305Z"
+    },
+    {
+      "signalId": "3ae9ad0ba99eb74f24f5",
+      "recordPath": "/signals/3ae9ad0ba99eb74f24f5/",
+      "brand": "Paysera",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "85-94",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-joined-affix",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "2-7d",
+      "firstSeen": "2026-09-10T14:31:18.070Z"
+    },
+    {
+      "signalId": "71b7af4763ffa22c34dd",
+      "recordPath": "/signals/71b7af4763ffa22c34dd/",
+      "brand": "Smart-ID",
+      "sources": [
+        "URLScan"
+      ],
+      "scoreBand": "85-94",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-domain-match"
+      ],
+      "candidateAgeBand": "8-30d",
+      "firstSeen": "2026-08-21T07:33:13.155Z"
+    },
+    {
+      "signalId": "3d179a68c89e521dc72c",
+      "recordPath": "/signals/3d179a68c89e521dc72c/",
+      "brand": "MAXIMA",
       "sources": [
         "URLScan"
       ],
@@ -208,7 +239,7 @@
         "brand-domain-match"
       ],
       "candidateAgeBand": "8-30d",
-      "firstSeen": "2026-08-21T10:44:29.723Z"
+      "firstSeen": "2026-08-23T02:00:48.622Z"
     },
     {
       "signalId": "9fd081ed66b4b1cd1ea5",
@@ -227,9 +258,9 @@
       "firstSeen": "2026-09-06T08:55:08.376Z"
     },
     {
-      "signalId": "13f79616dab9bc707d4b",
-      "recordPath": "/signals/13f79616dab9bc707d4b/",
-      "brand": "MAXIMA",
+      "signalId": "2daea4d479bf7af1a8f1",
+      "recordPath": "/signals/2daea4d479bf7af1a8f1/",
+      "brand": "Swedbank",
       "sources": [
         "CertStream"
       ],
@@ -241,7 +272,7 @@
         "suspicious-context"
       ],
       "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-09-11T02:06:09.749Z"
+      "firstSeen": "2026-09-11T14:17:03.868Z"
     },
     {
       "signalId": "74a34aa5a01e9ed77fb6",
@@ -276,21 +307,6 @@
       "firstSeen": "2026-09-05T23:26:24.193Z"
     },
     {
-      "signalId": "3d179a68c89e521dc72c",
-      "recordPath": "/signals/3d179a68c89e521dc72c/",
-      "brand": "MAXIMA",
-      "sources": [
-        "URLScan"
-      ],
-      "scoreBand": "95-100",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-domain-match"
-      ],
-      "candidateAgeBand": "8-30d",
-      "firstSeen": "2026-08-23T02:00:48.622Z"
-    },
-    {
       "signalId": "c26367d14c89d7479a01",
       "recordPath": "/signals/c26367d14c89d7479a01/",
       "brand": "DHL",
@@ -305,6 +321,21 @@
       ],
       "candidateAgeBand": "0-1d",
       "firstSeen": "2026-09-11T13:21:57.642Z"
+    },
+    {
+      "signalId": "b2a74041369ff0a25a50",
+      "recordPath": "/signals/b2a74041369ff0a25a50/",
+      "brand": "Revolut",
+      "sources": [
+        "URLScan"
+      ],
+      "scoreBand": "95-100",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-domain-match"
+      ],
+      "candidateAgeBand": "8-30d",
+      "firstSeen": "2026-08-21T09:45:07.660Z"
     },
     {
       "signalId": "54f4184b3225454a3624",
@@ -324,54 +355,6 @@
       "firstSeen": "2026-09-06T21:55:35.453Z"
     },
     {
-      "signalId": "b2a74041369ff0a25a50",
-      "recordPath": "/signals/b2a74041369ff0a25a50/",
-      "brand": "Revolut",
-      "sources": [
-        "URLScan"
-      ],
-      "scoreBand": "95-100",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-domain-match"
-      ],
-      "candidateAgeBand": "8-30d",
-      "firstSeen": "2026-08-21T09:45:07.660Z"
-    },
-    {
-      "signalId": "504b0e51995ad98ce286",
-      "recordPath": "/signals/504b0e51995ad98ce286/",
-      "brand": "Revolut",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "85-94",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-joined-affix",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-09-07T11:52:37.956Z"
-    },
-    {
-      "signalId": "2daea4d479bf7af1a8f1",
-      "recordPath": "/signals/2daea4d479bf7af1a8f1/",
-      "brand": "Swedbank",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "95-100",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-joined-affix",
-        "different-tld",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-09-11T14:17:03.868Z"
-    },
-    {
       "signalId": "043e15419600d8aecf56",
       "recordPath": "/signals/043e15419600d8aecf56/",
       "brand": "Revolut",
@@ -387,6 +370,23 @@
       ],
       "candidateAgeBand": "2-7d",
       "firstSeen": "2026-09-06T00:16:01.629Z"
+    },
+    {
+      "signalId": "13f79616dab9bc707d4b",
+      "recordPath": "/signals/13f79616dab9bc707d4b/",
+      "brand": "MAXIMA",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "95-100",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-joined-affix",
+        "different-tld",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-09-11T02:06:09.749Z"
     },
     {
       "signalId": "e86f606e9f0cc3c28a51",
