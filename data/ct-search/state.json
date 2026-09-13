@@ -1,29 +1,31 @@
 {
   "dataset": "ct-search-state",
-  "generatedAt": "2026-09-13T17:03:58.566Z",
+  "generatedAt": "2026-09-13T19:58:22.007Z",
   "latestRun": {
     "dnsNames": 0,
-    "endedAt": "2026-09-13T17:03:58.566Z",
-    "failureCodes": [],
+    "endedAt": "2026-09-13T19:58:22.007Z",
+    "failureCodes": [
+      "provider-http"
+    ],
     "matches": 0,
     "newRecords": 0,
-    "outcome": "deferred-backoff",
-    "queriesAttempted": 0,
+    "outcome": "failed",
+    "queriesAttempted": 1,
     "queriesBacklogged": 0,
     "queriesCompleted": 0,
     "rowsProcessed": 0,
-    "startedAt": "2026-09-13T17:03:58.560Z"
+    "startedAt": "2026-09-13T19:58:21.246Z"
   },
   "provider": "crt.sh",
   "providerHealth": {
-    "consecutiveFailures": 9,
+    "consecutiveFailures": 10,
     "degradedSince": "2026-09-11T20:08:38.668Z",
-    "lastAttemptAt": "2026-09-13T12:58:48.066Z",
+    "lastAttemptAt": "2026-09-13T19:58:22.007Z",
     "lastFailureCodes": [
       "provider-http"
     ],
     "lastSuccessAt": "2026-09-11T16:54:12.488Z",
-    "nextAttemptAt": "2026-09-13T18:18:48.066Z"
+    "nextAttemptAt": "2026-09-14T01:18:22.007Z"
   },
   "queries": {
     "brand:artea": {
@@ -342,8 +344,8 @@
       "brand": "Swedbank",
       "lastEntryAt": null,
       "lastId": 0,
-      "lastOutcome": "completed",
-      "lastRunAt": "2026-09-10T05:22:55.269Z",
+      "lastOutcome": "failed",
+      "lastRunAt": "2026-09-13T19:58:21.246Z",
       "term": "swedbank"
     },
     "brand:tele2": {
@@ -395,6 +397,6 @@
       "term": "vinted"
     }
   },
-  "queryCursor": 39,
+  "queryCursor": 40,
   "schemaVersion": 1
 }
