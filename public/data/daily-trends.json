@@ -3,7 +3,7 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-09-13T01:02:50.714Z",
+  "generatedAt": "2026-09-13T01:27:05.863Z",
   "retentionDays": 365,
   "from": "2025-09-14",
   "to": "2026-09-13",
@@ -999,7 +999,7 @@
         "firstPublications": 21,
         "statusChanges": 0,
         "facetSampleSize": 21,
-        "evidenceClassifiedSignals": 2,
+        "evidenceClassifiedSignals": 5,
         "byBrand": {
           "Lidl Lietuva": 5,
           "Revolut": 5,
@@ -1015,7 +1015,7 @@
           "CertStream": 21
         },
         "byEvidenceTier": {
-          "name-only": 2
+          "name-only": 5
         },
         "byReason": {
           "first-publication": 21,
@@ -1444,49 +1444,55 @@
       "date": "2026-09-13",
       "partialDay": true,
       "collectorCoverage": {
-        "windowSeconds": 3770,
-        "scheduledSlots": 4,
-        "recordedAttempts": 4,
-        "healthyAttempts": 4,
+        "windowSeconds": 5225,
+        "scheduledSlots": 5,
+        "recordedAttempts": 6,
+        "healthyAttempts": 6,
         "recordedSchedulePercent": 100.0,
-        "listeningCoveragePercent": 50.93,
-        "scheduledListeningCeilingPercent": 50.93,
-        "listeningSeconds": 1919.996,
+        "listeningCoveragePercent": 55.12,
+        "scheduledListeningCeilingPercent": 45.93,
+        "listeningSeconds": 2879.993,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 1919.996,
-          "upperSeconds": 1919.996,
+          "lowerSeconds": 2879.993,
+          "upperSeconds": 2879.993,
           "precision": "exact",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 1919.996
+          "reportedWorkerSeconds": 2879.993
         },
         "outcomes": {
-          "healthy-empty": 3,
-          "healthy-matches": 1
+          "healthy-empty": 4,
+          "healthy-matches": 2
         }
       },
       "discovery": {
-        "events": 1,
-        "uniqueSignals": 1,
-        "observations": 1,
-        "reobservations": 1,
-        "firstPublications": 0,
+        "events": 6,
+        "uniqueSignals": 5,
+        "observations": 5,
+        "reobservations": 4,
+        "firstPublications": 1,
         "statusChanges": 0,
-        "facetSampleSize": 1,
-        "evidenceClassifiedSignals": 1,
+        "facetSampleSize": 5,
+        "evidenceClassifiedSignals": 5,
         "byBrand": {
+          "Lidl Lietuva": 3,
+          "DHL": 1,
           "Smart-ID": 1
         },
         "bySource": {
-          "CertStream": 1
+          "CertStream": 5
         },
         "byEvidenceTier": {
-          "name-only": 1
+          "name-only": 5
         },
         "byReason": {
+          "brand-exact-token": 4,
+          "punycode": 3,
+          "unicode-confusable": 3,
+          "different-tld": 2,
+          "suspicious-context": 2,
           "brand-joined-affix": 1,
-          "different-tld": 1,
-          "suspicious-context": 1
+          "first-publication": 1
         }
       }
     }
