@@ -1,29 +1,31 @@
 {
   "dataset": "ct-search-state",
-  "generatedAt": "2026-09-13T01:26:52.773Z",
+  "generatedAt": "2026-09-13T06:47:04.568Z",
   "latestRun": {
     "dnsNames": 0,
-    "endedAt": "2026-09-13T01:26:52.773Z",
-    "failureCodes": [],
+    "endedAt": "2026-09-13T06:47:04.568Z",
+    "failureCodes": [
+      "provider-http"
+    ],
     "matches": 0,
     "newRecords": 0,
-    "outcome": "deferred-backoff",
-    "queriesAttempted": 0,
+    "outcome": "partial",
+    "queriesAttempted": 2,
     "queriesBacklogged": 0,
-    "queriesCompleted": 0,
+    "queriesCompleted": 1,
     "rowsProcessed": 0,
-    "startedAt": "2026-09-13T01:26:52.767Z"
+    "startedAt": "2026-09-13T06:46:52.933Z"
   },
   "provider": "crt.sh",
   "providerHealth": {
-    "consecutiveFailures": 7,
+    "consecutiveFailures": 8,
     "degradedSince": "2026-09-11T20:08:38.668Z",
-    "lastAttemptAt": "2026-09-12T21:41:09.616Z",
+    "lastAttemptAt": "2026-09-13T06:47:04.568Z",
     "lastFailureCodes": [
       "provider-http"
     ],
     "lastSuccessAt": "2026-09-11T16:54:12.488Z",
-    "nextAttemptAt": "2026-09-13T03:01:09.616Z"
+    "nextAttemptAt": "2026-09-13T12:07:04.568Z"
   },
   "queries": {
     "brand:artea": {
@@ -287,15 +289,15 @@
       "lastEntryAt": null,
       "lastId": 0,
       "lastOutcome": "completed",
-      "lastRunAt": "2026-09-10T00:36:42.036Z",
+      "lastRunAt": "2026-09-13T06:46:52.933Z",
       "term": "regitra"
     },
     "brand:revolut": {
       "brand": "Revolut",
       "lastEntryAt": "2026-08-28T20:22:13.947Z",
       "lastId": 29118779167,
-      "lastOutcome": "completed",
-      "lastRunAt": "2026-09-10T00:36:42.036Z",
+      "lastOutcome": "failed",
+      "lastRunAt": "2026-09-13T06:46:52.933Z",
       "term": "revolut"
     },
     "brand:rimilietuva": {
@@ -395,6 +397,6 @@
       "term": "vinted"
     }
   },
-  "queryCursor": 32,
+  "queryCursor": 34,
   "schemaVersion": 1
 }
