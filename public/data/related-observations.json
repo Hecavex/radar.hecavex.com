@@ -1,10 +1,67 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-related-observations",
-  "generatedAt": "2026-09-14T22:15:31.189Z",
+  "generatedAt": "2026-09-14T22:30:46.757Z",
   "semantics": "Shared evidence is a bounded association between public observations. It is not campaign, operator, malware, infrastructure ownership, or threat-actor attribution.",
-  "nodes": [],
-  "edges": [],
+  "nodes": [
+    {
+      "signalId": "0d43ffbf1cddacd4c7ba",
+      "domain": "www[.]revolutbank[.]de",
+      "clusterId": "ffdead0f0430330e"
+    },
+    {
+      "signalId": "13f79616dab9bc707d4b",
+      "domain": "dev[.]maximaservice[.]de",
+      "clusterId": "ffdead0f0430330e"
+    },
+    {
+      "signalId": "f067c1c4c9224e6ec2fd",
+      "domain": "random[.]revolutbank[.]de",
+      "clusterId": "ffdead0f0430330e"
+    }
+  ],
+  "edges": [
+    {
+      "id": "0fe09a967784bc29153c",
+      "source": "0d43ffbf1cddacd4c7ba",
+      "target": "13f79616dab9bc707d4b",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "91[.]195[.]241[.]232"
+        },
+        {
+          "type": "dns-ns",
+          "value": "sl1[.]sedo[.]com"
+        },
+        {
+          "type": "dns-ns",
+          "value": "sl2[.]sedo[.]com"
+        }
+      ]
+    },
+    {
+      "id": "58d1eea499d0d1717cea",
+      "source": "13f79616dab9bc707d4b",
+      "target": "f067c1c4c9224e6ec2fd",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "91[.]195[.]241[.]232"
+        },
+        {
+          "type": "dns-ns",
+          "value": "sl1[.]sedo[.]com"
+        },
+        {
+          "type": "dns-ns",
+          "value": "sl2[.]sedo[.]com"
+        }
+      ]
+    }
+  ],
   "suppressedEvidence": {
     "highFanoutValues": 0,
     "temporalPairs": 25,
