@@ -3,7 +3,7 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-09-15T20:29:27.963Z",
+  "generatedAt": "2026-09-15T20:59:13.815Z",
   "retentionDays": 365,
   "from": "2025-09-16",
   "to": "2026-09-15",
@@ -1563,38 +1563,38 @@
       "date": "2026-09-15",
       "partialDay": true,
       "collectorCoverage": {
-        "windowSeconds": 73767,
-        "scheduledSlots": 81,
-        "recordedAttempts": 82,
-        "healthyAttempts": 82,
+        "windowSeconds": 75553,
+        "scheduledSlots": 83,
+        "recordedAttempts": 84,
+        "healthyAttempts": 84,
         "recordedSchedulePercent": 100.0,
-        "listeningCoveragePercent": 52.7,
-        "scheduledListeningCeilingPercent": 52.71,
-        "listeningSeconds": 38878.889,
+        "listeningCoveragePercent": 52.73,
+        "scheduledListeningCeilingPercent": 52.73,
+        "listeningSeconds": 39838.886,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 38878.889,
-          "upperSeconds": 38880.586,
+          "lowerSeconds": 39838.886,
+          "upperSeconds": 39840.583,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 39358.888
+          "reportedWorkerSeconds": 40318.885
         },
         "outcomes": {
-          "healthy-empty": 71,
-          "healthy-matches": 11
+          "healthy-empty": 72,
+          "healthy-matches": 12
         }
       },
       "discovery": {
-        "events": 34,
-        "uniqueSignals": 17,
-        "observations": 17,
+        "events": 38,
+        "uniqueSignals": 19,
+        "observations": 19,
         "reobservations": 0,
-        "firstPublications": 17,
+        "firstPublications": 19,
         "statusChanges": 0,
-        "facetSampleSize": 17,
-        "evidenceClassifiedSignals": 17,
+        "facetSampleSize": 19,
+        "evidenceClassifiedSignals": 19,
         "byBrand": {
-          "Tele2": 5,
+          "Tele2": 6,
           "ESO": 3,
           "Lidl Lietuva": 2,
           "SmartPosti": 2,
@@ -1602,23 +1602,24 @@
           "Revolut": 1,
           "Swedbank": 1,
           "Telia": 1,
+          "VMI": 1,
           "Vinted": 1
         },
         "bySource": {
-          "CertStream": 17
+          "CertStream": 19
         },
         "byEvidenceTier": {
-          "name-only": 17
+          "name-only": 19
         },
         "byReason": {
-          "first-publication": 17,
-          "suspicious-context": 16,
-          "brand-exact-token": 14,
-          "different-tld": 14,
+          "first-publication": 19,
+          "suspicious-context": 18,
+          "brand-exact-token": 15,
+          "different-tld": 15,
           "multiple-hyphens": 10,
-          "brand-joined-affix": 3,
-          "punycode": 2,
-          "unicode-confusable": 2
+          "brand-joined-affix": 4,
+          "punycode": 3,
+          "unicode-confusable": 3
         }
       }
     }
