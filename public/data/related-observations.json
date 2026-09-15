@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-related-observations",
-  "generatedAt": "2026-09-15T06:00:21.771Z",
+  "generatedAt": "2026-09-15T06:56:59.358Z",
   "semantics": "Shared evidence is a bounded association between public observations. It is not campaign, operator, malware, infrastructure ownership, or threat-actor attribution.",
   "nodes": [
     {
@@ -13,6 +13,16 @@
       "signalId": "13f79616dab9bc707d4b",
       "domain": "dev[.]maximaservice[.]de",
       "clusterId": "ffdead0f0430330e"
+    },
+    {
+      "signalId": "4cb628b66dd993e6009a",
+      "domain": "revolutbankonline[.]info",
+      "clusterId": "94af30bd01bb37e1"
+    },
+    {
+      "signalId": "c4cf0bb61201dc5e2508",
+      "domain": "revolutsupport[.]info",
+      "clusterId": "94af30bd01bb37e1"
     },
     {
       "signalId": "f067c1c4c9224e6ec2fd",
@@ -60,11 +70,27 @@
           "value": "sl2[.]sedo[.]com"
         }
       ]
+    },
+    {
+      "id": "da464e70ef96bdd9d16d",
+      "source": "4cb628b66dd993e6009a",
+      "target": "c4cf0bb61201dc5e2508",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "198[.]185[.]159[.]144"
+        },
+        {
+          "type": "dns-mx",
+          "value": "smtp[.]google[.]com"
+        }
+      ]
     }
   ],
   "suppressedEvidence": {
     "highFanoutValues": 0,
-    "temporalPairs": 25,
+    "temporalPairs": 31,
     "edgeLimit": 0
   }
 }
