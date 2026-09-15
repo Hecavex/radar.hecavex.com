@@ -3,7 +3,7 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-09-15T02:30:26.747Z",
+  "generatedAt": "2026-09-15T03:00:29.006Z",
   "retentionDays": 365,
   "from": "2025-09-16",
   "to": "2026-09-15",
@@ -1563,39 +1563,52 @@
       "date": "2026-09-15",
       "partialDay": true,
       "collectorCoverage": {
-        "windowSeconds": 9026,
-        "scheduledSlots": 10,
-        "recordedAttempts": 11,
-        "healthyAttempts": 11,
+        "windowSeconds": 10829,
+        "scheduledSlots": 12,
+        "recordedAttempts": 13,
+        "healthyAttempts": 13,
         "recordedSchedulePercent": 100.0,
-        "listeningCoveragePercent": 53.18,
-        "scheduledListeningCeilingPercent": 53.18,
-        "listeningSeconds": 4799.987,
+        "listeningCoveragePercent": 53.19,
+        "scheduledListeningCeilingPercent": 53.19,
+        "listeningSeconds": 5759.985,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 4799.987,
-          "upperSeconds": 4801.684,
+          "lowerSeconds": 5759.985,
+          "upperSeconds": 5761.682,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 5279.987
+          "reportedWorkerSeconds": 6239.985
         },
         "outcomes": {
-          "healthy-empty": 11
+          "healthy-empty": 12,
+          "healthy-matches": 1
         }
       },
       "discovery": {
-        "events": 0,
-        "uniqueSignals": 0,
-        "observations": 0,
+        "events": 2,
+        "uniqueSignals": 1,
+        "observations": 1,
         "reobservations": 0,
-        "firstPublications": 0,
+        "firstPublications": 1,
         "statusChanges": 0,
-        "facetSampleSize": 0,
-        "evidenceClassifiedSignals": 0,
-        "byBrand": {},
-        "bySource": {},
-        "byEvidenceTier": {},
-        "byReason": {}
+        "facetSampleSize": 1,
+        "evidenceClassifiedSignals": 1,
+        "byBrand": {
+          "Tele2": 1
+        },
+        "bySource": {
+          "CertStream": 1
+        },
+        "byEvidenceTier": {
+          "name-only": 1
+        },
+        "byReason": {
+          "brand-joined-affix": 1,
+          "first-publication": 1,
+          "punycode": 1,
+          "suspicious-context": 1,
+          "unicode-confusable": 1
+        }
       }
     }
   ],
