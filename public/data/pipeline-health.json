@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-pipeline-health",
-  "generatedAt": "2026-09-15T08:42:05.470Z",
+  "generatedAt": "2026-09-15T09:28:34.002Z",
   "privacy": "Aggregate counters only; no candidate names or detector payloads.",
   "current": {
     "publishedSignals": 103,
     "sourceStates": {
       "CertStream": "healthy",
-      "URLScan": "partial",
+      "URLScan": "healthy",
       "HECAVEX": "healthy"
     },
     "sourceRecords": {
@@ -16,20 +16,20 @@
       "HECAVEX": 1
     },
     "certstream": {
-      "generatedAt": "2026-09-15T08:41:32.469Z",
-      "lastSuccessAt": "2026-09-15T08:41:32.469Z",
+      "generatedAt": "2026-09-15T09:26:31.388Z",
+      "lastSuccessAt": "2026-09-15T09:26:31.388Z",
       "freshness": {
         "status": "current",
-        "referenceAt": "2026-09-15T08:41:32.469Z",
+        "referenceAt": "2026-09-15T09:26:31.388Z",
         "ageSeconds": 0
       },
       "latestAttempt": {
-        "startedAt": "2026-09-15T08:33:12.920Z",
-        "endedAt": "2026-09-15T08:41:32.469Z",
+        "startedAt": "2026-09-15T09:18:12.920Z",
+        "endedAt": "2026-09-15T09:26:31.388Z",
         "outcome": "healthy-empty",
-        "listeningSeconds": 479.998,
-        "messages": 167711,
-        "dnsNames": 290975,
+        "listeningSeconds": 479.999,
+        "messages": 154007,
+        "dnsNames": 270364,
         "matches": 0,
         "newRecords": 0
       }
@@ -87,27 +87,27 @@
   "windows": [
     {
       "hours": 24,
-      "from": "2026-09-14T08:42:05.470Z",
-      "to": "2026-09-15T08:42:05.470Z",
+      "from": "2026-09-14T09:28:34.002Z",
+      "to": "2026-09-15T09:28:34.002Z",
       "collection": {
         "scheduledSlots": 96,
         "recordedAttempts": 96,
         "healthyAttempts": 96,
         "recordedSchedulePercent": 100.0,
-        "listeningCoveragePercent": 52.86,
+        "listeningCoveragePercent": 52.78,
         "scheduledListeningCeilingPercent": 53.33,
         "expectedListeningSeconds": 46080,
-        "listeningSeconds": 45672.403,
+        "listeningSeconds": 45599.866,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 45672.403,
-          "upperSeconds": 45682.419,
+          "lowerSeconds": 45599.866,
+          "upperSeconds": 45601.821,
           "precision": "bounded",
           "unknownAttempts": 0,
           "reportedWorkerSeconds": 46079.865
         },
-        "messages": 14318814,
-        "dnsNames": 25275084,
+        "messages": 14342601,
+        "dnsNames": 25308489,
         "outcomes": {
           "healthy-empty": 85,
           "healthy-matches": 11
@@ -140,29 +140,29 @@
     },
     {
       "hours": 168,
-      "from": "2026-09-08T08:42:05.470Z",
-      "to": "2026-09-15T08:42:05.470Z",
+      "from": "2026-09-08T09:28:34.002Z",
+      "to": "2026-09-15T09:28:34.002Z",
       "collection": {
         "scheduledSlots": 672,
-        "recordedAttempts": 502,
-        "healthyAttempts": 502,
-        "recordedSchedulePercent": 74.7,
-        "listeningCoveragePercent": 39.84,
+        "recordedAttempts": 505,
+        "healthyAttempts": 505,
+        "recordedSchedulePercent": 75.1,
+        "listeningCoveragePercent": 40.08,
         "scheduledListeningCeilingPercent": 53.33,
-        "expectedListeningSeconds": 240960,
-        "listeningSeconds": 240956.316,
+        "expectedListeningSeconds": 242400,
+        "listeningSeconds": 242396.313,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 240956.316,
-          "upperSeconds": 240956.317,
+          "lowerSeconds": 242396.313,
+          "upperSeconds": 242396.314,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 240956.316
+          "reportedWorkerSeconds": 242396.313
         },
-        "messages": 71252451,
-        "dnsNames": 126853056,
+        "messages": 71717418,
+        "dnsNames": 127668122,
         "outcomes": {
-          "healthy-empty": 432,
+          "healthy-empty": 435,
           "healthy-matches": 70
         }
       },
