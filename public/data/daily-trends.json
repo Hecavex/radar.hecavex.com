@@ -3,7 +3,7 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-09-15T03:00:29.006Z",
+  "generatedAt": "2026-09-15T03:45:32.291Z",
   "retentionDays": 365,
   "from": "2025-09-16",
   "to": "2026-09-15",
@@ -1563,50 +1563,54 @@
       "date": "2026-09-15",
       "partialDay": true,
       "collectorCoverage": {
-        "windowSeconds": 10829,
-        "scheduledSlots": 12,
-        "recordedAttempts": 13,
-        "healthyAttempts": 13,
+        "windowSeconds": 13532,
+        "scheduledSlots": 15,
+        "recordedAttempts": 16,
+        "healthyAttempts": 16,
         "recordedSchedulePercent": 100.0,
-        "listeningCoveragePercent": 53.19,
-        "scheduledListeningCeilingPercent": 53.19,
-        "listeningSeconds": 5759.985,
+        "listeningCoveragePercent": 53.21,
+        "scheduledListeningCeilingPercent": 53.21,
+        "listeningSeconds": 7199.981,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 5759.985,
-          "upperSeconds": 5761.682,
+          "lowerSeconds": 7199.981,
+          "upperSeconds": 7201.678,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 6239.985
+          "reportedWorkerSeconds": 7679.981
         },
         "outcomes": {
-          "healthy-empty": 12,
-          "healthy-matches": 1
+          "healthy-empty": 14,
+          "healthy-matches": 2
         }
       },
       "discovery": {
-        "events": 2,
-        "uniqueSignals": 1,
-        "observations": 1,
+        "events": 4,
+        "uniqueSignals": 2,
+        "observations": 2,
         "reobservations": 0,
-        "firstPublications": 1,
+        "firstPublications": 2,
         "statusChanges": 0,
-        "facetSampleSize": 1,
-        "evidenceClassifiedSignals": 1,
+        "facetSampleSize": 2,
+        "evidenceClassifiedSignals": 2,
         "byBrand": {
+          "Swedbank": 1,
           "Tele2": 1
         },
         "bySource": {
-          "CertStream": 1
+          "CertStream": 2
         },
         "byEvidenceTier": {
-          "name-only": 1
+          "name-only": 2
         },
         "byReason": {
+          "first-publication": 2,
+          "suspicious-context": 2,
+          "brand-exact-token": 1,
           "brand-joined-affix": 1,
-          "first-publication": 1,
+          "different-tld": 1,
+          "multiple-hyphens": 1,
           "punycode": 1,
-          "suspicious-context": 1,
           "unicode-confusable": 1
         }
       }
