@@ -3,7 +3,7 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-09-16T00:23:48.657Z",
+  "generatedAt": "2026-09-16T00:46:07.748Z",
   "retentionDays": 365,
   "from": "2025-09-17",
   "to": "2026-09-16",
@@ -1626,39 +1626,51 @@
       "date": "2026-09-16",
       "partialDay": true,
       "collectorCoverage": {
-        "windowSeconds": 1428,
-        "scheduledSlots": 1,
-        "recordedAttempts": 1,
-        "healthyAttempts": 1,
+        "windowSeconds": 2767,
+        "scheduledSlots": 3,
+        "recordedAttempts": 3,
+        "healthyAttempts": 3,
         "recordedSchedulePercent": 100.0,
-        "listeningCoveragePercent": 33.61,
-        "scheduledListeningCeilingPercent": 33.61,
-        "listeningSeconds": 479.999,
+        "listeningCoveragePercent": 52.04,
+        "scheduledListeningCeilingPercent": 52.04,
+        "listeningSeconds": 1439.997,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 479.999,
-          "upperSeconds": 479.999,
+          "lowerSeconds": 1439.997,
+          "upperSeconds": 1439.997,
           "precision": "exact",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 479.999
+          "reportedWorkerSeconds": 1439.997
         },
         "outcomes": {
-          "healthy-empty": 1
+          "healthy-empty": 2,
+          "healthy-matches": 1
         }
       },
       "discovery": {
-        "events": 0,
-        "uniqueSignals": 0,
-        "observations": 0,
+        "events": 2,
+        "uniqueSignals": 1,
+        "observations": 1,
         "reobservations": 0,
-        "firstPublications": 0,
+        "firstPublications": 1,
         "statusChanges": 0,
-        "facetSampleSize": 0,
-        "evidenceClassifiedSignals": 0,
-        "byBrand": {},
-        "bySource": {},
-        "byEvidenceTier": {},
-        "byReason": {}
+        "facetSampleSize": 1,
+        "evidenceClassifiedSignals": 1,
+        "byBrand": {
+          "Smart-ID": 1
+        },
+        "bySource": {
+          "CertStream": 1
+        },
+        "byEvidenceTier": {
+          "name-only": 1
+        },
+        "byReason": {
+          "brand-joined-affix": 1,
+          "different-tld": 1,
+          "first-publication": 1,
+          "suspicious-context": 1
+        }
       }
     }
   ],
