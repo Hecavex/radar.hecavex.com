@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-related-observations",
-  "generatedAt": "2026-09-16T17:01:07.959Z",
+  "generatedAt": "2026-09-16T18:01:27.111Z",
   "semantics": "Shared evidence is a bounded association between public observations. It is not campaign, operator, malware, infrastructure ownership, or threat-actor attribution.",
   "nodes": [
     {
       "signalId": "083e17cf9a0918c6167a",
       "domain": "vptkbcns[.]xn--tl2mobile-b4ab[.]com",
-      "clusterId": "aa7be14ddc26760e"
+      "clusterId": "5ddc1111e28eb9dc"
     },
     {
       "signalId": "0d43ffbf1cddacd4c7ba",
@@ -20,6 +20,16 @@
       "clusterId": "ffdead0f0430330e"
     },
     {
+      "signalId": "16cef1a071ecc0789ae3",
+      "domain": "airwave[.]dhl-support-del[.]com",
+      "clusterId": "96337b44fbd83444"
+    },
+    {
+      "signalId": "2a162925fb6599897b35",
+      "domain": "tdfskaxo[.]xn--tl2mobile-b4ab[.]com",
+      "clusterId": "5ddc1111e28eb9dc"
+    },
+    {
       "signalId": "4cb628b66dd993e6009a",
       "domain": "revolutbankonline[.]info",
       "clusterId": "94af30bd01bb37e1"
@@ -27,12 +37,17 @@
     {
       "signalId": "ae06c39c6e8fd4e39d83",
       "domain": "aflymgrs[.]xn--tl2mobile-b4ab[.]fr",
-      "clusterId": "aa7be14ddc26760e"
+      "clusterId": "5ddc1111e28eb9dc"
     },
     {
       "signalId": "c4cf0bb61201dc5e2508",
       "domain": "revolutsupport[.]info",
       "clusterId": "94af30bd01bb37e1"
+    },
+    {
+      "signalId": "e86f606e9f0cc3c28a51",
+      "domain": "5aedlradc0o0cowi[.]delivery-dhl-uae[.]com",
+      "clusterId": "96337b44fbd83444"
     },
     {
       "signalId": "f067c1c4c9224e6ec2fd",
@@ -41,6 +56,30 @@
     }
   ],
   "edges": [
+    {
+      "id": "359899007d8521cf35ef",
+      "source": "16cef1a071ecc0789ae3",
+      "target": "e86f606e9f0cc3c28a51",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "185[.]53[.]179[.]136"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ina1[.]registrar[.]eu"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ina2[.]registrar[.]eu"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ina3[.]registrar[.]eu"
+        }
+      ]
+    },
     {
       "id": "0fe09a967784bc29153c",
       "source": "0d43ffbf1cddacd4c7ba",
@@ -84,6 +123,22 @@
     {
       "id": "0687ac63262817883df9",
       "source": "083e17cf9a0918c6167a",
+      "target": "ae06c39c6e8fd4e39d83",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "185[.]53[.]179[.]200"
+        },
+        {
+          "type": "dns-cname",
+          "value": "845192[.]parkingcrew[.]net"
+        }
+      ]
+    },
+    {
+      "id": "283d73d6e10b32870943",
+      "source": "2a162925fb6599897b35",
       "target": "ae06c39c6e8fd4e39d83",
       "strength": "shared-context",
       "evidence": [
