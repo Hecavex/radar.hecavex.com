@@ -3,7 +3,7 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-09-16T00:00:09.817Z",
+  "generatedAt": "2026-09-16T00:23:48.657Z",
   "retentionDays": 365,
   "from": "2025-09-17",
   "to": "2026-09-16",
@@ -1626,23 +1626,25 @@
       "date": "2026-09-16",
       "partialDay": true,
       "collectorCoverage": {
-        "windowSeconds": 9,
-        "scheduledSlots": 0,
-        "recordedAttempts": 0,
-        "healthyAttempts": 0,
-        "recordedSchedulePercent": null,
-        "listeningCoveragePercent": 0.0,
-        "scheduledListeningCeilingPercent": 0.0,
-        "listeningSeconds": 0.0,
+        "windowSeconds": 1428,
+        "scheduledSlots": 1,
+        "recordedAttempts": 1,
+        "healthyAttempts": 1,
+        "recordedSchedulePercent": 100.0,
+        "listeningCoveragePercent": 33.61,
+        "scheduledListeningCeilingPercent": 33.61,
+        "listeningSeconds": 479.999,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 0.0,
-          "upperSeconds": 0.0,
+          "lowerSeconds": 479.999,
+          "upperSeconds": 479.999,
           "precision": "exact",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 0.0
+          "reportedWorkerSeconds": 479.999
         },
-        "outcomes": {}
+        "outcomes": {
+          "healthy-empty": 1
+        }
       },
       "discovery": {
         "events": 0,
