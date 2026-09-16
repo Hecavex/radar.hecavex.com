@@ -1,9 +1,14 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-related-observations",
-  "generatedAt": "2026-09-16T12:31:07.109Z",
+  "generatedAt": "2026-09-16T13:16:05.348Z",
   "semantics": "Shared evidence is a bounded association between public observations. It is not campaign, operator, malware, infrastructure ownership, or threat-actor attribution.",
   "nodes": [
+    {
+      "signalId": "083e17cf9a0918c6167a",
+      "domain": "vptkbcns[.]xn--tl2mobile-b4ab[.]com",
+      "clusterId": "aa7be14ddc26760e"
+    },
     {
       "signalId": "0d43ffbf1cddacd4c7ba",
       "domain": "www[.]revolutbank[.]de",
@@ -18,6 +23,11 @@
       "signalId": "4cb628b66dd993e6009a",
       "domain": "revolutbankonline[.]info",
       "clusterId": "94af30bd01bb37e1"
+    },
+    {
+      "signalId": "ae06c39c6e8fd4e39d83",
+      "domain": "aflymgrs[.]xn--tl2mobile-b4ab[.]fr",
+      "clusterId": "aa7be14ddc26760e"
     },
     {
       "signalId": "c4cf0bb61201dc5e2508",
@@ -72,6 +82,22 @@
       ]
     },
     {
+      "id": "0687ac63262817883df9",
+      "source": "083e17cf9a0918c6167a",
+      "target": "ae06c39c6e8fd4e39d83",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "185[.]53[.]179[.]200"
+        },
+        {
+          "type": "dns-cname",
+          "value": "845192[.]parkingcrew[.]net"
+        }
+      ]
+    },
+    {
       "id": "da464e70ef96bdd9d16d",
       "source": "4cb628b66dd993e6009a",
       "target": "c4cf0bb61201dc5e2508",
@@ -90,7 +116,7 @@
   ],
   "suppressedEvidence": {
     "highFanoutValues": 0,
-    "temporalPairs": 42,
+    "temporalPairs": 34,
     "edgeLimit": 0
   }
 }
