@@ -3,7 +3,7 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-09-17T16:02:26.775Z",
+  "generatedAt": "2026-09-17T16:32:38.915Z",
   "retentionDays": 365,
   "from": "2025-09-18",
   "to": "2026-09-17",
@@ -933,7 +933,7 @@
         "firstPublications": 17,
         "statusChanges": 0,
         "facetSampleSize": 20,
-        "evidenceClassifiedSignals": 0,
+        "evidenceClassifiedSignals": 1,
         "byBrand": {
           "DHL": 9,
           "Revolut": 3,
@@ -947,7 +947,9 @@
         "bySource": {
           "CertStream": 20
         },
-        "byEvidenceTier": {},
+        "byEvidenceTier": {
+          "name-only": 1
+        },
         "byReason": {
           "suspicious-context": 19,
           "first-publication": 17,
@@ -1229,7 +1231,7 @@
         "firstPublications": 11,
         "statusChanges": 0,
         "facetSampleSize": 12,
-        "evidenceClassifiedSignals": 0,
+        "evidenceClassifiedSignals": 1,
         "byBrand": {
           "Bitė": 10,
           "DHL": 1,
@@ -1238,7 +1240,9 @@
         "bySource": {
           "CertStream": 12
         },
-        "byEvidenceTier": {},
+        "byEvidenceTier": {
+          "name-only": 1
+        },
         "byReason": {
           "brand-exact-token": 12,
           "different-tld": 11,
@@ -1685,36 +1689,36 @@
       "date": "2026-09-17",
       "partialDay": true,
       "collectorCoverage": {
-        "windowSeconds": 57746,
-        "scheduledSlots": 64,
-        "recordedAttempts": 65,
-        "healthyAttempts": 65,
+        "windowSeconds": 59558,
+        "scheduledSlots": 66,
+        "recordedAttempts": 67,
+        "healthyAttempts": 67,
         "recordedSchedulePercent": 100.0,
-        "listeningCoveragePercent": 53.33,
-        "scheduledListeningCeilingPercent": 53.2,
-        "listeningSeconds": 30793.113,
+        "listeningCoveragePercent": 53.31,
+        "scheduledListeningCeilingPercent": 53.19,
+        "listeningSeconds": 31753.109,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 30793.113,
-          "upperSeconds": 30803.127,
+          "lowerSeconds": 31753.109,
+          "upperSeconds": 31763.123,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 31197.909
+          "reportedWorkerSeconds": 32157.905
         },
         "outcomes": {
-          "healthy-empty": 49,
-          "healthy-matches": 16
+          "healthy-empty": 50,
+          "healthy-matches": 17
         }
       },
       "discovery": {
-        "events": 37,
-        "uniqueSignals": 19,
-        "observations": 19,
-        "reobservations": 1,
+        "events": 38,
+        "uniqueSignals": 20,
+        "observations": 20,
+        "reobservations": 2,
         "firstPublications": 18,
         "statusChanges": 0,
-        "facetSampleSize": 19,
-        "evidenceClassifiedSignals": 19,
+        "facetSampleSize": 20,
+        "evidenceClassifiedSignals": 20,
         "byBrand": {
           "Tele2": 7,
           "ERGO": 2,
@@ -1725,23 +1729,24 @@
           "Gjensidige": 1,
           "IKI": 1,
           "Lidl Lietuva": 1,
-          "Smart-ID": 1
+          "Smart-ID": 1,
+          "Telia": 1
         },
         "bySource": {
-          "CertStream": 19
+          "CertStream": 20
         },
         "byEvidenceTier": {
-          "name-only": 19
+          "name-only": 20
         },
         "byReason": {
           "suspicious-context": 19,
           "first-publication": 18,
           "different-tld": 17,
-          "brand-exact-token": 14,
+          "brand-exact-token": 15,
           "multiple-hyphens": 6,
           "brand-joined-affix": 5,
-          "punycode": 2,
-          "unicode-confusable": 2
+          "punycode": 3,
+          "unicode-confusable": 3
         }
       }
     }
