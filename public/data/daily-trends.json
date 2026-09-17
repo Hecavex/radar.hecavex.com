@@ -3,7 +3,7 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-09-17T10:17:22.098Z",
+  "generatedAt": "2026-09-17T11:02:07.267Z",
   "retentionDays": 365,
   "from": "2025-09-18",
   "to": "2026-09-17",
@@ -1685,55 +1685,56 @@
       "date": "2026-09-17",
       "partialDay": true,
       "collectorCoverage": {
-        "windowSeconds": 37042,
-        "scheduledSlots": 41,
-        "recordedAttempts": 42,
-        "healthyAttempts": 42,
+        "windowSeconds": 39727,
+        "scheduledSlots": 44,
+        "recordedAttempts": 45,
+        "healthyAttempts": 45,
         "recordedSchedulePercent": 100.0,
-        "listeningCoveragePercent": 53.33,
-        "scheduledListeningCeilingPercent": 53.13,
-        "listeningSeconds": 19754.145,
+        "listeningCoveragePercent": 53.35,
+        "scheduledListeningCeilingPercent": 53.16,
+        "listeningSeconds": 21194.142,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 19754.145,
-          "upperSeconds": 19764.159,
+          "lowerSeconds": 21194.142,
+          "upperSeconds": 21204.156,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 20158.941
+          "reportedWorkerSeconds": 21598.938
         },
         "outcomes": {
-          "healthy-empty": 31,
-          "healthy-matches": 11
+          "healthy-empty": 33,
+          "healthy-matches": 12
         }
       },
       "discovery": {
-        "events": 23,
-        "uniqueSignals": 12,
-        "observations": 12,
+        "events": 25,
+        "uniqueSignals": 13,
+        "observations": 13,
         "reobservations": 1,
-        "firstPublications": 11,
+        "firstPublications": 12,
         "statusChanges": 0,
-        "facetSampleSize": 12,
-        "evidenceClassifiedSignals": 12,
+        "facetSampleSize": 13,
+        "evidenceClassifiedSignals": 13,
         "byBrand": {
           "Tele2": 5,
           "ERGO": 2,
           "Revolut": 2,
+          "DHL": 1,
           "Gjensidige": 1,
           "Smart-ID": 1,
           "Vinted": 1
         },
         "bySource": {
-          "CertStream": 12
+          "CertStream": 13
         },
         "byEvidenceTier": {
-          "name-only": 12
+          "name-only": 13
         },
         "byReason": {
-          "suspicious-context": 12,
+          "suspicious-context": 13,
+          "first-publication": 12,
           "different-tld": 11,
-          "first-publication": 11,
-          "brand-exact-token": 9,
+          "brand-exact-token": 10,
           "multiple-hyphens": 6,
           "brand-joined-affix": 3
         }
