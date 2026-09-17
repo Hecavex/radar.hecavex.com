@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-related-observations",
-  "generatedAt": "2026-09-17T06:02:09.555Z",
+  "generatedAt": "2026-09-17T06:17:24.352Z",
   "semantics": "Shared evidence is a bounded association between public observations. It is not campaign, operator, malware, infrastructure ownership, or threat-actor attribution.",
   "nodes": [
     {
       "signalId": "083e17cf9a0918c6167a",
       "domain": "vptkbcns[.]xn--tl2mobile-b4ab[.]com",
-      "clusterId": "5ddc1111e28eb9dc"
+      "clusterId": "f0c1496f572c5c10"
     },
     {
       "signalId": "0d43ffbf1cddacd4c7ba",
@@ -22,7 +22,7 @@
     {
       "signalId": "2a162925fb6599897b35",
       "domain": "tdfskaxo[.]xn--tl2mobile-b4ab[.]com",
-      "clusterId": "5ddc1111e28eb9dc"
+      "clusterId": "f0c1496f572c5c10"
     },
     {
       "signalId": "4cb628b66dd993e6009a",
@@ -30,9 +30,14 @@
       "clusterId": "94af30bd01bb37e1"
     },
     {
+      "signalId": "6d05241c8b9b61e6c706",
+      "domain": "rksnuxha[.]xn--tl2mobile-b4ab[.]com",
+      "clusterId": "f0c1496f572c5c10"
+    },
+    {
       "signalId": "ae06c39c6e8fd4e39d83",
       "domain": "aflymgrs[.]xn--tl2mobile-b4ab[.]fr",
-      "clusterId": "5ddc1111e28eb9dc"
+      "clusterId": "f0c1496f572c5c10"
     },
     {
       "signalId": "c4cf0bb61201dc5e2508",
@@ -133,11 +138,27 @@
           "value": "smtp[.]google[.]com"
         }
       ]
+    },
+    {
+      "id": "7a2d400270d28a9aaef4",
+      "source": "6d05241c8b9b61e6c706",
+      "target": "ae06c39c6e8fd4e39d83",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "185[.]53[.]179[.]200"
+        },
+        {
+          "type": "dns-cname",
+          "value": "845192[.]parkingcrew[.]net"
+        }
+      ]
     }
   ],
   "suppressedEvidence": {
     "highFanoutValues": 0,
-    "temporalPairs": 24,
+    "temporalPairs": 25,
     "edgeLimit": 0
   }
 }
