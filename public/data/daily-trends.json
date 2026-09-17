@@ -3,7 +3,7 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-09-17T21:29:51.806Z",
+  "generatedAt": "2026-09-17T22:02:24.011Z",
   "retentionDays": 365,
   "from": "2025-09-18",
   "to": "2026-09-17",
@@ -1122,7 +1122,7 @@
         "firstPublications": 13,
         "statusChanges": 0,
         "facetSampleSize": 13,
-        "evidenceClassifiedSignals": 0,
+        "evidenceClassifiedSignals": 1,
         "byBrand": {
           "DHL": 5,
           "Revolut": 2,
@@ -1135,7 +1135,9 @@
         "bySource": {
           "CertStream": 13
         },
-        "byEvidenceTier": {},
+        "byEvidenceTier": {
+          "name-only": 1
+        },
         "byReason": {
           "first-publication": 13,
           "suspicious-context": 12,
@@ -1691,36 +1693,36 @@
       "date": "2026-09-17",
       "partialDay": true,
       "collectorCoverage": {
-        "windowSeconds": 77391,
-        "scheduledSlots": 85,
-        "recordedAttempts": 86,
-        "healthyAttempts": 86,
+        "windowSeconds": 79344,
+        "scheduledSlots": 88,
+        "recordedAttempts": 89,
+        "healthyAttempts": 89,
         "recordedSchedulePercent": 100.0,
-        "listeningCoveragePercent": 52.81,
-        "scheduledListeningCeilingPercent": 52.72,
-        "listeningSeconds": 40872.082,
+        "listeningCoveragePercent": 53.33,
+        "scheduledListeningCeilingPercent": 53.24,
+        "listeningSeconds": 42312.079,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 40872.082,
-          "upperSeconds": 40882.096,
+          "lowerSeconds": 42312.079,
+          "upperSeconds": 42322.093,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 41276.877
+          "reportedWorkerSeconds": 42716.874
         },
         "outcomes": {
-          "healthy-empty": 64,
-          "healthy-matches": 22
+          "healthy-empty": 66,
+          "healthy-matches": 23
         }
       },
       "discovery": {
-        "events": 49,
-        "uniqueSignals": 26,
-        "observations": 26,
-        "reobservations": 3,
+        "events": 50,
+        "uniqueSignals": 27,
+        "observations": 27,
+        "reobservations": 4,
         "firstPublications": 23,
         "statusChanges": 0,
-        "facetSampleSize": 26,
-        "evidenceClassifiedSignals": 26,
+        "facetSampleSize": 27,
+        "evidenceClassifiedSignals": 27,
         "byBrand": {
           "Tele2": 7,
           "Revolut": 3,
@@ -1739,18 +1741,18 @@
           "VMI": 1
         },
         "bySource": {
-          "CertStream": 26
+          "CertStream": 27
         },
         "byEvidenceTier": {
-          "name-only": 26
+          "name-only": 27
         },
         "byReason": {
-          "suspicious-context": 25,
+          "suspicious-context": 26,
           "first-publication": 23,
-          "different-tld": 21,
+          "different-tld": 22,
           "brand-exact-token": 20,
           "multiple-hyphens": 8,
-          "brand-joined-affix": 6,
+          "brand-joined-affix": 7,
           "punycode": 3,
           "unicode-confusable": 3
         }
