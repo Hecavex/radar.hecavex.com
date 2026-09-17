@@ -3,7 +3,7 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-09-17T16:32:38.915Z",
+  "generatedAt": "2026-09-17T16:47:38.573Z",
   "retentionDays": 365,
   "from": "2025-09-18",
   "to": "2026-09-17",
@@ -1689,36 +1689,36 @@
       "date": "2026-09-17",
       "partialDay": true,
       "collectorCoverage": {
-        "windowSeconds": 59558,
-        "scheduledSlots": 66,
-        "recordedAttempts": 67,
-        "healthyAttempts": 67,
+        "windowSeconds": 60458,
+        "scheduledSlots": 67,
+        "recordedAttempts": 68,
+        "healthyAttempts": 68,
         "recordedSchedulePercent": 100.0,
         "listeningCoveragePercent": 53.31,
         "scheduledListeningCeilingPercent": 53.19,
-        "listeningSeconds": 31753.109,
+        "listeningSeconds": 32233.107,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 31753.109,
-          "upperSeconds": 31763.123,
+          "lowerSeconds": 32233.107,
+          "upperSeconds": 32243.121,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 32157.905
+          "reportedWorkerSeconds": 32637.903
         },
         "outcomes": {
           "healthy-empty": 50,
-          "healthy-matches": 17
+          "healthy-matches": 18
         }
       },
       "discovery": {
-        "events": 38,
-        "uniqueSignals": 20,
-        "observations": 20,
+        "events": 40,
+        "uniqueSignals": 21,
+        "observations": 21,
         "reobservations": 2,
-        "firstPublications": 18,
+        "firstPublications": 19,
         "statusChanges": 0,
-        "facetSampleSize": 20,
-        "evidenceClassifiedSignals": 20,
+        "facetSampleSize": 21,
+        "evidenceClassifiedSignals": 21,
         "byBrand": {
           "Tele2": 7,
           "ERGO": 2,
@@ -1729,22 +1729,23 @@
           "Gjensidige": 1,
           "IKI": 1,
           "Lidl Lietuva": 1,
+          "MAXIMA": 1,
           "Smart-ID": 1,
           "Telia": 1
         },
         "bySource": {
-          "CertStream": 20
+          "CertStream": 21
         },
         "byEvidenceTier": {
-          "name-only": 20
+          "name-only": 21
         },
         "byReason": {
-          "suspicious-context": 19,
-          "first-publication": 18,
-          "different-tld": 17,
+          "suspicious-context": 20,
+          "first-publication": 19,
+          "different-tld": 18,
           "brand-exact-token": 15,
+          "brand-joined-affix": 6,
           "multiple-hyphens": 6,
-          "brand-joined-affix": 5,
           "punycode": 3,
           "unicode-confusable": 3
         }
