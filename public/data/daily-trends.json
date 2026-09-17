@@ -3,7 +3,7 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-09-17T01:27:46.791Z",
+  "generatedAt": "2026-09-17T01:31:49.120Z",
   "retentionDays": 365,
   "from": "2025-09-18",
   "to": "2026-09-17",
@@ -1685,39 +1685,51 @@
       "date": "2026-09-17",
       "partialDay": true,
       "collectorCoverage": {
-        "windowSeconds": 5266,
-        "scheduledSlots": 5,
-        "recordedAttempts": 6,
-        "healthyAttempts": 6,
+        "windowSeconds": 5509,
+        "scheduledSlots": 6,
+        "recordedAttempts": 7,
+        "healthyAttempts": 7,
         "recordedSchedulePercent": 100.0,
-        "listeningCoveragePercent": 47.0,
-        "scheduledListeningCeilingPercent": 45.58,
-        "listeningSeconds": 2475.197,
+        "listeningCoveragePercent": 53.64,
+        "scheduledListeningCeilingPercent": 52.28,
+        "listeningSeconds": 2955.196,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 2475.197,
-          "upperSeconds": 2485.21,
+          "lowerSeconds": 2955.196,
+          "upperSeconds": 2965.209,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 2879.992
+          "reportedWorkerSeconds": 3359.991
         },
         "outcomes": {
-          "healthy-empty": 6
+          "healthy-empty": 6,
+          "healthy-matches": 1
         }
       },
       "discovery": {
-        "events": 0,
-        "uniqueSignals": 0,
-        "observations": 0,
+        "events": 4,
+        "uniqueSignals": 2,
+        "observations": 2,
         "reobservations": 0,
-        "firstPublications": 0,
+        "firstPublications": 2,
         "statusChanges": 0,
-        "facetSampleSize": 0,
-        "evidenceClassifiedSignals": 0,
-        "byBrand": {},
-        "bySource": {},
-        "byEvidenceTier": {},
-        "byReason": {}
+        "facetSampleSize": 2,
+        "evidenceClassifiedSignals": 2,
+        "byBrand": {
+          "ERGO": 2
+        },
+        "bySource": {
+          "CertStream": 2
+        },
+        "byEvidenceTier": {
+          "name-only": 2
+        },
+        "byReason": {
+          "brand-exact-token": 2,
+          "different-tld": 2,
+          "first-publication": 2,
+          "suspicious-context": 2
+        }
       }
     }
   ],
