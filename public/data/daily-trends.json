@@ -3,7 +3,7 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-09-17T07:42:59.904Z",
+  "generatedAt": "2026-09-17T07:47:06.098Z",
   "retentionDays": 365,
   "from": "2025-09-18",
   "to": "2026-09-17",
@@ -1685,53 +1685,55 @@
       "date": "2026-09-17",
       "partialDay": true,
       "collectorCoverage": {
-        "windowSeconds": 27779,
-        "scheduledSlots": 30,
-        "recordedAttempts": 31,
-        "healthyAttempts": 31,
+        "windowSeconds": 28026,
+        "scheduledSlots": 31,
+        "recordedAttempts": 32,
+        "healthyAttempts": 32,
         "recordedSchedulePercent": 100.0,
-        "listeningCoveragePercent": 52.11,
-        "scheduledListeningCeilingPercent": 51.84,
-        "listeningSeconds": 14475.163,
+        "listeningCoveragePercent": 53.36,
+        "scheduledListeningCeilingPercent": 53.09,
+        "listeningSeconds": 14955.162,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 14475.163,
-          "upperSeconds": 14485.177,
+          "lowerSeconds": 14955.162,
+          "upperSeconds": 14965.176,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 14879.959
+          "reportedWorkerSeconds": 15359.958
         },
         "outcomes": {
           "healthy-empty": 26,
-          "healthy-matches": 5
+          "healthy-matches": 6
         }
       },
       "discovery": {
-        "events": 9,
-        "uniqueSignals": 5,
-        "observations": 5,
+        "events": 11,
+        "uniqueSignals": 6,
+        "observations": 6,
         "reobservations": 1,
-        "firstPublications": 4,
+        "firstPublications": 5,
         "statusChanges": 0,
-        "facetSampleSize": 5,
-        "evidenceClassifiedSignals": 5,
+        "facetSampleSize": 6,
+        "evidenceClassifiedSignals": 6,
         "byBrand": {
           "ERGO": 2,
           "Revolut": 2,
-          "Smart-ID": 1
+          "Smart-ID": 1,
+          "Vinted": 1
         },
         "bySource": {
-          "CertStream": 5
+          "CertStream": 6
         },
         "byEvidenceTier": {
-          "name-only": 5
+          "name-only": 6
         },
         "byReason": {
-          "suspicious-context": 5,
-          "different-tld": 4,
-          "first-publication": 4,
-          "brand-exact-token": 3,
-          "brand-joined-affix": 2
+          "suspicious-context": 6,
+          "different-tld": 5,
+          "first-publication": 5,
+          "brand-exact-token": 4,
+          "brand-joined-affix": 2,
+          "multiple-hyphens": 1
         }
       }
     }
