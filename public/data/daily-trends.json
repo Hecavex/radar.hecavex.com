@@ -3,7 +3,7 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-09-18T09:48:55.726Z",
+  "generatedAt": "2026-09-18T10:18:46.336Z",
   "retentionDays": 365,
   "from": "2025-09-19",
   "to": "2026-09-18",
@@ -1765,55 +1765,56 @@
       "date": "2026-09-18",
       "partialDay": true,
       "collectorCoverage": {
-        "windowSeconds": 35335,
-        "scheduledSlots": 39,
-        "recordedAttempts": 40,
-        "healthyAttempts": 40,
+        "windowSeconds": 37126,
+        "scheduledSlots": 41,
+        "recordedAttempts": 42,
+        "healthyAttempts": 42,
         "recordedSchedulePercent": 100.0,
-        "listeningCoveragePercent": 53.26,
-        "scheduledListeningCeilingPercent": 52.98,
-        "listeningSeconds": 18818.511,
+        "listeningCoveragePercent": 53.27,
+        "scheduledListeningCeilingPercent": 53.01,
+        "listeningSeconds": 19778.509,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 18818.511,
-          "upperSeconds": 18818.515,
+          "lowerSeconds": 19778.509,
+          "upperSeconds": 19778.513,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 19190.92
+          "reportedWorkerSeconds": 20150.918
         },
         "outcomes": {
-          "healthy-empty": 37,
-          "healthy-matches": 3
+          "healthy-empty": 38,
+          "healthy-matches": 4
         }
       },
       "discovery": {
-        "events": 6,
-        "uniqueSignals": 4,
-        "observations": 4,
+        "events": 8,
+        "uniqueSignals": 5,
+        "observations": 5,
         "reobservations": 2,
-        "firstPublications": 2,
+        "firstPublications": 3,
         "statusChanges": 0,
-        "facetSampleSize": 4,
-        "evidenceClassifiedSignals": 4,
+        "facetSampleSize": 5,
+        "evidenceClassifiedSignals": 5,
         "byBrand": {
           "DHL": 1,
           "DPD": 1,
           "ESO": 1,
-          "Revolut": 1
+          "Revolut": 1,
+          "Tele2": 1
         },
         "bySource": {
-          "CertStream": 4
+          "CertStream": 5
         },
         "byEvidenceTier": {
-          "name-only": 3,
+          "name-only": 4,
           "corroborated": 1
         },
         "byReason": {
-          "brand-exact-token": 4,
-          "different-tld": 4,
-          "suspicious-context": 4,
-          "first-publication": 2,
-          "multiple-hyphens": 2
+          "brand-exact-token": 5,
+          "different-tld": 5,
+          "suspicious-context": 5,
+          "first-publication": 3,
+          "multiple-hyphens": 3
         }
       }
     }
