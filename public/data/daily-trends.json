@@ -3,7 +3,7 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-09-19T00:24:04.607Z",
+  "generatedAt": "2026-09-19T01:08:59.086Z",
   "retentionDays": 365,
   "from": "2025-09-20",
   "to": "2026-09-19",
@@ -1781,50 +1781,52 @@
       "date": "2026-09-19",
       "partialDay": true,
       "collectorCoverage": {
-        "windowSeconds": 1444,
-        "scheduledSlots": 1,
-        "recordedAttempts": 2,
-        "healthyAttempts": 2,
+        "windowSeconds": 4139,
+        "scheduledSlots": 4,
+        "recordedAttempts": 5,
+        "healthyAttempts": 5,
         "recordedSchedulePercent": 100.0,
-        "listeningCoveragePercent": 66.48,
-        "scheduledListeningCeilingPercent": 33.24,
-        "listeningSeconds": 959.998,
+        "listeningCoveragePercent": 57.98,
+        "scheduledListeningCeilingPercent": 46.39,
+        "listeningSeconds": 2399.993,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 959.998,
-          "upperSeconds": 959.998,
-          "precision": "exact",
+          "lowerSeconds": 2399.993,
+          "upperSeconds": 2399.994,
+          "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 959.998
+          "reportedWorkerSeconds": 2399.993
         },
         "outcomes": {
-          "healthy-empty": 1,
-          "healthy-matches": 1
+          "healthy-empty": 3,
+          "healthy-matches": 2
         }
       },
       "discovery": {
-        "events": 4,
-        "uniqueSignals": 2,
-        "observations": 2,
+        "events": 6,
+        "uniqueSignals": 3,
+        "observations": 3,
         "reobservations": 0,
-        "firstPublications": 2,
+        "firstPublications": 3,
         "statusChanges": 0,
-        "facetSampleSize": 2,
-        "evidenceClassifiedSignals": 2,
+        "facetSampleSize": 3,
+        "evidenceClassifiedSignals": 3,
         "byBrand": {
-          "Citadele": 2
+          "Citadele": 2,
+          "ESO": 1
         },
         "bySource": {
-          "CertStream": 2
+          "CertStream": 3
         },
         "byEvidenceTier": {
-          "name-only": 2
+          "name-only": 3
         },
         "byReason": {
-          "brand-exact-token": 2,
-          "different-tld": 2,
-          "first-publication": 2,
-          "suspicious-context": 2
+          "brand-exact-token": 3,
+          "different-tld": 3,
+          "first-publication": 3,
+          "suspicious-context": 3,
+          "multiple-hyphens": 1
         }
       }
     }
