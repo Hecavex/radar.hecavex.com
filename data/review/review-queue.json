@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-stratified-review-queue",
-  "generatedAt": "2026-09-19T16:01:42.759Z",
+  "generatedAt": "2026-09-19T17:39:55.894Z",
   "samplingPolicy": {
     "method": "deterministic-greedy-facet-balancing",
     "dimensions": [
@@ -15,7 +15,7 @@
     "excludes": "Signals already represented by a sanitized assessment.",
     "semantics": "A review worklist, not a random or prevalence-representative sample."
   },
-  "availableUnreviewed": 138,
+  "availableUnreviewed": 139,
   "selected": 24,
   "candidates": [
     {
@@ -69,9 +69,9 @@
       "firstSeen": "2026-09-13T01:21:50.236Z"
     },
     {
-      "signalId": "41a444b318b023500889",
-      "recordPath": "/signals/41a444b318b023500889/",
-      "brand": "MAXIMA",
+      "signalId": "5a513e602ae24437bb4a",
+      "recordPath": "/signals/5a513e602ae24437bb4a/",
+      "brand": "Skelbiu.lt",
       "sources": [
         "CertStream"
       ],
@@ -83,7 +83,7 @@
         "suspicious-context"
       ],
       "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-09-17T16:45:48.233Z"
+      "firstSeen": "2026-09-17T21:55:34.941Z"
     },
     {
       "signalId": "543fb6629ad729415188",
@@ -117,6 +117,54 @@
       "firstSeen": "2026-09-13T15:41:57.773Z"
     },
     {
+      "signalId": "54b7622ec9c57480f3dc",
+      "recordPath": "/signals/54b7622ec9c57480f3dc/",
+      "brand": "MAXIMA",
+      "sources": [
+        "URLScan"
+      ],
+      "scoreBand": "95-100",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-domain-match"
+      ],
+      "candidateAgeBand": "8-30d",
+      "firstSeen": "2026-08-22T07:21:16.259Z"
+    },
+    {
+      "signalId": "928289d5a5f709befe8f",
+      "recordPath": "/signals/928289d5a5f709befe8f/",
+      "brand": "Lidl Lietuva",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "70-84",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-exact-token",
+        "punycode",
+        "unicode-confusable"
+      ],
+      "candidateAgeBand": "2-7d",
+      "firstSeen": "2026-09-13T01:21:50.236Z"
+    },
+    {
+      "signalId": "410824e5fcc7b7fd8264",
+      "recordPath": "/signals/410824e5fcc7b7fd8264/",
+      "brand": "Tele2",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "85-94",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-joined-affix",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-09-19T04:22:46.422Z"
+    },
+    {
       "signalId": "f1909ad7540e264b7fb4",
       "recordPath": "/signals/f1909ad7540e264b7fb4/",
       "brand": "Swedbank",
@@ -130,23 +178,6 @@
       ],
       "candidateAgeBand": "8-30d",
       "firstSeen": "2026-08-22T10:09:17.586Z"
-    },
-    {
-      "signalId": "a6a1f542302b3b1c8eb9",
-      "recordPath": "/signals/a6a1f542302b3b1c8eb9/",
-      "brand": "Telia",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "85-94",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-exact-token",
-        "punycode",
-        "unicode-confusable"
-      ],
-      "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-09-17T16:26:25.983Z"
     },
     {
       "signalId": "5b0f8b137394c5f88ddf",
@@ -198,69 +229,6 @@
       "firstSeen": "2026-08-21T07:33:48.367Z"
     },
     {
-      "signalId": "928289d5a5f709befe8f",
-      "recordPath": "/signals/928289d5a5f709befe8f/",
-      "brand": "Lidl Lietuva",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "70-84",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-exact-token",
-        "punycode",
-        "unicode-confusable"
-      ],
-      "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-09-13T01:21:50.236Z"
-    },
-    {
-      "signalId": "410824e5fcc7b7fd8264",
-      "recordPath": "/signals/410824e5fcc7b7fd8264/",
-      "brand": "Tele2",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "85-94",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-joined-affix",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-09-19T04:22:46.422Z"
-    },
-    {
-      "signalId": "54b7622ec9c57480f3dc",
-      "recordPath": "/signals/54b7622ec9c57480f3dc/",
-      "brand": "MAXIMA",
-      "sources": [
-        "URLScan"
-      ],
-      "scoreBand": "95-100",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-domain-match"
-      ],
-      "candidateAgeBand": "8-30d",
-      "firstSeen": "2026-08-22T07:21:16.259Z"
-    },
-    {
-      "signalId": "b2a74041369ff0a25a50",
-      "recordPath": "/signals/b2a74041369ff0a25a50/",
-      "brand": "Revolut",
-      "sources": [
-        "URLScan"
-      ],
-      "scoreBand": "95-100",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-domain-match"
-      ],
-      "candidateAgeBand": "8-30d",
-      "firstSeen": "2026-08-21T09:45:07.660Z"
-    },
-    {
       "signalId": "c3d2e566e7c13469cea2",
       "recordPath": "/signals/c3d2e566e7c13469cea2/",
       "brand": "Lidl Lietuva",
@@ -309,6 +277,38 @@
       "firstSeen": "2026-08-23T02:00:48.622Z"
     },
     {
+      "signalId": "1632bc83bd9b551e3e05",
+      "recordPath": "/signals/1632bc83bd9b551e3e05/",
+      "brand": "SEB",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "85-94",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-exact-token",
+        "multiple-hyphens",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-09-18T15:29:04.359Z"
+    },
+    {
+      "signalId": "b2a74041369ff0a25a50",
+      "recordPath": "/signals/b2a74041369ff0a25a50/",
+      "brand": "Revolut",
+      "sources": [
+        "URLScan"
+      ],
+      "scoreBand": "95-100",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-domain-match"
+      ],
+      "candidateAgeBand": "8-30d",
+      "firstSeen": "2026-08-21T09:45:07.660Z"
+    },
+    {
       "signalId": "ca4adfc5796f620423d2",
       "recordPath": "/signals/ca4adfc5796f620423d2/",
       "brand": "Luminor",
@@ -325,9 +325,9 @@
       "firstSeen": "2026-09-13T15:41:57.773Z"
     },
     {
-      "signalId": "1632bc83bd9b551e3e05",
-      "recordPath": "/signals/1632bc83bd9b551e3e05/",
-      "brand": "SEB",
+      "signalId": "a6a1f542302b3b1c8eb9",
+      "recordPath": "/signals/a6a1f542302b3b1c8eb9/",
+      "brand": "Telia",
       "sources": [
         "CertStream"
       ],
@@ -335,11 +335,11 @@
       "evidenceTier": "name-only",
       "reasonCodes": [
         "brand-exact-token",
-        "multiple-hyphens",
-        "suspicious-context"
+        "punycode",
+        "unicode-confusable"
       ],
-      "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-09-18T15:29:04.359Z"
+      "candidateAgeBand": "2-7d",
+      "firstSeen": "2026-09-17T16:26:25.983Z"
     },
     {
       "signalId": "f2a959fee2ae4c26b698",
@@ -358,23 +358,6 @@
       "firstSeen": "2026-09-15T10:07:16.028Z"
     },
     {
-      "signalId": "5a513e602ae24437bb4a",
-      "recordPath": "/signals/5a513e602ae24437bb4a/",
-      "brand": "Skelbiu.lt",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "95-100",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-joined-affix",
-        "different-tld",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-09-17T21:55:34.941Z"
-    },
-    {
       "signalId": "b8e58b405b1097005845",
       "recordPath": "/signals/b8e58b405b1097005845/",
       "brand": "Paysera",
@@ -391,20 +374,38 @@
       "firstSeen": "2026-09-17T22:12:15.810Z"
     },
     {
-      "signalId": "91b4d650691ccfd2f8a2",
-      "recordPath": "/signals/91b4d650691ccfd2f8a2/",
-      "brand": "Revolut",
+      "signalId": "5e84d77b9489d9143ffa",
+      "recordPath": "/signals/5e84d77b9489d9143ffa/",
+      "brand": "VMI",
       "sources": [
         "CertStream"
       ],
       "scoreBand": "85-94",
       "evidenceTier": "name-only",
       "reasonCodes": [
+        "brand-exact-token",
+        "different-tld",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-09-17T19:09:22.556Z"
+    },
+    {
+      "signalId": "15a8ee66bc3b46aa99d2",
+      "recordPath": "/signals/15a8ee66bc3b46aa99d2/",
+      "brand": "Artea",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "95-100",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
         "brand-joined-affix",
+        "different-tld",
         "suspicious-context"
       ],
       "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-09-17T04:15:27.444Z"
+      "firstSeen": "2026-09-13T21:40:37.326Z"
     }
   ]
 }
