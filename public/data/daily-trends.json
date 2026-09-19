@@ -3,7 +3,7 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-09-19T04:09:02.584Z",
+  "generatedAt": "2026-09-19T04:24:04.836Z",
   "retentionDays": 365,
   "from": "2025-09-20",
   "to": "2026-09-19",
@@ -1781,55 +1781,57 @@
       "date": "2026-09-19",
       "partialDay": true,
       "collectorCoverage": {
-        "windowSeconds": 14942,
-        "scheduledSlots": 16,
-        "recordedAttempts": 17,
-        "healthyAttempts": 17,
+        "windowSeconds": 15844,
+        "scheduledSlots": 17,
+        "recordedAttempts": 18,
+        "healthyAttempts": 18,
         "recordedSchedulePercent": 100.0,
-        "listeningCoveragePercent": 54.59,
-        "scheduledListeningCeilingPercent": 51.4,
-        "listeningSeconds": 8156.968,
+        "listeningCoveragePercent": 54.51,
+        "scheduledListeningCeilingPercent": 51.5,
+        "listeningSeconds": 8636.966,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 8156.968,
-          "upperSeconds": 8156.969,
+          "lowerSeconds": 8636.966,
+          "upperSeconds": 8636.967,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 8156.969
+          "reportedWorkerSeconds": 8636.967
         },
         "outcomes": {
           "healthy-empty": 12,
-          "healthy-matches": 5
+          "healthy-matches": 6
         }
       },
       "discovery": {
-        "events": 12,
-        "uniqueSignals": 6,
-        "observations": 6,
+        "events": 16,
+        "uniqueSignals": 8,
+        "observations": 8,
         "reobservations": 0,
-        "firstPublications": 6,
+        "firstPublications": 8,
         "statusChanges": 0,
-        "facetSampleSize": 6,
-        "evidenceClassifiedSignals": 6,
+        "facetSampleSize": 8,
+        "evidenceClassifiedSignals": 8,
         "byBrand": {
           "Citadele": 2,
           "SEB": 2,
           "ESO": 1,
-          "MAXIMA": 1
+          "MAXIMA": 1,
+          "Tele2": 1,
+          "Vinted": 1
         },
         "bySource": {
-          "CertStream": 6
+          "CertStream": 8
         },
         "byEvidenceTier": {
-          "name-only": 6
+          "name-only": 8
         },
         "byReason": {
-          "different-tld": 6,
-          "first-publication": 6,
-          "suspicious-context": 6,
-          "brand-exact-token": 5,
+          "first-publication": 8,
+          "suspicious-context": 8,
+          "different-tld": 7,
+          "brand-exact-token": 6,
           "multiple-hyphens": 3,
-          "brand-joined-affix": 1
+          "brand-joined-affix": 2
         }
       }
     }
