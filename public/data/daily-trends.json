@@ -3,7 +3,7 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-09-20T02:25:15.857Z",
+  "generatedAt": "2026-09-20T02:40:16.032Z",
   "retentionDays": 365,
   "from": "2025-09-21",
   "to": "2026-09-20",
@@ -1784,51 +1784,52 @@
       "date": "2026-09-20",
       "partialDay": true,
       "collectorCoverage": {
-        "windowSeconds": 8715,
-        "scheduledSlots": 9,
-        "recordedAttempts": 10,
-        "healthyAttempts": 10,
+        "windowSeconds": 9616,
+        "scheduledSlots": 10,
+        "recordedAttempts": 11,
+        "healthyAttempts": 11,
         "recordedSchedulePercent": 100.0,
-        "listeningCoveragePercent": 55.08,
-        "scheduledListeningCeilingPercent": 49.57,
-        "listeningSeconds": 4799.989,
+        "listeningCoveragePercent": 54.91,
+        "scheduledListeningCeilingPercent": 49.92,
+        "listeningSeconds": 5279.987,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 4799.989,
-          "upperSeconds": 4799.989,
-          "precision": "exact",
+          "lowerSeconds": 5279.987,
+          "upperSeconds": 5279.988,
+          "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 4799.989
+          "reportedWorkerSeconds": 5279.988
         },
         "outcomes": {
           "healthy-empty": 8,
-          "healthy-matches": 2
+          "healthy-matches": 3
         }
       },
       "discovery": {
-        "events": 6,
-        "uniqueSignals": 3,
-        "observations": 3,
+        "events": 8,
+        "uniqueSignals": 4,
+        "observations": 4,
         "reobservations": 0,
-        "firstPublications": 3,
+        "firstPublications": 4,
         "statusChanges": 0,
-        "facetSampleSize": 3,
-        "evidenceClassifiedSignals": 3,
+        "facetSampleSize": 4,
+        "evidenceClassifiedSignals": 4,
         "byBrand": {
           "Lidl Lietuva": 2,
+          "Paysera": 1,
           "Smart-ID": 1
         },
         "bySource": {
-          "CertStream": 3
+          "CertStream": 4
         },
         "byEvidenceTier": {
-          "name-only": 3
+          "name-only": 4
         },
         "byReason": {
-          "first-publication": 3,
-          "suspicious-context": 3,
-          "brand-exact-token": 2,
-          "different-tld": 2,
+          "first-publication": 4,
+          "suspicious-context": 4,
+          "brand-exact-token": 3,
+          "different-tld": 3,
           "brand-joined-affix": 1
         }
       }
