@@ -3,7 +3,7 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-09-20T14:11:04.755Z",
+  "generatedAt": "2026-09-20T14:55:11.096Z",
   "retentionDays": 365,
   "from": "2025-09-21",
   "to": "2026-09-20",
@@ -1784,55 +1784,56 @@
       "date": "2026-09-20",
       "partialDay": true,
       "collectorCoverage": {
-        "windowSeconds": 51064,
-        "scheduledSlots": 56,
-        "recordedAttempts": 57,
-        "healthyAttempts": 57,
+        "windowSeconds": 53711,
+        "scheduledSlots": 59,
+        "recordedAttempts": 60,
+        "healthyAttempts": 60,
         "recordedSchedulePercent": 100.0,
-        "listeningCoveragePercent": 53.58,
-        "scheduledListeningCeilingPercent": 52.64,
-        "listeningSeconds": 27359.929,
+        "listeningCoveragePercent": 53.62,
+        "scheduledListeningCeilingPercent": 52.73,
+        "listeningSeconds": 28799.925,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 27359.929,
-          "upperSeconds": 27359.93,
+          "lowerSeconds": 28799.925,
+          "upperSeconds": 28799.926,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 27359.93
+          "reportedWorkerSeconds": 28799.926
         },
         "outcomes": {
-          "healthy-empty": 49,
-          "healthy-matches": 8
+          "healthy-empty": 51,
+          "healthy-matches": 9
         }
       },
       "discovery": {
-        "events": 24,
-        "uniqueSignals": 12,
-        "observations": 12,
-        "reobservations": 0,
+        "events": 25,
+        "uniqueSignals": 13,
+        "observations": 13,
+        "reobservations": 1,
         "firstPublications": 12,
         "statusChanges": 0,
-        "facetSampleSize": 12,
-        "evidenceClassifiedSignals": 12,
+        "facetSampleSize": 13,
+        "evidenceClassifiedSignals": 13,
         "byBrand": {
           "Tele2": 5,
           "Lidl Lietuva": 3,
           "Bitė": 1,
           "Citadele": 1,
           "Paysera": 1,
-          "Smart-ID": 1
+          "Smart-ID": 1,
+          "Vinted": 1
         },
         "bySource": {
-          "CertStream": 12
+          "CertStream": 13
         },
         "byEvidenceTier": {
-          "name-only": 12
+          "name-only": 13
         },
         "byReason": {
+          "suspicious-context": 13,
           "first-publication": 12,
-          "suspicious-context": 12,
-          "different-tld": 10,
-          "brand-exact-token": 9,
+          "different-tld": 11,
+          "brand-exact-token": 10,
           "multiple-hyphens": 5,
           "brand-joined-affix": 3,
           "punycode": 1,
