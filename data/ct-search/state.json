@@ -1,27 +1,31 @@
 {
   "dataset": "ct-search-state",
-  "generatedAt": "2026-09-20T16:31:18.415Z",
+  "generatedAt": "2026-09-20T19:10:28.916Z",
   "latestRun": {
     "dnsNames": 0,
-    "endedAt": "2026-09-20T16:31:18.415Z",
-    "failureCodes": [],
+    "endedAt": "2026-09-20T19:10:28.916Z",
+    "failureCodes": [
+      "provider-http"
+    ],
     "matches": 0,
     "newRecords": 0,
-    "outcome": "completed",
-    "queriesAttempted": 6,
+    "outcome": "failed",
+    "queriesAttempted": 1,
     "queriesBacklogged": 0,
-    "queriesCompleted": 6,
+    "queriesCompleted": 0,
     "rowsProcessed": 0,
-    "startedAt": "2026-09-20T16:30:13.417Z"
+    "startedAt": "2026-09-20T19:10:28.368Z"
   },
   "provider": "crt.sh",
   "providerHealth": {
-    "consecutiveFailures": 0,
-    "degradedSince": null,
-    "lastAttemptAt": "2026-09-20T16:31:18.415Z",
-    "lastFailureCodes": [],
+    "consecutiveFailures": 1,
+    "degradedSince": "2026-09-20T19:10:28.368Z",
+    "lastAttemptAt": "2026-09-20T19:10:28.916Z",
+    "lastFailureCodes": [
+      "provider-http"
+    ],
     "lastSuccessAt": "2026-09-20T16:31:18.415Z",
-    "nextAttemptAt": null
+    "nextAttemptAt": "2026-09-20T19:15:28.916Z"
   },
   "queries": {
     "brand:artea": {
@@ -348,8 +352,8 @@
       "brand": "Tele2",
       "lastEntryAt": null,
       "lastId": 0,
-      "lastOutcome": "completed",
-      "lastRunAt": "2026-09-19T01:38:52.866Z",
+      "lastOutcome": "failed",
+      "lastRunAt": "2026-09-20T19:10:28.368Z",
       "term": "tele2"
     },
     "brand:telia": {
@@ -393,6 +397,6 @@
       "term": "vinted"
     }
   },
-  "queryCursor": 40,
+  "queryCursor": 41,
   "schemaVersion": 1
 }
