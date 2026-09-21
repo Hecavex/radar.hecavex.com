@@ -3,7 +3,7 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-09-21T17:41:59.970Z",
+  "generatedAt": "2026-09-21T18:27:36.437Z",
   "retentionDays": 365,
   "from": "2025-09-22",
   "to": "2026-09-21",
@@ -1321,7 +1321,7 @@
         "firstPublications": 12,
         "statusChanges": 0,
         "facetSampleSize": 19,
-        "evidenceClassifiedSignals": 1,
+        "evidenceClassifiedSignals": 2,
         "byBrand": {
           "DHL": 5,
           "Lidl Lietuva": 4,
@@ -1338,7 +1338,7 @@
           "CertStream": 19
         },
         "byEvidenceTier": {
-          "name-only": 1
+          "name-only": 2
         },
         "byReason": {
           "suspicious-context": 16,
@@ -1798,40 +1798,41 @@
       "date": "2026-09-21",
       "partialDay": true,
       "collectorCoverage": {
-        "windowSeconds": 63719,
-        "scheduledSlots": 70,
-        "recordedAttempts": 71,
-        "healthyAttempts": 71,
+        "windowSeconds": 66456,
+        "scheduledSlots": 73,
+        "recordedAttempts": 74,
+        "healthyAttempts": 74,
         "recordedSchedulePercent": 100.0,
-        "listeningCoveragePercent": 53.48,
+        "listeningCoveragePercent": 53.45,
         "scheduledListeningCeilingPercent": 52.73,
-        "listeningSeconds": 34079.907,
+        "listeningSeconds": 35519.903,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 34079.907,
-          "upperSeconds": 34079.908,
+          "lowerSeconds": 35519.903,
+          "upperSeconds": 35519.904,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 34079.908
+          "reportedWorkerSeconds": 35519.904
         },
         "outcomes": {
-          "healthy-empty": 60,
-          "healthy-matches": 11
+          "healthy-empty": 62,
+          "healthy-matches": 12
         }
       },
       "discovery": {
-        "events": 19,
-        "uniqueSignals": 11,
-        "observations": 11,
-        "reobservations": 3,
+        "events": 20,
+        "uniqueSignals": 12,
+        "observations": 12,
+        "reobservations": 4,
         "firstPublications": 8,
         "statusChanges": 0,
-        "facetSampleSize": 11,
-        "evidenceClassifiedSignals": 11,
+        "facetSampleSize": 12,
+        "evidenceClassifiedSignals": 12,
         "byBrand": {
           "ERGO": 2,
           "SEB": 2,
           "Smart-ID": 2,
+          "BTA": 1,
           "ESO": 1,
           "Registrų centras": 1,
           "Revolut": 1,
@@ -1839,17 +1840,17 @@
           "Vinted": 1
         },
         "bySource": {
-          "CertStream": 11
+          "CertStream": 12
         },
         "byEvidenceTier": {
-          "name-only": 11
+          "name-only": 12
         },
         "byReason": {
-          "suspicious-context": 10,
-          "brand-exact-token": 8,
+          "suspicious-context": 11,
+          "brand-exact-token": 9,
           "first-publication": 8,
-          "different-tld": 6,
-          "multiple-hyphens": 4,
+          "different-tld": 7,
+          "multiple-hyphens": 5,
           "brand-joined-affix": 3,
           "punycode": 1,
           "unicode-confusable": 1
