@@ -3,7 +3,7 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-09-21T03:26:00.213Z",
+  "generatedAt": "2026-09-21T03:40:51.962Z",
   "retentionDays": 365,
   "from": "2025-09-22",
   "to": "2026-09-21",
@@ -855,7 +855,7 @@
         "firstPublications": 21,
         "statusChanges": 0,
         "facetSampleSize": 21,
-        "evidenceClassifiedSignals": 0,
+        "evidenceClassifiedSignals": 1,
         "byBrand": {
           "Lidl Lietuva": 5,
           "Revolut": 5,
@@ -870,7 +870,9 @@
         "bySource": {
           "CertStream": 21
         },
-        "byEvidenceTier": {},
+        "byEvidenceTier": {
+          "name-only": 1
+        },
         "byReason": {
           "first-publication": 21,
           "brand-exact-token": 18,
@@ -1796,49 +1798,52 @@
       "date": "2026-09-21",
       "partialDay": true,
       "collectorCoverage": {
-        "windowSeconds": 12360,
-        "scheduledSlots": 13,
-        "recordedAttempts": 14,
-        "healthyAttempts": 14,
+        "windowSeconds": 13251,
+        "scheduledSlots": 14,
+        "recordedAttempts": 15,
+        "healthyAttempts": 15,
         "recordedSchedulePercent": 100.0,
-        "listeningCoveragePercent": 54.37,
-        "scheduledListeningCeilingPercent": 50.49,
-        "listeningSeconds": 6719.982,
+        "listeningCoveragePercent": 54.34,
+        "scheduledListeningCeilingPercent": 50.71,
+        "listeningSeconds": 7199.981,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 6719.982,
-          "upperSeconds": 6719.983,
+          "lowerSeconds": 7199.981,
+          "upperSeconds": 7199.982,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 6719.983
+          "reportedWorkerSeconds": 7199.982
         },
         "outcomes": {
           "healthy-empty": 12,
-          "healthy-matches": 2
+          "healthy-matches": 3
         }
       },
       "discovery": {
-        "events": 4,
-        "uniqueSignals": 2,
-        "observations": 2,
-        "reobservations": 0,
+        "events": 5,
+        "uniqueSignals": 3,
+        "observations": 3,
+        "reobservations": 1,
         "firstPublications": 2,
         "statusChanges": 0,
-        "facetSampleSize": 2,
-        "evidenceClassifiedSignals": 2,
+        "facetSampleSize": 3,
+        "evidenceClassifiedSignals": 3,
         "byBrand": {
-          "ERGO": 2
+          "ERGO": 2,
+          "Smart-ID": 1
         },
         "bySource": {
-          "CertStream": 2
+          "CertStream": 3
         },
         "byEvidenceTier": {
-          "name-only": 2
+          "name-only": 3
         },
         "byReason": {
+          "suspicious-context": 3,
           "brand-exact-token": 2,
           "first-publication": 2,
-          "suspicious-context": 2
+          "brand-joined-affix": 1,
+          "different-tld": 1
         }
       }
     }
