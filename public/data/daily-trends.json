@@ -3,7 +3,7 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-09-21T09:40:54.238Z",
+  "generatedAt": "2026-09-21T10:11:04.828Z",
   "retentionDays": 365,
   "from": "2025-09-22",
   "to": "2026-09-21",
@@ -1798,56 +1798,57 @@
       "date": "2026-09-21",
       "partialDay": true,
       "collectorCoverage": {
-        "windowSeconds": 34854,
-        "scheduledSlots": 38,
-        "recordedAttempts": 39,
-        "healthyAttempts": 39,
+        "windowSeconds": 36664,
+        "scheduledSlots": 40,
+        "recordedAttempts": 41,
+        "healthyAttempts": 41,
         "recordedSchedulePercent": 100.0,
-        "listeningCoveragePercent": 53.71,
-        "scheduledListeningCeilingPercent": 52.33,
-        "listeningSeconds": 18719.948,
+        "listeningCoveragePercent": 53.68,
+        "scheduledListeningCeilingPercent": 52.37,
+        "listeningSeconds": 19679.946,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 18719.948,
-          "upperSeconds": 18719.949,
+          "lowerSeconds": 19679.946,
+          "upperSeconds": 19679.947,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 18719.949
+          "reportedWorkerSeconds": 19679.947
         },
         "outcomes": {
-          "healthy-empty": 33,
-          "healthy-matches": 6
+          "healthy-empty": 34,
+          "healthy-matches": 7
         }
       },
       "discovery": {
-        "events": 11,
-        "uniqueSignals": 6,
-        "observations": 6,
+        "events": 13,
+        "uniqueSignals": 7,
+        "observations": 7,
         "reobservations": 1,
-        "firstPublications": 5,
+        "firstPublications": 6,
         "statusChanges": 0,
-        "facetSampleSize": 6,
-        "evidenceClassifiedSignals": 6,
+        "facetSampleSize": 7,
+        "evidenceClassifiedSignals": 7,
         "byBrand": {
           "ERGO": 2,
           "ESO": 1,
           "Registrų centras": 1,
           "SEB": 1,
-          "Smart-ID": 1
+          "Smart-ID": 1,
+          "Vinted": 1
         },
         "bySource": {
-          "CertStream": 6
+          "CertStream": 7
         },
         "byEvidenceTier": {
-          "name-only": 6
+          "name-only": 7
         },
         "byReason": {
+          "first-publication": 6,
+          "suspicious-context": 6,
           "brand-exact-token": 5,
-          "first-publication": 5,
-          "suspicious-context": 5,
-          "different-tld": 2,
+          "different-tld": 3,
+          "brand-joined-affix": 2,
           "multiple-hyphens": 2,
-          "brand-joined-affix": 1,
           "punycode": 1,
           "unicode-confusable": 1
         }
