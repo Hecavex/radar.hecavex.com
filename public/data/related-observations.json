@@ -1,18 +1,33 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-related-observations",
-  "generatedAt": "2026-09-21T22:27:42.693Z",
+  "generatedAt": "2026-09-21T23:13:29.451Z",
   "semantics": "Shared evidence is a bounded association between public observations. It is not campaign, operator, malware, infrastructure ownership, or threat-actor attribution.",
   "nodes": [
     {
       "signalId": "038130a3c1e1e7201453",
       "domain": "gaxudtno[.]xn--tl2mobile-b4ab[.]fr",
-      "clusterId": "a74b10b2aae304d3"
+      "clusterId": "3fcbb3f564eb6f53"
+    },
+    {
+      "signalId": "147dc37a85d1e178857a",
+      "domain": "pjsbwyno[.]xn--tl2mobile-b4ab[.]fr",
+      "clusterId": "3fcbb3f564eb6f53"
     },
     {
       "signalId": "16cef1a071ecc0789ae3",
       "domain": "airwave[.]dhl-support-del[.]com",
       "clusterId": "c9fd454ea98af504"
+    },
+    {
+      "signalId": "1e8077e85ff4b40972e4",
+      "domain": "lidl-support[.]de",
+      "clusterId": "132671a3af84edc9"
+    },
+    {
+      "signalId": "2c79cfde824cccef7b02",
+      "domain": "lidl-mobile[.]be",
+      "clusterId": "78f46cd2e758b170"
     },
     {
       "signalId": "6bf564dbb0e7537b48f8",
@@ -22,20 +37,106 @@
     {
       "signalId": "6d05241c8b9b61e6c706",
       "domain": "rksnuxha[.]xn--tl2mobile-b4ab[.]com",
-      "clusterId": "a74b10b2aae304d3"
+      "clusterId": "3fcbb3f564eb6f53"
+    },
+    {
+      "signalId": "78293593a32db5af0abf",
+      "domain": "lidl-support[.]online",
+      "clusterId": "132671a3af84edc9"
     },
     {
       "signalId": "a282c276384f4b0c081d",
       "domain": "code[.]xn--tl2mobile-b4ab[.]fr",
-      "clusterId": "a74b10b2aae304d3"
+      "clusterId": "3fcbb3f564eb6f53"
     },
     {
       "signalId": "f0fd7945b71fc9321cd1",
       "domain": "git[.]xn--tl2mobile-b4ab[.]fr",
-      "clusterId": "a74b10b2aae304d3"
+      "clusterId": "3fcbb3f564eb6f53"
+    },
+    {
+      "signalId": "f9224fa530d9afda7852",
+      "domain": "lidl-service[.]de",
+      "clusterId": "78f46cd2e758b170"
     }
   ],
   "edges": [
+    {
+      "id": "d36c78f8401ef338a144",
+      "source": "1e8077e85ff4b40972e4",
+      "target": "78293593a32db5af0abf",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "116[.]202[.]21[.]136"
+        },
+        {
+          "type": "dns-a",
+          "value": "116[.]202[.]9[.]166"
+        },
+        {
+          "type": "dns-a",
+          "value": "116[.]203[.]213[.]72"
+        },
+        {
+          "type": "dns-aaaa",
+          "value": "2a01[:]4f8[:]c010[:]3f9c[:][:]1"
+        },
+        {
+          "type": "dns-aaaa",
+          "value": "2a01[:]4f8[:]c17[:]c19c[:][:]1"
+        },
+        {
+          "type": "dns-aaaa",
+          "value": "2a01[:]4f8[:]c2c[:]abf5[:][:]1"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns1[.]domainoffensive[.]de"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns2[.]domainoffensive[.]eu"
+        }
+      ]
+    },
+    {
+      "id": "7a60606bda96d1d57e1e",
+      "source": "2c79cfde824cccef7b02",
+      "target": "f9224fa530d9afda7852",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "5[.]22[.]145[.]121"
+        },
+        {
+          "type": "dns-a",
+          "value": "5[.]22[.]145[.]16"
+        },
+        {
+          "type": "dns-aaaa",
+          "value": "2a00[:]18e0[:]5[:]2[:]7577[:]4e4d[:]413b[:]f507"
+        },
+        {
+          "type": "dns-aaaa",
+          "value": "2a00[:]18e0[:]5[:]3[:]dfe2[:]c743[:]85aa[:]61bc"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns[.]do-ex[.]com"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns[.]do-ex[.]net"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns[.]do-ex[.]org"
+        }
+      ]
+    },
     {
       "id": "ba7f055b95da512bb24f",
       "source": "16cef1a071ecc0789ae3",
@@ -63,6 +164,22 @@
     {
       "id": "f4c3918631f09e16a9a9",
       "source": "038130a3c1e1e7201453",
+      "target": "6d05241c8b9b61e6c706",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "185[.]53[.]179[.]200"
+        },
+        {
+          "type": "dns-cname",
+          "value": "845192[.]parkingcrew[.]net"
+        }
+      ]
+    },
+    {
+      "id": "0f1dce4e841da2c1a970",
+      "source": "147dc37a85d1e178857a",
       "target": "6d05241c8b9b61e6c706",
       "strength": "shared-context",
       "evidence": [
