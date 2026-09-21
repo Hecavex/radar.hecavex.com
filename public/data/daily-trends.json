@@ -3,7 +3,7 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-09-21T20:27:37.571Z",
+  "generatedAt": "2026-09-21T21:27:39.495Z",
   "retentionDays": 365,
   "from": "2025-09-22",
   "to": "2026-09-21",
@@ -104,7 +104,7 @@
         "firstPublications": 3,
         "statusChanges": 0,
         "facetSampleSize": 6,
-        "evidenceClassifiedSignals": 1,
+        "evidenceClassifiedSignals": 0,
         "byBrand": {
           "DHL": 2,
           "Revolut": 2,
@@ -114,9 +114,7 @@
         "bySource": {
           "URLScan": 6
         },
-        "byEvidenceTier": {
-          "name-only": 1
-        },
+        "byEvidenceTier": {},
         "byReason": {
           "brand-domain-match": 6,
           "first-publication": 3
@@ -1385,7 +1383,7 @@
         "firstPublications": 15,
         "statusChanges": 0,
         "facetSampleSize": 15,
-        "evidenceClassifiedSignals": 8,
+        "evidenceClassifiedSignals": 4,
         "byBrand": {
           "Tele2": 6,
           "DHL": 5,
@@ -1397,7 +1395,7 @@
           "CertStream": 15
         },
         "byEvidenceTier": {
-          "name-only": 8
+          "name-only": 4
         },
         "byReason": {
           "different-tld": 15,
@@ -1442,7 +1440,7 @@
         "firstPublications": 23,
         "statusChanges": 0,
         "facetSampleSize": 24,
-        "evidenceClassifiedSignals": 24,
+        "evidenceClassifiedSignals": 7,
         "byBrand": {
           "Tele2": 6,
           "DHL": 3,
@@ -1460,7 +1458,7 @@
           "CertStream": 24
         },
         "byEvidenceTier": {
-          "name-only": 24
+          "name-only": 7
         },
         "byReason": {
           "first-publication": 23,
@@ -1798,58 +1796,59 @@
       "date": "2026-09-21",
       "partialDay": true,
       "collectorCoverage": {
-        "windowSeconds": 73657,
-        "scheduledSlots": 81,
-        "recordedAttempts": 82,
-        "healthyAttempts": 82,
+        "windowSeconds": 77259,
+        "scheduledSlots": 85,
+        "recordedAttempts": 86,
+        "healthyAttempts": 86,
         "recordedSchedulePercent": 100.0,
-        "listeningCoveragePercent": 53.44,
-        "scheduledListeningCeilingPercent": 52.79,
-        "listeningSeconds": 39359.894,
+        "listeningCoveragePercent": 53.43,
+        "scheduledListeningCeilingPercent": 52.81,
+        "listeningSeconds": 41279.889,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 39359.894,
-          "upperSeconds": 39359.895,
+          "lowerSeconds": 41279.889,
+          "upperSeconds": 41279.89,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 39359.894
+          "reportedWorkerSeconds": 41279.889
         },
         "outcomes": {
-          "healthy-empty": 70,
-          "healthy-matches": 12
+          "healthy-empty": 73,
+          "healthy-matches": 13
         }
       },
       "discovery": {
-        "events": 20,
-        "uniqueSignals": 12,
-        "observations": 12,
+        "events": 22,
+        "uniqueSignals": 13,
+        "observations": 13,
         "reobservations": 4,
-        "firstPublications": 8,
+        "firstPublications": 9,
         "statusChanges": 0,
-        "facetSampleSize": 12,
-        "evidenceClassifiedSignals": 12,
+        "facetSampleSize": 13,
+        "evidenceClassifiedSignals": 13,
         "byBrand": {
           "ERGO": 2,
           "SEB": 2,
           "Smart-ID": 2,
           "BTA": 1,
           "ESO": 1,
+          "Lidl Lietuva": 1,
           "Registrų centras": 1,
           "Revolut": 1,
           "Tele2": 1,
           "Vinted": 1
         },
         "bySource": {
-          "CertStream": 12
+          "CertStream": 13
         },
         "byEvidenceTier": {
-          "name-only": 12
+          "name-only": 13
         },
         "byReason": {
-          "suspicious-context": 11,
-          "brand-exact-token": 9,
-          "first-publication": 8,
-          "different-tld": 7,
+          "suspicious-context": 12,
+          "brand-exact-token": 10,
+          "first-publication": 9,
+          "different-tld": 8,
           "multiple-hyphens": 5,
           "brand-joined-affix": 3,
           "punycode": 1,
