@@ -3,10 +3,10 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-09-20T23:40:55.177Z",
+  "generatedAt": "2026-09-21T00:40:58.247Z",
   "retentionDays": 365,
-  "from": "2025-09-21",
-  "to": "2026-09-20",
+  "from": "2025-09-22",
+  "to": "2026-09-21",
   "semantics": "Counts describe Radar discovery and publication activity under the collector coverage shown beside them. They are not a measure of Lithuanian phishing prevalence or total incident volume.",
   "facetSemantics": "Brand, source, evidence and reason facets count unique signals within each UTC day.",
   "seriesSemantics": "The series is sparse. Missing UTC dates inside the stated range mean zero recorded attempts and zero discovery events; consumers can derive scheduled slots from collectorSchedule.",
@@ -17,54 +17,6 @@
     "derivedFrom": "pipeline-health-24h-window"
   },
   "series": [
-    {
-      "date": "2026-08-21",
-      "partialDay": false,
-      "collectorCoverage": {
-        "windowSeconds": 86400,
-        "scheduledSlots": 96,
-        "recordedAttempts": 0,
-        "healthyAttempts": 0,
-        "recordedSchedulePercent": 0.0,
-        "listeningCoveragePercent": 0.0,
-        "scheduledListeningCeilingPercent": 53.33,
-        "listeningSeconds": 0.0,
-        "coverageBounds": {
-          "methodVersion": 2,
-          "lowerSeconds": 0.0,
-          "upperSeconds": 0.0,
-          "precision": "exact",
-          "unknownAttempts": 0,
-          "reportedWorkerSeconds": 0.0
-        },
-        "outcomes": {}
-      },
-      "discovery": {
-        "events": 12,
-        "uniqueSignals": 5,
-        "observations": 7,
-        "reobservations": 0,
-        "firstPublications": 5,
-        "statusChanges": 0,
-        "facetSampleSize": 5,
-        "evidenceClassifiedSignals": 1,
-        "byBrand": {
-          "Revolut": 3,
-          "Smart-ID": 1,
-          "Vinted": 1
-        },
-        "bySource": {
-          "URLScan": 5
-        },
-        "byEvidenceTier": {
-          "name-only": 1
-        },
-        "byReason": {
-          "brand-domain-match": 5,
-          "first-publication": 5
-        }
-      }
-    },
     {
       "date": "2026-08-22",
       "partialDay": false,
@@ -91,7 +43,7 @@
         "events": 9,
         "uniqueSignals": 5,
         "observations": 5,
-        "reobservations": 1,
+        "reobservations": 0,
         "firstPublications": 4,
         "statusChanges": 0,
         "facetSampleSize": 5,
@@ -148,7 +100,7 @@
         "events": 10,
         "uniqueSignals": 6,
         "observations": 7,
-        "reobservations": 3,
+        "reobservations": 0,
         "firstPublications": 3,
         "statusChanges": 0,
         "facetSampleSize": 6,
@@ -473,7 +425,7 @@
         "events": 81,
         "uniqueSignals": 41,
         "observations": 41,
-        "reobservations": 1,
+        "reobservations": 0,
         "firstPublications": 40,
         "statusChanges": 0,
         "facetSampleSize": 41,
@@ -1549,7 +1501,7 @@
         "events": 42,
         "uniqueSignals": 24,
         "observations": 24,
-        "reobservations": 6,
+        "reobservations": 5,
         "firstPublications": 18,
         "statusChanges": 0,
         "facetSampleSize": 24,
@@ -1777,26 +1729,26 @@
     },
     {
       "date": "2026-09-20",
-      "partialDay": true,
+      "partialDay": false,
       "collectorCoverage": {
-        "windowSeconds": 85255,
-        "scheduledSlots": 94,
-        "recordedAttempts": 95,
-        "healthyAttempts": 95,
+        "windowSeconds": 86400,
+        "scheduledSlots": 96,
+        "recordedAttempts": 96,
+        "healthyAttempts": 96,
         "recordedSchedulePercent": 100.0,
-        "listeningCoveragePercent": 53.49,
-        "scheduledListeningCeilingPercent": 52.92,
-        "listeningSeconds": 45599.886,
+        "listeningCoveragePercent": 53.33,
+        "scheduledListeningCeilingPercent": 53.33,
+        "listeningSeconds": 46079.885,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 45599.886,
-          "upperSeconds": 45599.887,
+          "lowerSeconds": 46079.885,
+          "upperSeconds": 46079.886,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 45599.886
+          "reportedWorkerSeconds": 46079.885
         },
         "outcomes": {
-          "healthy-empty": 78,
+          "healthy-empty": 79,
           "healthy-matches": 17
         }
       },
@@ -1838,6 +1790,45 @@
           "punycode": 2,
           "unicode-confusable": 2
         }
+      }
+    },
+    {
+      "date": "2026-09-21",
+      "partialDay": true,
+      "collectorCoverage": {
+        "windowSeconds": 2458,
+        "scheduledSlots": 2,
+        "recordedAttempts": 3,
+        "healthyAttempts": 3,
+        "recordedSchedulePercent": 100.0,
+        "listeningCoveragePercent": 58.58,
+        "scheduledListeningCeilingPercent": 39.06,
+        "listeningSeconds": 1439.996,
+        "coverageBounds": {
+          "methodVersion": 2,
+          "lowerSeconds": 1439.996,
+          "upperSeconds": 1439.996,
+          "precision": "exact",
+          "unknownAttempts": 0,
+          "reportedWorkerSeconds": 1439.996
+        },
+        "outcomes": {
+          "healthy-empty": 3
+        }
+      },
+      "discovery": {
+        "events": 0,
+        "uniqueSignals": 0,
+        "observations": 0,
+        "reobservations": 0,
+        "firstPublications": 0,
+        "statusChanges": 0,
+        "facetSampleSize": 0,
+        "evidenceClassifiedSignals": 0,
+        "byBrand": {},
+        "bySource": {},
+        "byEvidenceTier": {},
+        "byReason": {}
       }
     }
   ],
