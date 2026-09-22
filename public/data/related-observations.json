@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-related-observations",
-  "generatedAt": "2026-09-22T05:00:15.277Z",
+  "generatedAt": "2026-09-22T05:44:23.337Z",
   "semantics": "Shared evidence is a bounded association between public observations. It is not campaign, operator, malware, infrastructure ownership, or threat-actor attribution.",
   "nodes": [
     {
@@ -40,6 +40,11 @@
       "clusterId": "3fcbb3f564eb6f53"
     },
     {
+      "signalId": "6eaebcca623900768a04",
+      "domain": "daclsv-dl-client-dpd[.]us-east-1[.]aws[.]snowflake[.]app",
+      "clusterId": "9120798e20ab4bcb"
+    },
+    {
       "signalId": "78293593a32db5af0abf",
       "domain": "lidl-support[.]online",
       "clusterId": "132671a3af84edc9"
@@ -48,6 +53,11 @@
       "signalId": "a282c276384f4b0c081d",
       "domain": "code[.]xn--tl2mobile-b4ab[.]fr",
       "clusterId": "3fcbb3f564eb6f53"
+    },
+    {
+      "signalId": "f09222bbfa008b1e99dd",
+      "domain": "daclsv-dl-client-dpd[.]us-east-1[.]aws[.]privatelink[.]snowflake[.]app",
+      "clusterId": "9120798e20ab4bcb"
     },
     {
       "signalId": "f0fd7945b71fc9321cd1",
@@ -61,6 +71,18 @@
     }
   ],
   "edges": [
+    {
+      "id": "7f818b42d5020cb0dfb5",
+      "source": "6eaebcca623900768a04",
+      "target": "f09222bbfa008b1e99dd",
+      "strength": "strong",
+      "evidence": [
+        {
+          "type": "certificate-sha256",
+          "value": "b28856328e012f546b1b4a26de97d72ce35d51bf43885d161f3b862ed68af9ea"
+        }
+      ]
+    },
     {
       "id": "d36c78f8401ef338a144",
       "source": "1e8077e85ff4b40972e4",
