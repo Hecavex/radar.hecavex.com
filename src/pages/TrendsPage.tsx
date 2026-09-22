@@ -2,7 +2,7 @@ import { Activity, RadioTower } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ArtifactHero, PageShell, type StaticPageLanguage } from "../components/ArtifactPageShell.tsx";
 import { formatEventDateTime } from "../lib/staticPageFormat.ts";
-import type { DailyTrendRow, StaticPageData } from "../lib/staticPageBootstrap.ts";
+import type { DailyTrendRow, TrendsPageData } from "../lib/staticPageBootstrap.ts";
 import { trendCollectionState, trendDayState, trendFreshness } from "../lib/trendFreshness.ts";
 
 function formatTrendNumber(value: number, language: StaticPageLanguage): string {
@@ -61,7 +61,7 @@ function Counts({ values, empty = "No values in the public sample" }: { values: 
   return entries.length ? <ul className="facet-counts">{entries.slice(0, 12).map(([label, value]) => <li key={label}><span>{label}</span><strong>{value}</strong></li>)}</ul> : <p className="empty-copy">{empty}</p>;
 }
 
-export function TrendsPage({ data, language = "en" }: { data: StaticPageData; language?: StaticPageLanguage }) {
+export function TrendsPage({ data, language = "en" }: { data: TrendsPageData; language?: StaticPageLanguage }) {
   const lt = language === "lt";
   const [now, setNow] = useState(data.renderedAt);
   useEffect(() => {

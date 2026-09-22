@@ -187,7 +187,7 @@ function staticPagePlugin() {
           { parseHistory },
           { encodeSnapshotBootstrap },
           { encodeHistoryBootstrap },
-          { encodeStaticPageBootstrap, parseEventArtifact },
+          { encodeStaticPageBootstrap, encodeTrendsPageBootstrap, parseEventArtifact },
           { parseRelatedObservations },
           { renderLithuanianPage, renderPrerenderedPage, renderStaticPage },
         ] = await Promise.all([
@@ -222,7 +222,8 @@ function staticPagePlugin() {
             renderedAt,
           } as StaticPageData;
           staticMarkup = renderStaticPage(staticPage.kind, data, staticPage.language);
-          bootstrap = ` data-page-kind="${staticPage.kind}" data-page-language="${staticPage.language}" data-page-bootstrap="${encodeStaticPageBootstrap(data)}"`;
+          const encodedData = staticPage.kind === "trends" ? encodeTrendsPageBootstrap(data) : encodeStaticPageBootstrap(data);
+          bootstrap = ` data-page-kind="${staticPage.kind}" data-page-language="${staticPage.language}" data-page-bootstrap="${encodedData}"`;
         } else if (lithuanianPage) {
           staticMarkup = renderLithuanianPage(lithuanianPage, snapshot, renderedAt);
           bootstrap = lithuanianPage === "radar"

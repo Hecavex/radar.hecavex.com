@@ -1055,7 +1055,14 @@ function verifyBuiltHtml() {
       assert(staticBootstrap, `${route} has no embedded static artifact bootstrap.`);
       assert(pageLanguage === (route.startsWith("/lt/") ? "lt" : "en"), `${route} embeds the wrong static-page language.`);
       const payload = JSON.parse(decodeURIComponent(staticBootstrap));
-      assert(payload?.snapshot?.dataset === "live" && payload?.history?.dataset === "history", `${route} embeds the wrong static data.`);
+      if (route === "/trends/" || route === "/lt/tendencijos/") {
+        assert(Object.keys(payload).sort().join(",") === "quality,renderedAt,trends", `${route} embeds unrelated candidate or event records.`);
+        assert(payload.trends?.dataset === "radar-daily-trends" && payload.quality?.dataset === "radar-quality-metrics", `${route} embeds the wrong trends data.`);
+        assert(Number.isInteger(payload.renderedAt), `${route} has no stable trends render timestamp.`);
+        assert(statSync(outputPath(route)).size <= 512 * 1024, `${route} exceeds the live publication's 512 KiB raw HTML limit.`);
+      } else {
+        assert(payload?.snapshot?.dataset === "live" && payload?.history?.dataset === "history", `${route} embeds the wrong static data.`);
+      }
       if (route === "/changes/" || route === "/lt/pokyciai/") {
         assert(payload?.events?.dataset === "radar-events" && payload.events.schemaVersion === 1, `${route} does not embed the canonical event v1 record.`);
         assert(document.querySelector(".artifact-hero"), `${route} omits the shared changes hero.`);
@@ -2525,9 +2532,9 @@ async function verifyInBrowser(healthOnly = false, researchOnly = false) {
         );
         assert(
           layout.headingFontWeight === "600" &&
-            Math.abs(layout.headingLetterSpacing - (layout.headingFontSize * -.035)) <= .08,
+            Math.abs(layout.headingLetterSpacing - (layout.headingFontSize * -.04)) <= .08,
           `${entry.path} standard title uses weight/tracking ${layout.headingFontWeight}/${layout.headingLetterSpacing}px at ${width}px; ` +
-            "expected 600/-0.035em.",
+            "expected 600/-0.04em.",
         );
         if (layout.sectionTitleFontSize > 0) {
           assert(
