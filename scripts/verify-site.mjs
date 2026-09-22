@@ -2482,6 +2482,7 @@ async function verifyInBrowser(healthOnly = false, researchOnly = false) {
               ? heroElement.clientWidth - parseFloat(heroStyle.paddingLeft) - parseFloat(heroStyle.paddingRight)
               : 0,
             heroIntroFontSize: heroIntroStyle ? parseFloat(heroIntroStyle.fontSize) : 0,
+            heroIntroLineHeight: heroIntroStyle ? parseFloat(heroIntroStyle.lineHeight) : 0,
             radarHeroCopyWidth: radarHeroCopy?.width ?? 0,
             radarHeroCopyBottom: radarHeroCopy?.bottom ?? 0,
             radarFreshnessTop: radarFreshness?.top ?? 0,
@@ -2578,7 +2579,8 @@ async function verifyInBrowser(healthOnly = false, researchOnly = false) {
         }
         if (width === 1440 && overview) {
           assert(layout.heroHeight >= 320 && layout.heroHeight <= 430, `Radar hero is ${layout.heroHeight}px at 1440x900; expected 320–430px.`);
-          assert(Math.abs(layout.heroIntroFontSize - 18.4) <= .1, `Radar home lead is ${layout.heroIntroFontSize}px at 1440px, expected 18.4px.`);
+          assert(Math.abs(layout.heroIntroFontSize - 20) <= .1 && Math.abs(layout.heroIntroLineHeight - 29) <= .1,
+            `Radar home lead is ${layout.heroIntroFontSize}/${layout.heroIntroLineHeight}px at 1440px, expected the shared 20/29px role.`);
           assert(layout.metricTop > 0 && layout.metricTop < 760, `Radar summary starts below useful 1440x900 content at ${layout.metricTop}px.`);
           assert(
             layout.hostingColumnRatio >= 0.21 && layout.hostingColumnRatio <= 0.23,
