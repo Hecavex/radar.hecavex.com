@@ -6,12 +6,40 @@ import assert from "node:assert/strict";
 import { parseSnapshot } from "../src/lib/data.ts";
 import { parseCollectionHealth } from "../src/lib/collectionHealth.ts";
 import { trendCollectionState, trendDayState, trendFreshness } from "../src/lib/trendFreshness.ts";
+import { decodeTrendsPageBootstrap, encodeTrendsPageBootstrap } from "../src/lib/staticPageBootstrap.ts";
 
 const readJson = async (relative) => JSON.parse(await readFile(new URL(relative, import.meta.url), "utf8"));
 const snapshots = [
   ["checked-in live snapshot", await readJson("../public/data/radar.json")],
   ["minimal v2 fixture", await readJson("../tests/fixtures/radar-snapshot-v2-minimal.json")],
 ];
+
+// Keep complete analytics, but never duplicate unrelated operational records in Trends HTML.
+const trendsPageData = {
+  trends: await readJson("../public/data/daily-trends.json"),
+  quality: await readJson("../public/data/quality-metrics.json"),
+  renderedAt: Date.parse("2026-09-22T09:00:00.000Z"),
+};
+const encodedTrends = encodeTrendsPageBootstrap(trendsPageData);
+assert.deepEqual(decodeTrendsPageBootstrap(encodedTrends), trendsPageData);
+assert.equal(encodeTrendsPageBootstrap({
+  ...trendsPageData,
+  snapshot: { signals: ["unused".repeat(100_000)] },
+  history: { signals: ["unused".repeat(100_000)] },
+  historyTotal: 100_000,
+  events: { events: ["unused".repeat(100_000)] },
+  related: { observations: ["unused".repeat(100_000)] },
+}), encodedTrends, "Unrelated datasets must not grow the Trends bootstrap.");
+assert(!/[<>&"]/u.test(encodedTrends), "Trends bootstrap must remain safe in an HTML attribute.");
+for (const invalid of [
+  { ...trendsPageData, snapshot: {} },
+  { ...trendsPageData, renderedAt: null },
+  { ...trendsPageData, trends: { ...trendsPageData.trends, dataset: "radar-events" } },
+  { ...trendsPageData, trends: { ...trendsPageData.trends, series: null } },
+  { ...trendsPageData, quality: { ...trendsPageData.quality, reviewCoverage: null } },
+]) {
+  assert.throws(() => decodeTrendsPageBootstrap(encodeURIComponent(JSON.stringify(invalid))), /trends data is invalid/u);
+}
 
 for (const [label, snapshot] of snapshots) {
   const parsed = parseSnapshot(snapshot);

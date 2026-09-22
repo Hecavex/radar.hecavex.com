@@ -9,17 +9,18 @@ Use semantic ownership rather than generated pages as the starting point for a c
 | Overview, snapshot loading and hydration | `src/main.tsx`, `src/App.tsx`, `src/lt/LtRadarApp.tsx` | Snapshot bootstrap contracts; browser refresh/error/no-JS checks |
 | Candidate view, filters and exports | `src/components/Dashboard.tsx`, `FilterBar.tsx`, `SignalTable.tsx`, `ExportActions.tsx` | `src/lib/dashboard.ts`, `src/lib/export.ts`; filter, clipboard, defanging and mobile tests |
 | Changes feed and filter recovery | `src/pages/ChangesPage.tsx` | Changes EN/LT filtering, pagination and empty-state browser checks |
-| Discovery trends and coverage presentation | `src/pages/TrendsPage.tsx`, `src/lib/trendFreshness.ts` | Trend bounds, cutoff, partial-day, sparse-series and collection-warning checks |
+| Discovery trends and coverage presentation | `src/pages/TrendsPage.tsx`, `src/lib/trendFreshness.ts`, `src/lib/staticPageBootstrap.ts` | Trend bounds, cutoff, partial-day, sparse-series, collection-warning and route-scoped bootstrap checks |
 | Static-route dispatcher, associations/tools/dataset | `src/StaticPages.tsx`, `src/staticPage.tsx` | Static-page bootstrap and route checks |
 | Shared static-page framing and UTC formatting | `src/components/ArtifactPageShell.tsx`, `src/lib/staticPageFormat.ts` | EN/LT route and source geometry assertions |
 | Local indicator analysis and relationships | `src/components/BrowserIocChecker.tsx`, `AssociationExplorer.tsx`, `src/lib/iocCheck.ts`, `relatedObservations.ts` | Local-only/network-boundary and relationship evidence tests |
 | History, signal and brand pages | `src/HistoryApp.tsx`, `SignalPage.tsx`, `BrandActivityPage.tsx`, `BrandScopePage.tsx` | History partitions, retained data and signal-detail checks |
-| Methodology and technical documentation | `src/components/Methodology.tsx`, `Documentation.tsx`, `src/lt/LtMethodologyPage.tsx`, `LtDocumentation.tsx` | EN/LT documentation and terminology checks |
+| Methodology and technical documentation content | `src/components/Methodology.tsx`, `src/components/Documentation.tsx`, `src/lt/LtMethodologyPage.tsx`, `src/lt/LtDocumentation.tsx` | EN/LT documentation and terminology checks |
+| Documentation route wrapper and shared page framing | `src/DocumentationPage.tsx` | Selects EN/LT content with the shared header, main landmark and footer |
 | Portfolio navigation and footer | `src/components/SiteHeader.tsx`, `SiteFooter.tsx` | Exact routes/order, mobile navigation, focus and accessibility checks |
 
 ## Presentation ownership
 
-`src/styles.css` is the stable bundler entry point. It imports the ordered module index `src/styles/foundation.css`, then `src/styles/portfolio-interface.css` (the September 2026 portfolio presentation layer). The foundation index is not a monolithic implementation; these semantic modules own its rules:
+`src/styles.css` is the stable bundler entry point. It imports the ordered module index `src/styles/foundation.css`, then `src/styles/portfolio-interface.css` (the September 2026 portfolio presentation layer) and `src/styles/portfolio-typography.css` (shared Research/Radar/APT/Labs type roles). The foundation index is not a monolithic implementation; these semantic modules own its rules:
 
 | Module under `src/styles/` | Responsibility |
 | --- | --- |
@@ -48,6 +49,7 @@ See `docs/design-interface.md` for typography, layout and interaction invariants
 - `hecavex_radar/` owns collectors, publication, durable history and quality artifacts. Its source revision is separate from the `radar-data` branch. A visual change must not alter collection schedules, credentials, source/data trust, review state, schema or distribution semantics.
 - Candidate domains remain defanged and non-clickable as live destinations. A candidate is a lead, not a verdict. An association is not attribution; an absent measurement is not zero.
 - Trends keep unique signals, recorded attempts, planned slots, listening bounds, planned ceiling and data cutoff separate. Never silently replace unknowns with zeros or imply that a partial day is complete.
+- Trends hydration embeds the complete trends and quality artifacts plus a stable render timestamp, not unrelated candidate, history, event or relationship records. Its EN/LT raw HTML must also fit the existing 512 KiB live publication limit; reducing the payload must not truncate analytics.
 - Filters may share an allowlisted controlled state in the URL; free-text indicator searches stay local. Clipboard failure offers an explicit manual-copy fallback.
 
 ## Verification and delivery

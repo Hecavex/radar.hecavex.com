@@ -108,6 +108,9 @@ export type StaticPageData = {
 
 export type StaticPageKind = "changes" | "trends" | "associations" | "tools" | "dataset";
 
+/** Trends never reads candidate, event or relationship records. */
+export type TrendsPageData = Pick<StaticPageData, "trends" | "quality" | "renderedAt">;
+
 const identifierPattern = /^[a-f\d]{20}$/u;
 const eventIdentifierPattern = /^[a-f\d]{32}$/u;
 const timestampPattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/u;
@@ -177,6 +180,27 @@ export function parseEventArtifact(
 
 export function encodeStaticPageBootstrap(data: StaticPageData): string {
   return encodeURIComponent(JSON.stringify(data));
+}
+
+export function encodeTrendsPageBootstrap({ trends, quality, renderedAt }: TrendsPageData): string {
+  // Project explicitly: callers may pass the full static-page data at build time.
+  return encodeURIComponent(JSON.stringify({ trends, quality, renderedAt }));
+}
+
+export function decodeTrendsPageBootstrap(value: string): TrendsPageData {
+  const parsed: unknown = JSON.parse(decodeURIComponent(value));
+  if (
+    !isObject(parsed) || !hasExactFields(parsed, ["trends", "quality", "renderedAt"]) ||
+    typeof parsed.renderedAt !== "number" || !Number.isFinite(parsed.renderedAt) ||
+    !isObject(parsed.trends) || parsed.trends.schemaVersion !== 1 || parsed.trends.dataset !== "radar-daily-trends" ||
+    !Array.isArray(parsed.trends.series) || !isObject(parsed.trends.collectorSchedule) ||
+    !isObject(parsed.quality) || parsed.quality.schemaVersion !== 1 || parsed.quality.dataset !== "radar-quality-metrics" ||
+    !["reviewSample", "reviewCoverage", "reviewLatencyHours", "currentExclusions", "precision"].every((key) =>
+      isObject((parsed.quality as Record<string, unknown>)[key]))
+  ) {
+    throw new Error("The embedded Radar trends data is invalid.");
+  }
+  return parsed as TrendsPageData;
 }
 
 export function decodeStaticPageBootstrap(value: string): StaticPageData {
