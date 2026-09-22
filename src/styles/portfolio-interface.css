@@ -1,0 +1,134 @@
+/* Portfolio redesign, September 2026. Narrative labels use reading type;
+   monospace is reserved for identifiers, dates, counts and copied evidence. */
+:is(.source-link, .language-link, .navigation-label, .mobile-navigation summary,
+    .mobile-navigation-panel a, .site-footer nav a, .footer-copy, .breadcrumb,
+    .pagination, .pagination button, .record-link, .brand-target, .facet-button,
+    .source-chips span, .source-chips button, .status-pill, .evidence-tier, .review-state,
+    .section-heading > p, .collection-health-grid dt, .collection-health-status,
+    .collection-health-toggle-label, .health-badge, .collection-disclosure-links,
+    .methodology-toc > span, .methodology-toc a, .docs-toc > span, .docs-toc a,
+    .docs-card-grid a, .docs-terms-list a, .methodology-field-list dt,
+    .methodology-source-grid article > span, .docs-card-grid article > span,
+    .docs-operations-grid article > span, .docs-flow span, .docs-table thead th,
+    .metric-card span, .brand-scope-metrics span, .scope-boundaries dt,
+    .brand-filter-shell select, .brand-table a, .export-actions > span,
+    .evidence-badges > span, .candidate-provenance dt, .detail-grid dt,
+    .detail-state button, .detail-group h5, .detail-list h6, .detail-list li,
+    .source-chip, .detail-tags > span, .capture-footer a, .table-scroll td::before,
+    .profile-summary dt, .aside-panel > span, .dataset-summary span,
+    .aside-panel a, .feed-directory a, .source-link-list a, .feed-strip > a,
+    .related-route-card > a, .trend-section .section-heading a,
+    .quality-grid dt, .trend-legend, .trend-date span, .download-grid small,
+    .dataset-explanation a) {
+  font-family: var(--sans);
+  letter-spacing: 0;
+}
+
+.button,
+.share-filter-button,
+.reset-button,
+.pagination button,
+.record-link {
+  min-height: 2.75rem;
+  font-family: var(--sans);
+}
+
+.freshness-card .button {
+  margin-top: 1rem;
+  padding: .5rem .85rem;
+  border-color: var(--line);
+  background: transparent;
+  color: var(--text);
+  font-size: .8rem;
+}
+
+.freshness-card .button:hover {
+  border-color: var(--blue);
+  color: var(--blue);
+}
+
+.hero-actions .hero-action-primary:hover {
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--ink);
+}
+
+.hero-copy,
+.freshness-card,
+.freshness-card > div {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.artifact-hero {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.25rem;
+  padding: 1rem 0 2.5rem;
+}
+
+.artifact-hero h1 { max-width: 25ch; }
+.artifact-hero > p { max-width: 75ch; margin: 0; }
+.section-heading .eyebrow { display: none; }
+.event-section > p[role="status"] { font-size: .875rem; color: var(--muted); }
+.event-list li > div { min-width: 0; }
+.event-type { max-width: 100%; overflow-wrap: anywhere; }
+.event-list li:hover { background: var(--surface); }
+.trend-date time { font-family: var(--mono); overflow-wrap: anywhere; }
+.trend-bars { background: transparent; }
+.trend-row:hover { background: var(--surface); }
+.trend-boundary { margin-block: 2rem; }
+.empty-copy { padding-block: 1.5rem; }
+.state-page { padding-inline: 1rem; }
+.state-page p { overflow-wrap: anywhere; }
+
+.radar-route-grid {
+  gap: 1.5rem 2.5rem;
+  border: 0;
+  background: transparent;
+}
+
+.radar-route-grid > a {
+  padding: 1.25rem 0;
+  border-block: 1px solid var(--line);
+  background: transparent;
+}
+
+.radar-route-grid strong { font: 600 1rem/1.3 var(--display); }
+.radar-route-grid small { font: .8rem/1.5 var(--sans); }
+
+@media (max-width: 1160px) {
+  .activity-strip { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .activity-strip > a { grid-column: 1 / -1; min-height: 2.75rem; padding-top: 0; }
+}
+
+@media (max-width: 900px) {
+  .radar-hero {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: auto;
+    padding: .5rem 0 2rem;
+  }
+  .radar-hero .freshness-card { width: 100%; max-width: none; padding: 0 0 0 1rem; }
+  .event-list li { grid-template-columns: 10rem minmax(0, 1fr); }
+  .event-list li > div { grid-column: 2; grid-row: 1 / 3; }
+  .trend-row { grid-template-columns: 9rem minmax(0, 1fr); gap: .75rem 1.25rem; }
+  .trend-signal-count { grid-column: 2; grid-row: 1; }
+  .trend-bars { grid-column: 2; }
+  .trend-metrics { grid-column: 2; }
+}
+
+@media (max-width: 680px) {
+  .activity-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 1.5rem; }
+  .activity-strip > a { padding-top: .75rem; padding-bottom: 1.25rem; }
+  .hero-actions a { min-height: 2.75rem; font-size: .875rem; }
+  .artifact-hero { padding: .5rem 0 2rem; }
+  .feed-strip > a { flex: 1 1 auto; justify-content: center; }
+  .event-list li { grid-template-columns: minmax(0, 1fr); gap: .75rem; }
+  .event-list li > div { grid-column: auto; grid-row: auto; }
+  .event-list time { font-size: .8rem; }
+  .trend-row { grid-template-columns: minmax(0, 1fr); gap: .75rem; }
+  .trend-signal-count, .trend-bars, .trend-metrics { grid-column: 1; grid-row: auto; }
+  .trend-signal-count { font-size: 1rem; }
+  .trend-bars { max-width: 100%; }
+  .select-group { padding: 1rem; }
+  .trend-legend { flex-wrap: wrap; }
+  .select-group select, .event-filters select, .event-filters input { font-size: 1rem; }
+}

@@ -75,13 +75,14 @@ const performanceBudgets = {
 };
 
 function verifyLayoutSourceContract() {
-  const stylesheet = readFileSync(join(root, "src", "styles.css"), "utf8");
+  const stylesheet = ["foundation.css", "portfolio-interface.css"]
+    .map((file) => readFileSync(join(root, "src", "styles", file), "utf8")).join("\n");
   for (const declaration of [
-    "--page-frame-start: clamp(3.25rem, 5vw, 4.75rem);",
+    "--page-frame-start: clamp(2rem, 3vw, 3rem);",
     "--page-frame-end: clamp(4rem, 8vw, 8rem);",
-    "--frame-product-hero: clamp(21rem, 26.2vw, 23.5625rem);",
+    "--frame-product-hero: 20rem;",
     "--page-title-size: clamp(2.4rem, 3.6vw, 3.25rem);",
-    "--page-title-line-height: 1;",
+    "--page-title-line-height: 1.08;",
     "--section-title-line-height: 1.1;",
   ]) {
     assert(stylesheet.includes(declaration), `Radar layout source omits shared declaration ${declaration}`);
@@ -114,10 +115,11 @@ function verifyLayoutSourceContract() {
     "grid-template-columns: minmax(0, 1.7fr) minmax(18rem, .6fr);",
     "gap: clamp(2rem, 4vw, 4rem);",
     "min-height: var(--frame-product-hero);",
-    "padding: clamp(1.75rem, 3vw, 2.15rem) clamp(1.75rem, 3vw, 3rem);",
-    "border: 1px solid var(--line);",
-    "border-top: 3px solid var(--ember);",
-    "background: var(--surface);",
+    "padding: 1rem 0 2rem;",
+    "border: 0;",
+    "border-bottom: 1px solid var(--line);",
+    "background: transparent;",
+    "overflow: visible;",
   ]) {
     assert(desktopRadarHero.includes(declaration), `Radar home hero omits shared declaration ${declaration}`);
   }
@@ -125,8 +127,8 @@ function verifyLayoutSourceContract() {
     radarHeroBlocks.some((block) =>
       block.includes("grid-template-columns: minmax(0, 1fr);") &&
       block.includes("min-height: auto;") &&
-      block.includes("padding: 1.5rem;")),
-    "Radar mobile home hero no longer uses the shared single-column inset contract.",
+      block.includes("padding: .5rem 0 2rem;")),
+    "Radar mobile home hero no longer uses the shared open single-column contract.",
   );
   for (const breakpoint of [1160, 900, 680]) {
     assert(stylesheet.includes(`@media (max-width: ${breakpoint}px)`), `Radar layout omits the shared ${breakpoint}px breakpoint.`);
@@ -141,6 +143,8 @@ function verifyLayoutSourceContract() {
   );
 }
 const fontFiles = [
+  "space-grotesk/space-grotesk-latin-wght-normal.woff2",
+  "space-grotesk/space-grotesk-latin-ext-wght-normal.woff2",
   "inter/inter-latin-400-normal.woff2",
   "inter/inter-latin-ext-400-normal.woff2",
   "inter/inter-latin-400-italic.woff2",
@@ -1081,7 +1085,9 @@ function verifyBuiltHtml() {
           const scheduleCopy = row.querySelector(".trend-metrics > span")?.textContent ?? "";
           assert(scheduleCopy.includes(isLithuanian ? "interval" : "scheduled slots"), `${route} trend schedule value is not self-describing.`);
           assert(scheduleCopy.includes("/"), `${route} trend schedule omits its recorded and expected attempt counts.`);
-          const listeningCopy = row.querySelector(".trend-metrics small")?.textContent ?? "";
+          const listeningLines = [...row.querySelectorAll(".trend-metrics small")];
+          assert(listeningLines.length === 2, `${route} must separate actual listening from its planned ceiling.`);
+          const listeningCopy = listeningLines.map((line) => line.textContent).join(" ");
           const listeningLabel = trend.collectorCoverage.listeningCoveragePercent === null
             ? (isLithuanian ? "Faktinis klausymosi laikas" : "Wall-clock listening")
             : trend.collectorCoverage.coverageBounds
@@ -2441,6 +2447,7 @@ async function verifyInBrowser(healthOnly = false, researchOnly = false) {
             headingLineHeight: headingStyle ? parseFloat(headingStyle.lineHeight) : 0,
             headingFontWeight: headingStyle?.fontWeight ?? "",
             headingLetterSpacing: headingStyle ? parseFloat(headingStyle.letterSpacing) : 0,
+            headingFontFamily: headingStyle?.fontFamily ?? "",
             brandMarkWidth: brandMark?.width ?? 0,
             sectionTitleFontSize: sectionTitleStyle ? parseFloat(sectionTitleStyle.fontSize) : 0,
             sectionTitleLineHeight: sectionTitleStyle ? parseFloat(sectionTitleStyle.lineHeight) : 0,
@@ -2451,6 +2458,10 @@ async function verifyInBrowser(healthOnly = false, researchOnly = false) {
             networkHeight: networkBar?.height ?? 0,
             productHeight: productBar?.height ?? 0,
             heroHeight: hero?.height ?? 0,
+            heroBorderTop: heroStyle ? parseFloat(heroStyle.borderTopWidth) : 0,
+            heroBorderLeft: heroStyle ? parseFloat(heroStyle.borderLeftWidth) : 0,
+            heroBorderBottom: heroStyle ? parseFloat(heroStyle.borderBottomWidth) : 0,
+            heroPaddingLeft: heroStyle ? parseFloat(heroStyle.paddingLeft) : 0,
             heroContentWidth: heroElement && heroStyle
               ? heroElement.clientWidth - parseFloat(heroStyle.paddingLeft) - parseFloat(heroStyle.paddingRight)
               : 0,
@@ -2492,15 +2503,16 @@ async function verifyInBrowser(healthOnly = false, researchOnly = false) {
         );
         assert(layout.headingHeight > 0 && layout.headingHeight < 540, `${entry.path} has an oversized h1 at ${width}px.`);
         assert(layout.headingFontSize <= 64.1, `${entry.path} exceeds the 64px display-heading ceiling at ${width}px.`);
+        assert(layout.headingFontFamily.includes("Space Grotesk"), `${entry.path} omits the shared display face at ${width}px.`);
         assert(layout.headingRight <= layout.clientWidth + 1, `${entry.path} h1 escapes the viewport at ${width}px.`);
         const expectedPageTitle = Math.min(52, Math.max(38.4, width * .036));
-        const expectedFrameStart = Math.min(76, Math.max(52, width * .05));
+        const expectedFrameStart = Math.min(48, Math.max(32, width * .03));
         const expectedFrameEnd = Math.min(128, Math.max(64, width * .08));
         assert(
           Math.abs(layout.headingFontSize - expectedPageTitle) <= .25 &&
-            Math.abs(layout.headingLineHeight - layout.headingFontSize) <= .25,
+            Math.abs(layout.headingLineHeight - layout.headingFontSize * 1.08) <= .25,
           `${entry.path} page title is ${layout.headingFontSize}/${layout.headingLineHeight}px at ${width}px; ` +
-            `expected ${expectedPageTitle.toFixed(2)}px with unit line-height.`,
+            `expected ${expectedPageTitle.toFixed(2)}px with 1.08 line-height.`,
         );
         assert(
           layout.headingFontWeight === "600" &&
@@ -2533,6 +2545,8 @@ async function verifyInBrowser(healthOnly = false, researchOnly = false) {
           assert(layout.productHeight === 0, `${entry.path} exposes the desktop product row at ${width}px.`);
         }
         if (overview) {
+          assert(layout.heroBorderTop === 0 && layout.heroBorderLeft === 0 && layout.heroBorderBottom === 1 && layout.heroPaddingLeft === 0,
+            `${entry.path} lost its open, inner-edge-aligned hero composition at ${width}px.`);
           for (const block of layout.overviewBlocks) {
             assert(
               block.width > 0 && block.height > 0,
@@ -2545,7 +2559,7 @@ async function verifyInBrowser(healthOnly = false, researchOnly = false) {
           }
         }
         if (width === 1440 && overview) {
-          assert(layout.heroHeight > 0 && layout.heroHeight <= 430, `Radar hero is ${layout.heroHeight}px at 1440x900; budget is 430px.`);
+          assert(layout.heroHeight >= 320 && layout.heroHeight <= 430, `Radar hero is ${layout.heroHeight}px at 1440x900; expected 320–430px.`);
           assert(Math.abs(layout.heroIntroFontSize - 18.4) <= .1, `Radar home lead is ${layout.heroIntroFontSize}px at 1440px, expected 18.4px.`);
           assert(layout.metricTop > 0 && layout.metricTop < 760, `Radar summary starts below useful 1440x900 content at ${layout.metricTop}px.`);
           assert(
@@ -2677,6 +2691,30 @@ async function verifyInBrowser(healthOnly = false, researchOnly = false) {
             await page.locator(".export-actions button", { hasText: "CSV" }).isVisible(),
             `${entry.path} defanged CSV export is not visible.`,
           );
+          if (width === 390) {
+            await page.evaluate(() => Object.defineProperty(navigator, "clipboard", {
+              configurable: true,
+              value: { writeText: async () => { throw new Error("Clipboard denied for recovery check"); } },
+            }));
+            await page.locator(".share-filter-button").click();
+            const fallback = page.locator(".filter-copy-fallback input");
+            assert(await fallback.isVisible(), `${entry.path} clipboard denial has no manual recovery.`);
+            const sharedUrl = await fallback.inputValue();
+            assert(sharedUrl.includes("source=CertStream") && !sharedUrl.includes("private"),
+              `${entry.path} clipboard recovery does not preserve the controlled-only sharing boundary.`);
+          }
+        }
+
+        if ((width === 390 || width === 1440) && ["/changes/", "/lt/pokyciai/"].includes(entry.path)) {
+          const existingEvents = await page.locator(".event-list li").count();
+          if (existingEvents > 0) {
+            await page.locator('.event-filters input[type="date"]').fill("9999-12-31");
+            assert(await page.locator(".event-list li").count() === 0, `${entry.path} does not apply the event date filter.`);
+            const reset = page.locator(".empty-copy button");
+            assert(await reset.isVisible(), `${entry.path} filtered empty state omits recovery.`);
+            await reset.click();
+            assert(await page.locator(".event-list li").count() === existingEvents, `${entry.path} clear filters does not restore events.`);
+          }
         }
 
         assert(browserErrors.length === 0, `${entry.path} failed its CSP-enforced browser smoke check at ${width}px: ${browserErrors.join(" | ")}`);

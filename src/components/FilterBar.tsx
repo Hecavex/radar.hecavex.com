@@ -35,6 +35,7 @@ export function FilterBar({
   const lt = language === "lt";
   const searchRef = useRef<HTMLInputElement>(null);
   const [copiedView, setCopiedView] = useState(false);
+  const [copyFailureUrl, setCopyFailureUrl] = useState<string | null>(null);
   const brands = uniqueValues(signals, "brand");
   const countries = uniqueValues(signals, "country");
   const sources = sourceNames(signals);
@@ -59,10 +60,12 @@ export function FilterBar({
     const url = `${window.location.origin}${window.location.pathname}${query ? `?${query}` : ""}`;
     try {
       await navigator.clipboard.writeText(url);
+      setCopyFailureUrl(null);
       setCopiedView(true);
       window.setTimeout(() => setCopiedView(false), 1800);
     } catch {
       setCopiedView(false);
+      setCopyFailureUrl(url);
     }
   };
 
@@ -101,35 +104,35 @@ export function FilterBar({
         <summary><SlidersHorizontal aria-hidden="true" /> {lt ? "Išplėstiniai filtrai" : "Advanced filters"} {hasFilters ? <span>{lt ? "Aktyvūs" : "Active"}</span> : null}</summary>
         <div className="select-group" aria-label={lt ? "Kandidatų filtrai" : "Candidate filters"}>
           <label>
-            <span className="sr-only">{lt ? "Šaltinio nurodyta būsena" : "Source-reported status"}</span>
+            <span>{lt ? "Šaltinio nurodyta būsena" : "Source-reported status"}</span>
             <select aria-label={lt ? "Šaltinio nurodyta būsena" : "Source-reported status"} value={filters.status} onChange={(event) => update("status", event.target.value as SignalStatus | "all")}>
               <option value="all">{lt ? "Visos būsenos" : "All statuses"}</option>
               {(Object.keys(englishStatuses) as SignalStatus[]).map((status) => <option key={status} value={status}>{lt ? statusLt[status] : englishStatuses[status]}</option>)}
             </select>
           </label>
           <label>
-            <span className="sr-only">{lt ? "Šaltinis" : "Source"}</span>
+            <span>{lt ? "Šaltinis" : "Source"}</span>
             <select aria-label={lt ? "Šaltinis" : "Source"} value={filters.source} onChange={(event) => update("source", event.target.value)}>
               <option value="all">{lt ? "Visi šaltiniai" : "All sources"}</option>
               {sources.map((source) => <option key={source} value={source}>{source}</option>)}
             </select>
           </label>
           <label>
-            <span className="sr-only">{lt ? "Galimas prekių ženklo atitikmuo" : "Potential brand match"}</span>
+            <span>{lt ? "Galimas prekių ženklo atitikmuo" : "Potential brand match"}</span>
             <select aria-label={lt ? "Galimas prekių ženklo atitikmuo" : "Potential brand match"} value={filters.brand} onChange={(event) => update("brand", event.target.value)}>
               <option value="all">{lt ? "Visi galimi prekių ženklai" : "All brand matches"}</option>
               {brands.map((brand) => <option key={brand} value={brand}>{brand}</option>)}
             </select>
           </label>
           <label>
-            <span className="sr-only">{lt ? "Stebėta prieglobos šalis" : "Hosting country observed"}</span>
+            <span>{lt ? "Stebėta prieglobos šalis" : "Hosting country observed"}</span>
             <select aria-label={lt ? "Stebėta prieglobos šalis" : "Hosting country observed"} value={filters.country} onChange={(event) => update("country", event.target.value)}>
               <option value="all">{lt ? "Visos prieglobos šalys" : "All hosting countries"}</option>
               {countries.map((country) => <option key={country} value={country}>{country}</option>)}
             </select>
           </label>
           <label>
-            <span className="sr-only">{lt ? "Mažiausias atitikties balas" : "Minimum match score"}</span>
+            <span>{lt ? "Mažiausias atitikties balas" : "Minimum match score"}</span>
             <select
               aria-label={lt ? "Mažiausias atitikties balas" : "Minimum match score"}
               value={filters.minimumMatchScore}
@@ -140,7 +143,7 @@ export function FilterBar({
             </select>
           </label>
           <label>
-            <span className="sr-only">{lt ? "Įrodymai" : "Evidence"}</span>
+            <span>{lt ? "Įrodymai" : "Evidence"}</span>
             <select aria-label={lt ? "Įrodymai" : "Evidence"} value={filters.evidence} onChange={(event) => update("evidence", event.target.value as Filters["evidence"])}>
               <option value="all">{lt ? "Visi įrodymų lygiai" : "All evidence"}</option>
               <option value="name-only">{lt ? "Tik stebėta" : "Observed only"}</option>
@@ -153,7 +156,7 @@ export function FilterBar({
             </select>
           </label>
           <label>
-            <span className="sr-only">{lt ? "Rikiuoti kandidatus" : "Sort candidates"}</span>
+            <span>{lt ? "Rikiuoti kandidatus" : "Sort candidates"}</span>
             <select aria-label={lt ? "Rikiuoti kandidatus" : "Sort candidates"} value={filters.sort} onChange={(event) => update("sort", event.target.value as Filters["sort"])}>
               <option value="last-seen-desc">{lt ? "Naujausias stebėjimas" : "Newest observation"}</option>
               <option value="first-seen-desc">{lt ? "Naujausias aptikimas" : "Newest discovery"}</option>
@@ -173,6 +176,10 @@ export function FilterBar({
         </div>
       </details>
       <p className="filter-privacy-note">{lt ? "Paieškos tekstas lieka šioje naršyklėje ir nėra pridedamas prie bendrinamo URL." : "Free-text search stays in this browser and is never added to the shared URL."}</p>
+      {copyFailureUrl ? <div className="filter-copy-fallback" role="status">
+        <label htmlFor="filtered-view-url">{lt ? "Kopijuoti nepavyko. Pažymėkite ir nukopijuokite nuorodą rankiniu būdu." : "Copy failed. Select and copy this filtered-view link manually."}</label>
+        <input id="filtered-view-url" readOnly value={copyFailureUrl} onFocus={(event) => event.currentTarget.select()} />
+      </div> : null}
     </div>
   );
 }

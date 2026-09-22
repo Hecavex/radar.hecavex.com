@@ -8,7 +8,7 @@
   grid-template-columns: minmax(0, .9fr) minmax(22rem, 1.1fr);
   gap: clamp(2rem, 6vw, 6rem);
   align-items: end;
-  padding: clamp(2.5rem, 6vw, 5rem) 0 2rem;
+  padding: clamp(2rem, 3vw, 3rem) 0 2rem;
   border-bottom: 1px solid var(--line);
 }
 
@@ -17,10 +17,10 @@
   max-width: 15ch;
   margin: 0;
   color: var(--text);
-  font-size: clamp(2.2rem, 5vw, 4.35rem);
-  font-weight: 550;
+  font-size: clamp(1.6rem, 2.5vw, 2rem);
+  font-weight: 600;
   line-height: var(--section-title-line-height);
-  letter-spacing: -.055em;
+  letter-spacing: -.025em;
 }
 
 .radar-tool-heading > p {
@@ -83,9 +83,9 @@
   display: block;
   margin-bottom: .45rem;
   color: var(--text-soft);
-  font: 600 .64rem/1.3 var(--mono);
+  font: 600 .75rem/1.3 var(--mono);
   letter-spacing: .07em;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .radar-ioc-input textarea {
@@ -116,7 +116,7 @@
 .radar-ioc-input > p {
   margin: .6rem 0 0;
   color: var(--faint);
-  font: .62rem/1.6 var(--mono);
+  font: .875rem/1.6 var(--sans);
 }
 
 .radar-ioc-actions {
@@ -138,7 +138,7 @@
   border-radius: 0;
   background: var(--surface);
   color: var(--text-soft);
-  font: 600 .66rem var(--mono);
+  font: 600 .75rem var(--mono);
   cursor: pointer;
 }
 
@@ -186,7 +186,7 @@
 .radar-tool-message {
   margin: .75rem 0 0;
   color: var(--muted);
-  font: .65rem/1.6 var(--mono);
+  font: .875rem/1.6 var(--sans);
 }
 
 .radar-ioc-results {
@@ -239,9 +239,9 @@
 
 .radar-tool-summary span {
   color: currentColor;
-  font: 600 .58rem/1.35 var(--mono);
+  font: 600 .75rem/1.35 var(--mono);
   letter-spacing: .06em;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .radar-tool-summary strong {
@@ -251,7 +251,7 @@
 
 .radar-tool-summary time {
   color: var(--text-soft);
-  font: .68rem/1.5 var(--mono);
+  font: .75rem/1.5 var(--mono);
 }
 
 .radar-tool-table-scroll {
@@ -272,9 +272,9 @@
   border-right: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
   color: var(--muted);
-  font: 600 .58rem/1.4 var(--mono);
+  font: 600 .75rem/1.4 var(--mono);
   letter-spacing: .08em;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .radar-tool-table th:last-child,
@@ -298,7 +298,7 @@
 .radar-association-endpoint code,
 .radar-association-evidence code {
   color: var(--text);
-  font: 600 .68rem/1.55 var(--mono);
+  font: 600 .75rem/1.55 var(--mono);
   overflow-wrap: anywhere;
 }
 
@@ -306,9 +306,9 @@
   display: block;
   margin-bottom: .35rem;
   color: var(--faint);
-  font: 600 .55rem var(--mono);
+  font: 600 .75rem var(--mono);
   letter-spacing: .08em;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .radar-ioc-state {
@@ -316,8 +316,8 @@
   align-items: center;
   gap: .35rem;
   color: var(--muted);
-  font: 600 .62rem var(--mono);
-  text-transform: uppercase;
+  font: 600 .75rem var(--mono);
+  text-transform: none;
 }
 
 .radar-ioc-state svg {
@@ -342,7 +342,7 @@
   max-width: 28ch;
   margin-top: .5rem;
   color: var(--faint);
-  font: .62rem/1.5 var(--mono);
+  font: .75rem/1.5 var(--mono);
 }
 
 .radar-ioc-matches {
@@ -356,7 +356,7 @@
 .radar-ioc-matches a {
   display: block;
   color: var(--ember);
-  font: 600 .68rem/1.5 var(--mono);
+  font: 600 .75rem/1.5 var(--mono);
   overflow-wrap: anywhere;
   text-decoration-thickness: 1px;
   text-underline-offset: .2em;
@@ -366,7 +366,7 @@
 .radar-ioc-timeline,
 .radar-tool-muted {
   color: var(--muted);
-  font: .62rem/1.55 var(--mono);
+  font: .75rem/1.55 var(--mono);
 }
 
 .radar-tool-empty {
@@ -374,7 +374,7 @@
   border: 1px solid var(--line);
   background: var(--bg-elevated);
   color: var(--muted);
-  font: .7rem/1.6 var(--mono);
+  font: .875rem/1.6 var(--sans);
   text-align: center;
 }
 
@@ -393,7 +393,7 @@
   border-radius: 0;
   background: var(--surface);
   color: var(--text-soft);
-  font: 600 .62rem var(--mono);
+  font: 600 .75rem var(--mono);
   cursor: pointer;
 }
 
@@ -409,7 +409,7 @@
 
 .radar-tool-pagination span {
   color: var(--muted);
-  font: .62rem var(--mono);
+  font: .75rem var(--mono);
 }
 
 .radar-association-summary {
@@ -435,7 +435,7 @@
   border-radius: 0;
   background: var(--surface);
   color: var(--muted);
-  font: 600 .58rem var(--mono);
+  font: 600 .75rem var(--mono);
   cursor: pointer;
 }
 
@@ -476,7 +476,7 @@
   border-radius: 0;
   background: var(--bg);
   color: var(--text-soft);
-  font: .64rem var(--mono);
+  font: .75rem var(--mono);
 }
 
 .radar-association-filters select {
@@ -510,7 +510,7 @@
   outline: 0;
   background: transparent;
   color: var(--text);
-  font: .68rem var(--mono);
+  font: .75rem var(--mono);
 }
 
 .radar-tool-search input::placeholder {
@@ -528,7 +528,7 @@
 .radar-association-result-heading p {
   margin: 0;
   color: var(--muted);
-  font: .68rem var(--mono);
+  font: .75rem var(--mono);
 }
 
 .radar-association-result-heading strong {
@@ -540,7 +540,7 @@
   align-items: center;
   gap: .4rem;
   color: var(--ember);
-  font: 600 .62rem var(--mono);
+  font: 600 .75rem var(--mono);
   text-underline-offset: .2em;
 }
 
@@ -570,7 +570,7 @@
   padding: .6rem .8rem;
   border-bottom: 1px solid var(--line);
   color: var(--faint);
-  font: .58rem var(--mono);
+  font: .75rem var(--mono);
 }
 
 .radar-association-strength {
@@ -578,7 +578,7 @@
   border: 1px solid var(--line);
   color: var(--text-soft);
   font-weight: 600;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .radar-association-strength--strong {
@@ -639,7 +639,7 @@
 
 .radar-association-endpoint small {
   color: var(--faint);
-  font: .58rem var(--mono);
+  font: .75rem var(--mono);
 }
 
 .radar-association-endpoint > svg {
@@ -683,8 +683,8 @@
 
 .radar-association-evidence span {
   color: var(--muted);
-  font: .59rem/1.5 var(--mono);
-  text-transform: uppercase;
+  font: .75rem/1.5 var(--mono);
+  text-transform: none;
 }
 
 .radar-association-evidence code {
@@ -702,7 +702,7 @@
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
   color: var(--faint);
-  font: .62rem/1.6 var(--mono);
+  font: .75rem/1.6 var(--mono);
 }
 
 .radar-association-boundary p {
@@ -817,4 +817,30 @@
   .radar-association-evidence li:last-child {
     border-bottom: 0;
   }
+}
+
+/* Reading labels are distinct from mono indicator values and timestamps. */
+:is(.radar-ioc-input > label, .radar-association-filters label > span:first-child,
+    .radar-tool-button, .radar-tool-summary span, .radar-tool-table th,
+    .radar-tool-kicker, .radar-ioc-state, .radar-tool-table td small,
+    .radar-tool-muted, .radar-tool-pagination, .radar-tool-pagination button,
+    .radar-tool-pagination span, .radar-association-facets button,
+    .radar-association-filters select, .radar-association-result-heading p,
+    .radar-association-result-heading a, .radar-association-evidence span) {
+  font-family: var(--sans);
+  letter-spacing: 0;
+}
+
+.radar-tool-button,
+.radar-tool-pagination button,
+.radar-association-facets button,
+.radar-association-filters select,
+.radar-tool-search > span:last-child { min-height: 2.75rem; }
+
+.radar-tool-search input { min-height: 2.625rem; }
+
+@media (max-width: 680px) {
+  .radar-association-filters select,
+  .radar-tool-search input,
+  .radar-ioc-input textarea { font-size: 1rem; }
 }
