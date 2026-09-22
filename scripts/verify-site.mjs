@@ -3,7 +3,7 @@
 import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
-import { join, relative, resolve, sep } from "node:path";
+import { dirname, join, relative, resolve, sep } from "node:path";
 import { gzipSync } from "node:zlib";
 
 import axe from "axe-core";
@@ -74,9 +74,16 @@ const performanceBudgets = {
   publicDataFileGzip: 1024 * 1024,
 };
 
+function readStylesheetSource(file, ancestors = new Set()) {
+  const resolved = resolve(file);
+  assert(!ancestors.has(resolved), `Cyclic stylesheet import: ${relative(root, resolved)}`);
+  const next = new Set([...ancestors, resolved]);
+  return readFileSync(resolved, "utf8").replace(/^@import "([^"]+)";$/gm,
+    (_, imported) => readStylesheetSource(resolve(dirname(resolved), imported), next));
+}
+
 function verifyLayoutSourceContract() {
-  const stylesheet = ["foundation.css", "portfolio-interface.css"]
-    .map((file) => readFileSync(join(root, "src", "styles", file), "utf8")).join("\n");
+  const stylesheet = readStylesheetSource(join(root, "src", "styles.css"));
   for (const declaration of [
     "--page-frame-start: clamp(2rem, 3vw, 3rem);",
     "--page-frame-end: clamp(4rem, 8vw, 8rem);",

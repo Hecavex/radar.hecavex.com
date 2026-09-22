@@ -19,7 +19,25 @@ Use semantic ownership rather than generated pages as the starting point for a c
 
 ## Presentation ownership
 
-`src/styles.css` is the stable bundler entry point. It imports `src/styles/foundation.css` first (font faces, tokens, shell, component and responsive foundations), then `src/styles/portfolio-interface.css` (the September 2026 portfolio presentation layer). The order is intentional. `src/components/intelligenceTools.css` owns the indicator/association tools, not the shared shell. Self-hosted type assets and licenses live under `public/fonts/`.
+`src/styles.css` is the stable bundler entry point. It imports the ordered module index `src/styles/foundation.css`, then `src/styles/portfolio-interface.css` (the September 2026 portfolio presentation layer). The foundation index is not a monolithic implementation; these semantic modules own its rules:
+
+| Module under `src/styles/` | Responsibility |
+| --- | --- |
+| `fonts.css`, `tokens-and-base.css` | Self-hosted type faces, palette, sizing tokens, document/reset and accessibility primitives |
+| `site-shell.css` | Network/product rows, portfolio links, mobile menu and main frame |
+| `overview-summary.css`, `overview-navigation-layout.css` | Introduction, freshness, summary metrics, activity strip, route navigation and later layout refinements |
+| `collection-health.css` | Sampling disclosure, collector attempt health and labelled status states |
+| `reading-pages.css` | Methodology and documentation reading layouts, tables and code samples |
+| `brand-registry.css` | Brand scope, registry filters and evidence values |
+| `candidate-filters.css`, `candidate-table.css` | Search/filter/export controls, candidate table, status/evidence labels and pagination |
+| `evidence-dialog.css` | Candidate modal, captured evidence, provenance and bounded observation details |
+| `record-pages.css` | Durable signal/brand records, timeline, comparisons and related observations |
+| `activity-pages.css` | Changes feed, event filters, discovery trends, quality and dataset distributions |
+| `footer-and-states.css` | Footer, initial/error states and basic buttons |
+| `responsive-foundations.css`, `portfolio-geometry.css` | Responsive table/navigation/prose behavior and shared heading/spacing geometry |
+| `research-brief.css` | Local evidence-note draft controls |
+
+Import order is intentional: existing later refinements follow earlier component and responsive rules. Do not alphabetically reorder it. `scripts/verify-site.mjs` reads imports recursively, so the source geometry gate checks the actual complete entry rather than an unbundled copy. `src/components/intelligenceTools.css` owns the indicator/association tools, not the shared shell. Self-hosted type assets and licenses live under `public/fonts/`.
 
 See `docs/design-interface.md` for typography, layout and interaction invariants. Avoid adding route-specific shell widths or parallel copies of the same shared styles.
 
