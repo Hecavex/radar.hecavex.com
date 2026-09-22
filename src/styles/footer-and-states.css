@@ -1,0 +1,115 @@
+.site-footer {
+  border-top: 1px solid var(--line);
+  background: var(--bg);
+}
+
+.footer-inner {
+  display: flex;
+  width: min(100%, var(--content-width));
+  min-height: 8rem;
+  margin-inline: auto;
+  padding: 1.7rem clamp(1rem, 3.5vw, 3.5rem);
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.footer-brand {
+  display: grid;
+  gap: .45rem;
+  max-width: 52rem;
+  color: var(--muted);
+  font-size: .76rem;
+}
+
+.footer-brand strong {
+  color: var(--text);
+  font: 600 .75rem var(--mono);
+  letter-spacing: .12em;
+}
+
+.footer-brand a {
+  color: var(--text-soft);
+}
+
+.site-footer nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: .65rem 1rem;
+}
+
+.site-footer nav a {
+  display: inline-flex;
+  min-height: 24px;
+  padding-block: .35rem;
+  align-items: center;
+  color: var(--muted);
+  font: 500 .75rem var(--mono);
+  text-decoration: none;
+  text-transform: none;
+  white-space: nowrap;
+}
+
+.site-footer a:hover {
+  color: var(--ember-bright);
+}
+
+.state-page {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  min-height: calc(100vh - var(--header-offset));
+  text-align: center;
+}
+
+.state-page .state-icon {
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 1rem;
+  color: var(--blue);
+}
+
+.state-page .state-mark {
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 1rem;
+}
+
+.state-page .danger {
+  color: var(--danger);
+}
+
+.state-page h1 {
+  margin: 0;
+  color: var(--text);
+  font-size: clamp(1.4rem, 3vw, 2.4rem);
+}
+
+.state-page > p:not(.eyebrow) {
+  max-width: 50ch;
+  color: var(--muted);
+}
+
+.button {
+  min-height: 2.5rem;
+  padding: .5rem 1rem;
+  border: 1px solid var(--ember);
+  background: var(--ember);
+  color: var(--bg);
+  font-weight: 680;
+  cursor: pointer;
+}
+
+.button:hover {
+  border-color: var(--ember-bright);
+  background: var(--ember-bright);
+}
+
+.pulse {
+  animation: pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% { opacity: .35; transform: scale(.94); }
+}

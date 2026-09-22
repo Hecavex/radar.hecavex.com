@@ -155,7 +155,10 @@ That gate covers Python and frontend linting and type checks; the production bui
 
 ## Documentation index
 
+- [Source map and ownership boundaries](docs/CODEMAP.md)
+
 - [Architecture](docs/ARCHITECTURE.md)
+- [Portfolio interface and accessibility contract](docs/design-interface.md)
 - [Public data contract](docs/DATA-CONTRACT.md)
 - [Data sources and provenance](docs/DATA-SOURCES.md)
 - [Detection and brand matching](docs/DETECTION.md)

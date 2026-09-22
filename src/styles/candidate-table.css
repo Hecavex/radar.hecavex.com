@@ -1,0 +1,367 @@
+.table-panel {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.table-scroll {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  contain: inline-size paint;
+}
+
+table {
+  width: 100%;
+  min-width: 74rem;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+th {
+  padding: 1rem .9rem;
+  border-bottom: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--faint);
+  font: 600 .75rem/1.5 var(--sans);
+  text-transform: none;
+}
+
+td {
+  padding: .95rem .9rem;
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+}
+
+tbody tr {
+  transition: background-color 120ms ease;
+}
+
+tbody tr:hover {
+  background: color-mix(in srgb, var(--surface) 65%, transparent);
+}
+
+tbody tr:target {
+  background: var(--blue-soft);
+  box-shadow: inset 3px 0 0 var(--blue);
+}
+
+.indicator-cell {
+  width: 35%;
+  max-width: 31rem;
+}
+
+.indicator-cell > div {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+}
+
+.indicator-cell code {
+  display: block;
+  overflow: hidden;
+  color: var(--text);
+  font: 650 .75rem/1.45 var(--mono);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.indicator-cell button,
+.signal-deep-link,
+.capture-cell button,
+.capture-heading button {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--faint);
+  cursor: pointer;
+}
+
+.indicator-cell button {
+  width: 1.55rem;
+  height: 1.55rem;
+}
+
+.signal-deep-link {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 1.55rem;
+  height: 1.55rem;
+  color: var(--faint);
+  text-decoration: none;
+}
+
+.indicator-cell button:hover,
+.signal-deep-link:hover,
+.capture-cell button:hover,
+.capture-heading button:hover {
+  border-color: var(--line-strong);
+  color: var(--text);
+}
+
+.indicator-cell button svg,
+.signal-deep-link svg,
+.capture-cell button svg {
+  width: .9rem;
+  height: .9rem;
+}
+
+.indicator-cell > span,
+.host-name,
+.country,
+.first-seen,
+td time {
+  display: block;
+}
+
+.indicator-cell > span {
+  margin-top: .25rem;
+  color: var(--faint);
+  font: .75rem var(--mono);
+}
+
+.brand-target {
+  color: var(--text-soft);
+  font-size: .77rem;
+  font-weight: 600;
+}
+
+.facet-button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.facet-button:hover,
+.facet-button:focus-visible {
+  color: var(--blue);
+  text-decoration: underline;
+  text-underline-offset: .2rem;
+}
+
+.unknown {
+  color: var(--faint);
+  font-size: .75rem;
+}
+
+.source-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .3rem;
+}
+
+.source-chips span,
+.source-chips button {
+  padding: .2rem .4rem;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--muted);
+  font: 600 .75rem var(--mono);
+  white-space: nowrap;
+}
+
+.source-chips button {
+  cursor: pointer;
+}
+
+.source-chips button:hover,
+.source-chips button:focus-visible {
+  border-color: var(--blue);
+  color: var(--text);
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  color: var(--muted);
+  font: 650 .75rem var(--mono);
+  text-transform: none;
+}
+
+.status-pill i {
+  width: .42rem;
+  height: .42rem;
+  border-radius: 50%;
+  background: var(--faint);
+}
+
+.status-pill.active i {
+  background: var(--green);
+  box-shadow: 0 0 0 3px var(--green-soft);
+}
+
+.status-pill.suspected i {
+  background: var(--amber);
+}
+
+.status-pill.offline i,
+.status-pill.mitigated i {
+  background: var(--blue);
+}
+
+.confidence {
+  display: block;
+  width: fit-content;
+  margin-top: .35rem;
+  padding: .08rem .3rem;
+  background: var(--surface-strong);
+  color: var(--muted);
+  font: .75rem var(--mono);
+}
+
+.confidence.high {
+  background: var(--green-soft);
+  color: var(--green);
+}
+
+.confidence.medium {
+  background: var(--amber-soft);
+  color: var(--amber);
+}
+
+.confidence small {
+  font-size: .75rem;
+}
+
+.evidence-tier,
+.review-state {
+  display: block;
+  width: fit-content;
+  margin-top: .3rem;
+  padding: .12rem .35rem;
+  border: 1px solid var(--line);
+  color: var(--faint);
+  font: 650 .75rem var(--mono);
+  letter-spacing: .035em;
+  text-transform: none;
+}
+
+.evidence-tier.corroborated {
+  border-color: color-mix(in srgb, var(--blue) 55%, var(--line));
+  color: var(--blue);
+}
+
+.evidence-tier.reviewed {
+  border-color: color-mix(in srgb, var(--green) 55%, var(--line));
+  color: var(--green);
+}
+
+.review-state {
+  color: var(--text-soft);
+}
+
+.host-name,
+td time {
+  color: var(--text-soft);
+  font-size: .75rem;
+  font-weight: 590;
+}
+
+.country,
+.first-seen {
+  margin-top: .2rem;
+  color: var(--faint);
+  font: .75rem var(--mono);
+}
+
+.capture-cell {
+  text-align: right;
+}
+
+.capture-cell button {
+  width: 2rem;
+  height: 2rem;
+  border-color: var(--line);
+  background: var(--surface);
+}
+
+.capture-cell > span {
+  color: var(--faint);
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .75rem .9rem;
+  background: var(--surface);
+  color: var(--faint);
+  font: .75rem var(--mono);
+}
+
+.pagination p {
+  margin: 0;
+}
+
+.pagination strong {
+  color: var(--text-soft);
+}
+
+.pagination > div {
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+}
+
+.pagination button {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  min-height: 2rem;
+  padding: 0 .55rem;
+  border: 1px solid var(--line);
+  background: var(--bg-elevated);
+  color: var(--muted);
+  font: 600 .75rem var(--mono);
+  cursor: pointer;
+}
+
+.pagination button:hover:not(:disabled) {
+  border-color: var(--line-strong);
+  color: var(--text);
+}
+
+.pagination button:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+}
+
+.pagination button svg {
+  width: .8rem;
+  height: .8rem;
+}
+
+.empty-state {
+  display: grid;
+  place-items: center;
+  min-height: 18rem;
+  padding: 3rem;
+  border: 1px dashed var(--line-strong);
+  background: var(--bg-elevated);
+  text-align: center;
+}
+
+.empty-state svg {
+  width: 2.2rem;
+  height: 2.2rem;
+  color: var(--faint);
+}
+
+.empty-state h3 {
+  margin: .8rem 0 .2rem;
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.empty-state p {
+  margin: 0;
+  color: var(--muted);
+}
