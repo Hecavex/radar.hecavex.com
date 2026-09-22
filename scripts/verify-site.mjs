@@ -2464,6 +2464,8 @@ async function verifyInBrowser(healthOnly = false, researchOnly = false) {
             firstMainBlockTop: firstMainBlock?.top ?? 0,
             networkHeight: networkBar?.height ?? 0,
             productHeight: productBar?.height ?? 0,
+            headerUtilityHeights: [...document.querySelectorAll(".product-bar .header-utility a")]
+              .map((element) => element.getBoundingClientRect().height),
             heroHeight: hero?.height ?? 0,
             heroBorderTop: heroStyle ? parseFloat(heroStyle.borderTopWidth) : 0,
             heroBorderLeft: heroStyle ? parseFloat(heroStyle.borderLeftWidth) : 0,
@@ -2548,6 +2550,8 @@ async function verifyInBrowser(healthOnly = false, researchOnly = false) {
 
         if (width > 1160) {
           assert(Math.abs(layout.productHeight - 52) <= 1, `${entry.path} product row is ${layout.productHeight}px at ${width}px, expected 52px.`);
+          assert(layout.headerUtilityHeights.length > 0 && layout.headerUtilityHeights.every((height) => Math.abs(height - 44) <= .25),
+            `${entry.path} header utilities are not consistently 44px tall at ${width}px.`);
         } else {
           assert(layout.productHeight === 0, `${entry.path} exposes the desktop product row at ${width}px.`);
         }
