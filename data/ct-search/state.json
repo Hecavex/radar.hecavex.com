@@ -1,27 +1,31 @@
 {
   "dataset": "ct-search-state",
-  "generatedAt": "2026-09-22T22:33:42.827Z",
+  "generatedAt": "2026-09-23T01:03:48.774Z",
   "latestRun": {
     "dnsNames": 0,
-    "endedAt": "2026-09-22T22:33:42.827Z",
-    "failureCodes": [],
+    "endedAt": "2026-09-23T01:03:48.774Z",
+    "failureCodes": [
+      "provider-http"
+    ],
     "matches": 0,
     "newRecords": 0,
-    "outcome": "completed",
-    "queriesAttempted": 6,
+    "outcome": "failed",
+    "queriesAttempted": 1,
     "queriesBacklogged": 0,
-    "queriesCompleted": 6,
+    "queriesCompleted": 0,
     "rowsProcessed": 0,
-    "startedAt": "2026-09-22T22:32:17.278Z"
+    "startedAt": "2026-09-23T01:03:47.946Z"
   },
   "provider": "crt.sh",
   "providerHealth": {
-    "consecutiveFailures": 0,
-    "degradedSince": null,
-    "lastAttemptAt": "2026-09-22T22:33:42.827Z",
-    "lastFailureCodes": [],
+    "consecutiveFailures": 1,
+    "degradedSince": "2026-09-23T01:03:47.946Z",
+    "lastAttemptAt": "2026-09-23T01:03:48.774Z",
+    "lastFailureCodes": [
+      "provider-http"
+    ],
     "lastSuccessAt": "2026-09-22T22:33:42.827Z",
-    "nextAttemptAt": null
+    "nextAttemptAt": "2026-09-23T01:08:48.774Z"
   },
   "queries": {
     "brand:artea": {
@@ -140,8 +144,8 @@
       "brand": "Gjensidige",
       "lastEntryAt": null,
       "lastId": 0,
-      "lastOutcome": "completed",
-      "lastRunAt": "2026-09-19T14:55:24.689Z",
+      "lastOutcome": "failed",
+      "lastRunAt": "2026-09-23T01:03:47.946Z",
       "term": "gjensidige"
     },
     "brand:ignitis": {
@@ -393,6 +397,6 @@
       "term": "vinted"
     }
   },
-  "queryCursor": 14,
+  "queryCursor": 15,
   "schemaVersion": 1
 }
