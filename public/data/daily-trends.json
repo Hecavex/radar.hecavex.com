@@ -3,7 +3,7 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-09-23T13:34:52.020Z",
+  "generatedAt": "2026-09-23T13:51:07.195Z",
   "retentionDays": 365,
   "from": "2025-09-24",
   "to": "2026-09-23",
@@ -1854,54 +1854,56 @@
       "date": "2026-09-23",
       "partialDay": true,
       "collectorCoverage": {
-        "windowSeconds": 48892,
-        "scheduledSlots": 54,
-        "recordedAttempts": 55,
-        "healthyAttempts": 55,
+        "windowSeconds": 49867,
+        "scheduledSlots": 55,
+        "recordedAttempts": 56,
+        "healthyAttempts": 56,
         "recordedSchedulePercent": 100.0,
-        "listeningCoveragePercent": 53.24,
-        "scheduledListeningCeilingPercent": 53.01,
-        "listeningSeconds": 26030.581,
+        "listeningCoveragePercent": 53.16,
+        "scheduledListeningCeilingPercent": 52.94,
+        "listeningSeconds": 26510.579,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 26030.581,
-          "upperSeconds": 26040.596,
+          "lowerSeconds": 26510.579,
+          "upperSeconds": 26520.594,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 26392.914
+          "reportedWorkerSeconds": 26872.912
         },
         "outcomes": {
           "healthy-empty": 47,
-          "healthy-matches": 8
+          "healthy-matches": 9
         }
       },
       "discovery": {
-        "events": 24,
-        "uniqueSignals": 12,
-        "observations": 12,
+        "events": 26,
+        "uniqueSignals": 13,
+        "observations": 13,
         "reobservations": 0,
-        "firstPublications": 12,
+        "firstPublications": 13,
         "statusChanges": 0,
-        "facetSampleSize": 12,
-        "evidenceClassifiedSignals": 12,
+        "facetSampleSize": 13,
+        "evidenceClassifiedSignals": 13,
         "byBrand": {
           "IKI": 8,
           "DPD": 2,
           "SEB": 1,
+          "Smart-ID": 1,
           "Tele2": 1
         },
         "bySource": {
-          "CertStream": 12
+          "CertStream": 13
         },
         "byEvidenceTier": {
-          "name-only": 12
+          "name-only": 13
         },
         "byReason": {
+          "first-publication": 13,
+          "suspicious-context": 13,
           "brand-exact-token": 12,
           "different-tld": 12,
-          "first-publication": 12,
-          "suspicious-context": 12,
-          "multiple-hyphens": 4
+          "multiple-hyphens": 4,
+          "brand-joined-affix": 1
         }
       }
     }
