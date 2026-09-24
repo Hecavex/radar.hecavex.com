@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-related-observations",
-  "generatedAt": "2026-09-24T06:06:24.082Z",
+  "generatedAt": "2026-09-24T06:21:22.498Z",
   "semantics": "Shared evidence is a bounded association between public observations. It is not campaign, operator, malware, infrastructure ownership, or threat-actor attribution.",
   "nodes": [
     {
@@ -25,6 +25,11 @@
       "clusterId": "a873336fe2b26788"
     },
     {
+      "signalId": "6bf564dbb0e7537b48f8",
+      "domain": "www[.]revolut-casino-online[.]es",
+      "clusterId": "f624d7528282f8c7"
+    },
+    {
       "signalId": "6eaebcca623900768a04",
       "domain": "daclsv-dl-client-dpd[.]us-east-1[.]aws[.]snowflake[.]app",
       "clusterId": "9120798e20ab4bcb"
@@ -43,6 +48,11 @@
       "signalId": "e646490578a84b44ff3a",
       "domain": "service-lidl[.]com",
       "clusterId": "a873336fe2b26788"
+    },
+    {
+      "signalId": "e92abb8d76774feec61e",
+      "domain": "help[.]dhl-support-del[.]com",
+      "clusterId": "f624d7528282f8c7"
     },
     {
       "signalId": "f09222bbfa008b1e99dd",
@@ -333,6 +343,30 @@
         {
           "type": "dns-ns",
           "value": "ns[.]do-ex[.]org"
+        }
+      ]
+    },
+    {
+      "id": "2e9f25c7704d51adbabf",
+      "source": "6bf564dbb0e7537b48f8",
+      "target": "e92abb8d76774feec61e",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "185[.]53[.]179[.]136"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ina1[.]registrar[.]eu"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ina2[.]registrar[.]eu"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ina3[.]registrar[.]eu"
         }
       ]
     }
