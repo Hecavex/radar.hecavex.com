@@ -3,14 +3,14 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-09-23T23:44:27.672Z",
+  "generatedAt": "2026-09-24T00:35:46.358Z",
   "retentionDays": 365,
-  "from": "2025-09-24",
-  "to": "2026-09-23",
+  "from": "2025-09-25",
+  "to": "2026-09-24",
   "semantics": "Counts describe Radar discovery and publication activity under the collector coverage shown beside them. They are not a measure of Lithuanian phishing prevalence or total incident volume.",
   "facetSemantics": "Brand, source, evidence and reason facets count unique signals within each UTC day.",
   "seriesSemantics": "The series is sparse. Missing UTC dates inside the stated range mean zero recorded attempts and zero discovery events; consumers can derive scheduled slots from collectorSchedule.",
-  "omittedZeroDays": 333,
+  "omittedZeroDays": 332,
   "collectorSchedule": {
     "expectedIntervalSeconds": 900,
     "expectedListeningSeconds": 480,
@@ -82,27 +82,18 @@
         }
       },
       "discovery": {
-        "events": 2,
-        "uniqueSignals": 1,
-        "observations": 1,
+        "events": 0,
+        "uniqueSignals": 0,
+        "observations": 0,
         "reobservations": 0,
-        "firstPublications": 1,
+        "firstPublications": 0,
         "statusChanges": 0,
-        "facetSampleSize": 1,
+        "facetSampleSize": 0,
         "evidenceClassifiedSignals": 0,
-        "byBrand": {
-          "ESO": 1
-        },
-        "bySource": {
-          "CertStream": 1
-        },
+        "byBrand": {},
+        "bySource": {},
         "byEvidenceTier": {},
-        "byReason": {
-          "brand-exact-token": 1,
-          "different-tld": 1,
-          "first-publication": 1,
-          "suspicious-context": 1
-        }
+        "byReason": {}
       }
     },
     {
@@ -1846,26 +1837,26 @@
     },
     {
       "date": "2026-09-23",
-      "partialDay": true,
+      "partialDay": false,
       "collectorCoverage": {
-        "windowSeconds": 85467,
-        "scheduledSlots": 94,
-        "recordedAttempts": 95,
-        "healthyAttempts": 95,
+        "windowSeconds": 86400,
+        "scheduledSlots": 96,
+        "recordedAttempts": 96,
+        "healthyAttempts": 96,
         "recordedSchedulePercent": 100.0,
-        "listeningCoveragePercent": 52.92,
-        "scheduledListeningCeilingPercent": 52.79,
-        "listeningSeconds": 45229.527,
+        "listeningCoveragePercent": 53.13,
+        "scheduledListeningCeilingPercent": 53.33,
+        "listeningSeconds": 45900.083,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 45229.527,
-          "upperSeconds": 45239.542,
+          "lowerSeconds": 45900.083,
+          "upperSeconds": 45920.11,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 45591.859
+          "reportedWorkerSeconds": 46071.858
         },
         "outcomes": {
-          "healthy-empty": 80,
+          "healthy-empty": 81,
           "healthy-matches": 15
         }
       },
@@ -1903,6 +1894,45 @@
           "multiple-hyphens": 8,
           "brand-joined-affix": 1
         }
+      }
+    },
+    {
+      "date": "2026-09-24",
+      "partialDay": true,
+      "collectorCoverage": {
+        "windowSeconds": 2146,
+        "scheduledSlots": 2,
+        "recordedAttempts": 3,
+        "healthyAttempts": 3,
+        "recordedSchedulePercent": 100.0,
+        "listeningCoveragePercent": 57.76,
+        "scheduledListeningCeilingPercent": 44.73,
+        "listeningSeconds": 1239.427,
+        "coverageBounds": {
+          "methodVersion": 2,
+          "lowerSeconds": 1239.427,
+          "upperSeconds": 1249.439,
+          "precision": "bounded",
+          "unknownAttempts": 0,
+          "reportedWorkerSeconds": 1439.996
+        },
+        "outcomes": {
+          "healthy-empty": 3
+        }
+      },
+      "discovery": {
+        "events": 0,
+        "uniqueSignals": 0,
+        "observations": 0,
+        "reobservations": 0,
+        "firstPublications": 0,
+        "statusChanges": 0,
+        "facetSampleSize": 0,
+        "evidenceClassifiedSignals": 0,
+        "byBrand": {},
+        "bySource": {},
+        "byEvidenceTier": {},
+        "byReason": {}
       }
     }
   ],
