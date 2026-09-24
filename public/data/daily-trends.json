@@ -3,7 +3,7 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-09-24T06:21:22.498Z",
+  "generatedAt": "2026-09-24T06:36:27.786Z",
   "retentionDays": 365,
   "from": "2025-09-25",
   "to": "2026-09-24",
@@ -1178,7 +1178,7 @@
         "firstPublications": 13,
         "statusChanges": 0,
         "facetSampleSize": 15,
-        "evidenceClassifiedSignals": 0,
+        "evidenceClassifiedSignals": 1,
         "byBrand": {
           "Revolut": 5,
           "ESO": 3,
@@ -1191,7 +1191,9 @@
         "bySource": {
           "CertStream": 15
         },
-        "byEvidenceTier": {},
+        "byEvidenceTier": {
+          "name-only": 1
+        },
         "byReason": {
           "suspicious-context": 15,
           "different-tld": 13,
@@ -1900,52 +1902,53 @@
       "date": "2026-09-24",
       "partialDay": true,
       "collectorCoverage": {
-        "windowSeconds": 22882,
-        "scheduledSlots": 25,
-        "recordedAttempts": 26,
-        "healthyAttempts": 26,
+        "windowSeconds": 23787,
+        "scheduledSlots": 26,
+        "recordedAttempts": 27,
+        "healthyAttempts": 27,
         "recordedSchedulePercent": 100.0,
-        "listeningCoveragePercent": 53.66,
-        "scheduledListeningCeilingPercent": 52.44,
-        "listeningSeconds": 12279.398,
+        "listeningCoveragePercent": 53.64,
+        "scheduledListeningCeilingPercent": 52.47,
+        "listeningSeconds": 12758.394,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 12279.398,
-          "upperSeconds": 12289.411,
+          "lowerSeconds": 12758.394,
+          "upperSeconds": 12768.407,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 12479.968
+          "reportedWorkerSeconds": 12958.964
         },
         "outcomes": {
           "healthy-empty": 22,
-          "healthy-matches": 4
+          "healthy-matches": 5
         }
       },
       "discovery": {
-        "events": 6,
-        "uniqueSignals": 3,
-        "observations": 3,
-        "reobservations": 0,
-        "firstPublications": 3,
+        "events": 9,
+        "uniqueSignals": 5,
+        "observations": 5,
+        "reobservations": 1,
+        "firstPublications": 4,
         "statusChanges": 0,
-        "facetSampleSize": 3,
-        "evidenceClassifiedSignals": 3,
+        "facetSampleSize": 5,
+        "evidenceClassifiedSignals": 5,
         "byBrand": {
-          "Lidl Lietuva": 2,
-          "DHL": 1
+          "Lidl Lietuva": 3,
+          "DHL": 1,
+          "Revolut": 1
         },
         "bySource": {
-          "CertStream": 3
+          "CertStream": 5
         },
         "byEvidenceTier": {
-          "name-only": 3
+          "name-only": 5
         },
         "byReason": {
-          "brand-exact-token": 3,
-          "first-publication": 3,
-          "suspicious-context": 3,
-          "different-tld": 2,
-          "multiple-hyphens": 2
+          "brand-exact-token": 5,
+          "suspicious-context": 5,
+          "different-tld": 4,
+          "first-publication": 4,
+          "multiple-hyphens": 4
         }
       }
     }
