@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-related-observations",
-  "generatedAt": "2026-09-24T21:38:31.870Z",
+  "generatedAt": "2026-09-24T22:26:58.923Z",
   "semantics": "Shared evidence is a bounded association between public observations. It is not campaign, operator, malware, infrastructure ownership, or threat-actor attribution.",
   "nodes": [
     {
@@ -32,7 +32,7 @@
     {
       "signalId": "5abf34c432de3b17345c",
       "domain": "lidl-mobile[.]hu",
-      "clusterId": "998a5b0a48871894"
+      "clusterId": "103af30af588567e"
     },
     {
       "signalId": "601986fa00bf4f2d4ac4",
@@ -50,6 +50,11 @@
       "clusterId": "132671a3af84edc9"
     },
     {
+      "signalId": "88f5ebfbb9a9fd3cfd9d",
+      "domain": "lidl-mobile[.]bg",
+      "clusterId": "103af30af588567e"
+    },
+    {
       "signalId": "9bafcf13420a64e14466",
       "domain": "daclsv-dl-client-dpd-ext[.]us-east-1[.]aws[.]privatelink[.]snowflake[.]app",
       "clusterId": "f381643171cbda07"
@@ -57,7 +62,7 @@
     {
       "signalId": "d12f55bd08af6d986626",
       "domain": "lidl-service[.]schwarz",
-      "clusterId": "998a5b0a48871894"
+      "clusterId": "103af30af588567e"
     },
     {
       "signalId": "e646490578a84b44ff3a",
@@ -506,6 +511,30 @@
       ]
     },
     {
+      "id": "1259b193ca371467375c",
+      "source": "5abf34c432de3b17345c",
+      "target": "88f5ebfbb9a9fd3cfd9d",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "188[.]34[.]100[.]38"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns[.]do-ex[.]com"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns[.]do-ex[.]net"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns[.]do-ex[.]org"
+        }
+      ]
+    },
+    {
       "id": "160808f5a2bd04630c2e",
       "source": "5abf34c432de3b17345c",
       "target": "d12f55bd08af6d986626",
@@ -550,6 +579,30 @@
         {
           "type": "dns-ns",
           "value": "ina3[.]registrar[.]eu"
+        }
+      ]
+    },
+    {
+      "id": "4e0b4d51d2788a60580b",
+      "source": "88f5ebfbb9a9fd3cfd9d",
+      "target": "d12f55bd08af6d986626",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "188[.]34[.]100[.]38"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns[.]do-ex[.]com"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns[.]do-ex[.]net"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns[.]do-ex[.]org"
         }
       ]
     }
