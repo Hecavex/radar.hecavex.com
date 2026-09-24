@@ -3,7 +3,7 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-09-24T11:08:07.860Z",
+  "generatedAt": "2026-09-24T11:23:15.008Z",
   "retentionDays": 365,
   "from": "2025-09-25",
   "to": "2026-09-24",
@@ -1902,53 +1902,54 @@
       "date": "2026-09-24",
       "partialDay": true,
       "collectorCoverage": {
-        "windowSeconds": 40087,
-        "scheduledSlots": 44,
-        "recordedAttempts": 45,
-        "healthyAttempts": 45,
+        "windowSeconds": 40995,
+        "scheduledSlots": 45,
+        "recordedAttempts": 46,
+        "healthyAttempts": 46,
         "recordedSchedulePercent": 100.0,
-        "listeningCoveragePercent": 53.38,
+        "listeningCoveragePercent": 53.37,
         "scheduledListeningCeilingPercent": 52.69,
-        "listeningSeconds": 21397.366,
+        "listeningSeconds": 21877.365,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 21397.366,
-          "upperSeconds": 21407.379,
+          "lowerSeconds": 21877.365,
+          "upperSeconds": 21887.378,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 21597.936
+          "reportedWorkerSeconds": 22077.935
         },
         "outcomes": {
           "healthy-empty": 39,
-          "healthy-matches": 6
+          "healthy-matches": 7
         }
       },
       "discovery": {
-        "events": 11,
-        "uniqueSignals": 6,
-        "observations": 6,
+        "events": 13,
+        "uniqueSignals": 7,
+        "observations": 7,
         "reobservations": 1,
-        "firstPublications": 5,
+        "firstPublications": 6,
         "statusChanges": 0,
-        "facetSampleSize": 6,
-        "evidenceClassifiedSignals": 6,
+        "facetSampleSize": 7,
+        "evidenceClassifiedSignals": 7,
         "byBrand": {
           "Lidl Lietuva": 4,
+          "Bitė": 1,
           "DHL": 1,
           "Revolut": 1
         },
         "bySource": {
-          "CertStream": 6
+          "CertStream": 7
         },
         "byEvidenceTier": {
-          "name-only": 6
+          "name-only": 7
         },
         "byReason": {
-          "brand-exact-token": 6,
-          "suspicious-context": 6,
-          "different-tld": 5,
-          "first-publication": 5,
-          "multiple-hyphens": 4
+          "brand-exact-token": 7,
+          "suspicious-context": 7,
+          "different-tld": 6,
+          "first-publication": 6,
+          "multiple-hyphens": 5
         }
       }
     }
