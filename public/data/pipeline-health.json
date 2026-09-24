@@ -1,37 +1,37 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-pipeline-health",
-  "generatedAt": "2026-09-24T16:08:16.091Z",
+  "generatedAt": "2026-09-24T17:08:16.560Z",
   "privacy": "Aggregate counters only; no candidate names or detector payloads.",
   "current": {
-    "publishedSignals": 103,
+    "publishedSignals": 104,
     "sourceStates": {
       "CertStream": "healthy",
       "URLScan": "healthy",
       "HECAVEX": "healthy"
     },
     "sourceRecords": {
-      "CertStream": 102,
+      "CertStream": 103,
       "URLScan": 0,
       "HECAVEX": 1
     },
     "certstream": {
-      "generatedAt": "2026-09-24T16:07:39.272Z",
-      "lastSuccessAt": "2026-09-24T16:07:39.272Z",
+      "generatedAt": "2026-09-24T17:07:40.372Z",
+      "lastSuccessAt": "2026-09-24T17:07:40.372Z",
       "freshness": {
         "status": "current",
-        "referenceAt": "2026-09-24T16:07:39.272Z",
+        "referenceAt": "2026-09-24T17:07:40.372Z",
         "ageSeconds": 0
       },
       "latestAttempt": {
-        "startedAt": "2026-09-24T15:59:21.828Z",
-        "endedAt": "2026-09-24T16:07:39.272Z",
-        "outcome": "healthy-empty",
-        "listeningSeconds": 479.999,
-        "messages": 178730,
-        "dnsNames": 302554,
-        "matches": 0,
-        "newRecords": 0
+        "startedAt": "2026-09-24T16:59:21.864Z",
+        "endedAt": "2026-09-24T17:07:40.372Z",
+        "outcome": "healthy-matches",
+        "listeningSeconds": 479.998,
+        "messages": 178131,
+        "dnsNames": 296325,
+        "matches": 1,
+        "newRecords": 1
       }
     },
     "urlscan": {
@@ -91,8 +91,8 @@
   "windows": [
     {
       "hours": 24,
-      "from": "2026-09-23T16:08:16.091Z",
-      "to": "2026-09-24T16:08:16.091Z",
+      "from": "2026-09-23T17:08:16.560Z",
+      "to": "2026-09-24T17:08:16.560Z",
       "collection": {
         "scheduledSlots": 96,
         "recordedAttempts": 96,
@@ -110,8 +110,8 @@
           "unknownAttempts": 0,
           "reportedWorkerSeconds": 46076.872
         },
-        "messages": 16332718,
-        "dnsNames": 27476887,
+        "messages": 16324943,
+        "dnsNames": 27495479,
         "outcomes": {
           "healthy-empty": 82,
           "healthy-matches": 14
@@ -144,8 +144,8 @@
     },
     {
       "hours": 168,
-      "from": "2026-09-17T16:08:16.091Z",
-      "to": "2026-09-24T16:08:16.091Z",
+      "from": "2026-09-17T17:08:16.560Z",
+      "to": "2026-09-24T17:08:16.560Z",
       "collection": {
         "scheduledSlots": 672,
         "recordedAttempts": 670,
@@ -154,28 +154,28 @@
         "listeningCoveragePercent": 53.17,
         "scheduledListeningCeilingPercent": 53.33,
         "expectedListeningSeconds": 321600,
-        "listeningSeconds": 321568.049,
+        "listeningSeconds": 321568.051,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 321568.049,
-          "upperSeconds": 321568.05,
+          "lowerSeconds": 321568.051,
+          "upperSeconds": 321568.052,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 321568.049
+          "reportedWorkerSeconds": 321568.051
         },
-        "messages": 109388307,
-        "dnsNames": 190127985,
+        "messages": 109446821,
+        "dnsNames": 190195916,
         "outcomes": {
-          "healthy-empty": 573,
-          "healthy-matches": 97
+          "healthy-empty": 574,
+          "healthy-matches": 96
         }
       },
       "screening": {
-        "matches": 209,
-        "newArchiveRecords": 113,
+        "matches": 207,
+        "newArchiveRecords": 112,
         "firstPublications": 94,
         "bySource": {
-          "CertStream": 207
+          "CertStream": 206
         }
       },
       "enrichment": {
@@ -189,10 +189,10 @@
         "rdap": 0
       },
       "publication": {
-        "events": 207,
-        "observations": 113,
+        "events": 206,
+        "observations": 112,
         "statusTransitions": 94,
-        "uniqueSignals": 109
+        "uniqueSignals": 108
       }
     }
   ]
