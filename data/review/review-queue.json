@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-stratified-review-queue",
-  "generatedAt": "2026-09-25T11:10:26.926Z",
+  "generatedAt": "2026-09-25T11:55:20.734Z",
   "samplingPolicy": {
     "method": "deterministic-greedy-facet-balancing",
     "dimensions": [
@@ -15,7 +15,7 @@
     "excludes": "Signals already represented by a sanitized assessment.",
     "semantics": "A review worklist, not a random or prevalence-representative sample."
   },
-  "availableUnreviewed": 103,
+  "availableUnreviewed": 105,
   "selected": 24,
   "candidates": [
     {
@@ -33,7 +33,7 @@
         "manual-review",
         "suspicious-context"
       ],
-      "candidateAgeBand": "8-30d",
+      "candidateAgeBand": "31d+",
       "firstSeen": "2026-08-25T11:47:24.305Z"
     },
     {
@@ -236,9 +236,9 @@
       "firstSeen": "2026-09-22T04:25:57.832Z"
     },
     {
-      "signalId": "212a90adf5c64979f1a9",
-      "recordPath": "/signals/212a90adf5c64979f1a9/",
-      "brand": "Vinted",
+      "signalId": "4ba80a5c29b204e94858",
+      "recordPath": "/signals/4ba80a5c29b204e94858/",
+      "brand": "Revolut",
       "sources": [
         "CertStream"
       ],
@@ -250,7 +250,7 @@
         "suspicious-context"
       ],
       "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-09-23T19:30:33.409Z"
+      "firstSeen": "2026-09-25T11:47:45.488Z"
     },
     {
       "signalId": "69a63df59c8e2a4c58b4",
@@ -385,9 +385,26 @@
       "firstSeen": "2026-09-21T10:05:36.722Z"
     },
     {
-      "signalId": "601986fa00bf4f2d4ac4",
-      "recordPath": "/signals/601986fa00bf4f2d4ac4/",
-      "brand": "DHL",
+      "signalId": "8713820a7f229839b318",
+      "recordPath": "/signals/8713820a7f229839b318/",
+      "brand": "Revolut",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "95-100",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-exact-token",
+        "different-tld",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-09-25T11:47:45.488Z"
+    },
+    {
+      "signalId": "1614ab875c75303559f2",
+      "recordPath": "/signals/1614ab875c75303559f2/",
+      "brand": "DPD",
       "sources": [
         "CertStream"
       ],
@@ -398,25 +415,8 @@
         "multiple-hyphens",
         "suspicious-context"
       ],
-      "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-09-23T18:47:00.233Z"
-    },
-    {
-      "signalId": "e2402545027cf11061b0",
-      "recordPath": "/signals/e2402545027cf11061b0/",
-      "brand": "MAXIMA",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "95-100",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-joined-affix",
-        "different-tld",
-        "suspicious-context"
-      ],
       "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-09-19T04:02:33.129Z"
+      "firstSeen": "2026-09-22T15:44:21.866Z"
     }
   ]
 }
