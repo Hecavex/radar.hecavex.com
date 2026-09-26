@@ -3,7 +3,7 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-09-26T21:29:44.461Z",
+  "generatedAt": "2026-09-26T21:43:26.811Z",
   "retentionDays": 365,
   "from": "2025-09-27",
   "to": "2026-09-26",
@@ -1997,53 +1997,54 @@
       "date": "2026-09-26",
       "partialDay": true,
       "collectorCoverage": {
-        "windowSeconds": 77384,
-        "scheduledSlots": 85,
-        "recordedAttempts": 86,
-        "healthyAttempts": 86,
+        "windowSeconds": 78206,
+        "scheduledSlots": 86,
+        "recordedAttempts": 87,
+        "healthyAttempts": 87,
         "recordedSchedulePercent": 100.0,
-        "listeningCoveragePercent": 53.34,
-        "scheduledListeningCeilingPercent": 52.72,
-        "listeningSeconds": 41274.885,
+        "listeningCoveragePercent": 53.39,
+        "scheduledListeningCeilingPercent": 52.78,
+        "listeningSeconds": 41754.883,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 41274.885,
-          "upperSeconds": 41274.886,
+          "lowerSeconds": 41754.883,
+          "upperSeconds": 41754.884,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 41274.885
+          "reportedWorkerSeconds": 41754.883
         },
         "outcomes": {
           "healthy-empty": 81,
-          "healthy-matches": 5
+          "healthy-matches": 6
         }
       },
       "discovery": {
-        "events": 13,
-        "uniqueSignals": 7,
-        "observations": 7,
+        "events": 17,
+        "uniqueSignals": 9,
+        "observations": 9,
         "reobservations": 1,
-        "firstPublications": 6,
+        "firstPublications": 8,
         "statusChanges": 0,
-        "facetSampleSize": 7,
-        "evidenceClassifiedSignals": 7,
+        "facetSampleSize": 9,
+        "evidenceClassifiedSignals": 9,
         "byBrand": {
           "DHL": 5,
+          "Artea": 2,
           "MAXIMA": 2
         },
         "bySource": {
-          "CertStream": 7
+          "CertStream": 9
         },
         "byEvidenceTier": {
-          "name-only": 7
+          "name-only": 9
         },
         "byReason": {
-          "suspicious-context": 7,
-          "first-publication": 6,
+          "suspicious-context": 9,
+          "first-publication": 8,
           "brand-exact-token": 5,
+          "different-tld": 5,
           "multiple-hyphens": 5,
-          "different-tld": 3,
-          "brand-joined-affix": 2
+          "brand-joined-affix": 4
         }
       }
     }
