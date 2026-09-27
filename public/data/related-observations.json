@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-related-observations",
-  "generatedAt": "2026-09-27T06:28:41.906Z",
+  "generatedAt": "2026-09-27T06:43:28.657Z",
   "semantics": "Shared evidence is a bounded association between public observations. It is not campaign, operator, malware, infrastructure ownership, or threat-actor attribution.",
   "nodes": [
     {
@@ -23,6 +23,16 @@
       "signalId": "2c79cfde824cccef7b02",
       "domain": "lidl-mobile[.]be",
       "clusterId": "770fef75726902f3"
+    },
+    {
+      "signalId": "2fc6ef859099aa45d1dc",
+      "domain": "www[.]pay-dhl[.]icu",
+      "clusterId": "db8add245718e3fb"
+    },
+    {
+      "signalId": "3047aa7a4fc1f0afc4b6",
+      "domain": "www[.]artealogin[.]click",
+      "clusterId": "db8add245718e3fb"
     },
     {
       "signalId": "4daa31e9531e2374909a",
@@ -318,6 +328,34 @@
         {
           "type": "dns-ns",
           "value": "ns[.]do-ex[.]org"
+        }
+      ]
+    },
+    {
+      "id": "7d8647e6cbf2100e7f16",
+      "source": "2fc6ef859099aa45d1dc",
+      "target": "3047aa7a4fc1f0afc4b6",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "103[.]224[.]182[.]189"
+        },
+        {
+          "type": "dns-cname",
+          "value": "cname101[.]com"
+        },
+        {
+          "type": "dns-mx",
+          "value": "park-mx[.]above[.]com"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns3[.]abovedomains[.]com"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns4[.]abovedomains[.]com"
         }
       ]
     },

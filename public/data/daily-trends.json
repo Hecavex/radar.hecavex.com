@@ -3,7 +3,7 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-09-27T06:28:41.906Z",
+  "generatedAt": "2026-09-27T06:43:28.657Z",
   "retentionDays": 365,
   "from": "2025-09-28",
   "to": "2026-09-27",
@@ -1261,7 +1261,7 @@
         "firstPublications": 15,
         "statusChanges": 0,
         "facetSampleSize": 15,
-        "evidenceClassifiedSignals": 0,
+        "evidenceClassifiedSignals": 1,
         "byBrand": {
           "Tele2": 6,
           "DHL": 5,
@@ -1272,7 +1272,9 @@
         "bySource": {
           "CertStream": 15
         },
-        "byEvidenceTier": {},
+        "byEvidenceTier": {
+          "name-only": 1
+        },
         "byReason": {
           "different-tld": 15,
           "first-publication": 15,
@@ -2035,55 +2037,55 @@
       "date": "2026-09-27",
       "partialDay": true,
       "collectorCoverage": {
-        "windowSeconds": 23321,
-        "scheduledSlots": 25,
-        "recordedAttempts": 26,
-        "healthyAttempts": 26,
+        "windowSeconds": 24208,
+        "scheduledSlots": 26,
+        "recordedAttempts": 27,
+        "healthyAttempts": 27,
         "recordedSchedulePercent": 100.0,
-        "listeningCoveragePercent": 53.51,
-        "scheduledListeningCeilingPercent": 51.46,
-        "listeningSeconds": 12478.963,
+        "listeningCoveragePercent": 53.53,
+        "scheduledListeningCeilingPercent": 51.55,
+        "listeningSeconds": 12958.962,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 12478.963,
-          "upperSeconds": 12478.964,
+          "lowerSeconds": 12958.962,
+          "upperSeconds": 12958.963,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 12478.964
+          "reportedWorkerSeconds": 12958.963
         },
         "outcomes": {
           "healthy-empty": 21,
-          "healthy-matches": 5
+          "healthy-matches": 6
         }
       },
       "discovery": {
-        "events": 11,
-        "uniqueSignals": 6,
-        "observations": 6,
-        "reobservations": 1,
-        "firstPublications": 5,
+        "events": 14,
+        "uniqueSignals": 8,
+        "observations": 8,
+        "reobservations": 2,
+        "firstPublications": 6,
         "statusChanges": 0,
-        "facetSampleSize": 6,
-        "evidenceClassifiedSignals": 6,
+        "facetSampleSize": 8,
+        "evidenceClassifiedSignals": 8,
         "byBrand": {
-          "DHL": 2,
+          "DHL": 4,
           "Lidl Lietuva": 2,
           "ERGO": 1,
           "Vinted": 1
         },
         "bySource": {
-          "CertStream": 6
+          "CertStream": 8
         },
         "byEvidenceTier": {
-          "name-only": 6
+          "name-only": 8
         },
         "byReason": {
-          "different-tld": 6,
-          "suspicious-context": 6,
-          "brand-exact-token": 5,
-          "first-publication": 5,
-          "brand-joined-affix": 1,
-          "multiple-hyphens": 1
+          "different-tld": 8,
+          "suspicious-context": 8,
+          "brand-exact-token": 7,
+          "first-publication": 6,
+          "multiple-hyphens": 3,
+          "brand-joined-affix": 1
         }
       }
     }
