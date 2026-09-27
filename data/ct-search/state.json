@@ -1,27 +1,31 @@
 {
   "dataset": "ct-search-state",
-  "generatedAt": "2026-09-27T13:19:56.353Z",
+  "generatedAt": "2026-09-27T18:02:35.640Z",
   "latestRun": {
     "dnsNames": 0,
-    "endedAt": "2026-09-27T13:19:56.353Z",
-    "failureCodes": [],
+    "endedAt": "2026-09-27T18:02:35.640Z",
+    "failureCodes": [
+      "provider-timeout"
+    ],
     "matches": 0,
     "newRecords": 0,
-    "outcome": "completed",
-    "queriesAttempted": 6,
+    "outcome": "failed",
+    "queriesAttempted": 1,
     "queriesBacklogged": 0,
-    "queriesCompleted": 6,
+    "queriesCompleted": 0,
     "rowsProcessed": 0,
-    "startedAt": "2026-09-27T13:19:39.766Z"
+    "startedAt": "2026-09-27T18:01:50.310Z"
   },
   "provider": "crt.sh",
   "providerHealth": {
-    "consecutiveFailures": 0,
-    "degradedSince": null,
-    "lastAttemptAt": "2026-09-27T13:19:56.353Z",
-    "lastFailureCodes": [],
+    "consecutiveFailures": 1,
+    "degradedSince": "2026-09-27T18:01:50.310Z",
+    "lastAttemptAt": "2026-09-27T18:02:35.640Z",
+    "lastFailureCodes": [
+      "provider-timeout"
+    ],
     "lastSuccessAt": "2026-09-27T13:19:56.353Z",
-    "nextAttemptAt": null
+    "nextAttemptAt": "2026-09-27T18:07:35.640Z"
   },
   "queries": {
     "brand:artea": {
@@ -325,7 +329,7 @@
       "lastEntryAt": null,
       "lastId": 0,
       "lastOutcome": "failed",
-      "lastRunAt": "2026-09-25T17:40:28.525Z",
+      "lastRunAt": "2026-09-27T18:01:50.310Z",
       "term": "smartid"
     },
     "brand:sodra": {
@@ -393,6 +397,6 @@
       "term": "vinted"
     }
   },
-  "queryCursor": 37,
+  "queryCursor": 38,
   "schemaVersion": 1
 }
