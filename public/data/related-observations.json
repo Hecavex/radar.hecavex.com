@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-related-observations",
-  "generatedAt": "2026-09-28T20:19:07.825Z",
+  "generatedAt": "2026-09-28T21:19:01.621Z",
   "semantics": "Shared evidence is a bounded association between public observations. It is not campaign, operator, malware, infrastructure ownership, or threat-actor attribution.",
   "nodes": [
     {
@@ -20,11 +20,6 @@
       "clusterId": "5ff9aa3ef19e61c7"
     },
     {
-      "signalId": "2c79cfde824cccef7b02",
-      "domain": "lidl-mobile[.]be",
-      "clusterId": "770fef75726902f3"
-    },
-    {
       "signalId": "2fc6ef859099aa45d1dc",
       "domain": "www[.]pay-dhl[.]icu",
       "clusterId": "db8add245718e3fb"
@@ -35,16 +30,6 @@
       "clusterId": "db8add245718e3fb"
     },
     {
-      "signalId": "4daa31e9531e2374909a",
-      "domain": "lidl-online[.]es",
-      "clusterId": "770fef75726902f3"
-    },
-    {
-      "signalId": "532f03998a3de10439f7",
-      "domain": "lidl-online[.]info",
-      "clusterId": "770fef75726902f3"
-    },
-    {
       "signalId": "5abf34c432de3b17345c",
       "domain": "lidl-mobile[.]hu",
       "clusterId": "103af30af588567e"
@@ -53,11 +38,6 @@
       "signalId": "601986fa00bf4f2d4ac4",
       "domain": "u5ep7h0cbvylypnb[.]service-reprogrammation-dhl[.]com",
       "clusterId": "5ff9aa3ef19e61c7"
-    },
-    {
-      "signalId": "6eaebcca623900768a04",
-      "domain": "daclsv-dl-client-dpd[.]us-east-1[.]aws[.]snowflake[.]app",
-      "clusterId": "9120798e20ab4bcb"
     },
     {
       "signalId": "88f5ebfbb9a9fd3cfd9d",
@@ -80,19 +60,9 @@
       "clusterId": "103af30af588567e"
     },
     {
-      "signalId": "e646490578a84b44ff3a",
-      "domain": "service-lidl[.]com",
-      "clusterId": "770fef75726902f3"
-    },
-    {
       "signalId": "e92abb8d76774feec61e",
       "domain": "help[.]dhl-support-del[.]com",
       "clusterId": "5ff9aa3ef19e61c7"
-    },
-    {
-      "signalId": "f09222bbfa008b1e99dd",
-      "domain": "daclsv-dl-client-dpd[.]us-east-1[.]aws[.]privatelink[.]snowflake[.]app",
-      "clusterId": "9120798e20ab4bcb"
     }
   ],
   "edges": [
@@ -105,234 +75,6 @@
         {
           "type": "certificate-sha256",
           "value": "d0b3380a2be107f8d8632aff89bd641379fc49c0cb67985826ded6cc60e0b4cc"
-        }
-      ]
-    },
-    {
-      "id": "7f818b42d5020cb0dfb5",
-      "source": "6eaebcca623900768a04",
-      "target": "f09222bbfa008b1e99dd",
-      "strength": "strong",
-      "evidence": [
-        {
-          "type": "certificate-sha256",
-          "value": "b28856328e012f546b1b4a26de97d72ce35d51bf43885d161f3b862ed68af9ea"
-        }
-      ]
-    },
-    {
-      "id": "ba10448482a2ae80f485",
-      "source": "2c79cfde824cccef7b02",
-      "target": "4daa31e9531e2374909a",
-      "strength": "shared-context",
-      "evidence": [
-        {
-          "type": "dns-a",
-          "value": "5[.]22[.]145[.]121"
-        },
-        {
-          "type": "dns-a",
-          "value": "5[.]22[.]145[.]16"
-        },
-        {
-          "type": "dns-aaaa",
-          "value": "2a00[:]18e0[:]5[:]2[:]7577[:]4e4d[:]413b[:]f507"
-        },
-        {
-          "type": "dns-aaaa",
-          "value": "2a00[:]18e0[:]5[:]3[:]dfe2[:]c743[:]85aa[:]61bc"
-        },
-        {
-          "type": "dns-ns",
-          "value": "ns[.]do-ex[.]com"
-        },
-        {
-          "type": "dns-ns",
-          "value": "ns[.]do-ex[.]net"
-        },
-        {
-          "type": "dns-ns",
-          "value": "ns[.]do-ex[.]org"
-        }
-      ]
-    },
-    {
-      "id": "07fc1b993876750b86f7",
-      "source": "2c79cfde824cccef7b02",
-      "target": "532f03998a3de10439f7",
-      "strength": "shared-context",
-      "evidence": [
-        {
-          "type": "dns-a",
-          "value": "5[.]22[.]145[.]121"
-        },
-        {
-          "type": "dns-a",
-          "value": "5[.]22[.]145[.]16"
-        },
-        {
-          "type": "dns-aaaa",
-          "value": "2a00[:]18e0[:]5[:]2[:]7577[:]4e4d[:]413b[:]f507"
-        },
-        {
-          "type": "dns-aaaa",
-          "value": "2a00[:]18e0[:]5[:]3[:]dfe2[:]c743[:]85aa[:]61bc"
-        },
-        {
-          "type": "dns-ns",
-          "value": "ns[.]do-ex[.]com"
-        },
-        {
-          "type": "dns-ns",
-          "value": "ns[.]do-ex[.]net"
-        },
-        {
-          "type": "dns-ns",
-          "value": "ns[.]do-ex[.]org"
-        }
-      ]
-    },
-    {
-      "id": "e3bd14d7c35f3fcfcfdf",
-      "source": "2c79cfde824cccef7b02",
-      "target": "e646490578a84b44ff3a",
-      "strength": "shared-context",
-      "evidence": [
-        {
-          "type": "dns-a",
-          "value": "5[.]22[.]145[.]121"
-        },
-        {
-          "type": "dns-a",
-          "value": "5[.]22[.]145[.]16"
-        },
-        {
-          "type": "dns-aaaa",
-          "value": "2a00[:]18e0[:]5[:]2[:]7577[:]4e4d[:]413b[:]f507"
-        },
-        {
-          "type": "dns-aaaa",
-          "value": "2a00[:]18e0[:]5[:]3[:]dfe2[:]c743[:]85aa[:]61bc"
-        },
-        {
-          "type": "dns-ns",
-          "value": "ns[.]do-ex[.]com"
-        },
-        {
-          "type": "dns-ns",
-          "value": "ns[.]do-ex[.]net"
-        },
-        {
-          "type": "dns-ns",
-          "value": "ns[.]do-ex[.]org"
-        }
-      ]
-    },
-    {
-      "id": "f2c3cd9470b1ff0e100b",
-      "source": "4daa31e9531e2374909a",
-      "target": "532f03998a3de10439f7",
-      "strength": "shared-context",
-      "evidence": [
-        {
-          "type": "dns-a",
-          "value": "5[.]22[.]145[.]121"
-        },
-        {
-          "type": "dns-a",
-          "value": "5[.]22[.]145[.]16"
-        },
-        {
-          "type": "dns-aaaa",
-          "value": "2a00[:]18e0[:]5[:]2[:]7577[:]4e4d[:]413b[:]f507"
-        },
-        {
-          "type": "dns-aaaa",
-          "value": "2a00[:]18e0[:]5[:]3[:]dfe2[:]c743[:]85aa[:]61bc"
-        },
-        {
-          "type": "dns-ns",
-          "value": "ns[.]do-ex[.]com"
-        },
-        {
-          "type": "dns-ns",
-          "value": "ns[.]do-ex[.]net"
-        },
-        {
-          "type": "dns-ns",
-          "value": "ns[.]do-ex[.]org"
-        }
-      ]
-    },
-    {
-      "id": "515d2c1186715099fa4d",
-      "source": "4daa31e9531e2374909a",
-      "target": "e646490578a84b44ff3a",
-      "strength": "shared-context",
-      "evidence": [
-        {
-          "type": "dns-a",
-          "value": "5[.]22[.]145[.]121"
-        },
-        {
-          "type": "dns-a",
-          "value": "5[.]22[.]145[.]16"
-        },
-        {
-          "type": "dns-aaaa",
-          "value": "2a00[:]18e0[:]5[:]2[:]7577[:]4e4d[:]413b[:]f507"
-        },
-        {
-          "type": "dns-aaaa",
-          "value": "2a00[:]18e0[:]5[:]3[:]dfe2[:]c743[:]85aa[:]61bc"
-        },
-        {
-          "type": "dns-ns",
-          "value": "ns[.]do-ex[.]com"
-        },
-        {
-          "type": "dns-ns",
-          "value": "ns[.]do-ex[.]net"
-        },
-        {
-          "type": "dns-ns",
-          "value": "ns[.]do-ex[.]org"
-        }
-      ]
-    },
-    {
-      "id": "9d0199890b1b5d81f9bd",
-      "source": "532f03998a3de10439f7",
-      "target": "e646490578a84b44ff3a",
-      "strength": "shared-context",
-      "evidence": [
-        {
-          "type": "dns-a",
-          "value": "5[.]22[.]145[.]121"
-        },
-        {
-          "type": "dns-a",
-          "value": "5[.]22[.]145[.]16"
-        },
-        {
-          "type": "dns-aaaa",
-          "value": "2a00[:]18e0[:]5[:]2[:]7577[:]4e4d[:]413b[:]f507"
-        },
-        {
-          "type": "dns-aaaa",
-          "value": "2a00[:]18e0[:]5[:]3[:]dfe2[:]c743[:]85aa[:]61bc"
-        },
-        {
-          "type": "dns-ns",
-          "value": "ns[.]do-ex[.]com"
-        },
-        {
-          "type": "dns-ns",
-          "value": "ns[.]do-ex[.]net"
-        },
-        {
-          "type": "dns-ns",
-          "value": "ns[.]do-ex[.]org"
         }
       ]
     },
