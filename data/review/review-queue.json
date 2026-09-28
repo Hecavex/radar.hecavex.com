@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-stratified-review-queue",
-  "generatedAt": "2026-09-28T00:02:39.006Z",
+  "generatedAt": "2026-09-28T01:17:06.297Z",
   "samplingPolicy": {
     "method": "deterministic-greedy-facet-balancing",
     "dimensions": [
@@ -15,7 +15,7 @@
     "excludes": "Signals already represented by a sanitized assessment.",
     "semantics": "A review worklist, not a random or prevalence-representative sample."
   },
-  "availableUnreviewed": 98,
+  "availableUnreviewed": 100,
   "selected": 24,
   "candidates": [
     {
@@ -205,6 +205,40 @@
       "firstSeen": "2026-09-27T08:58:11.254Z"
     },
     {
+      "signalId": "55ac96fdedb0a111a91c",
+      "recordPath": "/signals/55ac96fdedb0a111a91c/",
+      "brand": "Vinted",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "85-94",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-joined-affix",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-09-28T01:16:14.581Z"
+    },
+    {
+      "signalId": "eb9931c8f890c68191e9",
+      "recordPath": "/signals/eb9931c8f890c68191e9/",
+      "brand": "MAXIMA",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "95-100",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-exact-token",
+        "different-tld",
+        "punycode",
+        "unicode-confusable"
+      ],
+      "candidateAgeBand": "2-7d",
+      "firstSeen": "2026-09-25T02:32:05.632Z"
+    },
+    {
       "signalId": "18708378af90b4656ff3",
       "recordPath": "/signals/18708378af90b4656ff3/",
       "brand": "DPD",
@@ -271,9 +305,9 @@
       "firstSeen": "2026-09-26T23:39:52.413Z"
     },
     {
-      "signalId": "eb9931c8f890c68191e9",
-      "recordPath": "/signals/eb9931c8f890c68191e9/",
-      "brand": "MAXIMA",
+      "signalId": "27d9b8ea801d139b42f8",
+      "recordPath": "/signals/27d9b8ea801d139b42f8/",
+      "brand": "Telia",
       "sources": [
         "CertStream"
       ],
@@ -281,12 +315,11 @@
       "evidenceTier": "name-only",
       "reasonCodes": [
         "brand-exact-token",
-        "different-tld",
-        "punycode",
-        "unicode-confusable"
+        "multiple-hyphens",
+        "suspicious-context"
       ],
       "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-09-25T02:32:05.632Z"
+      "firstSeen": "2026-09-22T14:40:56.058Z"
     },
     {
       "signalId": "f33124adc1cf328715bc",
@@ -304,6 +337,24 @@
       ],
       "candidateAgeBand": "0-1d",
       "firstSeen": "2026-09-26T22:04:54.532Z"
+    },
+    {
+      "signalId": "07f7020d16d014179a34",
+      "recordPath": "/signals/07f7020d16d014179a34/",
+      "brand": "MAXIMA",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "95-100",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-exact-token",
+        "different-tld",
+        "punycode",
+        "unicode-confusable"
+      ],
+      "candidateAgeBand": "2-7d",
+      "firstSeen": "2026-09-25T06:22:24.610Z"
     },
     {
       "signalId": "b32fba11cec749cbe690",
@@ -356,24 +407,6 @@
       "firstSeen": "2026-09-22T15:44:21.866Z"
     },
     {
-      "signalId": "07f7020d16d014179a34",
-      "recordPath": "/signals/07f7020d16d014179a34/",
-      "brand": "MAXIMA",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "95-100",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-exact-token",
-        "different-tld",
-        "punycode",
-        "unicode-confusable"
-      ],
-      "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-09-25T06:22:24.610Z"
-    },
-    {
       "signalId": "7d7488bda534c89c64b0",
       "recordPath": "/signals/7d7488bda534c89c64b0/",
       "brand": "Smart-ID",
@@ -389,41 +422,6 @@
       ],
       "candidateAgeBand": "2-7d",
       "firstSeen": "2026-09-22T09:56:15.348Z"
-    },
-    {
-      "signalId": "608c8bdbab6dbe077545",
-      "recordPath": "/signals/608c8bdbab6dbe077545/",
-      "brand": "SEB",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "85-94",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-exact-token",
-        "multiple-hyphens",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-09-23T23:12:22.267Z"
-    },
-    {
-      "signalId": "f53806de41d18206079d",
-      "recordPath": "/signals/f53806de41d18206079d/",
-      "brand": "Telia",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "95-100",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-exact-token",
-        "different-tld",
-        "punycode",
-        "unicode-confusable"
-      ],
-      "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-09-27T15:08:35.966Z"
     }
   ]
 }
