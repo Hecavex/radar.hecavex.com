@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-related-observations",
-  "generatedAt": "2026-09-28T22:49:35.365Z",
+  "generatedAt": "2026-09-28T23:49:56.399Z",
   "semantics": "Shared evidence is a bounded association between public observations. It is not campaign, operator, malware, infrastructure ownership, or threat-actor attribution.",
   "nodes": [
     {
@@ -45,9 +45,19 @@
       "clusterId": "103af30af588567e"
     },
     {
+      "signalId": "8dee2a0a38eabdb50c0b",
+      "domain": "www[.]xn--tlia-bpa[.]org",
+      "clusterId": "87fbd4617829461e"
+    },
+    {
       "signalId": "9bafcf13420a64e14466",
       "domain": "daclsv-dl-client-dpd-ext[.]us-east-1[.]aws[.]privatelink[.]snowflake[.]app",
       "clusterId": "f381643171cbda07"
+    },
+    {
+      "signalId": "9ddae71022c144a4a876",
+      "domain": "xn--tlia-bpa[.]net",
+      "clusterId": "87fbd4617829461e"
     },
     {
       "signalId": "b608c214223d59c8be17",
@@ -63,6 +73,11 @@
       "signalId": "e92abb8d76774feec61e",
       "domain": "help[.]dhl-support-del[.]com",
       "clusterId": "5ff9aa3ef19e61c7"
+    },
+    {
+      "signalId": "f53806de41d18206079d",
+      "domain": "www[.]xn--tlia-bpa[.]net",
+      "clusterId": "87fbd4617829461e"
     }
   ],
   "edges": [
@@ -319,6 +334,46 @@
         {
           "type": "dns-ns",
           "value": "ns[.]do-ex[.]org"
+        }
+      ]
+    },
+    {
+      "id": "fa408d050d8c50327cc1",
+      "source": "8dee2a0a38eabdb50c0b",
+      "target": "9ddae71022c144a4a876",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "2[.]57[.]91[.]91"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns1[.]dns-parking[.]com"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns2[.]dns-parking[.]com"
+        }
+      ]
+    },
+    {
+      "id": "c04758ae9486927df433",
+      "source": "8dee2a0a38eabdb50c0b",
+      "target": "f53806de41d18206079d",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "2[.]57[.]91[.]91"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns1[.]dns-parking[.]com"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns2[.]dns-parking[.]com"
         }
       ]
     }
