@@ -1,27 +1,31 @@
 {
   "dataset": "ct-search-state",
-  "generatedAt": "2026-09-28T00:02:39.006Z",
+  "generatedAt": "2026-09-28T06:03:02.904Z",
   "latestRun": {
     "dnsNames": 0,
-    "endedAt": "2026-09-28T00:02:39.006Z",
-    "failureCodes": [],
+    "endedAt": "2026-09-28T06:03:02.904Z",
+    "failureCodes": [
+      "provider-http"
+    ],
     "matches": 0,
     "newRecords": 0,
-    "outcome": "completed",
-    "queriesAttempted": 6,
+    "outcome": "failed",
+    "queriesAttempted": 1,
     "queriesBacklogged": 0,
-    "queriesCompleted": 6,
+    "queriesCompleted": 0,
     "rowsProcessed": 0,
-    "startedAt": "2026-09-28T00:01:54.251Z"
+    "startedAt": "2026-09-28T06:03:02.244Z"
   },
   "provider": "crt.sh",
   "providerHealth": {
-    "consecutiveFailures": 0,
-    "degradedSince": null,
-    "lastAttemptAt": "2026-09-28T00:02:39.006Z",
-    "lastFailureCodes": [],
+    "consecutiveFailures": 1,
+    "degradedSince": "2026-09-28T06:03:02.244Z",
+    "lastAttemptAt": "2026-09-28T06:03:02.904Z",
+    "lastFailureCodes": [
+      "provider-http"
+    ],
     "lastSuccessAt": "2026-09-28T00:02:39.006Z",
-    "nextAttemptAt": null
+    "nextAttemptAt": "2026-09-28T06:08:02.904Z"
   },
   "queries": {
     "brand:artea": {
@@ -60,8 +64,8 @@
       "brand": "Cgates",
       "lastEntryAt": null,
       "lastId": 0,
-      "lastOutcome": "completed",
-      "lastRunAt": "2026-09-26T14:44:40.987Z",
+      "lastOutcome": "failed",
+      "lastRunAt": "2026-09-28T06:03:02.244Z",
       "term": "cgates"
     },
     "brand:citadele": {
@@ -393,6 +397,6 @@
       "term": "vinted"
     }
   },
-  "queryCursor": 4,
+  "queryCursor": 5,
   "schemaVersion": 1
 }
