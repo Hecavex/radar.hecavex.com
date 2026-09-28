@@ -3,7 +3,7 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-09-28T15:31:44.530Z",
+  "generatedAt": "2026-09-28T15:33:45.371Z",
   "retentionDays": 365,
   "from": "2025-09-29",
   "to": "2026-09-28",
@@ -2074,58 +2074,61 @@
       "date": "2026-09-28",
       "partialDay": true,
       "collectorCoverage": {
-        "windowSeconds": 55904,
+        "windowSeconds": 56025,
         "scheduledSlots": 62,
-        "recordedAttempts": 62,
-        "healthyAttempts": 62,
+        "recordedAttempts": 63,
+        "healthyAttempts": 63,
         "recordedSchedulePercent": 100.0,
-        "listeningCoveragePercent": 52.5,
-        "scheduledListeningCeilingPercent": 53.23,
-        "listeningSeconds": 29350.999,
+        "listeningCoveragePercent": 53.25,
+        "scheduledListeningCeilingPercent": 53.12,
+        "listeningSeconds": 29830.998,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 29350.999,
-          "upperSeconds": 29361.011,
+          "lowerSeconds": 29830.998,
+          "upperSeconds": 29841.01,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 29753.898
+          "reportedWorkerSeconds": 30233.897
         },
         "outcomes": {
           "healthy-empty": 49,
-          "healthy-matches": 13
+          "healthy-matches": 14
         }
       },
       "discovery": {
-        "events": 26,
-        "uniqueSignals": 14,
-        "observations": 14,
-        "reobservations": 2,
+        "events": 27,
+        "uniqueSignals": 15,
+        "observations": 15,
+        "reobservations": 3,
         "firstPublications": 12,
         "statusChanges": 0,
-        "facetSampleSize": 14,
-        "evidenceClassifiedSignals": 14,
+        "facetSampleSize": 15,
+        "evidenceClassifiedSignals": 15,
         "byBrand": {
           "Bitė": 4,
           "DHL": 3,
           "Vinted": 3,
           "Lidl Lietuva": 1,
+          "MAXIMA": 1,
           "SEB": 1,
           "Smart-ID": 1,
           "Swedbank": 1
         },
         "bySource": {
-          "CertStream": 14
+          "CertStream": 15
         },
         "byEvidenceTier": {
-          "name-only": 14
+          "name-only": 15
         },
         "byReason": {
           "suspicious-context": 14,
           "first-publication": 12,
-          "brand-exact-token": 10,
+          "brand-exact-token": 11,
           "multiple-hyphens": 8,
-          "different-tld": 6,
-          "brand-joined-affix": 4
+          "different-tld": 7,
+          "brand-joined-affix": 4,
+          "punycode": 1,
+          "unicode-confusable": 1
         }
       }
     }
