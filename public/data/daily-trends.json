@@ -3,14 +3,14 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-09-27T23:32:10.951Z",
+  "generatedAt": "2026-09-28T00:32:00.332Z",
   "retentionDays": 365,
-  "from": "2025-09-28",
-  "to": "2026-09-27",
+  "from": "2025-09-29",
+  "to": "2026-09-28",
   "semantics": "Counts describe Radar discovery and publication activity under the collector coverage shown beside them. They are not a measure of Lithuanian phishing prevalence or total incident volume.",
   "facetSemantics": "Brand, source, evidence and reason facets count unique signals within each UTC day.",
   "seriesSemantics": "The series is sparse. Missing UTC dates inside the stated range mean zero recorded attempts and zero discovery events; consumers can derive scheduled slots from collectorSchedule.",
-  "omittedZeroDays": 329,
+  "omittedZeroDays": 328,
   "collectorSchedule": {
     "expectedIntervalSeconds": 900,
     "expectedListeningSeconds": 480,
@@ -241,41 +241,18 @@
         }
       },
       "discovery": {
-        "events": 61,
-        "uniqueSignals": 31,
-        "observations": 31,
+        "events": 0,
+        "uniqueSignals": 0,
+        "observations": 0,
         "reobservations": 0,
-        "firstPublications": 30,
+        "firstPublications": 0,
         "statusChanges": 0,
-        "facetSampleSize": 31,
+        "facetSampleSize": 0,
         "evidenceClassifiedSignals": 0,
-        "byBrand": {
-          "DHL": 16,
-          "DPD": 3,
-          "Telia": 3,
-          "Revolut": 2,
-          "SEB": 2,
-          "BTA": 1,
-          "Bitė": 1,
-          "ESO": 1,
-          "MAXIMA": 1,
-          "Swedbank": 1
-        },
-        "bySource": {
-          "CertStream": 31
-        },
+        "byBrand": {},
+        "bySource": {},
         "byEvidenceTier": {},
-        "byReason": {
-          "first-publication": 30,
-          "brand-exact-token": 29,
-          "suspicious-context": 29,
-          "different-tld": 26,
-          "multiple-hyphens": 21,
-          "punycode": 2,
-          "unicode-confusable": 2,
-          "brand-joined-affix": 1,
-          "brand-split-token": 1
-        }
+        "byReason": {}
       }
     },
     {
@@ -2029,26 +2006,26 @@
     },
     {
       "date": "2026-09-27",
-      "partialDay": true,
+      "partialDay": false,
       "collectorCoverage": {
-        "windowSeconds": 84730,
-        "scheduledSlots": 94,
-        "recordedAttempts": 94,
-        "healthyAttempts": 94,
-        "recordedSchedulePercent": 100.0,
-        "listeningCoveragePercent": 53.25,
-        "scheduledListeningCeilingPercent": 53.25,
-        "listeningSeconds": 45117.88,
+        "windowSeconds": 86400,
+        "scheduledSlots": 96,
+        "recordedAttempts": 95,
+        "healthyAttempts": 95,
+        "recordedSchedulePercent": 99.0,
+        "listeningCoveragePercent": 53.23,
+        "scheduledListeningCeilingPercent": 53.33,
+        "listeningSeconds": 45990.766,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 45117.88,
-          "upperSeconds": 45117.881,
+          "lowerSeconds": 45990.766,
+          "upperSeconds": 46000.778,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 45117.88
+          "reportedWorkerSeconds": 45597.879
         },
         "outcomes": {
-          "healthy-empty": 76,
+          "healthy-empty": 77,
           "healthy-matches": 18
         }
       },
@@ -2091,6 +2068,45 @@
           "punycode": 3,
           "unicode-confusable": 3
         }
+      }
+    },
+    {
+      "date": "2026-09-28",
+      "partialDay": true,
+      "collectorCoverage": {
+        "windowSeconds": 1920,
+        "scheduledSlots": 2,
+        "recordedAttempts": 3,
+        "healthyAttempts": 3,
+        "recordedSchedulePercent": 100.0,
+        "listeningCoveragePercent": 54.02,
+        "scheduledListeningCeilingPercent": 50.0,
+        "listeningSeconds": 1037.097,
+        "coverageBounds": {
+          "methodVersion": 2,
+          "lowerSeconds": 1037.097,
+          "upperSeconds": 1047.108,
+          "precision": "bounded",
+          "unknownAttempts": 0,
+          "reportedWorkerSeconds": 1439.995
+        },
+        "outcomes": {
+          "healthy-empty": 3
+        }
+      },
+      "discovery": {
+        "events": 0,
+        "uniqueSignals": 0,
+        "observations": 0,
+        "reobservations": 0,
+        "firstPublications": 0,
+        "statusChanges": 0,
+        "facetSampleSize": 0,
+        "evidenceClassifiedSignals": 0,
+        "byBrand": {},
+        "bySource": {},
+        "byEvidenceTier": {},
+        "byReason": {}
       }
     }
   ],
