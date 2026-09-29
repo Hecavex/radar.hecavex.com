@@ -3,7 +3,7 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-09-29T04:50:44.343Z",
+  "generatedAt": "2026-09-29T05:20:54.615Z",
   "retentionDays": 365,
   "from": "2025-09-30",
   "to": "2026-09-29",
@@ -627,7 +627,7 @@
         "firstPublications": 17,
         "statusChanges": 0,
         "facetSampleSize": 20,
-        "evidenceClassifiedSignals": 0,
+        "evidenceClassifiedSignals": 1,
         "byBrand": {
           "DHL": 9,
           "Revolut": 3,
@@ -641,7 +641,9 @@
         "bySource": {
           "CertStream": 20
         },
-        "byEvidenceTier": {},
+        "byEvidenceTier": {
+          "name-only": 1
+        },
         "byReason": {
           "suspicious-context": 19,
           "first-publication": 17,
@@ -2114,52 +2116,53 @@
       "date": "2026-09-29",
       "partialDay": true,
       "collectorCoverage": {
-        "windowSeconds": 17444,
-        "scheduledSlots": 19,
-        "recordedAttempts": 20,
-        "healthyAttempts": 20,
+        "windowSeconds": 19254,
+        "scheduledSlots": 21,
+        "recordedAttempts": 22,
+        "healthyAttempts": 22,
         "recordedSchedulePercent": 100.0,
-        "listeningCoveragePercent": 53.74,
-        "scheduledListeningCeilingPercent": 52.28,
-        "listeningSeconds": 9373.59,
+        "listeningCoveragePercent": 53.67,
+        "scheduledListeningCeilingPercent": 52.35,
+        "listeningSeconds": 10333.588,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 9373.59,
-          "upperSeconds": 9383.604,
+          "lowerSeconds": 10333.588,
+          "upperSeconds": 10343.602,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 9597.969
+          "reportedWorkerSeconds": 10557.967
         },
         "outcomes": {
-          "healthy-empty": 17,
-          "healthy-matches": 3
+          "healthy-empty": 18,
+          "healthy-matches": 4
         }
       },
       "discovery": {
-        "events": 7,
-        "uniqueSignals": 4,
-        "observations": 4,
-        "reobservations": 1,
+        "events": 8,
+        "uniqueSignals": 5,
+        "observations": 5,
+        "reobservations": 2,
         "firstPublications": 3,
         "statusChanges": 0,
-        "facetSampleSize": 4,
-        "evidenceClassifiedSignals": 4,
+        "facetSampleSize": 5,
+        "evidenceClassifiedSignals": 5,
         "byBrand": {
           "Vinted": 3,
+          "Artea": 1,
           "MAXIMA": 1
         },
         "bySource": {
-          "CertStream": 4
+          "CertStream": 5
         },
         "byEvidenceTier": {
-          "name-only": 4
+          "name-only": 5
         },
         "byReason": {
+          "different-tld": 4,
+          "suspicious-context": 4,
           "brand-exact-token": 3,
-          "different-tld": 3,
           "first-publication": 3,
-          "suspicious-context": 3,
-          "brand-joined-affix": 1,
+          "brand-joined-affix": 2,
           "punycode": 1,
           "unicode-confusable": 1
         }
