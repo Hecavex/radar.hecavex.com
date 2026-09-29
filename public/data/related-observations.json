@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-related-observations",
-  "generatedAt": "2026-09-29T06:50:46.233Z",
+  "generatedAt": "2026-09-29T07:36:26.902Z",
   "semantics": "Shared evidence is a bounded association between public observations. It is not campaign, operator, malware, infrastructure ownership, or threat-actor attribution.",
   "nodes": [
     {
@@ -28,6 +28,11 @@
       "signalId": "3047aa7a4fc1f0afc4b6",
       "domain": "www[.]artealogin[.]click",
       "clusterId": "db8add245718e3fb"
+    },
+    {
+      "signalId": "532f03998a3de10439f7",
+      "domain": "lidl-online[.]info",
+      "clusterId": "55a01755cecbbfe1"
     },
     {
       "signalId": "5abf34c432de3b17345c",
@@ -65,6 +70,11 @@
       "clusterId": "5ff9aa3ef19e61c7"
     },
     {
+      "signalId": "ccfdb2893aa9150e2f2f",
+      "domain": "lidl-card[.]it",
+      "clusterId": "55a01755cecbbfe1"
+    },
+    {
       "signalId": "d12f55bd08af6d986626",
       "domain": "lidl-service[.]schwarz",
       "clusterId": "103af30af588567e"
@@ -90,6 +100,42 @@
         {
           "type": "certificate-sha256",
           "value": "d0b3380a2be107f8d8632aff89bd641379fc49c0cb67985826ded6cc60e0b4cc"
+        }
+      ]
+    },
+    {
+      "id": "773e5af250768c80862d",
+      "source": "532f03998a3de10439f7",
+      "target": "ccfdb2893aa9150e2f2f",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "5[.]22[.]145[.]121"
+        },
+        {
+          "type": "dns-a",
+          "value": "5[.]22[.]145[.]16"
+        },
+        {
+          "type": "dns-aaaa",
+          "value": "2a00[:]18e0[:]5[:]2[:]7577[:]4e4d[:]413b[:]f507"
+        },
+        {
+          "type": "dns-aaaa",
+          "value": "2a00[:]18e0[:]5[:]3[:]dfe2[:]c743[:]85aa[:]61bc"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns[.]do-ex[.]com"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns[.]do-ex[.]net"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns[.]do-ex[.]org"
         }
       ]
     },
@@ -380,7 +426,7 @@
   ],
   "suppressedEvidence": {
     "highFanoutValues": 0,
-    "temporalPairs": 1,
+    "temporalPairs": 2,
     "edgeLimit": 0
   }
 }
