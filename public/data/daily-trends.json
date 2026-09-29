@@ -3,7 +3,7 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-09-29T05:20:54.615Z",
+  "generatedAt": "2026-09-29T05:50:45.959Z",
   "retentionDays": 365,
   "from": "2025-09-30",
   "to": "2026-09-29",
@@ -2116,53 +2116,55 @@
       "date": "2026-09-29",
       "partialDay": true,
       "collectorCoverage": {
-        "windowSeconds": 19254,
-        "scheduledSlots": 21,
-        "recordedAttempts": 22,
-        "healthyAttempts": 22,
+        "windowSeconds": 21045,
+        "scheduledSlots": 23,
+        "recordedAttempts": 24,
+        "healthyAttempts": 24,
         "recordedSchedulePercent": 100.0,
-        "listeningCoveragePercent": 53.67,
-        "scheduledListeningCeilingPercent": 52.35,
-        "listeningSeconds": 10333.588,
+        "listeningCoveragePercent": 53.66,
+        "scheduledListeningCeilingPercent": 52.46,
+        "listeningSeconds": 11293.585,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 10333.588,
-          "upperSeconds": 10343.602,
+          "lowerSeconds": 11293.585,
+          "upperSeconds": 11303.599,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 10557.967
+          "reportedWorkerSeconds": 11517.964
         },
         "outcomes": {
-          "healthy-empty": 18,
-          "healthy-matches": 4
+          "healthy-empty": 19,
+          "healthy-matches": 5
         }
       },
       "discovery": {
-        "events": 8,
-        "uniqueSignals": 5,
-        "observations": 5,
+        "events": 10,
+        "uniqueSignals": 6,
+        "observations": 6,
         "reobservations": 2,
-        "firstPublications": 3,
+        "firstPublications": 4,
         "statusChanges": 0,
-        "facetSampleSize": 5,
-        "evidenceClassifiedSignals": 5,
+        "facetSampleSize": 6,
+        "evidenceClassifiedSignals": 6,
         "byBrand": {
           "Vinted": 3,
           "Artea": 1,
+          "Bitė": 1,
           "MAXIMA": 1
         },
         "bySource": {
-          "CertStream": 5
+          "CertStream": 6
         },
         "byEvidenceTier": {
-          "name-only": 5
+          "name-only": 6
         },
         "byReason": {
-          "different-tld": 4,
-          "suspicious-context": 4,
-          "brand-exact-token": 3,
-          "first-publication": 3,
+          "different-tld": 5,
+          "suspicious-context": 5,
+          "brand-exact-token": 4,
+          "first-publication": 4,
           "brand-joined-affix": 2,
+          "multiple-hyphens": 1,
           "punycode": 1,
           "unicode-confusable": 1
         }
