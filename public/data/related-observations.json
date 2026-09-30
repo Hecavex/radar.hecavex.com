@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-related-observations",
-  "generatedAt": "2026-09-30T06:38:30.685Z",
+  "generatedAt": "2026-09-30T06:45:40.840Z",
   "semantics": "Shared evidence is a bounded association between public observations. It is not campaign, operator, malware, infrastructure ownership, or threat-actor attribution.",
   "nodes": [
     {
@@ -25,6 +25,11 @@
       "clusterId": "db8add245718e3fb"
     },
     {
+      "signalId": "4316ef51d40ac7290184",
+      "domain": "xn--tlia-bpa[.]org",
+      "clusterId": "499b88176c17b3d7"
+    },
+    {
       "signalId": "532f03998a3de10439f7",
       "domain": "lidl-online[.]info",
       "clusterId": "55a01755cecbbfe1"
@@ -32,12 +37,12 @@
     {
       "signalId": "8dee2a0a38eabdb50c0b",
       "domain": "www[.]xn--tlia-bpa[.]org",
-      "clusterId": "87fbd4617829461e"
+      "clusterId": "499b88176c17b3d7"
     },
     {
       "signalId": "9ddae71022c144a4a876",
       "domain": "xn--tlia-bpa[.]net",
-      "clusterId": "87fbd4617829461e"
+      "clusterId": "499b88176c17b3d7"
     },
     {
       "signalId": "b608c214223d59c8be17",
@@ -52,7 +57,7 @@
     {
       "signalId": "f53806de41d18206079d",
       "domain": "www[.]xn--tlia-bpa[.]net",
-      "clusterId": "87fbd4617829461e"
+      "clusterId": "499b88176c17b3d7"
     }
   ],
   "edges": [
@@ -165,6 +170,46 @@
         {
           "type": "dns-ns",
           "value": "ina3[.]registrar[.]eu"
+        }
+      ]
+    },
+    {
+      "id": "e05100675264acb36f33",
+      "source": "4316ef51d40ac7290184",
+      "target": "9ddae71022c144a4a876",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "2[.]57[.]91[.]91"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns1[.]dns-parking[.]com"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns2[.]dns-parking[.]com"
+        }
+      ]
+    },
+    {
+      "id": "71da474b90f8530cb24e",
+      "source": "4316ef51d40ac7290184",
+      "target": "f53806de41d18206079d",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "2[.]57[.]91[.]91"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns1[.]dns-parking[.]com"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns2[.]dns-parking[.]com"
         }
       ]
     },
