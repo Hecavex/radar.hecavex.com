@@ -3,7 +3,7 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-10-01T17:40:47.030Z",
+  "generatedAt": "2026-10-01T17:56:03.013Z",
   "retentionDays": 365,
   "from": "2025-10-02",
   "to": "2026-10-01",
@@ -1480,7 +1480,7 @@
         "firstPublications": 12,
         "statusChanges": 0,
         "facetSampleSize": 13,
-        "evidenceClassifiedSignals": 0,
+        "evidenceClassifiedSignals": 1,
         "byBrand": {
           "SEB": 3,
           "Bitė": 2,
@@ -1494,7 +1494,9 @@
         "bySource": {
           "CertStream": 13
         },
-        "byEvidenceTier": {},
+        "byEvidenceTier": {
+          "name-only": 1
+        },
         "byReason": {
           "suspicious-context": 13,
           "different-tld": 12,
@@ -2195,56 +2197,57 @@
       "date": "2026-10-01",
       "partialDay": true,
       "collectorCoverage": {
-        "windowSeconds": 63647,
-        "scheduledSlots": 70,
-        "recordedAttempts": 70,
-        "healthyAttempts": 70,
+        "windowSeconds": 64563,
+        "scheduledSlots": 71,
+        "recordedAttempts": 71,
+        "healthyAttempts": 71,
         "recordedSchedulePercent": 100.0,
         "listeningCoveragePercent": 52.78,
         "scheduledListeningCeilingPercent": 52.79,
-        "listeningSeconds": 33594.897,
+        "listeningSeconds": 34074.895,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 33594.897,
-          "upperSeconds": 33594.898,
+          "lowerSeconds": 34074.895,
+          "upperSeconds": 34074.896,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 33594.898
+          "reportedWorkerSeconds": 34074.896
         },
         "outcomes": {
           "healthy-empty": 59,
-          "healthy-matches": 11
+          "healthy-matches": 12
         }
       },
       "discovery": {
-        "events": 28,
-        "uniqueSignals": 15,
-        "observations": 15,
-        "reobservations": 2,
+        "events": 29,
+        "uniqueSignals": 16,
+        "observations": 16,
+        "reobservations": 3,
         "firstPublications": 13,
         "statusChanges": 0,
-        "facetSampleSize": 15,
-        "evidenceClassifiedSignals": 15,
+        "facetSampleSize": 16,
+        "evidenceClassifiedSignals": 16,
         "byBrand": {
           "DHL": 6,
           "Tele2": 3,
           "Artea": 2,
           "Lidl Lietuva": 2,
-          "SEB": 2
+          "SEB": 2,
+          "MAXIMA": 1
         },
         "bySource": {
-          "CertStream": 15
+          "CertStream": 16
         },
         "byEvidenceTier": {
-          "name-only": 15
+          "name-only": 16
         },
         "byReason": {
-          "suspicious-context": 15,
+          "suspicious-context": 16,
           "first-publication": 13,
           "brand-exact-token": 10,
+          "different-tld": 7,
           "multiple-hyphens": 7,
-          "different-tld": 6,
-          "brand-joined-affix": 5,
+          "brand-joined-affix": 6,
           "punycode": 3,
           "unicode-confusable": 3
         }
