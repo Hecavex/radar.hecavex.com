@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-related-observations",
-  "generatedAt": "2026-10-01T10:40:25.137Z",
+  "generatedAt": "2026-10-01T10:55:34.026Z",
   "semantics": "Shared evidence is a bounded association between public observations. It is not campaign, operator, malware, infrastructure ownership, or threat-actor attribution.",
   "nodes": [
     {
@@ -30,6 +30,11 @@
       "clusterId": "499b88176c17b3d7"
     },
     {
+      "signalId": "580d297e430b21694b4d",
+      "domain": "mybylka-seb-replication-account[.]us-east-1[.]aws[.]privatelink[.]snowflake[.]app",
+      "clusterId": "031b1060a95efa21"
+    },
+    {
       "signalId": "8dee2a0a38eabdb50c0b",
       "domain": "www[.]xn--tlia-bpa[.]org",
       "clusterId": "499b88176c17b3d7"
@@ -45,12 +50,29 @@
       "clusterId": "35aa48992a6687ee"
     },
     {
+      "signalId": "c39dd094625ac399665a",
+      "domain": "mybylka-seb-replication-account[.]us-east-1[.]aws[.]snowflake[.]app",
+      "clusterId": "031b1060a95efa21"
+    },
+    {
       "signalId": "f53806de41d18206079d",
       "domain": "www[.]xn--tlia-bpa[.]net",
       "clusterId": "499b88176c17b3d7"
     }
   ],
   "edges": [
+    {
+      "id": "ed502bd0bb9eba20640e",
+      "source": "580d297e430b21694b4d",
+      "target": "c39dd094625ac399665a",
+      "strength": "strong",
+      "evidence": [
+        {
+          "type": "certificate-sha256",
+          "value": "a5489f46ef469c5e633c5dbd5b33bce834f1dfbcc0dc523f1701d722fdc6ebf5"
+        }
+      ]
+    },
     {
       "id": "7d8647e6cbf2100e7f16",
       "source": "2fc6ef859099aa45d1dc",
