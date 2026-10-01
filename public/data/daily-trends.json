@@ -3,14 +3,14 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-09-30T23:52:59.042Z",
+  "generatedAt": "2026-10-01T00:40:26.566Z",
   "retentionDays": 365,
-  "from": "2025-10-01",
-  "to": "2026-09-30",
+  "from": "2025-10-02",
+  "to": "2026-10-01",
   "semantics": "Counts describe Radar discovery and publication activity under the collector coverage shown beside them. They are not a measure of Lithuanian phishing prevalence or total incident volume.",
   "facetSemantics": "Brand, source, evidence and reason facets count unique signals within each UTC day.",
   "seriesSemantics": "The series is sparse. Missing UTC dates inside the stated range mean zero recorded attempts and zero discovery events; consumers can derive scheduled slots from collectorSchedule.",
-  "omittedZeroDays": 326,
+  "omittedZeroDays": 325,
   "collectorSchedule": {
     "expectedIntervalSeconds": 900,
     "expectedListeningSeconds": 480,
@@ -361,41 +361,18 @@
         }
       },
       "discovery": {
-        "events": 48,
-        "uniqueSignals": 24,
-        "observations": 24,
+        "events": 0,
+        "uniqueSignals": 0,
+        "observations": 0,
         "reobservations": 0,
-        "firstPublications": 24,
+        "firstPublications": 0,
         "statusChanges": 0,
-        "facetSampleSize": 24,
+        "facetSampleSize": 0,
         "evidenceClassifiedSignals": 0,
-        "byBrand": {
-          "DHL": 9,
-          "Revolut": 4,
-          "Artea": 2,
-          "VMI": 2,
-          "Vinted": 2,
-          "Citadele": 1,
-          "MAXIMA": 1,
-          "Swedbank": 1,
-          "Tele2": 1,
-          "Telia": 1
-        },
-        "bySource": {
-          "CertStream": 24
-        },
+        "byBrand": {},
+        "bySource": {},
         "byEvidenceTier": {},
-        "byReason": {
-          "first-publication": 24,
-          "different-tld": 22,
-          "suspicious-context": 22,
-          "brand-exact-token": 18,
-          "multiple-hyphens": 10,
-          "brand-joined-affix": 5,
-          "punycode": 3,
-          "unicode-confusable": 3,
-          "brand-split-token": 1
-        }
+        "byReason": {}
       }
     },
     {
@@ -486,7 +463,7 @@
         "events": 36,
         "uniqueSignals": 19,
         "observations": 21,
-        "reobservations": 6,
+        "reobservations": 5,
         "firstPublications": 15,
         "statusChanges": 0,
         "facetSampleSize": 19,
@@ -2153,26 +2130,26 @@
     },
     {
       "date": "2026-09-30",
-      "partialDay": true,
+      "partialDay": false,
       "collectorCoverage": {
-        "windowSeconds": 85979,
-        "scheduledSlots": 95,
-        "recordedAttempts": 94,
-        "healthyAttempts": 94,
-        "recordedSchedulePercent": 98.9,
-        "listeningCoveragePercent": 52.44,
-        "scheduledListeningCeilingPercent": 53.04,
-        "listeningSeconds": 45084.772,
+        "windowSeconds": 86400,
+        "scheduledSlots": 96,
+        "recordedAttempts": 95,
+        "healthyAttempts": 95,
+        "recordedSchedulePercent": 99.0,
+        "listeningCoveragePercent": 52.74,
+        "scheduledListeningCeilingPercent": 53.33,
+        "listeningSeconds": 45564.77,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 45084.772,
-          "upperSeconds": 45084.777,
+          "lowerSeconds": 45564.77,
+          "upperSeconds": 45564.775,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 45109.846
+          "reportedWorkerSeconds": 45589.844
         },
         "outcomes": {
-          "healthy-empty": 79,
+          "healthy-empty": 80,
           "healthy-matches": 15
         }
       },
@@ -2211,6 +2188,57 @@
           "multiple-hyphens": 4,
           "punycode": 1,
           "unicode-confusable": 1
+        }
+      }
+    },
+    {
+      "date": "2026-10-01",
+      "partialDay": true,
+      "collectorCoverage": {
+        "windowSeconds": 2426,
+        "scheduledSlots": 2,
+        "recordedAttempts": 3,
+        "healthyAttempts": 3,
+        "recordedSchedulePercent": 100.0,
+        "listeningCoveragePercent": 59.36,
+        "scheduledListeningCeilingPercent": 39.57,
+        "listeningSeconds": 1439.997,
+        "coverageBounds": {
+          "methodVersion": 2,
+          "lowerSeconds": 1439.997,
+          "upperSeconds": 1439.997,
+          "precision": "exact",
+          "unknownAttempts": 0,
+          "reportedWorkerSeconds": 1439.997
+        },
+        "outcomes": {
+          "healthy-empty": 2,
+          "healthy-matches": 1
+        }
+      },
+      "discovery": {
+        "events": 2,
+        "uniqueSignals": 1,
+        "observations": 1,
+        "reobservations": 0,
+        "firstPublications": 1,
+        "statusChanges": 0,
+        "facetSampleSize": 1,
+        "evidenceClassifiedSignals": 1,
+        "byBrand": {
+          "Lidl Lietuva": 1
+        },
+        "bySource": {
+          "CertStream": 1
+        },
+        "byEvidenceTier": {
+          "name-only": 1
+        },
+        "byReason": {
+          "brand-exact-token": 1,
+          "different-tld": 1,
+          "first-publication": 1,
+          "suspicious-context": 1
         }
       }
     }
