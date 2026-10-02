@@ -1,18 +1,23 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-related-observations",
-  "generatedAt": "2026-10-02T06:57:53.288Z",
+  "generatedAt": "2026-10-02T07:58:01.211Z",
   "semantics": "Shared evidence is a bounded association between public observations. It is not campaign, operator, malware, infrastructure ownership, or threat-actor attribution.",
   "nodes": [
     {
       "signalId": "0166e5716e8c808993b5",
       "domain": "0shakgzq3b8bm[.]dhl-support-del[.]com",
-      "clusterId": "2a03c3eca2d76371"
+      "clusterId": "3dd9e7aaf6c70ccb"
     },
     {
       "signalId": "16966353ca6b81f70ba4",
       "domain": "post[.]service-reprogrammation-dhl[.]com",
-      "clusterId": "2a03c3eca2d76371"
+      "clusterId": "3dd9e7aaf6c70ccb"
+    },
+    {
+      "signalId": "21415e42a1a156503934",
+      "domain": "leigfxqo[.]xn--tl2mobile-b4ab[.]com",
+      "clusterId": "77d065a112c87a6b"
     },
     {
       "signalId": "2fc6ef859099aa45d1dc",
@@ -25,6 +30,16 @@
       "clusterId": "f4954eb30d2183f4"
     },
     {
+      "signalId": "3c650d085a1456d139a8",
+      "domain": "vqhwfytrwsuoc[.]xn--tl2mobile-b4ab[.]com",
+      "clusterId": "77d065a112c87a6b"
+    },
+    {
+      "signalId": "3e51d4c252a41023a46c",
+      "domain": "delivery-dhl-uae[.]com",
+      "clusterId": "3dd9e7aaf6c70ccb"
+    },
+    {
       "signalId": "4316ef51d40ac7290184",
       "domain": "xn--tlia-bpa[.]org",
       "clusterId": "499b88176c17b3d7"
@@ -33,6 +48,11 @@
       "signalId": "580d297e430b21694b4d",
       "domain": "mybylka-seb-replication-account[.]us-east-1[.]aws[.]privatelink[.]snowflake[.]app",
       "clusterId": "031b1060a95efa21"
+    },
+    {
+      "signalId": "87f66230fa2befecbb06",
+      "domain": "vpn[.]xn--tl2mobile-b4ab[.]fr",
+      "clusterId": "77d065a112c87a6b"
     },
     {
       "signalId": "8dee2a0a38eabdb50c0b",
@@ -47,7 +67,7 @@
     {
       "signalId": "b608c214223d59c8be17",
       "domain": "jqjzayerwr21[.]dhl-support-del[.]com",
-      "clusterId": "2a03c3eca2d76371"
+      "clusterId": "3dd9e7aaf6c70ccb"
     },
     {
       "signalId": "c39dd094625ac399665a",
@@ -187,8 +207,80 @@
       ]
     },
     {
+      "id": "a005893e59e0a99cb734",
+      "source": "0166e5716e8c808993b5",
+      "target": "3e51d4c252a41023a46c",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "185[.]53[.]179[.]136"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ina1[.]registrar[.]eu"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ina2[.]registrar[.]eu"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ina3[.]registrar[.]eu"
+        }
+      ]
+    },
+    {
+      "id": "61eb8fda7f527d8aa701",
+      "source": "16966353ca6b81f70ba4",
+      "target": "3e51d4c252a41023a46c",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "185[.]53[.]179[.]136"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ina1[.]registrar[.]eu"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ina2[.]registrar[.]eu"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ina3[.]registrar[.]eu"
+        }
+      ]
+    },
+    {
       "id": "7f123ca16c34e64434f8",
       "source": "16966353ca6b81f70ba4",
+      "target": "b608c214223d59c8be17",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "185[.]53[.]179[.]136"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ina1[.]registrar[.]eu"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ina2[.]registrar[.]eu"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ina3[.]registrar[.]eu"
+        }
+      ]
+    },
+    {
+      "id": "db2072a87a26e52e625a",
+      "source": "3e51d4c252a41023a46c",
       "target": "b608c214223d59c8be17",
       "strength": "shared-context",
       "evidence": [
@@ -289,11 +381,43 @@
           "value": "ns2[.]dns-parking[.]com"
         }
       ]
+    },
+    {
+      "id": "5760819e2d6fa88bf5a3",
+      "source": "21415e42a1a156503934",
+      "target": "87f66230fa2befecbb06",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "185[.]53[.]179[.]200"
+        },
+        {
+          "type": "dns-cname",
+          "value": "845192[.]parkingcrew[.]net"
+        }
+      ]
+    },
+    {
+      "id": "a819578da5c47617c9be",
+      "source": "3c650d085a1456d139a8",
+      "target": "87f66230fa2befecbb06",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "185[.]53[.]179[.]200"
+        },
+        {
+          "type": "dns-cname",
+          "value": "845192[.]parkingcrew[.]net"
+        }
+      ]
     }
   ],
   "suppressedEvidence": {
     "highFanoutValues": 0,
-    "temporalPairs": 2,
+    "temporalPairs": 3,
     "edgeLimit": 0
   }
 }
