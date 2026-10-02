@@ -3,7 +3,7 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-10-02T05:42:00.429Z",
+  "generatedAt": "2026-10-02T05:57:17.660Z",
   "retentionDays": 365,
   "from": "2025-10-03",
   "to": "2026-10-02",
@@ -2236,57 +2236,59 @@
       "date": "2026-10-02",
       "partialDay": true,
       "collectorCoverage": {
-        "windowSeconds": 20520,
-        "scheduledSlots": 22,
-        "recordedAttempts": 23,
-        "healthyAttempts": 23,
+        "windowSeconds": 21437,
+        "scheduledSlots": 23,
+        "recordedAttempts": 24,
+        "healthyAttempts": 24,
         "recordedSchedulePercent": 100.0,
-        "listeningCoveragePercent": 53.78,
-        "scheduledListeningCeilingPercent": 51.46,
-        "listeningSeconds": 11034.954,
+        "listeningCoveragePercent": 53.72,
+        "scheduledListeningCeilingPercent": 51.5,
+        "listeningSeconds": 11514.953,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 11034.954,
-          "upperSeconds": 11034.955,
+          "lowerSeconds": 11514.953,
+          "upperSeconds": 11514.954,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 11034.955
+          "reportedWorkerSeconds": 11514.954
         },
         "outcomes": {
           "healthy-empty": 17,
-          "healthy-matches": 6
+          "healthy-matches": 7
         }
       },
       "discovery": {
-        "events": 15,
-        "uniqueSignals": 8,
-        "observations": 8,
+        "events": 17,
+        "uniqueSignals": 9,
+        "observations": 9,
         "reobservations": 1,
-        "firstPublications": 7,
+        "firstPublications": 8,
         "statusChanges": 0,
-        "facetSampleSize": 8,
-        "evidenceClassifiedSignals": 8,
+        "facetSampleSize": 9,
+        "evidenceClassifiedSignals": 9,
         "byBrand": {
           "MAXIMA": 2,
           "Revolut": 2,
           "DHL": 1,
           "ESO": 1,
+          "IKI": 1,
           "Smart-ID": 1,
           "Vinted": 1
         },
         "bySource": {
-          "CertStream": 8
+          "CertStream": 9
         },
         "byEvidenceTier": {
-          "name-only": 8
+          "name-only": 9
         },
         "byReason": {
-          "suspicious-context": 8,
-          "first-publication": 7,
+          "suspicious-context": 9,
+          "first-publication": 8,
+          "different-tld": 5,
+          "brand-exact-token": 4,
           "brand-joined-affix": 4,
-          "different-tld": 4,
-          "brand-exact-token": 3,
-          "brand-split-token": 1
+          "brand-split-token": 1,
+          "multiple-hyphens": 1
         }
       }
     }
