@@ -3,7 +3,7 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-10-02T11:27:52.234Z",
+  "generatedAt": "2026-10-02T11:43:03.760Z",
   "retentionDays": 365,
   "from": "2025-10-03",
   "to": "2026-10-02",
@@ -2236,36 +2236,36 @@
       "date": "2026-10-02",
       "partialDay": true,
       "collectorCoverage": {
-        "windowSeconds": 41272,
-        "scheduledSlots": 45,
-        "recordedAttempts": 46,
-        "healthyAttempts": 46,
+        "windowSeconds": 42183,
+        "scheduledSlots": 46,
+        "recordedAttempts": 47,
+        "healthyAttempts": 47,
         "recordedSchedulePercent": 100.0,
-        "listeningCoveragePercent": 53.48,
+        "listeningCoveragePercent": 53.46,
         "scheduledListeningCeilingPercent": 52.34,
-        "listeningSeconds": 22072.92,
+        "listeningSeconds": 22552.919,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 22072.92,
-          "upperSeconds": 22072.921,
+          "lowerSeconds": 22552.919,
+          "upperSeconds": 22552.92,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 22072.921
+          "reportedWorkerSeconds": 22552.92
         },
         "outcomes": {
           "healthy-empty": 34,
-          "healthy-matches": 12
+          "healthy-matches": 13
         }
       },
       "discovery": {
-        "events": 21,
-        "uniqueSignals": 12,
-        "observations": 12,
+        "events": 23,
+        "uniqueSignals": 13,
+        "observations": 13,
         "reobservations": 3,
-        "firstPublications": 9,
+        "firstPublications": 10,
         "statusChanges": 0,
-        "facetSampleSize": 12,
-        "evidenceClassifiedSignals": 12,
+        "facetSampleSize": 13,
+        "evidenceClassifiedSignals": 13,
         "byBrand": {
           "Vinted": 3,
           "MAXIMA": 2,
@@ -2274,22 +2274,25 @@
           "DHL": 1,
           "ESO": 1,
           "IKI": 1,
-          "Smart-ID": 1
+          "Smart-ID": 1,
+          "Tele2": 1
         },
         "bySource": {
-          "CertStream": 12
+          "CertStream": 13
         },
         "byEvidenceTier": {
-          "name-only": 12
+          "name-only": 13
         },
         "byReason": {
-          "suspicious-context": 12,
-          "first-publication": 9,
+          "suspicious-context": 13,
+          "first-publication": 10,
           "different-tld": 7,
           "brand-exact-token": 6,
-          "brand-joined-affix": 5,
+          "brand-joined-affix": 6,
           "multiple-hyphens": 2,
-          "brand-split-token": 1
+          "brand-split-token": 1,
+          "punycode": 1,
+          "unicode-confusable": 1
         }
       }
     }
