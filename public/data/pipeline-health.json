@@ -1,36 +1,36 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-pipeline-health",
-  "generatedAt": "2026-10-02T10:43:05.897Z",
+  "generatedAt": "2026-10-02T11:27:52.234Z",
   "privacy": "Aggregate counters only; no candidate names or detector payloads.",
   "current": {
-    "publishedSignals": 119,
+    "publishedSignals": 120,
     "sourceStates": {
       "CertStream": "healthy",
       "URLScan": "healthy",
       "HECAVEX": "healthy"
     },
     "sourceRecords": {
-      "CertStream": 118,
+      "CertStream": 119,
       "URLScan": 0,
       "HECAVEX": 1
     },
     "certstream": {
-      "generatedAt": "2026-10-02T10:42:28.720Z",
-      "lastSuccessAt": "2026-10-02T10:42:28.720Z",
+      "generatedAt": "2026-10-02T11:27:16.392Z",
+      "lastSuccessAt": "2026-10-02T11:27:16.392Z",
       "freshness": {
         "status": "current",
-        "referenceAt": "2026-10-02T10:42:28.720Z",
+        "referenceAt": "2026-10-02T11:27:16.392Z",
         "ageSeconds": 0
       },
       "latestAttempt": {
-        "startedAt": "2026-10-02T10:34:04.993Z",
-        "endedAt": "2026-10-02T10:42:28.720Z",
+        "startedAt": "2026-10-02T11:19:04.993Z",
+        "endedAt": "2026-10-02T11:27:16.392Z",
         "outcome": "healthy-matches",
         "listeningSeconds": 479.999,
-        "messages": 172691,
-        "dnsNames": 297320,
-        "matches": 2,
+        "messages": 189067,
+        "dnsNames": 337225,
+        "matches": 4,
         "newRecords": 1
       }
     },
@@ -91,8 +91,8 @@
   "windows": [
     {
       "hours": 24,
-      "from": "2026-10-01T10:43:05.897Z",
-      "to": "2026-10-02T10:43:05.897Z",
+      "from": "2026-10-01T11:27:52.234Z",
+      "to": "2026-10-02T11:27:52.234Z",
       "collection": {
         "scheduledSlots": 96,
         "recordedAttempts": 95,
@@ -101,28 +101,28 @@
         "listeningCoveragePercent": 52.77,
         "scheduledListeningCeilingPercent": 53.33,
         "expectedListeningSeconds": 45600,
-        "listeningSeconds": 45590.848,
+        "listeningSeconds": 45589.846,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 45590.848,
-          "upperSeconds": 45590.849,
+          "lowerSeconds": 45589.846,
+          "upperSeconds": 45589.847,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 45590.848
+          "reportedWorkerSeconds": 45589.846
         },
-        "messages": 15894306,
-        "dnsNames": 28033029,
+        "messages": 15922156,
+        "dnsNames": 28112851,
         "outcomes": {
-          "healthy-empty": 72,
-          "healthy-matches": 23
+          "healthy-empty": 73,
+          "healthy-matches": 22
         }
       },
       "screening": {
-        "matches": 50,
-        "newArchiveRecords": 23,
-        "firstPublications": 16,
+        "matches": 48,
+        "newArchiveRecords": 21,
+        "firstPublications": 13,
         "bySource": {
-          "CertStream": 39
+          "CertStream": 34
         }
       },
       "enrichment": {
@@ -136,16 +136,16 @@
         "rdap": 0
       },
       "publication": {
-        "events": 39,
-        "observations": 23,
-        "statusTransitions": 16,
-        "uniqueSignals": 23
+        "events": 34,
+        "observations": 21,
+        "statusTransitions": 13,
+        "uniqueSignals": 21
       }
     },
     {
       "hours": 168,
-      "from": "2026-09-25T10:43:05.897Z",
-      "to": "2026-10-02T10:43:05.897Z",
+      "from": "2026-09-25T11:27:52.234Z",
+      "to": "2026-10-02T11:27:52.234Z",
       "collection": {
         "scheduledSlots": 672,
         "recordedAttempts": 668,
@@ -154,28 +154,28 @@
         "listeningCoveragePercent": 53.01,
         "scheduledListeningCeilingPercent": 53.33,
         "expectedListeningSeconds": 320640,
-        "listeningSeconds": 320596.022,
+        "listeningSeconds": 320595.02,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 320596.022,
-          "upperSeconds": 320596.023,
+          "lowerSeconds": 320595.02,
+          "upperSeconds": 320595.021,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 320596.022
+          "reportedWorkerSeconds": 320595.02
         },
-        "messages": 109630346,
-        "dnsNames": 192880652,
+        "messages": 109623587,
+        "dnsNames": 192912815,
         "outcomes": {
           "healthy-empty": 557,
           "healthy-matches": 111
         }
       },
       "screening": {
-        "matches": 257,
+        "matches": 260,
         "newArchiveRecords": 131,
-        "firstPublications": 106,
+        "firstPublications": 105,
         "bySource": {
-          "CertStream": 237
+          "CertStream": 236
         }
       },
       "enrichment": {
@@ -189,9 +189,9 @@
         "rdap": 0
       },
       "publication": {
-        "events": 237,
+        "events": 236,
         "observations": 131,
-        "statusTransitions": 106,
+        "statusTransitions": 105,
         "uniqueSignals": 123
       }
     }

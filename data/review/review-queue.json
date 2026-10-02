@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-stratified-review-queue",
-  "generatedAt": "2026-10-02T10:43:05.897Z",
+  "generatedAt": "2026-10-02T11:27:52.234Z",
   "samplingPolicy": {
     "method": "deterministic-greedy-facet-balancing",
     "dimensions": [
@@ -15,7 +15,7 @@
     "excludes": "Signals already represented by a sanitized assessment.",
     "semantics": "A review worklist, not a random or prevalence-representative sample."
   },
-  "availableUnreviewed": 119,
+  "availableUnreviewed": 120,
   "selected": 24,
   "candidates": [
     {
@@ -72,72 +72,6 @@
       "firstSeen": "2026-09-27T08:58:11.254Z"
     },
     {
-      "signalId": "309600555669eaa5b994",
-      "recordPath": "/signals/309600555669eaa5b994/",
-      "brand": "Revolut",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "85-94",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-joined-affix",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-09-30T11:08:05.453Z"
-    },
-    {
-      "signalId": "a8ed8cd9c3dd4ffb1d34",
-      "recordPath": "/signals/a8ed8cd9c3dd4ffb1d34/",
-      "brand": "DHL",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "85-94",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-split-token",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-09-29T22:36:00.981Z"
-    },
-    {
-      "signalId": "c46794ccb267e7138b77",
-      "recordPath": "/signals/c46794ccb267e7138b77/",
-      "brand": "Lidl Lietuva",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "85-94",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-exact-token",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-09-30T15:38:34.531Z"
-    },
-    {
-      "signalId": "9ddae71022c144a4a876",
-      "recordPath": "/signals/9ddae71022c144a4a876/",
-      "brand": "Telia",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "95-100",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-exact-token",
-        "different-tld",
-        "punycode",
-        "unicode-confusable"
-      ],
-      "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-09-27T15:08:35.966Z"
-    },
-    {
       "signalId": "5824741f7beb33d061bb",
       "recordPath": "/signals/5824741f7beb33d061bb/",
       "brand": "Smart-ID",
@@ -154,8 +88,8 @@
       "firstSeen": "2026-10-02T02:19:24.913Z"
     },
     {
-      "signalId": "fa833470c3606501c8b2",
-      "recordPath": "/signals/fa833470c3606501c8b2/",
+      "signalId": "a8ed8cd9c3dd4ffb1d34",
+      "recordPath": "/signals/a8ed8cd9c3dd4ffb1d34/",
       "brand": "DHL",
       "sources": [
         "CertStream"
@@ -186,9 +120,9 @@
       "firstSeen": "2026-10-01T19:23:26.129Z"
     },
     {
-      "signalId": "07f7020d16d014179a34",
-      "recordPath": "/signals/07f7020d16d014179a34/",
-      "brand": "MAXIMA",
+      "signalId": "9ddae71022c144a4a876",
+      "recordPath": "/signals/9ddae71022c144a4a876/",
+      "brand": "Telia",
       "sources": [
         "CertStream"
       ],
@@ -201,7 +135,56 @@
         "unicode-confusable"
       ],
       "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-09-28T15:25:12.182Z"
+      "firstSeen": "2026-09-27T15:08:35.966Z"
+    },
+    {
+      "signalId": "fa833470c3606501c8b2",
+      "recordPath": "/signals/fa833470c3606501c8b2/",
+      "brand": "DHL",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "85-94",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-split-token",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "2-7d",
+      "firstSeen": "2026-09-29T22:36:00.981Z"
+    },
+    {
+      "signalId": "c46794ccb267e7138b77",
+      "recordPath": "/signals/c46794ccb267e7138b77/",
+      "brand": "Lidl Lietuva",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "85-94",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-exact-token",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-09-30T15:38:34.531Z"
+    },
+    {
+      "signalId": "18865c3cc273a77ebf76",
+      "recordPath": "/signals/18865c3cc273a77ebf76/",
+      "brand": "MAXIMA",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "95-100",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-joined-affix",
+        "different-tld",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-10-01T17:50:13.024Z"
     },
     {
       "signalId": "55ac96fdedb0a111a91c",
@@ -218,38 +201,6 @@
       ],
       "candidateAgeBand": "2-7d",
       "firstSeen": "2026-09-28T01:16:14.581Z"
-    },
-    {
-      "signalId": "4e7db6613cb605dee8e7",
-      "recordPath": "/signals/4e7db6613cb605dee8e7/",
-      "brand": "Vinted",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "95-100",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-exact-token",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-10-02T00:04:06.306Z"
-    },
-    {
-      "signalId": "9c4c6128fb0bd5e73bb0",
-      "recordPath": "/signals/9c4c6128fb0bd5e73bb0/",
-      "brand": "Artea",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "85-94",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-joined-affix",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-09-29T18:31:05.314Z"
     },
     {
       "signalId": "3506aa800d90a7ae5d36",
@@ -286,9 +237,9 @@
       "firstSeen": "2026-09-27T15:08:35.966Z"
     },
     {
-      "signalId": "2213204eff4198758a2d",
-      "recordPath": "/signals/2213204eff4198758a2d/",
-      "brand": "Vinted",
+      "signalId": "9c4c6128fb0bd5e73bb0",
+      "recordPath": "/signals/9c4c6128fb0bd5e73bb0/",
+      "brand": "Artea",
       "sources": [
         "CertStream"
       ],
@@ -299,7 +250,7 @@
         "suspicious-context"
       ],
       "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-09-29T02:14:54.565Z"
+      "firstSeen": "2026-09-29T18:31:05.314Z"
     },
     {
       "signalId": "28c31317dcb9979fe282",
@@ -318,8 +269,8 @@
       "firstSeen": "2026-10-01T11:17:46.924Z"
     },
     {
-      "signalId": "18865c3cc273a77ebf76",
-      "recordPath": "/signals/18865c3cc273a77ebf76/",
+      "signalId": "07f7020d16d014179a34",
+      "recordPath": "/signals/07f7020d16d014179a34/",
       "brand": "MAXIMA",
       "sources": [
         "CertStream"
@@ -327,12 +278,61 @@
       "scoreBand": "95-100",
       "evidenceTier": "name-only",
       "reasonCodes": [
-        "brand-joined-affix",
+        "brand-exact-token",
         "different-tld",
+        "punycode",
+        "unicode-confusable"
+      ],
+      "candidateAgeBand": "2-7d",
+      "firstSeen": "2026-09-28T15:25:12.182Z"
+    },
+    {
+      "signalId": "2213204eff4198758a2d",
+      "recordPath": "/signals/2213204eff4198758a2d/",
+      "brand": "Vinted",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "85-94",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-joined-affix",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "2-7d",
+      "firstSeen": "2026-09-29T02:14:54.565Z"
+    },
+    {
+      "signalId": "4e7db6613cb605dee8e7",
+      "recordPath": "/signals/4e7db6613cb605dee8e7/",
+      "brand": "Vinted",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "95-100",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-exact-token",
         "suspicious-context"
       ],
       "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-10-01T17:50:13.024Z"
+      "firstSeen": "2026-10-02T00:04:06.306Z"
+    },
+    {
+      "signalId": "db9ba353d6c64309652a",
+      "recordPath": "/signals/db9ba353d6c64309652a/",
+      "brand": "Revolut",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "85-94",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-joined-affix",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "2-7d",
+      "firstSeen": "2026-09-29T08:13:52.090Z"
     },
     {
       "signalId": "60ed7a03aa16392f2c33",
@@ -349,6 +349,24 @@
       ],
       "candidateAgeBand": "2-7d",
       "firstSeen": "2026-09-28T12:40:52.806Z"
+    },
+    {
+      "signalId": "21415e42a1a156503934",
+      "recordPath": "/signals/21415e42a1a156503934/",
+      "brand": "Tele2",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "95-100",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-joined-affix",
+        "punycode",
+        "suspicious-context",
+        "unicode-confusable"
+      ],
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-10-01T10:05:18.773Z"
     },
     {
       "signalId": "4316ef51d40ac7290184",
@@ -369,8 +387,8 @@
       "firstSeen": "2026-09-28T17:10:42.696Z"
     },
     {
-      "signalId": "db9ba353d6c64309652a",
-      "recordPath": "/signals/db9ba353d6c64309652a/",
+      "signalId": "309600555669eaa5b994",
+      "recordPath": "/signals/309600555669eaa5b994/",
       "brand": "Revolut",
       "sources": [
         "CertStream"
@@ -382,24 +400,7 @@
         "suspicious-context"
       ],
       "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-09-29T08:13:52.090Z"
-    },
-    {
-      "signalId": "9dd6b056363e84a88714",
-      "recordPath": "/signals/9dd6b056363e84a88714/",
-      "brand": "Artea",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "95-100",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-joined-affix",
-        "different-tld",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-09-30T10:50:48.836Z"
+      "firstSeen": "2026-09-30T11:08:05.453Z"
     },
     {
       "signalId": "032f4da44a927850e805",
