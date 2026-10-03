@@ -1,18 +1,18 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-related-observations",
-  "generatedAt": "2026-10-03T06:01:08.151Z",
+  "generatedAt": "2026-10-03T07:01:09.244Z",
   "semantics": "Shared evidence is a bounded association between public observations. It is not campaign, operator, malware, infrastructure ownership, or threat-actor attribution.",
   "nodes": [
     {
       "signalId": "0166e5716e8c808993b5",
       "domain": "0shakgzq3b8bm[.]dhl-support-del[.]com",
-      "clusterId": "e30fb8e0a961c949"
+      "clusterId": "40144c7ed6244713"
     },
     {
       "signalId": "21415e42a1a156503934",
       "domain": "leigfxqo[.]xn--tl2mobile-b4ab[.]com",
-      "clusterId": "1c64afb7388fea5e"
+      "clusterId": "75a77293f9d18573"
     },
     {
       "signalId": "2fc6ef859099aa45d1dc",
@@ -27,12 +27,12 @@
     {
       "signalId": "3c650d085a1456d139a8",
       "domain": "vqhwfytrwsuoc[.]xn--tl2mobile-b4ab[.]com",
-      "clusterId": "1c64afb7388fea5e"
+      "clusterId": "75a77293f9d18573"
     },
     {
       "signalId": "3e51d4c252a41023a46c",
       "domain": "delivery-dhl-uae[.]com",
-      "clusterId": "e30fb8e0a961c949"
+      "clusterId": "40144c7ed6244713"
     },
     {
       "signalId": "4316ef51d40ac7290184",
@@ -47,12 +47,12 @@
     {
       "signalId": "72c33b7f99086c5084ef",
       "domain": "solwfatn[.]xn--tl2mobile-b4ab[.]com",
-      "clusterId": "1c64afb7388fea5e"
+      "clusterId": "75a77293f9d18573"
     },
     {
       "signalId": "87f66230fa2befecbb06",
       "domain": "vpn[.]xn--tl2mobile-b4ab[.]fr",
-      "clusterId": "1c64afb7388fea5e"
+      "clusterId": "75a77293f9d18573"
     },
     {
       "signalId": "8dee2a0a38eabdb50c0b",
@@ -60,9 +60,24 @@
       "clusterId": "499b88176c17b3d7"
     },
     {
+      "signalId": "94d277cc5295c6242477",
+      "domain": "login[.]dhl-support-del[.]com",
+      "clusterId": "40144c7ed6244713"
+    },
+    {
       "signalId": "9ddae71022c144a4a876",
       "domain": "xn--tlia-bpa[.]net",
       "clusterId": "499b88176c17b3d7"
+    },
+    {
+      "signalId": "b10710a7c8ec90b0bc54",
+      "domain": "7xdd[.]dhl-support-del[.]com",
+      "clusterId": "40144c7ed6244713"
+    },
+    {
+      "signalId": "bc6e84449bd688cd059b",
+      "domain": "oewzfsrq[.]xn--tl2mobile-b4ab[.]com",
+      "clusterId": "75a77293f9d18573"
     },
     {
       "signalId": "c39dd094625ac399665a",
@@ -202,6 +217,54 @@
       ]
     },
     {
+      "id": "2ec72e6476d9ea3a5ebe",
+      "source": "3e51d4c252a41023a46c",
+      "target": "94d277cc5295c6242477",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "185[.]53[.]179[.]136"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ina1[.]registrar[.]eu"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ina2[.]registrar[.]eu"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ina3[.]registrar[.]eu"
+        }
+      ]
+    },
+    {
+      "id": "68817d4d3b0c8501b1e9",
+      "source": "3e51d4c252a41023a46c",
+      "target": "b10710a7c8ec90b0bc54",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "185[.]53[.]179[.]136"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ina1[.]registrar[.]eu"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ina2[.]registrar[.]eu"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ina3[.]registrar[.]eu"
+        }
+      ]
+    },
+    {
       "id": "e05100675264acb36f33",
       "source": "4316ef51d40ac7290184",
       "target": "9ddae71022c144a4a876",
@@ -317,6 +380,22 @@
       "id": "619c5d297bf69f67269c",
       "source": "72c33b7f99086c5084ef",
       "target": "87f66230fa2befecbb06",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "185[.]53[.]179[.]200"
+        },
+        {
+          "type": "dns-cname",
+          "value": "845192[.]parkingcrew[.]net"
+        }
+      ]
+    },
+    {
+      "id": "6c6994d2812bb0571df5",
+      "source": "87f66230fa2befecbb06",
+      "target": "bc6e84449bd688cd059b",
       "strength": "shared-context",
       "evidence": [
         {
