@@ -1,13 +1,18 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-related-observations",
-  "generatedAt": "2026-10-03T12:16:58.132Z",
+  "generatedAt": "2026-10-03T13:16:52.819Z",
   "semantics": "Shared evidence is a bounded association between public observations. It is not campaign, operator, malware, infrastructure ownership, or threat-actor attribution.",
   "nodes": [
     {
       "signalId": "0166e5716e8c808993b5",
       "domain": "0shakgzq3b8bm[.]dhl-support-del[.]com",
       "clusterId": "40144c7ed6244713"
+    },
+    {
+      "signalId": "100d6055efc10336b880",
+      "domain": "bite-service[.]com",
+      "clusterId": "20a6dc942696a1f4"
     },
     {
       "signalId": "21415e42a1a156503934",
@@ -45,9 +50,24 @@
       "clusterId": "031b1060a95efa21"
     },
     {
+      "signalId": "5daad77125ff948c7ce6",
+      "domain": "www[.]vinted-account[.]com",
+      "clusterId": "613854311de44443"
+    },
+    {
       "signalId": "72c33b7f99086c5084ef",
       "domain": "solwfatn[.]xn--tl2mobile-b4ab[.]com",
       "clusterId": "75a77293f9d18573"
+    },
+    {
+      "signalId": "799945b8b4949fb57e26",
+      "domain": "www[.]bite-service[.]ru",
+      "clusterId": "20a6dc942696a1f4"
+    },
+    {
+      "signalId": "81209ec636b8d7df8f1f",
+      "domain": "bite-service[.]ru",
+      "clusterId": "20a6dc942696a1f4"
     },
     {
       "signalId": "87f66230fa2befecbb06",
@@ -90,12 +110,41 @@
       "clusterId": "f4954eb30d2183f4"
     },
     {
+      "signalId": "d12d51af2a05e9df0620",
+      "domain": "www[.]vinted-verify[.]com",
+      "clusterId": "613854311de44443"
+    },
+    {
       "signalId": "f53806de41d18206079d",
       "domain": "www[.]xn--tlia-bpa[.]net",
       "clusterId": "499b88176c17b3d7"
     }
   ],
   "edges": [
+    {
+      "id": "d5ed347312dbc9747adf",
+      "source": "100d6055efc10336b880",
+      "target": "799945b8b4949fb57e26",
+      "strength": "strong",
+      "evidence": [
+        {
+          "type": "certificate-sha256",
+          "value": "067c3165c3c3c4a577d7159fbc1668ead1dff6dcdc1173ac7d80d6f004289e21"
+        }
+      ]
+    },
+    {
+      "id": "bea9b88e109f2d4624df",
+      "source": "100d6055efc10336b880",
+      "target": "81209ec636b8d7df8f1f",
+      "strength": "strong",
+      "evidence": [
+        {
+          "type": "certificate-sha256",
+          "value": "067c3165c3c3c4a577d7159fbc1668ead1dff6dcdc1173ac7d80d6f004289e21"
+        }
+      ]
+    },
     {
       "id": "ed502bd0bb9eba20640e",
       "source": "580d297e430b21694b4d",
@@ -105,6 +154,42 @@
         {
           "type": "certificate-sha256",
           "value": "a5489f46ef469c5e633c5dbd5b33bce834f1dfbcc0dc523f1701d722fdc6ebf5"
+        }
+      ]
+    },
+    {
+      "id": "6052052273d2c290eb25",
+      "source": "5daad77125ff948c7ce6",
+      "target": "d12d51af2a05e9df0620",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "13[.]248[.]148[.]104"
+        },
+        {
+          "type": "dns-a",
+          "value": "76[.]223[.]20[.]46"
+        },
+        {
+          "type": "dns-cname",
+          "value": "rebrandlydomain[.]com"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns-1281[.]awsdns-32[.]org"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns-196[.]awsdns-24[.]com"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns-2020[.]awsdns-60[.]co[.]uk"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns-620[.]awsdns-13[.]net"
         }
       ]
     },
