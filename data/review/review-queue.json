@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-stratified-review-queue",
-  "generatedAt": "2026-10-03T10:31:34.644Z",
+  "generatedAt": "2026-10-03T12:02:02.532Z",
   "samplingPolicy": {
     "method": "deterministic-greedy-facet-balancing",
     "dimensions": [
@@ -253,22 +253,6 @@
       "firstSeen": "2026-09-29T18:31:05.314Z"
     },
     {
-      "signalId": "28c31317dcb9979fe282",
-      "recordPath": "/signals/28c31317dcb9979fe282/",
-      "brand": "DHL",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "85-94",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-exact-token",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-10-01T11:17:46.924Z"
-    },
-    {
       "signalId": "4e7db6613cb605dee8e7",
       "recordPath": "/signals/4e7db6613cb605dee8e7/",
       "brand": "Vinted",
@@ -299,6 +283,23 @@
       ],
       "candidateAgeBand": "2-7d",
       "firstSeen": "2026-09-29T08:13:52.090Z"
+    },
+    {
+      "signalId": "3e51d4c252a41023a46c",
+      "recordPath": "/signals/3e51d4c252a41023a46c/",
+      "brand": "DHL",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "85-94",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-exact-token",
+        "multiple-hyphens",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-10-01T14:32:26.936Z"
     },
     {
       "signalId": "07f7020d16d014179a34",
@@ -351,9 +352,27 @@
       "firstSeen": "2026-09-30T11:08:05.453Z"
     },
     {
-      "signalId": "3c421085253677b81fc4",
-      "recordPath": "/signals/3c421085253677b81fc4/",
-      "brand": "DHL",
+      "signalId": "3c650d085a1456d139a8",
+      "recordPath": "/signals/3c650d085a1456d139a8/",
+      "brand": "Tele2",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "95-100",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-joined-affix",
+        "punycode",
+        "suspicious-context",
+        "unicode-confusable"
+      ],
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-10-01T12:50:27.228Z"
+    },
+    {
+      "signalId": "c46794ccb267e7138b77",
+      "recordPath": "/signals/c46794ccb267e7138b77/",
+      "brand": "Lidl Lietuva",
       "sources": [
         "CertStream"
       ],
@@ -361,11 +380,27 @@
       "evidenceTier": "name-only",
       "reasonCodes": [
         "brand-exact-token",
-        "multiple-hyphens",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "2-7d",
+      "firstSeen": "2026-09-30T15:38:34.531Z"
+    },
+    {
+      "signalId": "7630cadc3b4e8c69c6c8",
+      "recordPath": "/signals/7630cadc3b4e8c69c6c8/",
+      "brand": "MAXIMA",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "95-100",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-joined-affix",
+        "different-tld",
         "suspicious-context"
       ],
       "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-10-01T10:33:21.643Z"
+      "firstSeen": "2026-10-02T00:36:08.713Z"
     },
     {
       "signalId": "4316ef51d40ac7290184",
@@ -384,39 +419,6 @@
       ],
       "candidateAgeBand": "2-7d",
       "firstSeen": "2026-09-28T17:10:42.696Z"
-    },
-    {
-      "signalId": "2213204eff4198758a2d",
-      "recordPath": "/signals/2213204eff4198758a2d/",
-      "brand": "Vinted",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "85-94",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-joined-affix",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-09-29T02:14:54.565Z"
-    },
-    {
-      "signalId": "7630cadc3b4e8c69c6c8",
-      "recordPath": "/signals/7630cadc3b4e8c69c6c8/",
-      "brand": "MAXIMA",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "95-100",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-joined-affix",
-        "different-tld",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-10-02T00:36:08.713Z"
     }
   ]
 }
