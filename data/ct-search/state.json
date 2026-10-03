@@ -1,37 +1,39 @@
 {
   "dataset": "ct-search-state",
-  "generatedAt": "2026-10-02T22:44:54.483Z",
+  "generatedAt": "2026-10-03T01:30:43.923Z",
   "latestRun": {
     "dnsNames": 0,
-    "endedAt": "2026-10-02T22:44:54.483Z",
-    "failureCodes": [],
+    "endedAt": "2026-10-03T01:30:43.923Z",
+    "failureCodes": [
+      "provider-http"
+    ],
     "matches": 0,
     "newRecords": 0,
-    "outcome": "deferred-backoff",
-    "queriesAttempted": 0,
+    "outcome": "partial",
+    "queriesAttempted": 2,
     "queriesBacklogged": 0,
-    "queriesCompleted": 0,
+    "queriesCompleted": 1,
     "rowsProcessed": 0,
-    "startedAt": "2026-10-02T22:44:54.477Z"
+    "startedAt": "2026-10-03T01:30:27.267Z"
   },
   "provider": "crt.sh",
   "providerHealth": {
-    "consecutiveFailures": 9,
+    "consecutiveFailures": 10,
     "degradedSince": "2026-09-30T21:10:18.244Z",
-    "lastAttemptAt": "2026-10-02T18:44:36.387Z",
+    "lastAttemptAt": "2026-10-03T01:30:43.923Z",
     "lastFailureCodes": [
       "provider-http"
     ],
     "lastSuccessAt": "2026-09-30T16:11:41.690Z",
-    "nextAttemptAt": "2026-10-03T00:04:36.387Z"
+    "nextAttemptAt": "2026-10-03T06:50:43.923Z"
   },
   "queries": {
     "brand:artea": {
       "brand": "Artea",
       "lastEntryAt": null,
       "lastId": 0,
-      "lastOutcome": "completed",
-      "lastRunAt": "2026-09-28T00:01:54.251Z",
+      "lastOutcome": "failed",
+      "lastRunAt": "2026-10-03T01:30:27.267Z",
       "term": "artea"
     },
     "brand:bigbank": {
@@ -391,10 +393,10 @@
       "lastEntryAt": null,
       "lastId": 0,
       "lastOutcome": "completed",
-      "lastRunAt": "2026-09-28T00:01:54.251Z",
+      "lastRunAt": "2026-10-03T01:30:27.267Z",
       "term": "vinted"
     }
   },
-  "queryCursor": 45,
+  "queryCursor": 1,
   "schemaVersion": 1
 }
