@@ -3,7 +3,7 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-10-03T09:01:33.675Z",
+  "generatedAt": "2026-10-03T09:16:31.957Z",
   "retentionDays": 365,
   "from": "2025-10-04",
   "to": "2026-10-03",
@@ -2290,53 +2290,54 @@
       "date": "2026-10-03",
       "partialDay": true,
       "collectorCoverage": {
-        "windowSeconds": 32493,
-        "scheduledSlots": 36,
-        "recordedAttempts": 36,
-        "healthyAttempts": 36,
+        "windowSeconds": 33391,
+        "scheduledSlots": 37,
+        "recordedAttempts": 37,
+        "healthyAttempts": 37,
         "recordedSchedulePercent": 100.0,
-        "listeningCoveragePercent": 53.15,
-        "scheduledListeningCeilingPercent": 53.18,
-        "listeningSeconds": 17270.927,
+        "listeningCoveragePercent": 53.16,
+        "scheduledListeningCeilingPercent": 53.19,
+        "listeningSeconds": 17750.925,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 17270.927,
-          "upperSeconds": 17270.928,
+          "lowerSeconds": 17750.925,
+          "upperSeconds": 17750.926,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 17270.928
+          "reportedWorkerSeconds": 17750.926
         },
         "outcomes": {
           "healthy-empty": 28,
-          "healthy-matches": 8
+          "healthy-matches": 9
         }
       },
       "discovery": {
-        "events": 16,
-        "uniqueSignals": 9,
-        "observations": 9,
+        "events": 18,
+        "uniqueSignals": 10,
+        "observations": 10,
         "reobservations": 2,
-        "firstPublications": 7,
+        "firstPublications": 8,
         "statusChanges": 0,
-        "facetSampleSize": 9,
-        "evidenceClassifiedSignals": 9,
+        "facetSampleSize": 10,
+        "evidenceClassifiedSignals": 10,
         "byBrand": {
           "DHL": 8,
+          "Revolut": 1,
           "Vinted": 1
         },
         "bySource": {
-          "CertStream": 9
+          "CertStream": 10
         },
         "byEvidenceTier": {
-          "name-only": 9
+          "name-only": 10
         },
         "byReason": {
-          "suspicious-context": 9,
+          "suspicious-context": 10,
           "brand-exact-token": 8,
+          "first-publication": 8,
           "multiple-hyphens": 8,
-          "first-publication": 7,
-          "different-tld": 2,
-          "brand-joined-affix": 1
+          "different-tld": 3,
+          "brand-joined-affix": 2
         }
       }
     }
