@@ -3,14 +3,14 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-10-02T23:14:55.855Z",
+  "generatedAt": "2026-10-03T00:15:01.085Z",
   "retentionDays": 365,
-  "from": "2025-10-03",
-  "to": "2026-10-02",
+  "from": "2025-10-04",
+  "to": "2026-10-03",
   "semantics": "Counts describe Radar discovery and publication activity under the collector coverage shown beside them. They are not a measure of Lithuanian phishing prevalence or total incident volume.",
   "facetSemantics": "Brand, source, evidence and reason facets count unique signals within each UTC day.",
   "seriesSemantics": "The series is sparse. Missing UTC dates inside the stated range mean zero recorded attempts and zero discovery events; consumers can derive scheduled slots from collectorSchedule.",
-  "omittedZeroDays": 324,
+  "omittedZeroDays": 323,
   "collectorSchedule": {
     "expectedIntervalSeconds": 900,
     "expectedListeningSeconds": 480,
@@ -441,31 +441,18 @@
         }
       },
       "discovery": {
-        "events": 36,
-        "uniqueSignals": 19,
-        "observations": 21,
+        "events": 0,
+        "uniqueSignals": 0,
+        "observations": 0,
         "reobservations": 0,
-        "firstPublications": 15,
+        "firstPublications": 0,
         "statusChanges": 0,
-        "facetSampleSize": 19,
+        "facetSampleSize": 0,
         "evidenceClassifiedSignals": 0,
-        "byBrand": {
-          "DHL": 8,
-          "Revolut": 8,
-          "VMI": 3
-        },
-        "bySource": {
-          "CertStream": 19
-        },
+        "byBrand": {},
+        "bySource": {},
         "byEvidenceTier": {},
-        "byReason": {
-          "suspicious-context": 19,
-          "brand-exact-token": 16,
-          "first-publication": 15,
-          "different-tld": 14,
-          "multiple-hyphens": 12,
-          "brand-joined-affix": 3
-        }
+        "byReason": {}
       }
     },
     {
@@ -497,7 +484,7 @@
         "events": 31,
         "uniqueSignals": 17,
         "observations": 17,
-        "reobservations": 3,
+        "reobservations": 0,
         "firstPublications": 14,
         "statusChanges": 0,
         "facetSampleSize": 17,
@@ -557,7 +544,7 @@
         "events": 37,
         "uniqueSignals": 20,
         "observations": 20,
-        "reobservations": 2,
+        "reobservations": 1,
         "firstPublications": 17,
         "statusChanges": 0,
         "facetSampleSize": 20,
@@ -683,7 +670,7 @@
         "events": 41,
         "uniqueSignals": 21,
         "observations": 21,
-        "reobservations": 1,
+        "reobservations": 0,
         "firstPublications": 20,
         "statusChanges": 0,
         "facetSampleSize": 21,
@@ -907,7 +894,7 @@
         "events": 32,
         "uniqueSignals": 17,
         "observations": 17,
-        "reobservations": 2,
+        "reobservations": 1,
         "firstPublications": 15,
         "statusChanges": 0,
         "facetSampleSize": 17,
@@ -1327,7 +1314,7 @@
         "events": 54,
         "uniqueSignals": 29,
         "observations": 29,
-        "reobservations": 4,
+        "reobservations": 3,
         "firstPublications": 25,
         "statusChanges": 0,
         "facetSampleSize": 29,
@@ -2236,26 +2223,26 @@
     },
     {
       "date": "2026-10-02",
-      "partialDay": true,
+      "partialDay": false,
       "collectorCoverage": {
-        "windowSeconds": 83695,
-        "scheduledSlots": 92,
-        "recordedAttempts": 93,
-        "healthyAttempts": 93,
+        "windowSeconds": 86400,
+        "scheduledSlots": 96,
+        "recordedAttempts": 96,
+        "healthyAttempts": 96,
         "recordedSchedulePercent": 100.0,
-        "listeningCoveragePercent": 53.33,
-        "scheduledListeningCeilingPercent": 52.76,
-        "listeningSeconds": 44631.856,
+        "listeningCoveragePercent": 53.32,
+        "scheduledListeningCeilingPercent": 53.33,
+        "listeningSeconds": 46071.853,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 44631.856,
-          "upperSeconds": 44631.857,
+          "lowerSeconds": 46071.853,
+          "upperSeconds": 46071.854,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 44631.856
+          "reportedWorkerSeconds": 46071.853
         },
         "outcomes": {
-          "healthy-empty": 69,
+          "healthy-empty": 72,
           "healthy-matches": 24
         }
       },
@@ -2296,6 +2283,57 @@
           "brand-split-token": 1,
           "punycode": 1,
           "unicode-confusable": 1
+        }
+      }
+    },
+    {
+      "date": "2026-10-03",
+      "partialDay": true,
+      "collectorCoverage": {
+        "windowSeconds": 901,
+        "scheduledSlots": 1,
+        "recordedAttempts": 1,
+        "healthyAttempts": 1,
+        "recordedSchedulePercent": 100.0,
+        "listeningCoveragePercent": 53.27,
+        "scheduledListeningCeilingPercent": 53.27,
+        "listeningSeconds": 479.999,
+        "coverageBounds": {
+          "methodVersion": 2,
+          "lowerSeconds": 479.999,
+          "upperSeconds": 479.999,
+          "precision": "exact",
+          "unknownAttempts": 0,
+          "reportedWorkerSeconds": 479.999
+        },
+        "outcomes": {
+          "healthy-matches": 1
+        }
+      },
+      "discovery": {
+        "events": 4,
+        "uniqueSignals": 2,
+        "observations": 2,
+        "reobservations": 0,
+        "firstPublications": 2,
+        "statusChanges": 0,
+        "facetSampleSize": 2,
+        "evidenceClassifiedSignals": 2,
+        "byBrand": {
+          "DHL": 2
+        },
+        "bySource": {
+          "CertStream": 2
+        },
+        "byEvidenceTier": {
+          "name-only": 2
+        },
+        "byReason": {
+          "brand-exact-token": 2,
+          "first-publication": 2,
+          "multiple-hyphens": 2,
+          "suspicious-context": 2,
+          "different-tld": 1
         }
       }
     }
