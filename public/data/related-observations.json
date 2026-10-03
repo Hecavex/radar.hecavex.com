@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-related-observations",
-  "generatedAt": "2026-10-03T16:17:08.846Z",
+  "generatedAt": "2026-10-03T17:17:25.830Z",
   "semantics": "Shared evidence is a bounded association between public observations. It is not campaign, operator, malware, infrastructure ownership, or threat-actor attribution.",
   "nodes": [
     {
       "signalId": "0166e5716e8c808993b5",
       "domain": "0shakgzq3b8bm[.]dhl-support-del[.]com",
-      "clusterId": "40144c7ed6244713"
+      "clusterId": "7fba6d08ac2a4ff7"
     },
     {
       "signalId": "100d6055efc10336b880",
@@ -37,7 +37,7 @@
     {
       "signalId": "3e51d4c252a41023a46c",
       "domain": "delivery-dhl-uae[.]com",
-      "clusterId": "40144c7ed6244713"
+      "clusterId": "7fba6d08ac2a4ff7"
     },
     {
       "signalId": "4316ef51d40ac7290184",
@@ -82,7 +82,7 @@
     {
       "signalId": "94d277cc5295c6242477",
       "domain": "login[.]dhl-support-del[.]com",
-      "clusterId": "40144c7ed6244713"
+      "clusterId": "7fba6d08ac2a4ff7"
     },
     {
       "signalId": "9ddae71022c144a4a876",
@@ -92,7 +92,7 @@
     {
       "signalId": "b10710a7c8ec90b0bc54",
       "domain": "7xdd[.]dhl-support-del[.]com",
-      "clusterId": "40144c7ed6244713"
+      "clusterId": "7fba6d08ac2a4ff7"
     },
     {
       "signalId": "bc6e84449bd688cd059b",
@@ -118,6 +118,11 @@
       "signalId": "f53806de41d18206079d",
       "domain": "www[.]xn--tlia-bpa[.]net",
       "clusterId": "499b88176c17b3d7"
+    },
+    {
+      "signalId": "f72dc576a4210d79784f",
+      "domain": "shop[.]dhl-support-del[.]com",
+      "clusterId": "7fba6d08ac2a4ff7"
     }
   ],
   "edges": [
@@ -329,6 +334,30 @@
       "id": "68817d4d3b0c8501b1e9",
       "source": "3e51d4c252a41023a46c",
       "target": "b10710a7c8ec90b0bc54",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "185[.]53[.]179[.]136"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ina1[.]registrar[.]eu"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ina2[.]registrar[.]eu"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ina3[.]registrar[.]eu"
+        }
+      ]
+    },
+    {
+      "id": "f8d81fdf712bfb856fd9",
+      "source": "3e51d4c252a41023a46c",
+      "target": "f72dc576a4210d79784f",
       "strength": "shared-context",
       "evidence": [
         {
