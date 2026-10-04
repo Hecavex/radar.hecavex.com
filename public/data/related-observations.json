@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-related-observations",
-  "generatedAt": "2026-10-04T17:18:44.420Z",
+  "generatedAt": "2026-10-04T17:37:00.855Z",
   "semantics": "Shared evidence is a bounded association between public observations. It is not campaign, operator, malware, infrastructure ownership, or threat-actor attribution.",
   "nodes": [
     {
@@ -93,6 +93,16 @@
       "signalId": "94d277cc5295c6242477",
       "domain": "login[.]dhl-support-del[.]com",
       "clusterId": "06f0211b9e8ace2c"
+    },
+    {
+      "signalId": "9d83b92359ef325b9351",
+      "domain": "mobile-revolut[.]info",
+      "clusterId": "4b903a331cbee561"
+    },
+    {
+      "signalId": "b00891a61c00dee164e5",
+      "domain": "xn--revolu-n17b[.]com",
+      "clusterId": "4b903a331cbee561"
     },
     {
       "signalId": "b10710a7c8ec90b0bc54",
@@ -1022,6 +1032,30 @@
         {
           "type": "dns-ns",
           "value": "ina3[.]registrar[.]eu"
+        }
+      ]
+    },
+    {
+      "id": "9fee630755848d8f9b02",
+      "source": "9d83b92359ef325b9351",
+      "target": "b00891a61c00dee164e5",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "185[.]53[.]179[.]128"
+        },
+        {
+          "type": "dns-mx",
+          "value": "webhost[.]dynadot[.]com"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns1[.]dyna-ns[.]net"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns2[.]dyna-ns[.]net"
         }
       ]
     },
