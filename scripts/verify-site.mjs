@@ -1093,9 +1093,12 @@ function verifyBuiltHtml() {
           const bars = row.querySelector(".trend-bars");
           const progressBars = [...row.querySelectorAll("progress")];
           assert(bars?.getAttribute("aria-hidden") === "true", `${route} exposes duplicate visual trend bars to assistive technology.`);
-          assert(progressBars.length === 2 && progressBars.every((progress) => !progress.textContent), `${route} duplicates trend values inside progress fallback text.`);
+          assert(progressBars.length === (trend.discovery === null ? 1 : 2) && progressBars.every((progress) => !progress.textContent), `${route} invents an unknown bar or duplicates trend values inside progress fallback text.`);
           const signalCopy = row.querySelector(".trend-signal-count")?.textContent ?? "";
-          assert(signalCopy.includes(isLithuanian ? "Unikalūs signalai" : "unique signals"), `${route} trend signal value is not self-describing.`);
+          const signalLabel = trend.discovery === null
+            ? (isLithuanian ? "Aptikimo duomenys neišliko" : "Discovery history unavailable")
+            : (isLithuanian ? "Unikalūs signalai" : "unique signals");
+          assert(signalCopy.includes(signalLabel), `${route} trend signal value is not self-describing.`);
           const scheduleCopy = row.querySelector(".trend-metrics > span")?.textContent ?? "";
           assert(scheduleCopy.includes(isLithuanian ? "interval" : "scheduled slots"), `${route} trend schedule value is not self-describing.`);
           assert(scheduleCopy.includes("/"), `${route} trend schedule omits its recorded and expected attempt counts.`);
@@ -1117,7 +1120,7 @@ function verifyBuiltHtml() {
           const { recordedAttempts, scheduledSlots } = trend.collectorCoverage;
           const collectionState = scheduledSlots <= 0 ? "unavailable" : recordedAttempts === 0 ? "not-recorded" : recordedAttempts * 2 < scheduledSlots ? "limited" : "recorded";
           assert(row.getAttribute("data-collection-state") === collectionState, `${route} misstates the recorded collection gap.`);
-          assert(Boolean(row.querySelector(".trend-collection-note")) === ["limited", "not-recorded"].includes(collectionState), `${route} does not label limited collection beside its signal count.`);
+          assert(Boolean(row.querySelector(".trend-collection-note")) === (trend.discovery === null || ["limited", "not-recorded"].includes(collectionState)), `${route} does not label missing history or limited collection beside its signal count.`);
           const additionalAttempts = Math.max(0, trend.collectorCoverage.recordedAttempts - trend.collectorCoverage.scheduledSlots);
           assert(Boolean(row.querySelector(".trend-metrics em")) === (additionalAttempts > 0), `${route} trend row misstates additional collection attempts.`);
           if (trend.collectorCoverage.recordedSchedulePercent === null) {

@@ -469,6 +469,13 @@ event are omitted and counted in `omittedZeroDays`; consumers can derive expecte
 `collectorSchedule`. The series measures Radar activity under the coverage printed beside it, not Lithuanian phishing
 prevalence or total incident volume.
 
+Publications with `retentionMethodVersion: 1` preserve complete daily discovery
+aggregates beyond the detail-retention window. Each row's `discoveryBasis` is
+`retained-detail`, `retained-aggregate`, or `unknown`; unknown discovery is null,
+not a zero count. `omittedUnknownDays` is separate from `omittedZeroDays` and
+missing dates before `discoveryCompleteFrom` cannot be filled with zeros.
+Collection coverage is independent. See the [retention correction](TREND-RETENTION-2026-10-04.md).
+
 `countingMethodVersion: 2` classifies a reobservation only when its timestamp is strictly later than retained
 first-publication provenance, falling back to the inventory's `firstSeen`, matching event-feed semantics. A paired
 publication observation is excluded; absent earlier provenance remains unclassified. Version 1 subtracted distinct
