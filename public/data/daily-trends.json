@@ -3,14 +3,14 @@
   "dataset": "radar-daily-trends",
   "countingMethodVersion": 2,
   "reobservationSemantics": "Version 2: observations strictly after retained first-publication provenance, falling back to inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. This corrects version 1, which subtracted each day's distinct observed IDs.",
-  "generatedAt": "2026-10-03T23:32:34.242Z",
+  "generatedAt": "2026-10-04T00:17:26.618Z",
   "retentionDays": 365,
-  "from": "2025-10-04",
-  "to": "2026-10-03",
+  "from": "2025-10-05",
+  "to": "2026-10-04",
   "semantics": "Counts describe Radar discovery and publication activity under the collector coverage shown beside them. They are not a measure of Lithuanian phishing prevalence or total incident volume.",
   "facetSemantics": "Brand, source, evidence and reason facets count unique signals within each UTC day.",
   "seriesSemantics": "The series is sparse. Missing UTC dates inside the stated range mean zero recorded attempts and zero discovery events; consumers can derive scheduled slots from collectorSchedule.",
-  "omittedZeroDays": 323,
+  "omittedZeroDays": 322,
   "collectorSchedule": {
     "expectedIntervalSeconds": 900,
     "expectedListeningSeconds": 480,
@@ -481,38 +481,18 @@
         }
       },
       "discovery": {
-        "events": 31,
-        "uniqueSignals": 17,
-        "observations": 17,
+        "events": 0,
+        "uniqueSignals": 0,
+        "observations": 0,
         "reobservations": 0,
-        "firstPublications": 14,
+        "firstPublications": 0,
         "statusChanges": 0,
-        "facetSampleSize": 17,
-        "evidenceClassifiedSignals": 1,
-        "byBrand": {
-          "Revolut": 6,
-          "DHL": 5,
-          "Artea": 1,
-          "DPD": 1,
-          "IKI": 1,
-          "Paysera": 1,
-          "UNIPARK": 1,
-          "Vinted": 1
-        },
-        "bySource": {
-          "CertStream": 17
-        },
-        "byEvidenceTier": {
-          "name-only": 1
-        },
-        "byReason": {
-          "suspicious-context": 17,
-          "different-tld": 15,
-          "first-publication": 14,
-          "brand-exact-token": 12,
-          "multiple-hyphens": 8,
-          "brand-joined-affix": 5
-        }
+        "facetSampleSize": 0,
+        "evidenceClassifiedSignals": 0,
+        "byBrand": {},
+        "bySource": {},
+        "byEvidenceTier": {},
+        "byReason": {}
       }
     },
     {
@@ -544,7 +524,7 @@
         "events": 37,
         "uniqueSignals": 20,
         "observations": 20,
-        "reobservations": 1,
+        "reobservations": 0,
         "firstPublications": 17,
         "statusChanges": 0,
         "facetSampleSize": 20,
@@ -894,7 +874,7 @@
         "events": 32,
         "uniqueSignals": 17,
         "observations": 17,
-        "reobservations": 1,
+        "reobservations": 0,
         "firstPublications": 15,
         "statusChanges": 0,
         "facetSampleSize": 17,
@@ -1133,7 +1113,7 @@
         "firstPublications": 15,
         "statusChanges": 0,
         "facetSampleSize": 15,
-        "evidenceClassifiedSignals": 0,
+        "evidenceClassifiedSignals": 2,
         "byBrand": {
           "Tele2": 6,
           "DHL": 5,
@@ -1144,7 +1124,9 @@
         "bySource": {
           "CertStream": 15
         },
-        "byEvidenceTier": {},
+        "byEvidenceTier": {
+          "name-only": 2
+        },
         "byReason": {
           "different-tld": 15,
           "first-publication": 15,
@@ -1932,7 +1914,7 @@
         "firstPublications": 22,
         "statusChanges": 0,
         "facetSampleSize": 25,
-        "evidenceClassifiedSignals": 6,
+        "evidenceClassifiedSignals": 7,
         "byBrand": {
           "DHL": 5,
           "Vinted": 4,
@@ -1951,7 +1933,7 @@
           "CertStream": 25
         },
         "byEvidenceTier": {
-          "name-only": 6
+          "name-only": 7
         },
         "byReason": {
           "first-publication": 22,
@@ -2123,7 +2105,7 @@
         "events": 29,
         "uniqueSignals": 16,
         "observations": 16,
-        "reobservations": 2,
+        "reobservations": 1,
         "firstPublications": 13,
         "statusChanges": 0,
         "facetSampleSize": 16,
@@ -2286,26 +2268,26 @@
     },
     {
       "date": "2026-10-03",
-      "partialDay": true,
+      "partialDay": false,
       "collectorCoverage": {
-        "windowSeconds": 84754,
-        "scheduledSlots": 94,
-        "recordedAttempts": 92,
-        "healthyAttempts": 92,
-        "recordedSchedulePercent": 97.9,
-        "listeningCoveragePercent": 52.09,
-        "scheduledListeningCeilingPercent": 53.24,
-        "listeningSeconds": 44144.845,
+        "windowSeconds": 86400,
+        "scheduledSlots": 96,
+        "recordedAttempts": 93,
+        "healthyAttempts": 93,
+        "recordedSchedulePercent": 96.9,
+        "listeningCoveragePercent": 52.06,
+        "scheduledListeningCeilingPercent": 53.33,
+        "listeningSeconds": 44981.085,
         "coverageBounds": {
           "methodVersion": 2,
-          "lowerSeconds": 44144.845,
-          "upperSeconds": 44144.846,
+          "lowerSeconds": 44981.085,
+          "upperSeconds": 44991.102,
           "precision": "bounded",
           "unknownAttempts": 0,
-          "reportedWorkerSeconds": 44144.845
+          "reportedWorkerSeconds": 44624.844
         },
         "outcomes": {
-          "healthy-empty": 69,
+          "healthy-empty": 70,
           "healthy-matches": 23
         }
       },
@@ -2341,6 +2323,57 @@
           "multiple-hyphens": 17,
           "different-tld": 15,
           "brand-joined-affix": 3
+        }
+      }
+    },
+    {
+      "date": "2026-10-04",
+      "partialDay": true,
+      "collectorCoverage": {
+        "windowSeconds": 1046,
+        "scheduledSlots": 1,
+        "recordedAttempts": 2,
+        "healthyAttempts": 2,
+        "recordedSchedulePercent": 100.0,
+        "listeningCoveragePercent": 56.76,
+        "scheduledListeningCeilingPercent": 45.89,
+        "listeningSeconds": 593.74,
+        "coverageBounds": {
+          "methodVersion": 2,
+          "lowerSeconds": 593.74,
+          "upperSeconds": 603.757,
+          "precision": "bounded",
+          "unknownAttempts": 0,
+          "reportedWorkerSeconds": 959.997
+        },
+        "outcomes": {
+          "healthy-empty": 1,
+          "healthy-matches": 1
+        }
+      },
+      "discovery": {
+        "events": 2,
+        "uniqueSignals": 2,
+        "observations": 2,
+        "reobservations": 2,
+        "firstPublications": 0,
+        "statusChanges": 0,
+        "facetSampleSize": 2,
+        "evidenceClassifiedSignals": 2,
+        "byBrand": {
+          "DHL": 2
+        },
+        "bySource": {
+          "CertStream": 2
+        },
+        "byEvidenceTier": {
+          "name-only": 2
+        },
+        "byReason": {
+          "brand-exact-token": 2,
+          "different-tld": 2,
+          "multiple-hyphens": 2,
+          "suspicious-context": 2
         }
       }
     }
