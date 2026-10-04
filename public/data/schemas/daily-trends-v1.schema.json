@@ -59,6 +59,18 @@
     "countingMethodVersion": {
       "const": 2
     },
+    "retentionMethodVersion": {
+      "const": 1
+    },
+    "discoveryCompleteFrom": {
+      "type": "string",
+      "format": "date"
+    },
+    "omittedUnknownDays": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 365
+    },
     "reobservationSemantics": {
       "type": "string",
       "minLength": 1,
@@ -153,6 +165,13 @@
           "partialDay": {
             "type": "boolean"
           },
+          "discoveryBasis": {
+            "enum": [
+              "retained-detail",
+              "retained-aggregate",
+              "unknown"
+            ]
+          },
           "collectorCoverage": {
             "type": "object",
             "additionalProperties": false,
@@ -243,7 +262,10 @@
             }
           },
           "discovery": {
-            "type": "object",
+            "type": [
+              "object",
+              "null"
+            ],
             "additionalProperties": false,
             "required": [
               "events",
