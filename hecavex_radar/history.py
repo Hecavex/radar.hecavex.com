@@ -24,6 +24,7 @@ from .history_partitions import read_document, write_document
 from .models import RadarSignal, ReasonCode, SignalStatus
 from .provenance import normalize_reason_codes
 from .safety import defang_host, stable_id
+from .trend_retention import preserve_compacting_discovery
 
 MAXIMUM_EVENT_BYTES = 8 * 1024
 MAXIMUM_DAILY_BYTES = 8 * 1024 * 1024
@@ -583,6 +584,7 @@ def compact_history(root: str | Path, now: datetime, detail_days: int, summary_d
     ]
     if uncompacted_files:
         events = [event for path in uncompacted_files for event in read_event_file(path)]
+        preserve_compacting_discovery(archive_root, events, summary["signals"], now_text)
         summary["signals"] = _merge_events(summary["signals"], events)
         summary["compactedThrough"] = max(path.parent.name for path in uncompacted_files)
 

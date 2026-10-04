@@ -6,7 +6,7 @@ import assert from "node:assert/strict";
 import { parseSnapshot } from "../src/lib/data.ts";
 import { parseCollectionHealth } from "../src/lib/collectionHealth.ts";
 import { trendCollectionState, trendDayState, trendFreshness } from "../src/lib/trendFreshness.ts";
-import { decodeTrendsPageBootstrap, encodeTrendsPageBootstrap } from "../src/lib/staticPageBootstrap.ts";
+import { boundedTrendView, decodeTrendsPageBootstrap, encodeTrendsPageBootstrap } from "../src/lib/staticPageBootstrap.ts";
 
 const readJson = async (relative) => JSON.parse(await readFile(new URL(relative, import.meta.url), "utf8"));
 const snapshots = [
@@ -21,7 +21,9 @@ const trendsPageData = {
   renderedAt: Date.parse("2026-09-22T09:00:00.000Z"),
 };
 const encodedTrends = encodeTrendsPageBootstrap(trendsPageData);
-assert.deepEqual(decodeTrendsPageBootstrap(encodedTrends), trendsPageData);
+assert.deepEqual(decodeTrendsPageBootstrap(encodedTrends), {
+  ...trendsPageData, trends: boundedTrendView(trendsPageData.trends),
+});
 assert.equal(encodeTrendsPageBootstrap({
   ...trendsPageData,
   snapshot: { signals: ["unused".repeat(100_000)] },

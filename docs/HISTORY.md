@@ -2,6 +2,10 @@
 
 The history published at [radar.hecavex.com/history/](https://radar.hecavex.com/history/) answers two narrow questions: when did the operated public pipeline accept an observation for this host, and when did a supported source explicitly change its status? It is not a reputation database and does not infer current liveness.
 
+Daily discovery aggregates are retained independently of detailed events; compacted
+per-host totals must never be treated as exact daily counts. See the
+[retention correction and recovery provenance](TREND-RETENTION-2026-10-04.md).
+
 ## Event identity
 
 Each history event has a 32-character identifier derived from its signal ID, event type, observation time, sources, status, and previous status. Mutable confidence values and explanatory labels are not part of the identity. Replaying an unchanged source archive therefore cannot increase the observation count, even if registry wording or scoring changes later.

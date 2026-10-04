@@ -23,7 +23,7 @@
     "typecheck:frontend": "tsc --noEmit",
     "typecheck:python": "python -m mypy hecavex_radar",
     "typecheck": "pnpm typecheck:python && pnpm typecheck:frontend",
-    "verify:contracts": "node scripts/verify-snapshot-contract.mjs",
+    "verify:contracts": "node scripts/verify-snapshot-contract.mjs && node scripts/verify-trend-retention.mjs",
     "verify:quality": "python -m hecavex_radar.quality_artifacts --check",
     "verify:growth": "node --experimental-strip-types scripts/verify-history-growth.mjs",
     "verify:site": "node --experimental-strip-types --test scripts/deployment-capacity.test.mjs scripts/history-partitions.test.mjs scripts/gzip-budget.test.mjs && node --expose-gc scripts/verify-site.mjs static && node --expose-gc scripts/verify-site.mjs browser",

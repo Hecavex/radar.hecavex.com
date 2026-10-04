@@ -1324,7 +1324,7 @@ def publish_supplemental_artifacts(
     )
     _validate(trends, DAILY_TRENDS_SCHEMA, "daily trends")
     trends_path = _write_json(
-        PUBLIC_DATA / "daily-trends.json", trends, MAXIMUM_TRENDS_BYTES, pretty=True
+        PUBLIC_DATA / "daily-trends.json", trends, MAXIMUM_TRENDS_BYTES, pretty=False
     )
 
     schema_by_path: dict[Path, str | None] = {
