@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-stratified-review-queue",
-  "generatedAt": "2026-10-04T23:48:15.674Z",
+  "generatedAt": "2026-10-05T00:03:20.146Z",
   "samplingPolicy": {
     "method": "deterministic-greedy-facet-balancing",
     "dimensions": [
@@ -15,7 +15,7 @@
     "excludes": "Signals already represented by a sanitized assessment.",
     "semantics": "A review worklist, not a random or prevalence-representative sample."
   },
-  "availableUnreviewed": 130,
+  "availableUnreviewed": 134,
   "selected": 24,
   "candidates": [
     {
@@ -235,8 +235,8 @@
       "firstSeen": "2026-09-29T18:31:05.314Z"
     },
     {
-      "signalId": "c66b683af1b006f3218f",
-      "recordPath": "/signals/c66b683af1b006f3218f/",
+      "signalId": "6ebf83ed151acdd4aad6",
+      "recordPath": "/signals/6ebf83ed151acdd4aad6/",
       "brand": "DHL",
       "sources": [
         "CertStream"
@@ -248,8 +248,24 @@
         "multiple-hyphens",
         "suspicious-context"
       ],
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-10-04T23:55:19.899Z"
+    },
+    {
+      "signalId": "5824741f7beb33d061bb",
+      "recordPath": "/signals/5824741f7beb33d061bb/",
+      "brand": "Smart-ID",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "85-94",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-joined-affix",
+        "suspicious-context"
+      ],
       "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-09-29T09:46:01.055Z"
+      "firstSeen": "2026-10-02T02:19:24.913Z"
     },
     {
       "signalId": "f0e130d496665eba0f6c",
@@ -270,22 +286,6 @@
       "firstSeen": "2026-10-04T19:10:11.981Z"
     },
     {
-      "signalId": "5824741f7beb33d061bb",
-      "recordPath": "/signals/5824741f7beb33d061bb/",
-      "brand": "Smart-ID",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "85-94",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-joined-affix",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-10-02T02:19:24.913Z"
-    },
-    {
       "signalId": "2f14467983c9a15f4045",
       "recordPath": "/signals/2f14467983c9a15f4045/",
       "brand": "Revolut",
@@ -300,6 +300,72 @@
       ],
       "candidateAgeBand": "2-7d",
       "firstSeen": "2026-10-01T19:23:26.129Z"
+    },
+    {
+      "signalId": "baaf231f328b0c0dcb6f",
+      "recordPath": "/signals/baaf231f328b0c0dcb6f/",
+      "brand": "Telia",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "95-100",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-joined-affix",
+        "different-tld",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "2-7d",
+      "firstSeen": "2026-09-29T07:58:26.535Z"
+    },
+    {
+      "signalId": "c452f481b2831d9e65e1",
+      "recordPath": "/signals/c452f481b2831d9e65e1/",
+      "brand": "DHL",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "95-100",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-exact-token",
+        "multiple-hyphens",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-10-04T23:55:19.899Z"
+    },
+    {
+      "signalId": "2213204eff4198758a2d",
+      "recordPath": "/signals/2213204eff4198758a2d/",
+      "brand": "Vinted",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "85-94",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-joined-affix",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "2-7d",
+      "firstSeen": "2026-09-29T02:14:54.565Z"
+    },
+    {
+      "signalId": "c46794ccb267e7138b77",
+      "recordPath": "/signals/c46794ccb267e7138b77/",
+      "brand": "Lidl Lietuva",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "85-94",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-exact-token",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "2-7d",
+      "firstSeen": "2026-09-30T15:38:34.531Z"
     },
     {
       "signalId": "c7efca6aa7c1a2b9b145",
@@ -319,55 +385,6 @@
       "firstSeen": "2026-10-04T23:39:29.661Z"
     },
     {
-      "signalId": "c46794ccb267e7138b77",
-      "recordPath": "/signals/c46794ccb267e7138b77/",
-      "brand": "Lidl Lietuva",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "85-94",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-exact-token",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-09-30T15:38:34.531Z"
-    },
-    {
-      "signalId": "8d5ed2b45073f9a0a777",
-      "recordPath": "/signals/8d5ed2b45073f9a0a777/",
-      "brand": "Vinted",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "95-100",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-joined-affix",
-        "different-tld",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-10-03T05:59:29.705Z"
-    },
-    {
-      "signalId": "64d9e77d2adb2919f859",
-      "recordPath": "/signals/64d9e77d2adb2919f859/",
-      "brand": "DHL",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "85-94",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-exact-token",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-10-04T15:12:42.414Z"
-    },
-    {
       "signalId": "309600555669eaa5b994",
       "recordPath": "/signals/309600555669eaa5b994/",
       "brand": "Revolut",
@@ -384,24 +401,8 @@
       "firstSeen": "2026-09-30T11:08:05.453Z"
     },
     {
-      "signalId": "4e7db6613cb605dee8e7",
-      "recordPath": "/signals/4e7db6613cb605dee8e7/",
-      "brand": "Vinted",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "95-100",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-exact-token",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-10-02T00:04:06.306Z"
-    },
-    {
-      "signalId": "3b89b653102bd627e9a3",
-      "recordPath": "/signals/3b89b653102bd627e9a3/",
+      "signalId": "64d9e77d2adb2919f859",
+      "recordPath": "/signals/64d9e77d2adb2919f859/",
       "brand": "DHL",
       "sources": [
         "CertStream"
@@ -413,7 +414,7 @@
         "suspicious-context"
       ],
       "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-10-04T15:28:39.293Z"
+      "firstSeen": "2026-10-04T15:12:42.414Z"
     }
   ]
 }
