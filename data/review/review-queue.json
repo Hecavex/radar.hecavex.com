@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-stratified-review-queue",
-  "generatedAt": "2026-10-05T16:35:05.457Z",
+  "generatedAt": "2026-10-05T17:20:09.874Z",
   "samplingPolicy": {
     "method": "deterministic-greedy-facet-balancing",
     "dimensions": [
@@ -15,7 +15,7 @@
     "excludes": "Signals already represented by a sanitized assessment.",
     "semantics": "A review worklist, not a random or prevalence-representative sample."
   },
-  "availableUnreviewed": 150,
+  "availableUnreviewed": 153,
   "selected": 24,
   "candidates": [
     {
@@ -86,6 +86,23 @@
       "firstSeen": "2026-09-29T22:36:00.981Z"
     },
     {
+      "signalId": "4c5f0c744b53187dafec",
+      "recordPath": "/signals/4c5f0c744b53187dafec/",
+      "brand": "Elektrum",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "95-100",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-exact-token",
+        "multiple-hyphens",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-10-05T17:15:30.148Z"
+    },
+    {
       "signalId": "c69defaf06f39727d85a",
       "recordPath": "/signals/c69defaf06f39727d85a/",
       "brand": "Smart-ID",
@@ -135,23 +152,6 @@
       ],
       "candidateAgeBand": "2-7d",
       "firstSeen": "2026-09-29T00:01:59.763Z"
-    },
-    {
-      "signalId": "6ebf83ed151acdd4aad6",
-      "recordPath": "/signals/6ebf83ed151acdd4aad6/",
-      "brand": "DHL",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "95-100",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-exact-token",
-        "multiple-hyphens",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-10-04T23:55:19.899Z"
     },
     {
       "signalId": "fa833470c3606501c8b2",
@@ -204,6 +204,39 @@
       "firstSeen": "2026-09-29T02:14:54.565Z"
     },
     {
+      "signalId": "ab5d1d051cdfc9f78bda",
+      "recordPath": "/signals/ab5d1d051cdfc9f78bda/",
+      "brand": "Elektrum",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "95-100",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-exact-token",
+        "multiple-hyphens",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-10-05T17:15:54.221Z"
+    },
+    {
+      "signalId": "db9ba353d6c64309652a",
+      "recordPath": "/signals/db9ba353d6c64309652a/",
+      "brand": "Revolut",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "85-94",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-joined-affix",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "2-7d",
+      "firstSeen": "2026-09-29T08:13:52.090Z"
+    },
+    {
       "signalId": "2f14467983c9a15f4045",
       "recordPath": "/signals/2f14467983c9a15f4045/",
       "brand": "Revolut",
@@ -218,6 +251,89 @@
       ],
       "candidateAgeBand": "2-7d",
       "firstSeen": "2026-10-01T19:23:26.129Z"
+    },
+    {
+      "signalId": "f0e130d496665eba0f6c",
+      "recordPath": "/signals/f0e130d496665eba0f6c/",
+      "brand": "ESO",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "85-94",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-exact-token",
+        "different-tld",
+        "punycode",
+        "unicode-confusable"
+      ],
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-10-04T19:10:11.981Z"
+    },
+    {
+      "signalId": "9c4c6128fb0bd5e73bb0",
+      "recordPath": "/signals/9c4c6128fb0bd5e73bb0/",
+      "brand": "Artea",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "85-94",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-joined-affix",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "2-7d",
+      "firstSeen": "2026-09-29T18:31:05.314Z"
+    },
+    {
+      "signalId": "6ebf83ed151acdd4aad6",
+      "recordPath": "/signals/6ebf83ed151acdd4aad6/",
+      "brand": "DHL",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "95-100",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-exact-token",
+        "multiple-hyphens",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-10-04T23:55:19.899Z"
+    },
+    {
+      "signalId": "5824741f7beb33d061bb",
+      "recordPath": "/signals/5824741f7beb33d061bb/",
+      "brand": "Smart-ID",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "85-94",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-joined-affix",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "2-7d",
+      "firstSeen": "2026-10-02T02:19:24.913Z"
+    },
+    {
+      "signalId": "4e7db6613cb605dee8e7",
+      "recordPath": "/signals/4e7db6613cb605dee8e7/",
+      "brand": "Vinted",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "95-100",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-exact-token",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "2-7d",
+      "firstSeen": "2026-10-02T00:04:06.306Z"
     },
     {
       "signalId": "c7efca6aa7c1a2b9b145",
@@ -253,43 +369,9 @@
       "firstSeen": "2026-09-30T15:38:34.531Z"
     },
     {
-      "signalId": "f0e130d496665eba0f6c",
-      "recordPath": "/signals/f0e130d496665eba0f6c/",
-      "brand": "ESO",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "85-94",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-exact-token",
-        "different-tld",
-        "punycode",
-        "unicode-confusable"
-      ],
-      "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-10-04T19:10:11.981Z"
-    },
-    {
-      "signalId": "5824741f7beb33d061bb",
-      "recordPath": "/signals/5824741f7beb33d061bb/",
-      "brand": "Smart-ID",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "85-94",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-joined-affix",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-10-02T02:19:24.913Z"
-    },
-    {
-      "signalId": "c452f481b2831d9e65e1",
-      "recordPath": "/signals/c452f481b2831d9e65e1/",
-      "brand": "DHL",
+      "signalId": "246056db8ddc96dc8d22",
+      "recordPath": "/signals/246056db8ddc96dc8d22/",
+      "brand": "Elektrum",
       "sources": [
         "CertStream"
       ],
@@ -301,72 +383,7 @@
         "suspicious-context"
       ],
       "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-10-04T23:55:19.899Z"
-    },
-    {
-      "signalId": "db9ba353d6c64309652a",
-      "recordPath": "/signals/db9ba353d6c64309652a/",
-      "brand": "Revolut",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "85-94",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-joined-affix",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-09-29T08:13:52.090Z"
-    },
-    {
-      "signalId": "4e7db6613cb605dee8e7",
-      "recordPath": "/signals/4e7db6613cb605dee8e7/",
-      "brand": "Vinted",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "95-100",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-exact-token",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-10-02T00:04:06.306Z"
-    },
-    {
-      "signalId": "9c4c6128fb0bd5e73bb0",
-      "recordPath": "/signals/9c4c6128fb0bd5e73bb0/",
-      "brand": "Artea",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "85-94",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-joined-affix",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-09-29T18:31:05.314Z"
-    },
-    {
-      "signalId": "a6cc7ee4cbc8ba4bc82a",
-      "recordPath": "/signals/a6cc7ee4cbc8ba4bc82a/",
-      "brand": "Tele2",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "95-100",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-exact-token",
-        "different-tld",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-10-05T11:29:18.123Z"
+      "firstSeen": "2026-10-05T17:17:48.120Z"
     },
     {
       "signalId": "309600555669eaa5b994",
@@ -383,22 +400,6 @@
       ],
       "candidateAgeBand": "2-7d",
       "firstSeen": "2026-09-30T11:08:05.453Z"
-    },
-    {
-      "signalId": "0bb5827dc6d6d0e12300",
-      "recordPath": "/signals/0bb5827dc6d6d0e12300/",
-      "brand": "Vinted",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "95-100",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-exact-token",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-10-03T10:26:59.407Z"
     },
     {
       "signalId": "64d9e77d2adb2919f859",
