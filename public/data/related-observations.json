@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-related-observations",
-  "generatedAt": "2026-10-06T22:34:44.934Z",
+  "generatedAt": "2026-10-06T23:34:42.722Z",
   "semantics": "Shared evidence is a bounded association between public observations. It is not campaign, operator, malware, infrastructure ownership, or threat-actor attribution.",
   "nodes": [
     {
@@ -17,7 +17,7 @@
     {
       "signalId": "21415e42a1a156503934",
       "domain": "leigfxqo[.]xn--tl2mobile-b4ab[.]com",
-      "clusterId": "75a77293f9d18573"
+      "clusterId": "fba20344ece0a3dd"
     },
     {
       "signalId": "3047aa7a4fc1f0afc4b6",
@@ -27,7 +27,7 @@
     {
       "signalId": "3c650d085a1456d139a8",
       "domain": "vqhwfytrwsuoc[.]xn--tl2mobile-b4ab[.]com",
-      "clusterId": "75a77293f9d18573"
+      "clusterId": "fba20344ece0a3dd"
     },
     {
       "signalId": "580d297e430b21694b4d",
@@ -37,12 +37,17 @@
     {
       "signalId": "72c33b7f99086c5084ef",
       "domain": "solwfatn[.]xn--tl2mobile-b4ab[.]com",
-      "clusterId": "75a77293f9d18573"
+      "clusterId": "fba20344ece0a3dd"
     },
     {
       "signalId": "799945b8b4949fb57e26",
       "domain": "www[.]bite-service[.]ru",
       "clusterId": "20a6dc942696a1f4"
+    },
+    {
+      "signalId": "80584d94964701a98bc7",
+      "domain": "api[.]xn--tl2mobile-b4ab[.]fr",
+      "clusterId": "fba20344ece0a3dd"
     },
     {
       "signalId": "81209ec636b8d7df8f1f",
@@ -52,7 +57,7 @@
     {
       "signalId": "87f66230fa2befecbb06",
       "domain": "vpn[.]xn--tl2mobile-b4ab[.]fr",
-      "clusterId": "75a77293f9d18573"
+      "clusterId": "fba20344ece0a3dd"
     },
     {
       "signalId": "9d83b92359ef325b9351",
@@ -67,7 +72,7 @@
     {
       "signalId": "bc6e84449bd688cd059b",
       "domain": "oewzfsrq[.]xn--tl2mobile-b4ab[.]com",
-      "clusterId": "75a77293f9d18573"
+      "clusterId": "fba20344ece0a3dd"
     },
     {
       "signalId": "c39dd094625ac399665a",
@@ -242,9 +247,41 @@
       ]
     },
     {
+      "id": "53e7d303ec9f6fbc6123",
+      "source": "21415e42a1a156503934",
+      "target": "80584d94964701a98bc7",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "185[.]53[.]179[.]200"
+        },
+        {
+          "type": "dns-cname",
+          "value": "845192[.]parkingcrew[.]net"
+        }
+      ]
+    },
+    {
       "id": "5760819e2d6fa88bf5a3",
       "source": "21415e42a1a156503934",
       "target": "87f66230fa2befecbb06",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "185[.]53[.]179[.]200"
+        },
+        {
+          "type": "dns-cname",
+          "value": "845192[.]parkingcrew[.]net"
+        }
+      ]
+    },
+    {
+      "id": "fab368df245fd518f640",
+      "source": "3c650d085a1456d139a8",
+      "target": "80584d94964701a98bc7",
       "strength": "shared-context",
       "evidence": [
         {
@@ -274,9 +311,41 @@
       ]
     },
     {
+      "id": "fcfbd7308435cead5a8e",
+      "source": "72c33b7f99086c5084ef",
+      "target": "80584d94964701a98bc7",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "185[.]53[.]179[.]200"
+        },
+        {
+          "type": "dns-cname",
+          "value": "845192[.]parkingcrew[.]net"
+        }
+      ]
+    },
+    {
       "id": "619c5d297bf69f67269c",
       "source": "72c33b7f99086c5084ef",
       "target": "87f66230fa2befecbb06",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "185[.]53[.]179[.]200"
+        },
+        {
+          "type": "dns-cname",
+          "value": "845192[.]parkingcrew[.]net"
+        }
+      ]
+    },
+    {
+      "id": "1d5d416c9952885c0170",
+      "source": "80584d94964701a98bc7",
+      "target": "bc6e84449bd688cd059b",
       "strength": "shared-context",
       "evidence": [
         {
@@ -308,7 +377,7 @@
   ],
   "suppressedEvidence": {
     "highFanoutValues": 4,
-    "temporalPairs": 2,
+    "temporalPairs": 3,
     "edgeLimit": 0
   }
 }
