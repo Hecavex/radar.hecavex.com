@@ -1,0 +1,280 @@
+.collection-disclosure {
+  margin: clamp(3.5rem, 7vw, 6rem) 0 0;
+  padding: clamp(1.25rem, 2.5vw, 2rem);
+  border: 1px solid var(--line);
+  border-top: 2px solid var(--amber);
+  background: var(--bg-elevated);
+}
+
+.collection-disclosure-heading {
+  display: grid;
+  grid-template-columns: minmax(16rem, .9fr) minmax(22rem, 1.1fr);
+  gap: 1rem clamp(2rem, 5vw, 5rem);
+  align-items: end;
+  margin-bottom: 1.35rem;
+}
+
+.collection-disclosure-heading .eyebrow {
+  margin-bottom: .55rem;
+  color: var(--amber);
+}
+
+.collection-disclosure-heading h2 {
+  margin: 0;
+  color: var(--text);
+  max-width: 22ch;
+  font-size: clamp(1.35rem, 2.4vw, 1.85rem);
+  font-weight: 560;
+  line-height: var(--section-title-line-height);
+}
+
+.collection-disclosure-heading > p {
+  margin: 0;
+  color: var(--muted);
+  max-width: 68ch;
+  font-size: .88rem;
+  line-height: 1.7;
+}
+
+.collection-disclosure-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  border-block: 1px solid var(--line);
+}
+
+.collection-disclosure-grid article {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem;
+  min-width: 0;
+  padding: 1.15rem 1.25rem;
+  border-right: 1px solid var(--line);
+  background: color-mix(in srgb, var(--bg) 52%, transparent);
+}
+
+.collection-disclosure-grid article:last-child {
+  border-right: 0;
+}
+
+.collection-disclosure-grid svg {
+  width: 1rem;
+  height: 1rem;
+  margin-top: .15rem;
+  color: var(--amber);
+}
+
+.collection-disclosure-grid h3 {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: .84rem;
+}
+
+.collection-disclosure-grid p {
+  margin: .4rem 0 0;
+  color: var(--muted);
+  font-size: .78rem;
+  line-height: 1.65;
+}
+
+.collection-disclosure-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  margin: 1rem 0 0;
+  font: 650 .75rem var(--mono);
+}
+
+.collection-disclosure-links a {
+  color: var(--text-soft);
+}
+
+.collection-disclosure-links a:hover {
+  color: var(--amber);
+}
+
+.collection-health-disclosure {
+  margin-top: 1rem;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--bg) 52%, transparent);
+}
+
+.collection-health-disclosure > summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 1rem;
+  min-height: 4.5rem;
+  padding: .85rem 1rem;
+  color: var(--text-soft);
+  cursor: pointer;
+  list-style: none;
+}
+
+.collection-health-disclosure > summary::-webkit-details-marker {
+  display: none;
+}
+
+.collection-health-disclosure > summary:hover {
+  background: color-mix(in srgb, var(--surface) 48%, transparent);
+}
+
+.collection-health-disclosure > summary strong,
+.collection-health-disclosure > summary small {
+  display: block;
+}
+
+.collection-health-disclosure > summary strong {
+  font-size: .84rem;
+}
+
+.collection-health-disclosure > summary small {
+  margin-top: .2rem;
+  color: var(--muted);
+  font-size: .75rem;
+}
+
+.collection-health-toggle-label {
+  color: var(--faint);
+  font: 650 .75rem var(--mono);
+  letter-spacing: .05em;
+  text-transform: none;
+}
+
+.collection-health-disclosure > summary svg {
+  width: 1rem;
+  height: 1rem;
+  color: var(--amber);
+  transition: transform 160ms ease;
+}
+
+.collection-health-disclosure[open] > summary {
+  border-bottom: 1px solid var(--line);
+}
+
+.collection-health-disclosure[open] > summary svg {
+  transform: rotate(180deg);
+}
+
+.collection-health {
+  margin: 0;
+  padding: 1rem;
+  border: 0;
+  background: transparent;
+}
+
+.collection-health-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.collection-health .eyebrow {
+  margin: 0 0 .35rem;
+  color: var(--blue);
+}
+
+.collection-health h3 {
+  margin: 0;
+  color: var(--text);
+  font-size: .95rem;
+}
+
+.collection-health > p[role="status"] {
+  margin: .8rem 0 0;
+  color: var(--muted);
+  font-size: .75rem;
+}
+
+.collection-health-statuses {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: .4rem;
+}
+
+.health-badge {
+  padding: .28rem .45rem;
+  border: 1px solid var(--line-strong);
+  color: var(--muted);
+  background: var(--surface);
+  font: 650 .75rem var(--mono);
+  letter-spacing: .025em;
+  white-space: nowrap;
+}
+
+.health-badge.outcome-healthy-empty,
+.health-badge.outcome-healthy-matches,
+.health-badge.freshness-current {
+  border-color: color-mix(in srgb, var(--green) 38%, transparent);
+  color: var(--green);
+  background: var(--green-soft);
+}
+
+.health-badge.outcome-no-input,
+.health-badge.outcome-partial,
+.health-badge.schedule-delayed,
+.health-badge.freshness-stale {
+  border-color: color-mix(in srgb, var(--amber) 38%, transparent);
+  color: var(--amber);
+  background: var(--amber-soft);
+}
+
+.health-badge.outcome-failed {
+  border-color: rgb(208 108 101 / 38%);
+  color: var(--danger);
+  background: var(--danger-soft);
+}
+
+.collection-health-summary,
+.collection-health-note {
+  color: var(--muted);
+  font-size: .75rem;
+  line-height: 1.55;
+}
+
+.collection-health-summary {
+  margin: .75rem 0;
+}
+
+.collection-health-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  margin: 0;
+  padding: 1px;
+  background: var(--line);
+}
+
+.collection-health-grid > div {
+  min-width: 0;
+  padding: .85rem;
+  background: var(--bg-elevated);
+}
+
+.collection-health-grid dt {
+  margin-bottom: .32rem;
+  color: var(--faint);
+  font: 650 .75rem var(--mono);
+  letter-spacing: .05em;
+  text-transform: none;
+}
+
+.collection-health-grid dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: var(--text-soft);
+  font: 600 .76rem/1.45 var(--mono);
+}
+
+.collection-health-grid dd span {
+  display: block;
+  margin-top: .2rem;
+  color: var(--faint);
+  font-size: .75rem;
+}
+
+.collection-health-note {
+  margin: .7rem 0 0;
+}

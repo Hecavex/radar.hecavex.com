@@ -1,5 +1,6 @@
 import { fileURLToPath } from "node:url";
 import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, isAbsolute, relative, resolve } from "node:path";
 
@@ -186,7 +187,7 @@ function staticPagePlugin() {
           { parseHistory },
           { encodeSnapshotBootstrap },
           { encodeHistoryBootstrap },
-          { encodeStaticPageBootstrap, parseEventArtifact },
+          { encodeStaticPageBootstrap, encodeTrendsPageBootstrap, parseEventArtifact },
           { parseRelatedObservations },
           { renderLithuanianPage, renderPrerenderedPage, renderStaticPage },
         ] = await Promise.all([
@@ -221,7 +222,8 @@ function staticPagePlugin() {
             renderedAt,
           } as StaticPageData;
           staticMarkup = renderStaticPage(staticPage.kind, data, staticPage.language);
-          bootstrap = ` data-page-kind="${staticPage.kind}" data-page-language="${staticPage.language}" data-page-bootstrap="${encodeStaticPageBootstrap(data)}"`;
+          const encodedData = staticPage.kind === "trends" ? encodeTrendsPageBootstrap(data) : encodeStaticPageBootstrap(data);
+          bootstrap = ` data-page-kind="${staticPage.kind}" data-page-language="${staticPage.language}" data-page-bootstrap="${encodedData}"`;
         } else if (lithuanianPage) {
           staticMarkup = renderLithuanianPage(lithuanianPage, snapshot, renderedAt);
           bootstrap = lithuanianPage === "radar"
@@ -357,6 +359,12 @@ function dynamicRoutesPlugin() {
           const data = {
             signal,
             generatedAt: snapshot.generatedAt,
+            publicationIdentity: {
+              sourceRevision: releaseRevision,
+              dataRevision: releaseDataRevision,
+              manifestSha256: createHash("sha256").update(readFileSync(resolve(publicDataPath, "feed-manifest.json"))).digest("hex"),
+              recordScope: currentById.has(signal.id) ? "snapshot" as const : "history" as const,
+            },
             history: historicalById.get(signal.id) ?? null,
             detail,
             brand: signal.brand ? findBrand(signal.brand) ?? null : null,

@@ -1,0 +1,468 @@
+@media (max-width: 1160px) {
+  .metric-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .methodology-steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .methodology-source-grid,
+  .docs-archive-grid,
+  .docs-operations-grid,
+  .docs-flow {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .candidate-provenance,
+  .brand-scope-metrics,
+  .scope-boundaries dl {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1160px) {
+  :root {
+    --header-offset: 4rem;
+  }
+
+  .portfolio-navigation,
+  .product-bar {
+    display: none;
+  }
+
+  .mobile-navigation {
+    display: block;
+  }
+}
+
+@media (max-width: 900px) {
+  .metric-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .history-metrics .metric-card:last-child,
+  .metric-card:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .metric-card {
+    min-height: 5.4rem;
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 760px) {
+  .freshness-card {
+    max-width: 28rem;
+    padding: 1rem;
+  }
+
+  .hero-actions {
+    gap: .65rem;
+    margin-top: 1.2rem;
+  }
+
+  .hero-actions a {
+    min-height: 2.55rem;
+    font-size: .75rem;
+  }
+
+  .hero-actions .hero-action-primary {
+    padding-inline: .7rem;
+  }
+
+  .section-heading,
+  .collection-health-heading,
+  .methodology-toc,
+  .docs-toc,
+  .pagination {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .candidate-summary-heading {
+    align-items: flex-start;
+    grid-template-columns: 1fr;
+    flex-direction: column;
+  }
+
+  .quick-filter-row,
+  .signal-heading-actions {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .signal-heading-actions {
+    justify-content: flex-start;
+  }
+
+  .reason-explanations,
+  .candidate-provenance,
+  .brand-scope-metrics,
+  .scope-boundaries dl {
+    grid-template-columns: 1fr;
+  }
+
+  .evidence-badges {
+    justify-content: flex-start;
+  }
+
+  .brand-filter-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .brand-filter-shell label:first-child {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .brand-filter-shell select {
+    border-left: 0;
+  }
+
+  .context-heading > p {
+    text-align: left;
+  }
+
+  .collection-health-statuses {
+    justify-content: flex-start;
+  }
+
+  .methodology-boundaries,
+  .collection-disclosure-heading {
+    grid-template-columns: 1fr;
+  }
+
+  .methodology-toc > div,
+  .docs-toc > div {
+    justify-content: flex-start;
+  }
+
+  .methodology-source-grid,
+  .collection-disclosure-grid,
+  .collection-health-grid,
+  .methodology-field-list,
+  .docs-card-grid,
+  .docs-archive-grid,
+  .docs-operations-grid,
+  .docs-terms-list {
+    grid-template-columns: 1fr;
+  }
+
+  .collection-disclosure-grid article {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .collection-disclosure-grid article:last-child {
+    border-bottom: 0;
+  }
+
+  .collection-health-disclosure > summary {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .collection-health-toggle-label {
+    display: none;
+  }
+
+  .methodology-note,
+  .docs-callout {
+    grid-template-columns: 1fr;
+  }
+
+  .select-group > svg {
+    display: none;
+  }
+
+  .capture-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .signal-intelligence-heading,
+  .detail-observation > header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-list li {
+    grid-template-columns: 1fr;
+  }
+
+  .table-scroll {
+    overflow: visible;
+    contain: none;
+  }
+
+  .table-scroll table,
+  .table-scroll tbody {
+    display: block;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .table-scroll thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+
+  .table-scroll tbody {
+    display: grid;
+    gap: .75rem;
+    padding: .75rem;
+    background: var(--bg);
+  }
+
+  .table-scroll tbody tr {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr;
+    border: 1px solid var(--line);
+    background: var(--bg-elevated);
+  }
+
+  .table-scroll tbody tr:hover {
+    background: var(--bg-elevated);
+  }
+
+  .table-scroll td {
+    display: grid;
+    grid-template-columns: 5.25rem minmax(0, 1fr);
+    align-items: start;
+    gap: .75rem;
+    width: auto;
+    max-width: none;
+    padding: .65rem .8rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
+  }
+
+  .table-scroll td::before {
+    color: var(--faint);
+    content: attr(data-label);
+    font: 700 .75rem/1.5 var(--mono);
+    letter-spacing: .07em;
+    text-transform: none;
+  }
+
+  .table-scroll .indicator-cell {
+    padding-top: .85rem;
+    padding-right: .8rem;
+    padding-bottom: .85rem;
+  }
+
+  .table-scroll .indicator-cell > span {
+    grid-column: 2;
+    margin-top: -.35rem;
+  }
+
+  .table-scroll .country,
+  .table-scroll .first-seen {
+    grid-column: 2;
+  }
+
+  .table-scroll .indicator-cell code {
+    overflow: visible;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .table-scroll .capture-cell {
+    position: absolute;
+    top: .65rem;
+    right: .65rem;
+    display: block;
+    padding: 0;
+    border: 0;
+  }
+
+  .table-scroll .capture-cell::before {
+    display: none;
+  }
+
+  .table-scroll .capture-cell button {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+
+  .table-scroll .source-chips,
+  .table-scroll .status-pill,
+  .table-scroll .brand-target,
+  .table-scroll .unknown,
+  .table-scroll .host-name,
+  .table-scroll td time {
+    justify-self: start;
+  }
+
+  .table-scroll .confidence {
+    grid-column: 2;
+  }
+
+  .pagination {
+    border-top: 1px solid var(--line);
+  }
+}
+
+@media (max-width: 760px) {
+  /* Keep the table's accessible headers while grouping related card values. */
+  .table-scroll .signal-table td {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .35rem .6rem;
+    padding: .55rem .8rem;
+  }
+
+  .table-scroll .signal-table td::before,
+  .table-scroll .signal-table .indicator-cell > span {
+    display: none;
+  }
+
+  .table-scroll .signal-table .indicator-cell > div {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .table-scroll .signal-table .source-chips,
+  .table-scroll .signal-table .first-seen,
+  .table-scroll .signal-table .country {
+    margin: 0;
+  }
+
+  .table-scroll .signal-table .indicator-cell button:not(.candidate-link),
+  .table-scroll .signal-table .signal-deep-link {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+  }
+
+  .table-scroll .signal-table .record-link {
+    min-height: 2.75rem;
+  }
+}
+
+@media (max-width: 680px) {
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 1.35rem;
+    min-height: auto;
+    padding: 2.75rem 0 2.5rem;
+  }
+
+  .brand-scope-heading,
+  .methodology-heading,
+  .methodology-section-heading,
+  .docs-heading,
+  .docs-section-heading {
+    grid-template-columns: 1fr;
+  }
+
+  .brand-scope-heading,
+  .methodology-heading,
+  .docs-heading {
+    align-items: start;
+  }
+
+  .network-bar {
+    min-height: 4rem;
+    padding-inline: 1rem;
+  }
+
+  .brand img {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+
+  .brand-copy small {
+    display: none;
+  }
+
+  .mobile-navigation-panel {
+    grid-template-columns: 1fr;
+    width: min(21rem, calc(100vw - 2rem));
+  }
+
+  .mobile-navigation-column + .mobile-navigation-column {
+    border-top: 1px solid var(--line-strong);
+    border-left: 0;
+  }
+
+  .footer-inner {
+    display: block;
+  }
+
+  .site-footer nav {
+    justify-content: flex-start;
+    margin-top: 1.3rem;
+  }
+
+  .metric-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .metric-card:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .metric-card span {
+    white-space: normal;
+  }
+
+  .methodology-steps {
+    grid-template-columns: 1fr;
+  }
+
+  .methodology-steps li {
+    min-height: auto;
+  }
+
+  .docs-flow {
+    grid-template-columns: 1fr;
+  }
+
+  .docs-flow li {
+    min-height: auto;
+  }
+
+  .select-group label:not(.sr-only),
+  .select-group select,
+  .reset-button,
+  .share-filter-button {
+    width: 100%;
+    max-width: none;
+  }
+
+  .pagination > div {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .pagination > div > span {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}

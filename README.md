@@ -155,7 +155,10 @@ That gate covers Python and frontend linting and type checks; the production bui
 
 ## Documentation index
 
+- [Source map and ownership boundaries](docs/CODEMAP.md)
+
 - [Architecture](docs/ARCHITECTURE.md)
+- [Portfolio interface and accessibility contract](docs/design-interface.md)
 - [Public data contract](docs/DATA-CONTRACT.md)
 - [Data sources and provenance](docs/DATA-SOURCES.md)
 - [Detection and brand matching](docs/DETECTION.md)
@@ -163,6 +166,7 @@ That gate covers Python and frontend linting and type checks; the production bui
 - [Weekly dataset releases](docs/DATASET-RELEASES.md)
 - [MISP sharing](docs/MISP-SHARING.md)
 - [Private review workflow](docs/REVIEW-WORKFLOW.md)
+- [Bounded ranking evaluation and lifecycle-safe reuse](docs/RESEARCH-EVALUATION.md)
 - [Deployment and schedules](docs/DEPLOYMENT.md)
 - [Performance budgets](docs/PERFORMANCE.md)
 - [Data licensing and attribution](DATA-LICENSE.md)

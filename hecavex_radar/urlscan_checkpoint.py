@@ -62,6 +62,36 @@ def _query_hash(query: str) -> str:
     return hashlib.sha256(query.encode("utf-8")).hexdigest()
 
 
+def query_family(query: str) -> str:
+    """Classify only our fixed builders; never persist query terms or URLs."""
+    if "AND (hash:" in query:
+        return "hash-pivot"
+    if 'task.domain.keyword:"' in query:
+        return "exact-domain-batch"
+    if "task.domain.keyword:(" in query:
+        return "domain"
+    if "page.title.keyword:(" in query:
+        return "title"
+    return "legacy-unclassified"
+
+
+def audit_ownership(state: dict[str, Any], planned_queries: list[str]) -> list[dict[str, object]]:
+    """Read-only custody report. Absence from a plan NEVER retires unresolved work."""
+    if not _valid_state(_migrate_state(state)):
+        raise ValueError("Invalid checkpoint state.")
+    plan = {_query_hash(query): query_family(query) for query in planned_queries}
+    result = []
+    for key, row in sorted(state["queries"].items()):
+        if not row["backlogPending"]:
+            continue
+        result.append({"queryHash": key, "queryFamily": plan.get(key, row.get("queryFamily", "legacy-unclassified")),
+                       "ownership": "active-in-supplied-plan" if key in plan else "unresolved-not-in-supplied-plan",
+                       "lastProgressAt": row.get("lastProgressAt", row["updatedAt"]),
+                       "backlogResultsSeen": row["backlogResultsSeen"],
+                       "retired": False})
+    return result
+
+
 def _sort_token(value: object) -> list[str | int | float] | None:
     if not isinstance(value, list) or not 1 <= len(value) <= MAXIMUM_CURSOR_PARTS:
         return None
@@ -117,7 +147,7 @@ def _unique_results(values: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
 
 def _valid_checkpoint(value: object) -> bool:
-    if not isinstance(value, dict) or set(value) != {
+    if not isinstance(value, dict) or set(value) - {"queryFamily"} != {
         "queryHash",
         "updatedAt",
         "lastProgressAt",
@@ -137,6 +167,11 @@ def _valid_checkpoint(value: object) -> bool:
     recent = value["recentIds"]
     total = value["providerTotal"]
     return (
+        isinstance(value.get("queryFamily", "legacy-unclassified"), str)
+        and value.get("queryFamily", "legacy-unclassified") in {
+            "domain", "title", "exact-domain-batch", "hash-pivot", "legacy-unclassified"
+        }
+        and
         isinstance(value["queryHash"], str)
         and len(value["queryHash"]) == 64
         and all(character in "0123456789abcdef" for character in value["queryHash"])
@@ -444,6 +479,7 @@ class SearchCheckpointStore:
             raise RuntimeError("URLScan checkpoint progress state is inconsistent.")
         queries[key] = {
             "queryHash": key,
+            "queryFamily": query_family(query),
             "updatedAt": _timestamp(self.now),
             "lastProgressAt": last_progress_at,
             "complete": complete,

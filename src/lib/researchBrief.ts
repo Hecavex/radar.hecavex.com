@@ -72,6 +72,15 @@ export function researchBriefFilename(data: SignalPageData): string {
 export function buildResearchBrief(data: SignalPageData): string {
   const text = researchBriefCopy[data.language];
   const signal = data.signal;
+  const identity = data.publicationIdentity;
+  const hex = (value: unknown, length: number) => typeof value === "string" && new RegExp(`^[a-f0-9]{${length}}$`).test(value) ? value : text.unknown;
+  const sourceRevision = hex(identity?.sourceRevision, 40);
+  const dataRevision = hex(identity?.dataRevision, 40);
+  const immutable = dataRevision !== text.unknown
+    ? `https://github.com/Hecavex/radar.hecavex.com/tree/${dataRevision}/public/data` : text.unknown;
+  const provenanceLabels = data.language === "lt"
+    ? ["Kodo versija", "Duomenų versija", "Manifesto SHA-256", "Įrašo rinkinys", "Nekintanti publikacija"]
+    : ["Source revision", "Data revision", "Manifest SHA-256", "Record collection", "Pinned publication"];
   const id = /^[0-9a-f]{20}$/.test(signal.id) ? signal.id : null;
   const record = id ? `https://radar.hecavex.com/${data.language === "lt" ? "lt/signalai" : "signals"}/${id}/` : text.unknown;
   const observations = data.detail?.signalId === signal.id ? data.detail.observations.slice(0, 20) : [];
@@ -91,6 +100,11 @@ export function buildResearchBrief(data: SignalPageData): string {
     `${text.corroboration}: ${methods(signal.corroboratedBy, CORROBORATION_METHODS, text.unknown)}`,
     "", text.observations, ...(lines.length ? lines : [text.unknown]),
     "", text.provenance, `${text.record}: ${record}`,
+    `${provenanceLabels[0]}: ${sourceRevision}`,
+    `${provenanceLabels[1]}: ${dataRevision}`,
+    `${provenanceLabels[2]}: ${hex(identity?.manifestSha256, 64)}`,
+    `${provenanceLabels[3]}: ${published(identity?.recordScope, ["snapshot", "history"], text.unknown)}`,
+    `${provenanceLabels[4]}: ${immutable}`,
     `${text.report}: ${safeResearchReference(signal.referenceUrl) ?? text.unknown}`,
     "", text.limits, text.collection, text.missing, text.boundary,
     "", text.questions, ...text.prompts.map((prompt) => `- ${prompt}`), "",

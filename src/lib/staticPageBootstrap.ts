@@ -27,6 +27,7 @@ export type RadarEventArtifact = {
 export type DailyTrendRow = {
   date: string;
   partialDay: boolean;
+  discoveryBasis?: "retained-detail" | "retained-aggregate" | "unknown";
   collectorCoverage: {
     windowSeconds: number;
     scheduledSlots: number;
@@ -36,6 +37,8 @@ export type DailyTrendRow = {
     listeningCoveragePercent: number | null;
     scheduledListeningCeilingPercent: number | null;
     listeningSeconds: number;
+    coverageBounds?: { methodVersion: 2; lowerSeconds: number; upperSeconds: number;
+      precision: "exact" | "bounded" | "unknown"; unknownAttempts: number; reportedWorkerSeconds: number };
     outcomes: Record<string, number>;
   };
   discovery: {
@@ -51,7 +54,7 @@ export type DailyTrendRow = {
     bySource: Record<string, number>;
     byEvidenceTier: Record<string, number>;
     byReason: Record<string, number>;
-  };
+  } | null;
 };
 
 export type DailyTrends = {
@@ -65,6 +68,9 @@ export type DailyTrends = {
   facetSemantics: string;
   seriesSemantics: string;
   omittedZeroDays: number;
+  omittedUnknownDays?: number;
+  discoveryCompleteFrom?: string;
+  displayWindow?: { shownRows: number; totalRows: number; from: string; to: string };
   collectorSchedule: { expectedIntervalSeconds: number; expectedListeningSeconds: number; derivedFrom: string };
   series: DailyTrendRow[];
   privacy: string;
@@ -105,6 +111,9 @@ export type StaticPageData = {
 };
 
 export type StaticPageKind = "changes" | "trends" | "associations" | "tools" | "dataset";
+
+/** Trends never reads candidate, event or relationship records. */
+export type TrendsPageData = Pick<StaticPageData, "trends" | "quality" | "renderedAt">;
 
 const identifierPattern = /^[a-f\d]{20}$/u;
 const eventIdentifierPattern = /^[a-f\d]{32}$/u;
@@ -175,6 +184,38 @@ export function parseEventArtifact(
 
 export function encodeStaticPageBootstrap(data: StaticPageData): string {
   return encodeURIComponent(JSON.stringify(data));
+}
+
+export function encodeTrendsPageBootstrap({ trends, quality, renderedAt }: TrendsPageData): string {
+  // Project explicitly: callers may pass the full static-page data at build time.
+  return encodeURIComponent(JSON.stringify({ trends: boundedTrendView(trends), quality, renderedAt }));
+}
+
+export const MAX_VISIBLE_TREND_DATES = 90;
+
+export function boundedTrendView(trends: DailyTrends): DailyTrends {
+  if (trends.series.length <= MAX_VISIBLE_TREND_DATES) return trends;
+  const series = trends.series.slice(-MAX_VISIBLE_TREND_DATES);
+  return { ...trends, series, displayWindow: {
+    shownRows: series.length, totalRows: trends.series.length,
+    from: series[0].date, to: series.at(-1)!.date,
+  } };
+}
+
+export function decodeTrendsPageBootstrap(value: string): TrendsPageData {
+  const parsed: unknown = JSON.parse(decodeURIComponent(value));
+  if (
+    !isObject(parsed) || !hasExactFields(parsed, ["trends", "quality", "renderedAt"]) ||
+    typeof parsed.renderedAt !== "number" || !Number.isFinite(parsed.renderedAt) ||
+    !isObject(parsed.trends) || parsed.trends.schemaVersion !== 1 || parsed.trends.dataset !== "radar-daily-trends" ||
+    !Array.isArray(parsed.trends.series) || !isObject(parsed.trends.collectorSchedule) ||
+    !isObject(parsed.quality) || parsed.quality.schemaVersion !== 1 || parsed.quality.dataset !== "radar-quality-metrics" ||
+    !["reviewSample", "reviewCoverage", "reviewLatencyHours", "currentExclusions", "precision"].every((key) =>
+      isObject((parsed.quality as Record<string, unknown>)[key]))
+  ) {
+    throw new Error("The embedded Radar trends data is invalid.");
+  }
+  return parsed as TrendsPageData;
 }
 
 export function decodeStaticPageBootstrap(value: string): StaticPageData {

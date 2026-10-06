@@ -1,0 +1,72 @@
+/* Shared Research/Radar/APT/Labs type roles. Keep data/identifier monospace
+   and component-specific heading sizes; align weight, tracking and rhythm. */
+:root { --section-title-size: clamp(1.45rem, 2.4vw, 2rem); }
+
+body {
+  font-family: var(--sans);
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.65;
+  letter-spacing: -.006em;
+}
+
+:root :is(h1, h2, h3) {
+  font-family: var(--display);
+  font-weight: 600;
+}
+
+:root h1 { line-height: 1.08; letter-spacing: -.04em; }
+:root h2 { line-height: 1.1; letter-spacing: -.035em; }
+:root h3 { line-height: 1.2; letter-spacing: -.035em; }
+
+.section-heading h2,
+.methodology-section-heading h2,
+.docs-section-heading h2,
+.profile-section h2 {
+  font-size: var(--section-title-size);
+}
+
+.portfolio-navigation a,
+.product-navigation a,
+.source-link,
+.language-link,
+.mobile-navigation summary {
+  font: 600 .75rem var(--sans);
+  line-height: normal;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.brand-copy small,
+.product-identity span {
+  font: 500 .75rem var(--sans);
+  line-height: normal;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.hero-intro,
+.artifact-hero > p,
+.methodology-heading > p,
+.docs-heading > p,
+.brand-scope-heading > p {
+  font: 400 clamp(1.1rem, 1.6vw, 1.25rem)/1.45 var(--sans);
+  letter-spacing: -.006em;
+}
+
+.eyebrow {
+  font: 600 .75rem/1.5 var(--sans);
+  letter-spacing: .02em;
+  text-transform: none;
+}
+
+.button,
+.hero-actions a,
+.share-filter-button,
+.reset-button,
+.pagination button,
+.record-link,
+.freshness-card .button {
+  font: 600 .875rem/1.5 var(--sans);
+  letter-spacing: 0;
+}

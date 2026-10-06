@@ -1,0 +1,117 @@
+/* Portfolio geometry contract: product pages keep their operational
+   compositions while sharing one title scale with the wider HECAVEX system. */
+:is(
+  .hero,
+  .methodology-heading,
+  .docs-heading,
+  .brand-scope-heading,
+  .profile-hero,
+  .artifact-hero,
+  .not-found-copy
+) h1 {
+  font-size: var(--page-title-size);
+  line-height: var(--page-title-line-height);
+}
+
+/* Standard product and utility-page titles share the portfolio heading voice.
+   Record/profile titles retain their denser display treatment above. */
+:is(
+  .hero,
+  .methodology-heading,
+  .docs-heading,
+  .brand-scope-heading,
+  .artifact-hero,
+  .not-found-copy
+) h1 {
+  font-weight: 600;
+  letter-spacing: -.035em;
+}
+
+@media (max-width: 1160px) {
+  .activity-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .activity-strip > a { grid-column: span 2; }
+  .radar-route-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .profile-layout { grid-template-columns: 1fr; }
+  .profile-aside { position: static; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 0; }
+  .aside-panel { border-right: 1px solid var(--line); border-bottom: 0; }
+  .quality-grid,
+  .quality-facets { grid-template-columns: 1fr; }
+  .quality-grid > article,
+  .quality-facets > article { padding-inline: 0; border-right: 0 !important; border-bottom: 1px solid var(--line); }
+  .download-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 900px) {
+  .activity-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .activity-strip > a { grid-column: 1 / -1; }
+  .activity-strip span { white-space: normal; }
+}
+
+@media (max-width: 760px) {
+  .compact-signal-list article { grid-template-columns: 1fr; }
+  .trend-row { grid-template-columns: 6.5rem minmax(7rem, 1fr) 7.5rem; }
+  .trend-metrics { grid-column: 2 / -1; }
+}
+
+@media (max-width: 680px) {
+  .radar-hero {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: auto;
+    padding: .5rem 0 2rem;
+  }
+
+  .methodology-heading > p,
+  .methodology-section-heading > p,
+  .methodology-rule-list p,
+  .methodology-note p,
+  .methodology-report,
+  .docs-heading > p,
+  .docs-section-heading > p,
+  .docs-callout p,
+  .docs-copy,
+  .docs-contact {
+    text-align: left;
+    text-align-last: auto;
+    text-justify: auto;
+  }
+
+  .radar-hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.35rem;
+  }
+
+  .radar-hero .hero-copy,
+  .radar-hero .freshness-card {
+    width: 100%;
+    max-width: none;
+  }
+
+  .radar-route-grid { grid-template-columns: 1fr; }
+  .not-found-hero { grid-template-columns: 1fr; gap: 1.5rem; min-height: 0; padding-block: 3rem; }
+  .not-found-status { width: 100%; }
+  .not-found-routes { grid-template-columns: 1fr; }
+  .profile-hero,
+  .artifact-hero { grid-template-columns: 1fr; padding-block: 2.25rem; }
+  .profile-summary,
+  .domain-comparison,
+  .association-cards,
+  .brand-hub-grid,
+  .dataset-explanation { grid-template-columns: 1fr; }
+  .profile-aside { grid-template-columns: 1fr; }
+  .aside-panel { border-right: 0; border-bottom: 1px solid var(--line); }
+  .brand-hub-grid > article,
+  .dataset-explanation > article { padding-inline: 0 !important; border-right: 0 !important; }
+  .feed-strip { flex-wrap: wrap; }
+  .feed-strip > div { flex-basis: 100%; }
+  .event-list li { grid-template-columns: 1fr; gap: .45rem; }
+  .related-route-card { align-items: flex-start; flex-direction: column; }
+  .dataset-summary,
+  .download-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+  .trend-row { grid-template-columns: minmax(0, 1fr) auto; }
+  .trend-bars { grid-column: 1 / -1; }
+  .trend-signal-count { grid-column: 2; grid-row: 1; }
+  .trend-metrics { grid-column: 1 / -1; }
+}

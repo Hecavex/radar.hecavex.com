@@ -583,7 +583,9 @@ class ReviewLedgerTests(unittest.TestCase):
         original = read_review_events(self.database)[0].admission_source
         with tempfile.TemporaryDirectory() as temporary, patch(
             "hecavex_radar.review.PROJECT_ROOT", Path(temporary)
-        ), patch("hecavex_radar.review.load_brand_registry", return_value=registry()):
+        ), patch("hecavex_radar.review.load_brand_registry", return_value=registry()), patch(
+            "hecavex_radar.review._now", return_value="2026-08-26T12:00:00.000Z"
+        ):
             result = review_main(
                 [
                     "--database",

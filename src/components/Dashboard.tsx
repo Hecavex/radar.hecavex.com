@@ -1,4 +1,4 @@
-import { Activity, ArrowDown, ArrowRight, Clock3, Database, Radar, ShieldCheck, Waypoints } from "lucide-react";
+import { Activity, ArrowDown, ArrowRight, Clock3, Database, ShieldCheck, Waypoints } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 import { controlledFilterSearch, dashboardMetrics, DEFAULT_FILTERS, filterSignals, filtersFromSearch, sortSignals } from "../lib/dashboard.ts";
@@ -54,9 +54,7 @@ export function Dashboard({ snapshot, now = Date.now(), language = "en", refresh
   return (
     <main id="main-content">
       <section className="hero radar-hero" aria-labelledby="radar-title">
-        <div className="hero-grid" aria-hidden="true" />
         <div className="hero-copy">
-          <p className="eyebrow"><Radar aria-hidden="true" /> {lt ? "Atviroji grėsmių žvalgyba · Lietuva" : "Open threat intelligence · Lithuania"}</p>
           <h1 id="radar-title">
             {lt ? <>Phishing signalai.<br /><span>Pastebėti, ne numanomi.</span></> : <>Phishing signals.<br /><span>Observed, not assumed.</span></>}
           </h1>
@@ -85,10 +83,10 @@ export function Dashboard({ snapshot, now = Date.now(), language = "en", refresh
                   : (isStale ? "Snapshot sync delayed" : "Snapshot current")}
             </small>
             <strong>{invalidClock ? (lt ? "Nežinomas arba ateities laikas" : "Unknown or future timestamp") : relativeTime(snapshot.lastSuccessfulSyncAt, now)}</strong>
-            <button type="button" className="button" onClick={() => window.location.reload()}>{lt ? "Atnaujinti suvestinę" : "Refresh snapshot"}</button>
             <span>{lt ? `Paskutinis sėkmingas sinchronizavimas ${dateTime(snapshot.lastSuccessfulSyncAt)} Lietuvos laiku` : `Last successful sync ${dateTime(snapshot.lastSuccessfulSyncAt)} UTC`}</span>
             <span>{lt ? `Duomenys pasikeitė ${relativeTime(snapshot.generatedAt, now)}` : `Data changed ${relativeTime(snapshot.generatedAt, now)}`}</span>
             {refreshError ? <span>{lt ? "Atnaujinimo įspėjimas" : "Refresh warning"}: {refreshError}</span> : null}
+            <button type="button" className="button" onClick={() => window.location.reload()}>{lt ? "Atnaujinti suvestinę" : "Refresh snapshot"}</button>
           </div>
         </aside>
       </section>
@@ -103,7 +101,7 @@ export function Dashboard({ snapshot, now = Date.now(), language = "en", refresh
 
       <section className="signal-section" id={signalsAnchor} aria-labelledby="signals-title">
         <div className="section-heading">
-          <div><p className="eyebrow">{lt ? "Dabartinis signalų langas" : "Current signal window"}</p><h2 id="signals-title">{lt ? "Neseniai pastebėti kandidatai" : "Recently observed candidates"}</h2></div>
+          <div><h2 id="signals-title">{lt ? "Neseniai pastebėti kandidatai" : "Recently observed candidates"}</h2></div>
           <div className="signal-heading-actions"><p>{lt ? <><strong>{number(filteredSignals.length)}</strong> atitinka iš {number(snapshot.signals.length)}</> : <><strong>{number(filteredSignals.length)}</strong> matching {number(snapshot.signals.length)}</>}</p><ExportActions signals={filteredSignals} snapshotGeneratedAt={snapshot.generatedAt} language={language} /></div>
         </div>
         <FilterBar signals={snapshot.signals} filters={filters} onChange={setFilters} language={language} />
