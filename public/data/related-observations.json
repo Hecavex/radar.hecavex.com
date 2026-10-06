@@ -1,13 +1,18 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-related-observations",
-  "generatedAt": "2026-10-06T00:25:22.525Z",
+  "generatedAt": "2026-10-06T01:25:19.504Z",
   "semantics": "Shared evidence is a bounded association between public observations. It is not campaign, operator, malware, infrastructure ownership, or threat-actor attribution.",
   "nodes": [
     {
       "signalId": "100d6055efc10336b880",
       "domain": "bite-service[.]com",
       "clusterId": "20a6dc942696a1f4"
+    },
+    {
+      "signalId": "11d91b22a0174f1b1e1f",
+      "domain": "dhl-update[.]forum",
+      "clusterId": "d4575ae51986fb60"
     },
     {
       "signalId": "21415e42a1a156503934",
@@ -52,12 +57,12 @@
     {
       "signalId": "9d83b92359ef325b9351",
       "domain": "mobile-revolut[.]info",
-      "clusterId": "4b903a331cbee561"
+      "clusterId": "d4575ae51986fb60"
     },
     {
       "signalId": "b00891a61c00dee164e5",
       "domain": "xn--revolu-n17b[.]com",
-      "clusterId": "4b903a331cbee561"
+      "clusterId": "d4575ae51986fb60"
     },
     {
       "signalId": "bc6e84449bd688cd059b",
@@ -77,7 +82,7 @@
   ],
   "edges": [
     {
-      "id": "d5ed347312dbc9747adf",
+      "id": "3267fcd10bda113ff5ab",
       "source": "100d6055efc10336b880",
       "target": "799945b8b4949fb57e26",
       "strength": "strong",
@@ -85,11 +90,27 @@
         {
           "type": "certificate-sha256",
           "value": "067c3165c3c3c4a577d7159fbc1668ead1dff6dcdc1173ac7d80d6f004289e21"
+        },
+        {
+          "type": "dns-a",
+          "value": "80[.]66[.]80[.]199"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns1[.]easyhoster[.]ru"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns2[.]easyhoster[.]ru"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns3[.]easyhoster[.]ru"
         }
       ]
     },
     {
-      "id": "bea9b88e109f2d4624df",
+      "id": "ea13df7e743beae240d5",
       "source": "100d6055efc10336b880",
       "target": "81209ec636b8d7df8f1f",
       "strength": "strong",
@@ -97,6 +118,22 @@
         {
           "type": "certificate-sha256",
           "value": "067c3165c3c3c4a577d7159fbc1668ead1dff6dcdc1173ac7d80d6f004289e21"
+        },
+        {
+          "type": "dns-a",
+          "value": "80[.]66[.]80[.]199"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns1[.]easyhoster[.]ru"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns2[.]easyhoster[.]ru"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns3[.]easyhoster[.]ru"
         }
       ]
     },
@@ -153,6 +190,46 @@
         {
           "type": "dns-mx",
           "value": "webhost[.]dynadot[.]com"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns1[.]dyna-ns[.]net"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns2[.]dyna-ns[.]net"
+        }
+      ]
+    },
+    {
+      "id": "3deda6343c3a0f18a0a0",
+      "source": "11d91b22a0174f1b1e1f",
+      "target": "9d83b92359ef325b9351",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "185[.]53[.]179[.]128"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns1[.]dyna-ns[.]net"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns2[.]dyna-ns[.]net"
+        }
+      ]
+    },
+    {
+      "id": "36895cbb015c7bc0e5da",
+      "source": "11d91b22a0174f1b1e1f",
+      "target": "b00891a61c00dee164e5",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "185[.]53[.]179[.]128"
         },
         {
           "type": "dns-ns",
