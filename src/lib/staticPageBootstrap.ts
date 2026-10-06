@@ -27,6 +27,7 @@ export type RadarEventArtifact = {
 export type DailyTrendRow = {
   date: string;
   partialDay: boolean;
+  discoveryBasis?: "retained-detail" | "retained-aggregate" | "unknown";
   collectorCoverage: {
     windowSeconds: number;
     scheduledSlots: number;
@@ -53,7 +54,7 @@ export type DailyTrendRow = {
     bySource: Record<string, number>;
     byEvidenceTier: Record<string, number>;
     byReason: Record<string, number>;
-  };
+  } | null;
 };
 
 export type DailyTrends = {
@@ -67,6 +68,9 @@ export type DailyTrends = {
   facetSemantics: string;
   seriesSemantics: string;
   omittedZeroDays: number;
+  omittedUnknownDays?: number;
+  discoveryCompleteFrom?: string;
+  displayWindow?: { shownRows: number; totalRows: number; from: string; to: string };
   collectorSchedule: { expectedIntervalSeconds: number; expectedListeningSeconds: number; derivedFrom: string };
   series: DailyTrendRow[];
   privacy: string;
@@ -184,7 +188,18 @@ export function encodeStaticPageBootstrap(data: StaticPageData): string {
 
 export function encodeTrendsPageBootstrap({ trends, quality, renderedAt }: TrendsPageData): string {
   // Project explicitly: callers may pass the full static-page data at build time.
-  return encodeURIComponent(JSON.stringify({ trends, quality, renderedAt }));
+  return encodeURIComponent(JSON.stringify({ trends: boundedTrendView(trends), quality, renderedAt }));
+}
+
+export const MAX_VISIBLE_TREND_DATES = 90;
+
+export function boundedTrendView(trends: DailyTrends): DailyTrends {
+  if (trends.series.length <= MAX_VISIBLE_TREND_DATES) return trends;
+  const series = trends.series.slice(-MAX_VISIBLE_TREND_DATES);
+  return { ...trends, series, displayWindow: {
+    shownRows: series.length, totalRows: trends.series.length,
+    from: series[0].date, to: series.at(-1)!.date,
+  } };
 }
 
 export function decodeTrendsPageBootstrap(value: string): TrendsPageData {

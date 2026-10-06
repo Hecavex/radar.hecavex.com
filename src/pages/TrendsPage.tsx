@@ -2,7 +2,7 @@ import { Activity, RadioTower } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ArtifactHero, PageShell, type StaticPageLanguage } from "../components/ArtifactPageShell.tsx";
 import { formatEventDateTime } from "../lib/staticPageFormat.ts";
-import type { DailyTrendRow, TrendsPageData } from "../lib/staticPageBootstrap.ts";
+import { boundedTrendView, type DailyTrendRow, type TrendsPageData } from "../lib/staticPageBootstrap.ts";
 import { trendCollectionState, trendDayState, trendFreshness } from "../lib/trendFreshness.ts";
 
 function formatTrendNumber(value: number, language: StaticPageLanguage): string {
@@ -27,7 +27,7 @@ function CoverageBar({ row, maximum, language, now }: { row: DailyTrendRow; maxi
     0,
     row.collectorCoverage.recordedAttempts - row.collectorCoverage.scheduledSlots,
   );
-  const signals = formatTrendNumber(row.discovery.uniqueSignals, language);
+  const signals = row.discovery === null ? null : formatTrendNumber(row.discovery.uniqueSignals, language);
   const attemptRatio = lt
     ? `bandymai: ${formatTrendNumber(row.collectorCoverage.recordedAttempts, language)} / ${formatTrendNumber(row.collectorCoverage.scheduledSlots, language)}`
     : `${formatTrendNumber(row.collectorCoverage.recordedAttempts, language)} / ${formatTrendNumber(row.collectorCoverage.scheduledSlots, language)} attempts`;
@@ -46,9 +46,10 @@ function CoverageBar({ row, maximum, language, now }: { row: DailyTrendRow; maxi
 
   return <article className={`trend-row${row.partialDay ? " trend-row--partial" : ""}`} data-day-state={dayState} data-collection-state={collectionState}>
     <div className="trend-date"><time dateTime={row.date}>{row.date}</time>{row.partialDay ? <> <span>{partialLabel}</span></> : null}</div>{" "}
-    <div className="trend-bars" aria-hidden="true"><progress className="discovery" max={Math.max(1, maximum)} value={row.discovery.uniqueSignals} /><progress className="schedule" max={100} value={completedSchedule ?? 0} /></div>{" "}
-    <strong className="trend-signal-count">{lt ? `Unikalūs signalai: ${signals}` : `${signals} unique signals`}</strong>{" "}
+    <div className="trend-bars" aria-hidden="true">{row.discovery !== null ? <progress className="discovery" max={Math.max(1, maximum)} value={row.discovery.uniqueSignals} /> : <span /> }<progress className="schedule" max={100} value={completedSchedule ?? 0} /></div>{" "}
+    <strong className="trend-signal-count">{signals === null ? (lt ? "Aptikimo duomenys neišliko" : "Discovery history unavailable") : lt ? `Unikalūs signalai: ${signals}` : `${signals} unique signals`}</strong>{" "}
     <div className="trend-metrics"><span>{scheduleLabel}</span>{additionalAttempts > 0 ? <> <em>{lt ? `Papildomi bandymai: ${formatTrendNumber(additionalAttempts, language)}` : `Additional attempts: ${formatTrendNumber(additionalAttempts, language)}`}</em></> : null} <small>{listeningLabel}</small>{" "}<small>{ceilingLabel}</small>
+      {row.discovery === null ? <span className="trend-collection-note">{lt ? "Detalūs įvykiai pašalinti pagal saugojimo terminą, neišsaugojus dienos sumų. Tai nėra nulis signalų." : "Detailed events expired before daily totals were retained. This does not mean zero signals."}</span> : null}
       {collectionState === "not-recorded" || collectionState === "limited" ? <span className="trend-collection-note">{collectionState === "not-recorded"
         ? (lt ? "Iki duomenų ribos rinkimo bandymų neužfiksuota" : "No collection attempts recorded through cutoff")
         : (lt ? "Užfiksuota mažiau nei pusė numatytų bandymų" : "Fewer than half of planned attempts recorded")}</span> : null}
@@ -63,6 +64,7 @@ function Counts({ values, empty = "No values in the public sample" }: { values: 
 
 export function TrendsPage({ data, language = "en" }: { data: TrendsPageData; language?: StaticPageLanguage }) {
   const lt = language === "lt";
+  const visibleTrends = boundedTrendView(data.trends);
   const [now, setNow] = useState(data.renderedAt);
   useEffect(() => {
     const updateClock = () => setNow(Date.now());
@@ -71,7 +73,7 @@ export function TrendsPage({ data, language = "en" }: { data: TrendsPageData; la
     return () => window.clearInterval(interval);
   }, []);
   const freshness = trendFreshness(data.trends, now);
-  const maximum = Math.max(0, ...data.trends.series.map((row) => row.discovery.uniqueSignals));
+  const maximum = Math.max(0, ...visibleTrends.series.map((row) => row.discovery?.uniqueSignals ?? 0));
   const current = data.trends.series.at(-1);
   const latestCompleteDay = data.trends.series.findLast((row) => !row.partialDay);
   const latestCompleteState = latestCompleteDay ? trendCollectionState(latestCompleteDay.collectorCoverage) : "unavailable";
@@ -97,10 +99,13 @@ export function TrendsPage({ data, language = "en" }: { data: TrendsPageData; la
       </aside> : null}
       <div className="trend-legend"><span><i className="discovery" /> {lt ? "unikalūs signalai" : "unique signals"}</span><span><i className="schedule" /> {lt ? "užfiksuoti suplanuoti intervalai" : "scheduled slots recorded"}</span></div>
       <p className="trend-method-note">{lt ? `Grafiko įvykdymas lygina užfiksuotus bandymus su numatytais intervalais. Faktinis klausymosi laikas rodomas greta kiekvienos dienos planinės ribos. Rinktuvas numato ${formatTrendNumber(listeningMinutes, language)} min. klausymąsi kas ${formatTrendNumber(intervalMinutes, language)} min.` : `Schedule completion compares recorded attempts with expected slots. Wall-clock listening is shown beside each day's planned ceiling. The collector plans ${formatTrendNumber(listeningMinutes, language)} listening minutes in every ${formatTrendNumber(intervalMinutes, language)}-minute interval.`}</p>
-      <div className="trend-chart">{data.trends.series.map((row) => <CoverageBar key={row.date} row={row} maximum={maximum} language={language} now={now} />)}</div>
-      <p className="boundary-note">{lt ? `Rodomos dienos, kuriomis užfiksuota rinkimo arba publikavimo veikla. Suvestinės intervale praleista dienų be įrašų: ${data.trends.omittedZeroDays}. Datos po duomenų ribos yra nežinomos, o ne nulinės.` : `Dates with recorded collection or publication activity are shown. ${data.trends.omittedZeroDays} dates with neither are omitted within the saved range. Dates after the data cutoff are unknown, not zero.`}</p>
+      {visibleTrends.displayWindow ? <p className="trend-display-window">{lt
+        ? `Rodomos naujausios ${visibleTrends.displayWindow.shownRows} užfiksuotos datos iš ${visibleTrends.displayWindow.totalRows} (${visibleTrends.displayWindow.from}–${visibleTrends.displayWindow.to}). JSON faile išsaugota visa seka.`
+        : `Showing the latest ${visibleTrends.displayWindow.shownRows} recorded dates of ${visibleTrends.displayWindow.totalRows} (${visibleTrends.displayWindow.from}–${visibleTrends.displayWindow.to}). The JSON download retains the complete saved series.`}</p> : null}
+      <div className="trend-chart">{visibleTrends.series.map((row) => <CoverageBar key={row.date} row={row} maximum={maximum} language={language} now={now} />)}</div>
+      <p className="boundary-note">{lt ? `Praleista dienų be užfiksuotos veiklos: ${data.trends.omittedZeroDays}; dienų, kurių aptikimo istorija nežinoma: ${data.trends.omittedUnknownDays ?? 0}. Neišlikę įrašai ir datos po duomenų ribos nėra nuliai. Dienos unikalių signalų skaičių suma nėra unikalių mėnesio domenų skaičius.` : `${data.trends.omittedZeroDays} dates with no recorded activity and ${data.trends.omittedUnknownDays ?? 0} dates with unavailable discovery history are omitted. Missing history and dates after the cutoff are unknown, not zero. Daily unique counts cannot be added to obtain monthly unique hosts.`}</p>
     </section>
-    <section className="quality-grid"><article><p className="eyebrow">{lt ? "Naujausia užfiksuota diena" : "Latest recorded day"}</p><h2>{current?.date ?? data.trends.to}</h2><dl><div><dt>{lt ? "Unikalūs signalai" : "Unique signals"}</dt><dd>{current?.discovery.uniqueSignals ?? 0}</dd></div><div><dt>{lt ? "Pirmosios publikacijos" : "First publications"}</dt><dd>{current?.discovery.firstPublications ?? 0}</dd></div><div><dt>{lt ? "Pakartotiniai stebėjimai" : "Reobservations"}</dt><dd>{current?.discovery.reobservations ?? 0}</dd></div><div><dt>{lt ? "Sėkmingi bandymai" : "Healthy attempts"}</dt><dd>{current?.collectorCoverage.healthyAttempts ?? 0}</dd></div></dl></article><article><p className="eyebrow">{lt ? "Analitiko imtis" : "Analyst sample"}</p><h2>{lt ? "Peržiūros aprėptis" : "Review coverage"}</h2><dl><div><dt>{lt ? "Tinkami signalai" : "Eligible signals"}</dt><dd>{data.quality.reviewCoverage.eligiblePublishedSignals}</dd></div><div><dt>{lt ? "Įvertinta" : "Assessed"}</dt><dd>{data.quality.reviewCoverage.assessedSignals}</dd></div><div><dt>{lt ? "Aprėptis" : "Coverage"}</dt><dd>{data.quality.reviewCoverage.percent ?? (lt ? "Nėra duomenų" : "Unavailable")}{data.quality.reviewCoverage.percent !== null ? "%" : ""}</dd></div><div><dt>{lt ? "Medianinis vėlavimas" : "Median latency"}</dt><dd>{data.quality.reviewLatencyHours.median ?? (lt ? "Nėra duomenų" : "Unavailable")}{data.quality.reviewLatencyHours.median !== null ? (lt ? " val." : "h") : ""}</dd></div></dl></article><article className="quality-warning"><p className="eyebrow">{lt ? "Tikslumas" : "Precision"}</p><h2>{lt ? "Kol kas patikimai neapskaičiuojamas" : "Not supportable yet"}</h2><p>{lt ? "Nėra pagrįsto atrankos plano ar visos populiacijos vertinimo, todėl populiacijos tikslumo patikimai įvertinti negalima." : data.quality.precision.reason}</p></article></section>
+    <section className="quality-grid"><article><p className="eyebrow">{lt ? "Naujausia užfiksuota diena" : "Latest recorded day"}</p><h2>{current?.date ?? data.trends.to}</h2><dl><div><dt>{lt ? "Unikalūs signalai" : "Unique signals"}</dt><dd>{current?.discovery?.uniqueSignals ?? (lt ? "Nėra duomenų" : "Unavailable")}</dd></div><div><dt>{lt ? "Pirmosios publikacijos" : "First publications"}</dt><dd>{current?.discovery?.firstPublications ?? (lt ? "Nėra duomenų" : "Unavailable")}</dd></div><div><dt>{lt ? "Pakartotiniai stebėjimai" : "Reobservations"}</dt><dd>{current?.discovery?.reobservations ?? (lt ? "Nėra duomenų" : "Unavailable")}</dd></div><div><dt>{lt ? "Sėkmingi bandymai" : "Healthy attempts"}</dt><dd>{current?.collectorCoverage.healthyAttempts ?? 0}</dd></div></dl></article><article><p className="eyebrow">{lt ? "Analitiko imtis" : "Analyst sample"}</p><h2>{lt ? "Peržiūros aprėptis" : "Review coverage"}</h2><dl><div><dt>{lt ? "Tinkami signalai" : "Eligible signals"}</dt><dd>{data.quality.reviewCoverage.eligiblePublishedSignals}</dd></div><div><dt>{lt ? "Įvertinta" : "Assessed"}</dt><dd>{data.quality.reviewCoverage.assessedSignals}</dd></div><div><dt>{lt ? "Aprėptis" : "Coverage"}</dt><dd>{data.quality.reviewCoverage.percent ?? (lt ? "Nėra duomenų" : "Unavailable")}{data.quality.reviewCoverage.percent !== null ? "%" : ""}</dd></div><div><dt>{lt ? "Medianinis vėlavimas" : "Median latency"}</dt><dd>{data.quality.reviewLatencyHours.median ?? (lt ? "Nėra duomenų" : "Unavailable")}{data.quality.reviewLatencyHours.median !== null ? (lt ? " val." : "h") : ""}</dd></div></dl></article><article className="quality-warning"><p className="eyebrow">{lt ? "Tikslumas" : "Precision"}</p><h2>{lt ? "Kol kas patikimai neapskaičiuojamas" : "Not supportable yet"}</h2><p>{lt ? "Nėra pagrįsto atrankos plano ar visos populiacijos vertinimo, todėl populiacijos tikslumo patikimai įvertinti negalima." : data.quality.precision.reason}</p></article></section>
     <section className="quality-facets"><article><h3>{lt ? "Peržiūros rezultatai" : "Review outcomes"}</h3><Counts values={data.quality.reviewSample.outcomes} empty={lt ? "Viešoje imtyje reikšmių nėra" : "No values in the public sample"} /></article><article><h3>{lt ? "Peržiūrėtos imties įrodymai" : "Evidence in reviewed sample"}</h3><Counts values={data.quality.reviewSample.byEvidence} empty={lt ? "Viešoje imtyje reikšmių nėra" : "No values in the public sample"} /></article><article><h3>{lt ? "Dabartinės išimtys" : "Current exclusions"}</h3><Counts values={data.quality.currentExclusions.byReason} empty={lt ? "Viešoje imtyje reikšmių nėra" : "No values in the public sample"} /></article></section>
   </PageShell>;
 }

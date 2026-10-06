@@ -11,6 +11,7 @@ from typing import Any
 
 from .listening_coverage import coverage_bounds, intersects
 from .provenance import REASON_CODES
+from .trend_retention import history_context, load_retained_discovery, persist_discovery
 
 MAXIMUM_DAYS = 365
 MAXIMUM_DAILY_BYTES = 25 * 1024 * 1024
@@ -240,6 +241,9 @@ def build_daily_trends(
     generated_at: str,
     *,
     days: int = MAXIMUM_DAYS,
+    compacted_through: str | None = None,
+    retained_discovery: Mapping[str, Mapping[str, Any]] | None = None,
+    historical_signals: Sequence[Mapping[str, object]] = (),
 ) -> dict[str, object]:
     generated = _timestamp(generated_at)
     if generated is None:
@@ -253,10 +257,22 @@ def build_daily_trends(
     # inventory firstSeen. No provenance means no invented reobservation.
     first_seen = {
         str(signal["id"]): str(signal["firstSeen"])
-        for signal in signal_inventory
+        for signal in [*historical_signals, *signal_inventory]
         if isinstance(signal.get("id"), str) and _timestamp(signal.get("firstSeen")) is not None
     }
     publications: dict[str, str] = {}
+    for signal in historical_signals:
+        transitions = signal.get("statusTransitions")
+        identifier = signal.get("id")
+        if not isinstance(transitions, list) or not isinstance(identifier, str):
+            continue
+        for transition in transitions:
+            if (isinstance(transition, dict) and transition.get("previousStatus") is None
+                    and isinstance(transition.get("reasonCodes"), list)
+                    and "first-publication" in transition.get("reasonCodes", [])
+                    and _timestamp(transition.get("observedAt")) is not None):
+                stamp = str(transition["observedAt"])
+                publications[identifier] = min(publications.get(identifier, stamp), stamp)
     for event in history_events:
         observed = _event_time(event)
         reasons = event.get("reasonCodes")
@@ -270,6 +286,7 @@ def build_daily_trends(
     first_seen.update(publications)
 
     events_by_day: dict[str, list[Mapping[str, object]]] = {}
+    seen_events: dict[str, Mapping[str, object]] = {}
     for event in history_events:
         observed = _event_time(event)
         signal_id = event.get("signalId")
@@ -282,6 +299,13 @@ def build_daily_trends(
             or not SIGNAL_ID.fullmatch(signal_id)
         ):
             continue
+        event_id = event.get("eventId")
+        if isinstance(event_id, str):
+            if event_id in seen_events:
+                if seen_events[event_id] != event:
+                    raise ValueError("Conflicting daily discovery event identity")
+                continue
+            seen_events[event_id] = event
         events_by_day.setdefault(observed.date().isoformat(), []).append(event)
     attempts_by_day: dict[str, list[Mapping[str, object]]] = {}
     for attempt in collection_attempts:
@@ -296,6 +320,8 @@ def build_daily_trends(
         attempts_by_day.setdefault(observed.date().isoformat(), []).append(attempt)
 
     series: list[dict[str, object]] = []
+    omitted_unknown = 0
+    retained = retained_discovery or {}
     current = first_day
     while current <= generated.date():
         key = current.isoformat()
@@ -314,13 +340,18 @@ def build_daily_trends(
                 str(row.get("startedAt", "")),
             ),
         )
-        # The series is intentionally sparse. Consumers fill missing UTC dates
-        # with zero recorded attempts and zero discovery events using the
-        # published range and collector schedule. This keeps a full-year static
-        # artifact comfortably bounded without hiding coverage gaps.
+        # A compacted per-host summary cannot locate its observations by day.
+        # Use one frozen aggregate OR current detail, never add them together.
+        compacted = compacted_through is not None and key <= compacted_through
+        saved = retained.get(key) if compacted else None
+        discovery = saved["discovery"] if saved else (
+            None if compacted else _daily_discovery(day_events, evidence_by_signal, first_seen)
+        )
+        basis = "retained-aggregate" if saved else "unknown" if compacted else "retained-detail"
         overlaps = [row for row in collection_attempts if row.get("outcome") in KNOWN_OUTCOMES
                     and intersects(row, start, end)]
-        if day_events or day_attempts or overlaps or current == generated.date():
+        if (day_events or day_attempts or overlaps or saved or current == generated.date()
+                or (compacted_through is not None and not compacted)):
             series.append(
                 {
                     "date": key,
@@ -334,15 +365,24 @@ def build_daily_trends(
                         end=end,
                         overlapping_attempts=overlaps,
                     ),
-                    "discovery": _daily_discovery(day_events, evidence_by_signal, first_seen),
+                    "discovery": discovery,
+                    "discoveryBasis": basis,
                 }
             )
+        elif compacted:
+            omitted_unknown += 1
         current += timedelta(days=1)
 
     return {
         "schemaVersion": 1,
         "dataset": "radar-daily-trends",
         "countingMethodVersion": 2,
+        "retentionMethodVersion": 1,
+        "discoveryCompleteFrom": (
+            max(first_day, date.fromisoformat(compacted_through) + timedelta(days=1)).isoformat()
+            if compacted_through is not None else first_day.isoformat()
+        ),
+        "omittedUnknownDays": omitted_unknown,
         "reobservationSemantics": (
             "Version 2: observations strictly after retained first-publication provenance, falling back to "
             "inventory firstSeen. Unknown earlier provenance is unclassified, not a new publication. "
@@ -358,10 +398,11 @@ def build_daily_trends(
         ),
         "facetSemantics": "Brand, source, evidence and reason facets count unique signals within each UTC day.",
         "seriesSemantics": (
-            "The series is sparse. Missing UTC dates inside the stated range mean zero recorded attempts and "
-            "zero discovery events; consumers can derive scheduled slots from collectorSchedule."
+            "Discovery is null when detailed events were compacted without a retained daily aggregate. "
+            "Missing dates before discoveryCompleteFrom are unknown unless explicitly retained; later omitted "
+            "dates have zero recorded activity. Daily unique counts must not be summed as monthly unique hosts."
         ),
-        "omittedZeroDays": days - len(series),
+        "omittedZeroDays": days - len(series) - omitted_unknown,
         "collectorSchedule": {
             "expectedIntervalSeconds": expected_interval,
             "expectedListeningSeconds": expected_listening,
@@ -393,11 +434,18 @@ def build_daily_trends_from_repository(
     padded_end = generated.date() + timedelta(days=1)
     events = _read_daily_rows(repository / "data/history/daily", "events.ndjson", padded_start, padded_end)
     attempts = _read_daily_rows(repository / "data/certstream", "attempts.ndjson", padded_start, padded_end)
-    return build_daily_trends(
+    watermark, historical = history_context(repository, generated_at)
+    retained = load_retained_discovery(repository, generated_at)
+    result = build_daily_trends(
         events,
         attempts,
         signal_inventory,
         pipeline_health,
         generated_at,
         days=days,
+        compacted_through=watermark,
+        retained_discovery=retained,
+        historical_signals=historical,
     )
+    persist_discovery(repository, result, retained)
+    return result
