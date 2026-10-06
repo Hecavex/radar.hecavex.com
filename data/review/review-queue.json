@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-stratified-review-queue",
-  "generatedAt": "2026-10-06T12:43:30.824Z",
+  "generatedAt": "2026-10-06T13:28:27.950Z",
   "samplingPolicy": {
     "method": "deterministic-greedy-facet-balancing",
     "dimensions": [
@@ -15,7 +15,7 @@
     "excludes": "Signals already represented by a sanitized assessment.",
     "semantics": "A review worklist, not a random or prevalence-representative sample."
   },
-  "availableUnreviewed": 148,
+  "availableUnreviewed": 150,
   "selected": 24,
   "candidates": [
     {
@@ -66,8 +66,41 @@
         "punycode",
         "unicode-confusable"
       ],
-      "candidateAgeBand": "0-1d",
+      "candidateAgeBand": "2-7d",
       "firstSeen": "2026-10-04T13:27:51.604Z"
+    },
+    {
+      "signalId": "6ebf83ed151acdd4aad6",
+      "recordPath": "/signals/6ebf83ed151acdd4aad6/",
+      "brand": "DHL",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "95-100",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-exact-token",
+        "multiple-hyphens",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-10-04T23:55:19.899Z"
+    },
+    {
+      "signalId": "aac766c0fbd3f9106c90",
+      "recordPath": "/signals/aac766c0fbd3f9106c90/",
+      "brand": "Omniva",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "85-94",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-joined-affix",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-10-06T08:50:18.132Z"
     },
     {
       "signalId": "a8ed8cd9c3dd4ffb1d34",
@@ -84,40 +117,6 @@
       ],
       "candidateAgeBand": "2-7d",
       "firstSeen": "2026-09-29T22:36:00.981Z"
-    },
-    {
-      "signalId": "4c5f0c744b53187dafec",
-      "recordPath": "/signals/4c5f0c744b53187dafec/",
-      "brand": "Elektrum",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "95-100",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-exact-token",
-        "multiple-hyphens",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-10-05T17:15:30.148Z"
-    },
-    {
-      "signalId": "c9dffdb5efa12358a21c",
-      "recordPath": "/signals/c9dffdb5efa12358a21c/",
-      "brand": "Smart-ID",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "95-100",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-joined-affix",
-        "different-tld",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-09-30T10:17:51.946Z"
     },
     {
       "signalId": "ef8adc4f655f4353fc86",
@@ -138,6 +137,40 @@
       "firstSeen": "2026-10-04T19:10:11.981Z"
     },
     {
+      "signalId": "c9dffdb5efa12358a21c",
+      "recordPath": "/signals/c9dffdb5efa12358a21c/",
+      "brand": "Smart-ID",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "95-100",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-joined-affix",
+        "different-tld",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "2-7d",
+      "firstSeen": "2026-09-30T10:17:51.946Z"
+    },
+    {
+      "signalId": "4c5f0c744b53187dafec",
+      "recordPath": "/signals/4c5f0c744b53187dafec/",
+      "brand": "Elektrum",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "95-100",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-exact-token",
+        "multiple-hyphens",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-10-05T17:15:30.148Z"
+    },
+    {
       "signalId": "fa833470c3606501c8b2",
       "recordPath": "/signals/fa833470c3606501c8b2/",
       "brand": "DHL",
@@ -152,38 +185,6 @@
       ],
       "candidateAgeBand": "2-7d",
       "firstSeen": "2026-09-29T22:36:00.981Z"
-    },
-    {
-      "signalId": "aac766c0fbd3f9106c90",
-      "recordPath": "/signals/aac766c0fbd3f9106c90/",
-      "brand": "Omniva",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "85-94",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-joined-affix",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-10-06T08:50:18.132Z"
-    },
-    {
-      "signalId": "2f14467983c9a15f4045",
-      "recordPath": "/signals/2f14467983c9a15f4045/",
-      "brand": "Revolut",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "95-100",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-exact-token",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-10-01T19:23:26.129Z"
     },
     {
       "signalId": "77ed9d308f2dc2a944b4",
@@ -202,9 +203,9 @@
       "firstSeen": "2026-10-06T03:03:10.419Z"
     },
     {
-      "signalId": "4e7db6613cb605dee8e7",
-      "recordPath": "/signals/4e7db6613cb605dee8e7/",
-      "brand": "Vinted",
+      "signalId": "2f14467983c9a15f4045",
+      "recordPath": "/signals/2f14467983c9a15f4045/",
+      "brand": "Revolut",
       "sources": [
         "CertStream"
       ],
@@ -215,7 +216,7 @@
         "suspicious-context"
       ],
       "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-10-02T00:04:06.306Z"
+      "firstSeen": "2026-10-01T19:23:26.129Z"
     },
     {
       "signalId": "f0e130d496665eba0f6c",
@@ -253,6 +254,22 @@
       "firstSeen": "2026-10-01T17:50:13.024Z"
     },
     {
+      "signalId": "4e7db6613cb605dee8e7",
+      "recordPath": "/signals/4e7db6613cb605dee8e7/",
+      "brand": "Vinted",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "95-100",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-exact-token",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "2-7d",
+      "firstSeen": "2026-10-02T00:04:06.306Z"
+    },
+    {
       "signalId": "5824741f7beb33d061bb",
       "recordPath": "/signals/5824741f7beb33d061bb/",
       "brand": "Smart-ID",
@@ -267,6 +284,38 @@
       ],
       "candidateAgeBand": "2-7d",
       "firstSeen": "2026-10-02T02:19:24.913Z"
+    },
+    {
+      "signalId": "9a7254ff927c4199d72e",
+      "recordPath": "/signals/9a7254ff927c4199d72e/",
+      "brand": "Revolut",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "95-100",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-exact-token",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-10-06T10:37:50.348Z"
+    },
+    {
+      "signalId": "c7ce9d44dff719347e40",
+      "recordPath": "/signals/c7ce9d44dff719347e40/",
+      "brand": "Omniva",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "85-94",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-joined-affix",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "2-7d",
+      "firstSeen": "2026-10-04T08:15:52.037Z"
     },
     {
       "signalId": "ab5d1d051cdfc9f78bda",
@@ -286,9 +335,9 @@
       "firstSeen": "2026-10-05T17:15:54.221Z"
     },
     {
-      "signalId": "c7ce9d44dff719347e40",
-      "recordPath": "/signals/c7ce9d44dff719347e40/",
-      "brand": "Omniva",
+      "signalId": "55ac96fdedb0a111a91c",
+      "recordPath": "/signals/55ac96fdedb0a111a91c/",
+      "brand": "Vinted",
       "sources": [
         "CertStream"
       ],
@@ -299,11 +348,11 @@
         "suspicious-context"
       ],
       "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-10-04T08:15:52.037Z"
+      "firstSeen": "2026-10-02T10:37:09.579Z"
     },
     {
-      "signalId": "9a7254ff927c4199d72e",
-      "recordPath": "/signals/9a7254ff927c4199d72e/",
+      "signalId": "d649550bbb04229eff74",
+      "recordPath": "/signals/d649550bbb04229eff74/",
       "brand": "Revolut",
       "sources": [
         "CertStream"
@@ -315,7 +364,7 @@
         "suspicious-context"
       ],
       "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-10-06T10:37:50.348Z"
+      "firstSeen": "2026-10-06T10:39:26.092Z"
     },
     {
       "signalId": "c46794ccb267e7138b77",
@@ -351,9 +400,9 @@
       "firstSeen": "2026-10-06T07:19:35.399Z"
     },
     {
-      "signalId": "55ac96fdedb0a111a91c",
-      "recordPath": "/signals/55ac96fdedb0a111a91c/",
-      "brand": "Vinted",
+      "signalId": "309600555669eaa5b994",
+      "recordPath": "/signals/309600555669eaa5b994/",
+      "brand": "Revolut",
       "sources": [
         "CertStream"
       ],
@@ -364,55 +413,7 @@
         "suspicious-context"
       ],
       "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-10-02T10:37:09.579Z"
-    },
-    {
-      "signalId": "d649550bbb04229eff74",
-      "recordPath": "/signals/d649550bbb04229eff74/",
-      "brand": "Revolut",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "95-100",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-exact-token",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-10-06T10:39:26.092Z"
-    },
-    {
-      "signalId": "0bb5827dc6d6d0e12300",
-      "recordPath": "/signals/0bb5827dc6d6d0e12300/",
-      "brand": "Vinted",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "95-100",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-exact-token",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-10-03T10:26:59.407Z"
-    },
-    {
-      "signalId": "64d9e77d2adb2919f859",
-      "recordPath": "/signals/64d9e77d2adb2919f859/",
-      "brand": "DHL",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "85-94",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-exact-token",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-10-04T15:12:42.414Z"
+      "firstSeen": "2026-09-30T11:08:05.453Z"
     }
   ]
 }
