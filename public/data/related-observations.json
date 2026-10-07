@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-related-observations",
-  "generatedAt": "2026-10-07T07:05:43.931Z",
+  "generatedAt": "2026-10-07T07:35:56.277Z",
   "semantics": "Shared evidence is a bounded association between public observations. It is not campaign, operator, malware, infrastructure ownership, or threat-actor attribution.",
   "nodes": [
     {
@@ -22,7 +22,7 @@
     {
       "signalId": "3047aa7a4fc1f0afc4b6",
       "domain": "www[.]artealogin[.]click",
-      "clusterId": "7e9f8d7d173afbc7"
+      "clusterId": "9642a5e97432c83b"
     },
     {
       "signalId": "3c650d085a1456d139a8",
@@ -60,6 +60,11 @@
       "clusterId": "fba20344ece0a3dd"
     },
     {
+      "signalId": "995200bdb80b1fd0fcd7",
+      "domain": "www[.]track-dhl[.]icu",
+      "clusterId": "9642a5e97432c83b"
+    },
+    {
       "signalId": "9d83b92359ef325b9351",
       "domain": "mobile-revolut[.]info",
       "clusterId": "d4575ae51986fb60"
@@ -82,7 +87,7 @@
     {
       "signalId": "d129905b8671dc5a3d76",
       "domain": "www[.]dhl-info-tracking[.]com",
-      "clusterId": "7e9f8d7d173afbc7"
+      "clusterId": "9642a5e97432c83b"
     }
   ],
   "edges": [
@@ -155,8 +160,64 @@
       ]
     },
     {
+      "id": "65c54ff6a643acc737e2",
+      "source": "3047aa7a4fc1f0afc4b6",
+      "target": "995200bdb80b1fd0fcd7",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "103[.]224[.]182[.]189"
+        },
+        {
+          "type": "dns-cname",
+          "value": "cname101[.]com"
+        },
+        {
+          "type": "dns-mx",
+          "value": "park-mx[.]above[.]com"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns3[.]abovedomains[.]com"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns4[.]abovedomains[.]com"
+        }
+      ]
+    },
+    {
       "id": "c5733277788c28e287a5",
       "source": "3047aa7a4fc1f0afc4b6",
+      "target": "d129905b8671dc5a3d76",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "103[.]224[.]182[.]189"
+        },
+        {
+          "type": "dns-cname",
+          "value": "cname101[.]com"
+        },
+        {
+          "type": "dns-mx",
+          "value": "park-mx[.]above[.]com"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns3[.]abovedomains[.]com"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns4[.]abovedomains[.]com"
+        }
+      ]
+    },
+    {
+      "id": "fa6eea66e5213b179f73",
+      "source": "995200bdb80b1fd0fcd7",
       "target": "d129905b8671dc5a3d76",
       "strength": "shared-context",
       "evidence": [
