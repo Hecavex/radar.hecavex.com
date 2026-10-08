@@ -21,6 +21,8 @@ const englishStatuses: Record<SignalStatus, string> = {
   unknown: "Unknown",
 };
 
+const advancedFilterKeys = ["status", "source", "brand", "country", "minimumMatchScore", "evidence", "sort"] as const;
+
 export function FilterBar({
   signals,
   filters,
@@ -36,10 +38,19 @@ export function FilterBar({
   const searchRef = useRef<HTMLInputElement>(null);
   const [copiedView, setCopiedView] = useState(false);
   const [copyFailureUrl, setCopyFailureUrl] = useState<string | null>(null);
+  const [advancedOpen, setAdvancedOpen] = useState(false);
   const brands = uniqueValues(signals, "brand");
   const countries = uniqueValues(signals, "country");
   const sources = sourceNames(signals);
   const hasFilters = JSON.stringify(filters) !== JSON.stringify(DEFAULT_FILTERS);
+  const advancedFilterCount = advancedFilterKeys.filter((key) => filters[key] !== DEFAULT_FILTERS[key]).length;
+  const advancedValues = advancedFilterKeys.map((key) => filters[key]).join("\u001f");
+
+  // Restored/faceted criteria reveal their controls. Local search and time
+  // changes do not reopen a disclosure the reader deliberately closed.
+  useEffect(() => {
+    if (advancedFilterCount > 0) setAdvancedOpen(true);
+  }, [advancedValues, advancedFilterCount]);
 
   const update = <Key extends keyof Filters>(key: Key, value: Filters[Key]) => onChange({ ...filters, [key]: value });
 
@@ -87,21 +98,22 @@ export function FilterBar({
           ))}
         </div>
       </div>
+      <label className="search-label" htmlFor="signal-search">{lt ? "Ieškoti kandidatų" : "Search candidates"}</label>
       <div className="search-field">
         <Search aria-hidden="true" />
-        <label className="sr-only" htmlFor="signal-search">{lt ? "Ieškoti kandidatų" : "Search candidates"}</label>
         <input
           ref={searchRef}
           id="signal-search"
           type="search"
+          aria-describedby="filter-privacy-note"
           placeholder={lt ? "Ieškoti neutralizuoto URL, domeno, prekių ženklo ar prieglobos..." : "Search defanged URL, domain, brand or host..."}
           value={filters.query}
           onChange={(event) => update("query", event.target.value)}
         />
         <kbd>/</kbd>
       </div>
-      <details className="advanced-filter-shell" open={hasFilters || undefined}>
-        <summary><SlidersHorizontal aria-hidden="true" /> {lt ? "Išplėstiniai filtrai" : "Advanced filters"} {hasFilters ? <span>{lt ? "Aktyvūs" : "Active"}</span> : null}</summary>
+      <details className="advanced-filter-shell" open={advancedOpen} onToggle={(event) => setAdvancedOpen(event.currentTarget.open)}>
+        <summary><SlidersHorizontal aria-hidden="true" /> {lt ? "Išplėstiniai filtrai" : "Advanced filters"} {advancedFilterCount > 0 ? <span>{lt ? `${advancedFilterCount} ${advancedFilterCount === 1 ? "aktyvus" : "aktyvūs"}` : `${advancedFilterCount} active`}</span> : null}</summary>
         <div className="select-group" aria-label={lt ? "Kandidatų filtrai" : "Candidate filters"}>
           <label>
             <span>{lt ? "Šaltinio nurodyta būsena" : "Source-reported status"}</span>
@@ -164,18 +176,23 @@ export function FilterBar({
               <option value="brand-asc">{lt ? "Prekių ženklas A–Ž" : "Brand A-Z"}</option>
             </select>
           </label>
-          <button className="share-filter-button" type="button" onClick={() => void copyControlledView()}>
-            {copiedView ? <Check aria-hidden="true" /> : <Share2 aria-hidden="true" />}
-            {copiedView ? (lt ? "Nuoroda nukopijuota" : "View copied") : (lt ? "Kopijuoti filtruotos peržiūros nuorodą" : "Copy filtered view")}
-          </button>
-          {hasFilters && (
-            <button className="reset-button" type="button" onClick={() => onChange(DEFAULT_FILTERS)}>
-              <RotateCcw aria-hidden="true" /> {lt ? "Išvalyti filtrus" : "Reset"}
-            </button>
-          )}
         </div>
       </details>
-      <p className="filter-privacy-note">{lt ? "Paieškos tekstas lieka šioje naršyklėje ir nėra pridedamas prie bendrinamo URL." : "Free-text search stays in this browser and is never added to the shared URL."}</p>
+      <div className="filter-actions">
+        <button className="share-filter-button" type="button" onClick={() => void copyControlledView()}>
+          {copiedView ? <Check aria-hidden="true" /> : <Share2 aria-hidden="true" />}
+          {copiedView ? (lt ? "Nuoroda nukopijuota" : "View copied") : (lt ? "Kopijuoti filtruotos peržiūros nuorodą" : "Copy filtered view")}
+        </button>
+        {hasFilters && (
+          <button className="reset-button" type="button" onClick={() => {
+            onChange(DEFAULT_FILTERS);
+            searchRef.current?.focus();
+          }}>
+            <RotateCcw aria-hidden="true" /> {lt ? "Išvalyti filtrus" : "Reset all filters"}
+          </button>
+        )}
+      </div>
+      <p className="filter-privacy-note" id="filter-privacy-note">{lt ? "Paieškos tekstas lieka šioje naršyklėje ir nėra pridedamas prie bendrinamo URL." : "Free-text search stays in this browser and is never added to the shared URL."}</p>
       {copyFailureUrl ? <div className="filter-copy-fallback" role="status">
         <label htmlFor="filtered-view-url">{lt ? "Kopijuoti nepavyko. Pažymėkite ir nukopijuokite nuorodą rankiniu būdu." : "Copy failed. Select and copy this filtered-view link manually."}</label>
         <input id="filtered-view-url" readOnly value={copyFailureUrl} onFocus={(event) => event.currentTarget.select()} />

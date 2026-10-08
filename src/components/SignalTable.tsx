@@ -60,8 +60,10 @@ export function SignalTable({ signals, now = Date.now(), snapshotGeneratedAt, on
 
   return <div className="table-panel">
     {copyFailure && <div role="status"><label>{lt ? "Kopijuoti nepavyko. Pažymėkite ir nukopijuokite rankiniu būdu." : "Copy failed. Select and copy this value manually."}<input readOnly value={copyFailure} onFocus={(event) => event.currentTarget.select()} /></label></div>}
-    <div className="table-scroll" role="region" aria-label={lt ? "Galimi phishing kandidatai" : "Potential phishing candidates"} tabIndex={0}>
-      <table className="signal-table">
+    <p className="signal-table-context" id="signal-table-context">{lt ? "Būseną nurodo šaltinis. Atitikties balas rodo automatinės atitikties stiprumą, o ne kenkėjiškumo tikimybę. Atverkite kandidatą ir peržiūrėkite jo įrodymus." : "Status comes from the source. Match scores describe automated match strength, not the probability of harm. Open a candidate to inspect its evidence."}</p>
+    <div className="table-scroll" role="region" aria-label={lt ? "Galimi phishing kandidatai" : "Potential phishing candidates"} aria-describedby="signal-table-context" tabIndex={0}>
+      <table className="signal-table" aria-describedby="signal-table-context">
+        <caption className="sr-only">{lt ? "Galimų phishing kandidatų įrodymai" : "Potential phishing candidate evidence"}</caption>
         <colgroup><col className="candidate-column" /><col className="brand-column" /><col className="evidence-column" /><col className="hosting-column" /><col className="timeline-column" /></colgroup>
         <thead><tr><th scope="col">{lt ? "Kandidatas" : "Candidate"}</th><th scope="col">{lt ? "Galimas prekių ženklas" : "Potential brand"}</th><th scope="col">{lt ? "Įrodymai" : "Evidence"}</th><th scope="col">{lt ? "Stebėta priegloba" : "Hosting observed"}</th><th scope="col">{lt ? "Laiko juosta" : "Timeline"}</th></tr></thead>
         <tbody>{pageSignals.map((signal) => {
@@ -76,7 +78,7 @@ export function SignalTable({ signals, now = Date.now(), snapshotGeneratedAt, on
         })}</tbody>
       </table>
     </div>
-    <div className="pagination"><p>{lt ? "Rodoma" : "Showing"} <strong>{(page - 1) * PAGE_SIZE + 1}-{Math.min(page * PAGE_SIZE, signals.length)}</strong> {lt ? "iš" : "of"} {signals.length}</p><div><button type="button" disabled={page === 1} onClick={() => setPage((value) => value - 1)}><ChevronLeft aria-hidden="true" /> {lt ? "Ankstesnis" : "Previous"}</button><span>{lt ? "Puslapis" : "Page"} <strong>{page}</strong> {lt ? "iš" : "of"} {pages}</span><button type="button" disabled={page === pages} onClick={() => setPage((value) => value + 1)}>{lt ? "Kitas" : "Next"} <ChevronRight aria-hidden="true" /></button></div></div>
+    <div className="pagination"><p role="status" aria-live="polite" aria-atomic="true">{lt ? "Rodoma" : "Showing"} <strong>{(page - 1) * PAGE_SIZE + 1}-{Math.min(page * PAGE_SIZE, signals.length)}</strong> {lt ? "iš" : "of"} {signals.length}</p><div><button type="button" disabled={page === 1} onClick={() => setPage((value) => value - 1)}><ChevronLeft aria-hidden="true" /> {lt ? "Ankstesnis" : "Previous"}</button><span>{lt ? "Puslapis" : "Page"} <strong>{page}</strong> {lt ? "iš" : "of"} {pages}</span><button type="button" disabled={page === pages} onClick={() => setPage((value) => value + 1)}>{lt ? "Kitas" : "Next"} <ChevronRight aria-hidden="true" /></button></div></div>
     {detail ? <ScreenshotModal signal={detail.signal} snapshotGeneratedAt={snapshotGeneratedAt} returnFocus={detail.trigger} onClose={closeDetail} language={language} /> : null}
   </div>;
 }
