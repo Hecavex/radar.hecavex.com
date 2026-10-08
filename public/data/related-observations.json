@@ -1,9 +1,14 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-related-observations",
-  "generatedAt": "2026-10-08T18:19:33.661Z",
+  "generatedAt": "2026-10-08T18:34:45.290Z",
   "semantics": "Shared evidence is a bounded association between public observations. It is not campaign, operator, malware, infrastructure ownership, or threat-actor attribution.",
   "nodes": [
+    {
+      "signalId": "0811565f4c67f195eb38",
+      "domain": "mail[.]bite-service[.]ru",
+      "clusterId": "3e08e66d70b709ed"
+    },
     {
       "signalId": "100d6055efc10336b880",
       "domain": "bite-service[.]com",
@@ -13,6 +18,16 @@
       "signalId": "11d91b22a0174f1b1e1f",
       "domain": "dhl-update[.]forum",
       "clusterId": "d4575ae51986fb60"
+    },
+    {
+      "signalId": "54d5d7fc70db8709fc97",
+      "domain": "mgw[.]bite-service[.]ru",
+      "clusterId": "3e08e66d70b709ed"
+    },
+    {
+      "signalId": "5b9e0bdaf140b03d56d0",
+      "domain": "mail[.]bite-service[.]com",
+      "clusterId": "3e08e66d70b709ed"
     },
     {
       "signalId": "799945b8b4949fb57e26",
@@ -109,6 +124,30 @@
         {
           "type": "dns-ns",
           "value": "ns3[.]easyhoster[.]ru"
+        }
+      ]
+    },
+    {
+      "id": "d9165e4d3a97099efc8b",
+      "source": "0811565f4c67f195eb38",
+      "target": "5b9e0bdaf140b03d56d0",
+      "strength": "strong",
+      "evidence": [
+        {
+          "type": "certificate-sha256",
+          "value": "0868cb8619128afbeab8fa01546ec3c787d36e51bf55c499df40d20f7308c31a"
+        }
+      ]
+    },
+    {
+      "id": "7d5397d0b50956c568b0",
+      "source": "54d5d7fc70db8709fc97",
+      "target": "5b9e0bdaf140b03d56d0",
+      "strength": "strong",
+      "evidence": [
+        {
+          "type": "certificate-sha256",
+          "value": "0868cb8619128afbeab8fa01546ec3c787d36e51bf55c499df40d20f7308c31a"
         }
       ]
     },
