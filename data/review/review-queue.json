@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-stratified-review-queue",
-  "generatedAt": "2026-10-08T11:18:59.973Z",
+  "generatedAt": "2026-10-08T12:03:57.018Z",
   "samplingPolicy": {
     "method": "deterministic-greedy-facet-balancing",
     "dimensions": [
@@ -15,7 +15,7 @@
     "excludes": "Signals already represented by a sanitized assessment.",
     "semantics": "A review worklist, not a random or prevalence-representative sample."
   },
-  "availableUnreviewed": 151,
+  "availableUnreviewed": 152,
   "selected": 24,
   "candidates": [
     {
@@ -154,6 +154,38 @@
       "firstSeen": "2026-10-04T19:10:11.981Z"
     },
     {
+      "signalId": "a1c9e0daa3cc9343ff60",
+      "recordPath": "/signals/a1c9e0daa3cc9343ff60/",
+      "brand": "Vinted",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "95-100",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-exact-token",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-10-08T12:00:20.876Z"
+    },
+    {
+      "signalId": "c7ce9d44dff719347e40",
+      "recordPath": "/signals/c7ce9d44dff719347e40/",
+      "brand": "Omniva",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "85-94",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-joined-affix",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "2-7d",
+      "firstSeen": "2026-10-04T08:15:52.037Z"
+    },
+    {
       "signalId": "a0f4666a79b615bff8b8",
       "recordPath": "/signals/a0f4666a79b615bff8b8/",
       "brand": "Swedbank",
@@ -185,73 +217,6 @@
       ],
       "candidateAgeBand": "0-1d",
       "firstSeen": "2026-10-08T06:25:02.032Z"
-    },
-    {
-      "signalId": "4e7db6613cb605dee8e7",
-      "recordPath": "/signals/4e7db6613cb605dee8e7/",
-      "brand": "Vinted",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "95-100",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-exact-token",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-10-02T00:04:06.306Z"
-    },
-    {
-      "signalId": "c7ce9d44dff719347e40",
-      "recordPath": "/signals/c7ce9d44dff719347e40/",
-      "brand": "Omniva",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "85-94",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-joined-affix",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-10-04T08:15:52.037Z"
-    },
-    {
-      "signalId": "826daa6f58d6e4fece60",
-      "recordPath": "/signals/826daa6f58d6e4fece60/",
-      "brand": "SEB",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "85-94",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-exact-token",
-        "multiple-hyphens",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-10-06T12:37:39.129Z"
-    },
-    {
-      "signalId": "72c33b7f99086c5084ef",
-      "recordPath": "/signals/72c33b7f99086c5084ef/",
-      "brand": "Tele2",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "95-100",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-joined-affix",
-        "punycode",
-        "suspicious-context",
-        "unicode-confusable"
-      ],
-      "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-10-08T11:12:28.438Z"
     },
     {
       "signalId": "3506aa800d90a7ae5d36",
@@ -304,9 +269,26 @@
       "firstSeen": "2026-10-06T03:03:10.419Z"
     },
     {
-      "signalId": "4098df636ab4646395dc",
-      "recordPath": "/signals/4098df636ab4646395dc/",
-      "brand": "Revolut",
+      "signalId": "826daa6f58d6e4fece60",
+      "recordPath": "/signals/826daa6f58d6e4fece60/",
+      "brand": "SEB",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "85-94",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-exact-token",
+        "multiple-hyphens",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-10-06T12:37:39.129Z"
+    },
+    {
+      "signalId": "72c33b7f99086c5084ef",
+      "recordPath": "/signals/72c33b7f99086c5084ef/",
+      "brand": "Tele2",
       "sources": [
         "CertStream"
       ],
@@ -314,15 +296,16 @@
       "evidenceTier": "name-only",
       "reasonCodes": [
         "brand-joined-affix",
-        "different-tld",
-        "suspicious-context"
+        "punycode",
+        "suspicious-context",
+        "unicode-confusable"
       ],
       "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-10-06T15:35:26.023Z"
+      "firstSeen": "2026-10-08T11:12:28.438Z"
     },
     {
-      "signalId": "0bb5827dc6d6d0e12300",
-      "recordPath": "/signals/0bb5827dc6d6d0e12300/",
+      "signalId": "4e7db6613cb605dee8e7",
+      "recordPath": "/signals/4e7db6613cb605dee8e7/",
       "brand": "Vinted",
       "sources": [
         "CertStream"
@@ -334,7 +317,7 @@
         "suspicious-context"
       ],
       "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-10-03T10:26:59.407Z"
+      "firstSeen": "2026-10-02T00:04:06.306Z"
     },
     {
       "signalId": "aac766c0fbd3f9106c90",
@@ -353,41 +336,8 @@
       "firstSeen": "2026-10-06T08:50:18.132Z"
     },
     {
-      "signalId": "16cef1a071ecc0789ae3",
-      "recordPath": "/signals/16cef1a071ecc0789ae3/",
-      "brand": "DHL",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "85-94",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-exact-token",
-        "multiple-hyphens",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-10-06T11:55:31.585Z"
-    },
-    {
-      "signalId": "d12d51af2a05e9df0620",
-      "recordPath": "/signals/d12d51af2a05e9df0620/",
-      "brand": "Vinted",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "95-100",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-exact-token",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-10-03T10:27:07.560Z"
-    },
-    {
-      "signalId": "df77f26715633d348809",
-      "recordPath": "/signals/df77f26715633d348809/",
+      "signalId": "4098df636ab4646395dc",
+      "recordPath": "/signals/4098df636ab4646395dc/",
       "brand": "Revolut",
       "sources": [
         "CertStream"
@@ -400,7 +350,7 @@
         "suspicious-context"
       ],
       "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-10-06T20:13:30.261Z"
+      "firstSeen": "2026-10-06T15:35:26.023Z"
     },
     {
       "signalId": "1ecf36879ccaf2a67d2c",
@@ -418,6 +368,54 @@
       ],
       "candidateAgeBand": "0-1d",
       "firstSeen": "2026-10-06T16:10:29.723Z"
+    },
+    {
+      "signalId": "0bb5827dc6d6d0e12300",
+      "recordPath": "/signals/0bb5827dc6d6d0e12300/",
+      "brand": "Vinted",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "95-100",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-exact-token",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "2-7d",
+      "firstSeen": "2026-10-03T10:26:59.407Z"
+    },
+    {
+      "signalId": "55ac96fdedb0a111a91c",
+      "recordPath": "/signals/55ac96fdedb0a111a91c/",
+      "brand": "Vinted",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "85-94",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-joined-affix",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "2-7d",
+      "firstSeen": "2026-10-02T10:37:09.579Z"
+    },
+    {
+      "signalId": "9a7254ff927c4199d72e",
+      "recordPath": "/signals/9a7254ff927c4199d72e/",
+      "brand": "Revolut",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "95-100",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-exact-token",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "2-7d",
+      "firstSeen": "2026-10-06T10:37:50.348Z"
     }
   ]
 }
