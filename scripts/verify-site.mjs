@@ -2166,6 +2166,33 @@ async function verifyTrendCutoff(browser, origin) {
   }
 }
 
+async function verifyCountryFacetTargets(browser, origin) {
+  // One bounded in-memory fixture covers a field absent from the current first
+  // page. Never change the published snapshot to exercise a country action.
+  const fixture = JSON.parse(readFileSync(join(output, "data", "radar.json"), "utf8"));
+  assert(fixture.signals.length > 0, "Country target verification requires a published-schema fixture.");
+  fixture.signals[0].country = "LT";
+  const context = await browser.newContext({ viewport: { width: 320, height: 900 } });
+  const page = await context.newPage();
+  await page.route("https://static.cloudflareinsights.com/beacon.min.js", fulfillAnalyticsScript);
+  await page.route("**/data/radar.json", (route) => route.fulfill({ contentType: "application/json", body: JSON.stringify(fixture) }));
+  try {
+    for (const path of ["/", "/lt/"]) {
+      await page.goto(`${origin}${path}?country=LT`, { waitUntil: "networkidle" });
+      const country = page.locator(".signal-table .facet-button.country", { hasText: "LT" }).first();
+      await country.waitFor({ state: "visible" });
+      const dimensions = await country.evaluate((button) => {
+        const rect = button.getBoundingClientRect();
+        return { width: rect.width, height: rect.height };
+      });
+      assert(dimensions.width >= 43.5 && dimensions.height >= 43.5,
+        `${path} country action is ${dimensions.width}x${dimensions.height}px at320px; expected at least44x44px.`);
+    }
+  } finally {
+    await context.close();
+  }
+}
+
 async function verifyAccessibility(browser, origin, width) {
   const context = await browser.newContext({ viewport: { width, height: 900 }, bypassCSP: true });
   const page = await context.newPage();
@@ -2374,11 +2401,13 @@ async function verifyInBrowser(healthOnly = false, researchOnly = false) {
     }
     await verifyIndexedCtHealth(browser, origin);
     if (healthOnly) return;
+    await verifyCountryFacetTargets(browser, origin);
     await verifyTrendCutoff(browser, origin);
     for (const width of widths) {
       const context = await browser.newContext({ viewport: { width, height: 900 } });
       const page = await context.newPage();
       let analyticsRequests = 0;
+      let verifiedPageLoads = 0;
       await page.route("https://static.cloudflareinsights.com/beacon.min.js", async (route) => {
         analyticsRequests += 1;
         await fulfillAnalyticsScript(route);
@@ -2392,6 +2421,7 @@ async function verifyInBrowser(healthOnly = false, researchOnly = false) {
         page.on("console", onConsole);
         page.on("pageerror", onPageError);
         await page.goto(`${origin}${entry.path}`, { waitUntil: "networkidle" });
+        verifiedPageLoads += 1;
         assert(await page.locator("#root").getAttribute("data-hydrated") === "true", `${entry.path} did not hydrate under its production CSP at ${width}px.`);
         const layout = await page.evaluate(() => {
           const main = document.querySelector("main");
@@ -2701,10 +2731,22 @@ async function verifyInBrowser(healthOnly = false, researchOnly = false) {
           assert(await page.locator(".header-utility .source-link").isVisible(), `${entry.path} desktop Source utility is hidden at ${width}px.`);
         }
 
-        if (width === 1440 && overview) {
+        if ((width === 390 || width === 1440) && overview) {
           const sourceLabel = entry.path === "/lt/" ? "Šaltinis" : "Source";
+          const advanced = page.locator(".advanced-filter-shell");
+          assert(!(await advanced.evaluate((element) => element.open)), `${entry.path} default advanced controls are not collapsed.`);
           await page.locator("#signal-search").fill("private local search");
           assert(!page.url().includes("private") && !page.url().includes("query="), `${entry.path} free-text signal search leaked into the URL.`);
+          assert(!(await advanced.evaluate((element) => element.open)), `${entry.path} ordinary typing opened advanced controls.`);
+          await page.getByRole("button", { name: entry.path === "/lt/" ? "3 d." : "3 days", exact: true }).click();
+          assert(!(await advanced.evaluate((element) => element.open)), `${entry.path} a time-window change opened advanced controls.`);
+          const resetAll = page.locator(".filter-actions .reset-button");
+          assert(await resetAll.isVisible(), `${entry.path} search/time reset is hidden inside advanced controls.`);
+          await resetAll.click();
+          assert((await page.locator("#signal-search").inputValue()) === "", `${entry.path} reset did not clear the local query.`);
+          assert(await page.locator("#signal-search").evaluate((element) => element === document.activeElement), `${entry.path} reset did not return focus to search.`);
+          assert(new URL(page.url()).search === "", `${entry.path} reset did not clear controlled URL state.`);
+          await advanced.locator("summary").click();
           await page.locator(`select[aria-label="${sourceLabel}"]`).selectOption("CertStream");
           assert(
             page.url().includes("source=CertStream") && !page.url().includes("private"),
@@ -2714,6 +2756,11 @@ async function verifyInBrowser(healthOnly = false, researchOnly = false) {
             await page.locator(".export-actions button", { hasText: "CSV" }).isVisible(),
             `${entry.path} defanged CSV export is not visible.`,
           );
+          await advanced.locator("summary").click();
+          assert(!(await advanced.evaluate((element) => element.open)), `${entry.path} advanced controls could not be manually collapsed.`);
+          await page.locator("#signal-search").fill("private local search");
+          assert(!(await advanced.evaluate((element) => element.open)), `${entry.path} typing reopened manually collapsed advanced controls.`);
+          assert(await advanced.locator("summary span").isVisible(), `${entry.path} collapsed controls hide their active-filter count.`);
           if (width === 390) {
             await page.evaluate(() => Object.defineProperty(navigator, "clipboard", {
               configurable: true,
@@ -2726,6 +2773,14 @@ async function verifyInBrowser(healthOnly = false, researchOnly = false) {
             assert(sharedUrl.includes("source=CertStream") && !sharedUrl.includes("private"),
               `${entry.path} clipboard recovery does not preserve the controlled-only sharing boundary.`);
           }
+          await page.goto(new URL(`${entry.path}?source=CertStream`, origin).href, { waitUntil: "networkidle" });
+          verifiedPageLoads += 1;
+          assert((await page.locator(`select[aria-label="${sourceLabel}"]`).inputValue()) === "CertStream", `${entry.path} controlled source URL did not restore.`);
+          assert(await advanced.evaluate((element) => element.open), `${entry.path} restored advanced criteria did not reveal their controls.`);
+          await page.locator(".filter-actions .reset-button").click();
+          assert(!page.url().includes("source="), `${entry.path} reset did not remove controlled URL criteria.`);
+          assert(await page.locator("#signal-search").evaluate((element) => element === document.activeElement), `${entry.path} controlled-view reset did not return focus to search.`);
+          assert(await advanced.evaluate((element) => element.open), `${entry.path} reset unexpectedly collapsed the reader's open controls.`);
         }
 
         if ((width === 390 || width === 1440) && ["/changes/", "/lt/pokyciai/"].includes(entry.path)) {
@@ -2745,8 +2800,8 @@ async function verifyInBrowser(healthOnly = false, researchOnly = false) {
         page.off("pageerror", onPageError);
       }
       assert(
-        analyticsRequests === (analyticsToken ? pages.length : 0),
-        `Cloudflare Web Analytics loaded ${analyticsRequests} times for ${pages.length} pages at ${width}px.`,
+        analyticsRequests === (analyticsToken ? verifiedPageLoads : 0),
+        `Cloudflare Web Analytics loaded ${analyticsRequests} times for ${verifiedPageLoads} page loads at ${width}px.`,
       );
       await context.close();
       if (width === 390 || width === 1024) {

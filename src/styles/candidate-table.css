@@ -19,6 +19,15 @@ table {
   text-align: left;
 }
 
+.signal-table-context {
+  margin: 0;
+  padding: .75rem .9rem 1rem;
+  color: var(--muted);
+  font: 400 .8125rem/1.5 var(--sans);
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
 th {
   padding: 1rem .9rem;
   border-bottom: 1px solid var(--line-strong);
@@ -81,16 +90,17 @@ tbody tr:target {
 }
 
 .indicator-cell button {
-  width: 1.55rem;
-  height: 1.55rem;
+  width: 2.75rem;
+  height: 2.75rem;
+  min-height: 2.75rem;
 }
 
 .signal-deep-link {
   display: inline-grid;
   place-items: center;
   flex: 0 0 auto;
-  width: 1.55rem;
-  height: 1.55rem;
+  width: 2.75rem;
+  height: 2.75rem;
   color: var(--faint);
   text-decoration: none;
 }
@@ -131,6 +141,8 @@ td time {
 }
 
 .facet-button {
+  min-height: 2.75rem;
+  min-width: 2.75rem;
   padding: 0;
   border: 0;
   background: transparent;
@@ -167,6 +179,7 @@ td time {
 }
 
 .source-chips button {
+  min-height: 2.75rem;
   cursor: pointer;
 }
 
