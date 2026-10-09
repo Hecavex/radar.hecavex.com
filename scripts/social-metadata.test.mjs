@@ -1,7 +1,26 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
 import test from "node:test";
+import { URL } from "node:url";
 import { JSDOM } from "jsdom";
 import { completeSocialMetadata } from "../src/lib/socialMetadata.ts";
+
+test("Radar Dataset exposes a typed named creator without an unresolved off-page reference", () => {
+  const document = new JSDOM(readFileSync(new URL("../index.html", import.meta.url), "utf8")).window.document;
+  const jsonLd = document.querySelector('script[type="application/ld+json"]').textContent;
+  const dataset = JSON.parse(jsonLd)["@graph"].find((node) => node["@type"] === "Dataset");
+  assert.ok(dataset, "Radar must retain its Dataset metadata");
+  assert.deepEqual(dataset.creator, {
+    "@id": "https://hecavex.com/#organization",
+    "@type": "Organization",
+    name: "HECAVEX",
+    url: "https://hecavex.com/",
+  }, "The public creator must be locally typed and named while retaining its established identity");
+  const digest = createHash("sha256").update(jsonLd, "utf8").digest("base64");
+  assert.ok(document.querySelector('meta[http-equiv="Content-Security-Policy"]').content.includes(`'sha256-${digest}'`),
+    "The source CSP must authorize the changed JSON-LD bytes");
+});
 
 test("minimal Lithuanian route gains its actual canonical and escaped preview text", () => {
   const source = '<html lang="lt"><head><title>Ženklai &amp; įrodymai</title><meta name="description" content="&quot;Šaltinis&quot; &lt;/script&gt;&lt;script&gt;alert(1)&lt;/script&gt;" /><link rel="canonical" href="https://radar.hecavex.com/lt/prekes-zenklai/" /><link rel="alternate" hreflang="en" href="https://radar.hecavex.com/brands/" /></head><body></body></html>';

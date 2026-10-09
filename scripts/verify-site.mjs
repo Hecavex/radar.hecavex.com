@@ -987,6 +987,13 @@ function verifyBuiltHtml() {
         "Radar overview does not advertise the reviewed STIX 2.1 alternate distribution.",
       );
       assert(structuredData, "Radar overview has no Dataset JSON-LD.");
+      const dataset = structuredData["@graph"]?.find((node) => node["@type"] === "Dataset");
+      assert.deepEqual(dataset?.creator, {
+        "@id": "https://hecavex.com/#organization",
+        "@type": "Organization",
+        name: "HECAVEX",
+        url: "https://hecavex.com/",
+      }, "Radar Dataset creator must declare the established typed, named HECAVEX identity locally.");
       const serializedStructuredData = JSON.stringify(structuredData);
       assert(
         serializedStructuredData.includes("application/stix+json;version=2.1") &&
