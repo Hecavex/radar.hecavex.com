@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-stratified-review-queue",
-  "generatedAt": "2026-10-09T08:04:01.924Z",
+  "generatedAt": "2026-10-09T09:04:21.289Z",
   "samplingPolicy": {
     "method": "deterministic-greedy-facet-balancing",
     "dimensions": [
@@ -15,7 +15,7 @@
     "excludes": "Signals already represented by a sanitized assessment.",
     "semantics": "A review worklist, not a random or prevalence-representative sample."
   },
-  "availableUnreviewed": 153,
+  "availableUnreviewed": 154,
   "selected": 24,
   "candidates": [
     {
@@ -285,6 +285,23 @@
       "firstSeen": "2026-10-06T10:37:50.348Z"
     },
     {
+      "signalId": "27d17cb6e921adfee761",
+      "recordPath": "/signals/27d17cb6e921adfee761/",
+      "brand": "Swedbank",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "95-100",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-joined-affix",
+        "different-tld",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-10-09T09:02:57.242Z"
+    },
+    {
       "signalId": "f0e130d496665eba0f6c",
       "recordPath": "/signals/f0e130d496665eba0f6c/",
       "brand": "ESO",
@@ -301,24 +318,6 @@
       ],
       "candidateAgeBand": "2-7d",
       "firstSeen": "2026-10-04T19:10:11.981Z"
-    },
-    {
-      "signalId": "72c33b7f99086c5084ef",
-      "recordPath": "/signals/72c33b7f99086c5084ef/",
-      "brand": "Tele2",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "95-100",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-joined-affix",
-        "punycode",
-        "suspicious-context",
-        "unicode-confusable"
-      ],
-      "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-10-08T11:12:28.438Z"
     },
     {
       "signalId": "d649550bbb04229eff74",
@@ -354,9 +353,9 @@
       "firstSeen": "2026-10-08T09:13:04.373Z"
     },
     {
-      "signalId": "ce02faae7c1643371389",
-      "recordPath": "/signals/ce02faae7c1643371389/",
-      "brand": "MAXIMA",
+      "signalId": "72c33b7f99086c5084ef",
+      "recordPath": "/signals/72c33b7f99086c5084ef/",
+      "brand": "Tele2",
       "sources": [
         "CertStream"
       ],
@@ -364,11 +363,28 @@
       "evidenceTier": "name-only",
       "reasonCodes": [
         "brand-joined-affix",
-        "different-tld",
+        "punycode",
+        "suspicious-context",
+        "unicode-confusable"
+      ],
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-10-08T11:12:28.438Z"
+    },
+    {
+      "signalId": "d12d51af2a05e9df0620",
+      "recordPath": "/signals/d12d51af2a05e9df0620/",
+      "brand": "Vinted",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "95-100",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-exact-token",
         "suspicious-context"
       ],
       "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-10-06T07:19:35.399Z"
+      "firstSeen": "2026-10-03T10:27:07.560Z"
     },
     {
       "signalId": "a1d3c58150404b1c2b5a",
@@ -388,25 +404,9 @@
       "firstSeen": "2026-10-08T14:57:34.529Z"
     },
     {
-      "signalId": "d12d51af2a05e9df0620",
-      "recordPath": "/signals/d12d51af2a05e9df0620/",
-      "brand": "Vinted",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "95-100",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-exact-token",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-10-03T10:27:07.560Z"
-    },
-    {
-      "signalId": "b9477de66512eb394e6e",
-      "recordPath": "/signals/b9477de66512eb394e6e/",
-      "brand": "Artea",
+      "signalId": "ce02faae7c1643371389",
+      "recordPath": "/signals/ce02faae7c1643371389/",
+      "brand": "MAXIMA",
       "sources": [
         "CertStream"
       ],
@@ -418,7 +418,7 @@
         "suspicious-context"
       ],
       "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-10-03T11:58:33.015Z"
+      "firstSeen": "2026-10-06T07:19:35.399Z"
     }
   ]
 }
