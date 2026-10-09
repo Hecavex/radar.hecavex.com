@@ -1,5 +1,6 @@
 /* global URL, document, getComputedStyle, navigator, process, setTimeout, window */
 
+import { deepStrictEqual } from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
@@ -988,7 +989,7 @@ function verifyBuiltHtml() {
       );
       assert(structuredData, "Radar overview has no Dataset JSON-LD.");
       const dataset = structuredData["@graph"]?.find((node) => node["@type"] === "Dataset");
-      assert.deepEqual(dataset?.creator, {
+      deepStrictEqual(dataset?.creator, {
         "@id": "https://hecavex.com/#organization",
         "@type": "Organization",
         name: "HECAVEX",
