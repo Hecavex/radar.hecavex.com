@@ -1,18 +1,13 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-related-observations",
-  "generatedAt": "2026-10-10T20:34:18.505Z",
+  "generatedAt": "2026-10-10T21:34:15.614Z",
   "semantics": "Shared evidence is a bounded association between public observations. It is not campaign, operator, malware, infrastructure ownership, or threat-actor attribution.",
   "nodes": [
     {
       "signalId": "0811565f4c67f195eb38",
       "domain": "mail[.]bite-service[.]ru",
       "clusterId": "3e08e66d70b709ed"
-    },
-    {
-      "signalId": "11d91b22a0174f1b1e1f",
-      "domain": "dhl-update[.]forum",
-      "clusterId": "9a6764102fcc2fd5"
     },
     {
       "signalId": "148f9bf8587e8a3bc456",
@@ -45,16 +40,6 @@
       "clusterId": "fa5aea619c647de3"
     },
     {
-      "signalId": "995200bdb80b1fd0fcd7",
-      "domain": "www[.]track-dhl[.]icu",
-      "clusterId": "9d84c37d169271bf"
-    },
-    {
-      "signalId": "b00891a61c00dee164e5",
-      "domain": "xn--revolu-n17b[.]com",
-      "clusterId": "9a6764102fcc2fd5"
-    },
-    {
       "signalId": "b898951c41d47bc0ed96",
       "domain": "www[.]swedbankpay[.]ee",
       "clusterId": "fa5aea619c647de3"
@@ -63,11 +48,6 @@
       "signalId": "bd6ebacc1acbc69830fa",
       "domain": "swedbankpay[.]ee",
       "clusterId": "fa5aea619c647de3"
-    },
-    {
-      "signalId": "d129905b8671dc5a3d76",
-      "domain": "www[.]dhl-info-tracking[.]com",
-      "clusterId": "9d84c37d169271bf"
     }
   ],
   "edges": [
@@ -238,59 +218,11 @@
           "value": "3f2e7dcdaa50b6b052227008748c7c29aa951a4a5e6784636222a1f84d0fc629"
         }
       ]
-    },
-    {
-      "id": "fa6eea66e5213b179f73",
-      "source": "995200bdb80b1fd0fcd7",
-      "target": "d129905b8671dc5a3d76",
-      "strength": "shared-context",
-      "evidence": [
-        {
-          "type": "dns-a",
-          "value": "103[.]224[.]182[.]189"
-        },
-        {
-          "type": "dns-cname",
-          "value": "cname101[.]com"
-        },
-        {
-          "type": "dns-mx",
-          "value": "park-mx[.]above[.]com"
-        },
-        {
-          "type": "dns-ns",
-          "value": "ns3[.]abovedomains[.]com"
-        },
-        {
-          "type": "dns-ns",
-          "value": "ns4[.]abovedomains[.]com"
-        }
-      ]
-    },
-    {
-      "id": "36895cbb015c7bc0e5da",
-      "source": "11d91b22a0174f1b1e1f",
-      "target": "b00891a61c00dee164e5",
-      "strength": "shared-context",
-      "evidence": [
-        {
-          "type": "dns-a",
-          "value": "185[.]53[.]179[.]128"
-        },
-        {
-          "type": "dns-ns",
-          "value": "ns1[.]dyna-ns[.]net"
-        },
-        {
-          "type": "dns-ns",
-          "value": "ns2[.]dyna-ns[.]net"
-        }
-      ]
     }
   ],
   "suppressedEvidence": {
-    "highFanoutValues": 5,
-    "temporalPairs": 0,
+    "highFanoutValues": 4,
+    "temporalPairs": 11,
     "edgeLimit": 0
   }
 }
