@@ -1,29 +1,31 @@
 {
   "dataset": "ct-search-state",
-  "generatedAt": "2026-10-10T19:34:11.797Z",
+  "generatedAt": "2026-10-10T23:04:30.781Z",
   "latestRun": {
     "dnsNames": 0,
-    "endedAt": "2026-10-10T19:34:11.797Z",
-    "failureCodes": [],
+    "endedAt": "2026-10-10T23:04:30.781Z",
+    "failureCodes": [
+      "provider-http"
+    ],
     "matches": 0,
     "newRecords": 0,
-    "outcome": "deferred-backoff",
-    "queriesAttempted": 0,
+    "outcome": "partial",
+    "queriesAttempted": 2,
     "queriesBacklogged": 0,
-    "queriesCompleted": 0,
+    "queriesCompleted": 1,
     "rowsProcessed": 0,
-    "startedAt": "2026-10-10T19:34:11.791Z"
+    "startedAt": "2026-10-10T23:04:12.155Z"
   },
   "provider": "crt.sh",
   "providerHealth": {
-    "consecutiveFailures": 9,
+    "consecutiveFailures": 10,
     "degradedSince": "2026-10-08T09:34:04.790Z",
-    "lastAttemptAt": "2026-10-10T14:49:53.742Z",
+    "lastAttemptAt": "2026-10-10T23:04:30.781Z",
     "lastFailureCodes": [
-      "provider-network"
+      "provider-http"
     ],
     "lastSuccessAt": "2026-10-08T02:18:04.378Z",
-    "nextAttemptAt": "2026-10-10T20:09:53.742Z"
+    "nextAttemptAt": "2026-10-11T04:24:30.781Z"
   },
   "queries": {
     "brand:artea": {
@@ -358,8 +360,8 @@
       "brand": "Telia",
       "lastEntryAt": null,
       "lastId": 0,
-      "lastOutcome": "failed",
-      "lastRunAt": "2026-10-02T00:14:58.586Z",
+      "lastOutcome": "completed",
+      "lastRunAt": "2026-10-10T23:04:12.155Z",
       "term": "telia"
     },
     "brand:unipark": {
@@ -367,7 +369,7 @@
       "lastEntryAt": null,
       "lastId": 0,
       "lastOutcome": "failed",
-      "lastRunAt": "2026-10-02T06:15:04.861Z",
+      "lastRunAt": "2026-10-10T23:04:12.155Z",
       "term": "unipark"
     },
     "brand:urbobankas": {
@@ -395,6 +397,6 @@
       "term": "vinted"
     }
   },
-  "queryCursor": 41,
+  "queryCursor": 43,
   "schemaVersion": 1
 }
