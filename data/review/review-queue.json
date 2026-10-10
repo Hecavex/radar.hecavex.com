@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-stratified-review-queue",
-  "generatedAt": "2026-10-10T15:56:36.342Z",
+  "generatedAt": "2026-10-10T17:34:07.290Z",
   "samplingPolicy": {
     "method": "deterministic-greedy-facet-balancing",
     "dimensions": [
@@ -15,7 +15,7 @@
     "excludes": "Signals already represented by a sanitized assessment.",
     "semantics": "A review worklist, not a random or prevalence-representative sample."
   },
-  "availableUnreviewed": 178,
+  "availableUnreviewed": 179,
   "selected": 24,
   "candidates": [
     {
@@ -70,20 +70,37 @@
       "firstSeen": "2026-10-04T13:27:51.604Z"
     },
     {
-      "signalId": "7c22eaa1cfa14e7c811f",
-      "recordPath": "/signals/7c22eaa1cfa14e7c811f/",
-      "brand": "Smart-ID",
+      "signalId": "27d17cb6e921adfee761",
+      "recordPath": "/signals/27d17cb6e921adfee761/",
+      "brand": "Swedbank",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "95-100",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-joined-affix",
+        "different-tld",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-10-09T09:02:57.242Z"
+    },
+    {
+      "signalId": "fa833470c3606501c8b2",
+      "recordPath": "/signals/fa833470c3606501c8b2/",
+      "brand": "DHL",
       "sources": [
         "CertStream"
       ],
       "scoreBand": "85-94",
       "evidenceTier": "name-only",
       "reasonCodes": [
-        "brand-joined-affix",
+        "brand-split-token",
         "suspicious-context"
       ],
-      "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-10-08T17:11:25.298Z"
+      "candidateAgeBand": "2-7d",
+      "firstSeen": "2026-10-04T16:14:58.781Z"
     },
     {
       "signalId": "44ec39cd6e3c8ed24cc5",
@@ -103,55 +120,6 @@
       ],
       "candidateAgeBand": "0-1d",
       "firstSeen": "2026-10-08T19:03:37.030Z"
-    },
-    {
-      "signalId": "fa833470c3606501c8b2",
-      "recordPath": "/signals/fa833470c3606501c8b2/",
-      "brand": "DHL",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "85-94",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-split-token",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-10-04T16:14:58.781Z"
-    },
-    {
-      "signalId": "27d17cb6e921adfee761",
-      "recordPath": "/signals/27d17cb6e921adfee761/",
-      "brand": "Swedbank",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "95-100",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-joined-affix",
-        "different-tld",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-10-09T09:02:57.242Z"
-    },
-    {
-      "signalId": "4e7db6613cb605dee8e7",
-      "recordPath": "/signals/4e7db6613cb605dee8e7/",
-      "brand": "Vinted",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "95-100",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-exact-token",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-10-04T15:56:20.235Z"
     },
     {
       "signalId": "77ed9d308f2dc2a944b4",
@@ -186,6 +154,22 @@
       "firstSeen": "2026-10-09T12:29:28.628Z"
     },
     {
+      "signalId": "4e7db6613cb605dee8e7",
+      "recordPath": "/signals/4e7db6613cb605dee8e7/",
+      "brand": "Vinted",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "95-100",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-exact-token",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "2-7d",
+      "firstSeen": "2026-10-04T15:56:20.235Z"
+    },
+    {
       "signalId": "ef8adc4f655f4353fc86",
       "recordPath": "/signals/ef8adc4f655f4353fc86/",
       "brand": "ESO",
@@ -202,6 +186,22 @@
       ],
       "candidateAgeBand": "2-7d",
       "firstSeen": "2026-10-04T19:10:11.981Z"
+    },
+    {
+      "signalId": "148f9bf8587e8a3bc456",
+      "recordPath": "/signals/148f9bf8587e8a3bc456/",
+      "brand": "Swedbank",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "85-94",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-joined-affix",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-10-09T12:57:16.299Z"
     },
     {
       "signalId": "4c5f0c744b53187dafec",
@@ -221,20 +221,21 @@
       "firstSeen": "2026-10-05T17:15:30.148Z"
     },
     {
-      "signalId": "148f9bf8587e8a3bc456",
-      "recordPath": "/signals/148f9bf8587e8a3bc456/",
-      "brand": "Swedbank",
+      "signalId": "7a3ad7e19da1a8d07d47",
+      "recordPath": "/signals/7a3ad7e19da1a8d07d47/",
+      "brand": "Luminor",
       "sources": [
         "CertStream"
       ],
-      "scoreBand": "85-94",
+      "scoreBand": "95-100",
       "evidenceTier": "name-only",
       "reasonCodes": [
         "brand-joined-affix",
+        "different-tld",
         "suspicious-context"
       ],
       "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-10-09T12:57:16.299Z"
+      "firstSeen": "2026-10-10T12:13:15.480Z"
     },
     {
       "signalId": "9a7254ff927c4199d72e",
@@ -253,21 +254,37 @@
       "firstSeen": "2026-10-06T10:37:50.348Z"
     },
     {
-      "signalId": "7a3ad7e19da1a8d07d47",
-      "recordPath": "/signals/7a3ad7e19da1a8d07d47/",
-      "brand": "Luminor",
+      "signalId": "7c22eaa1cfa14e7c811f",
+      "recordPath": "/signals/7c22eaa1cfa14e7c811f/",
+      "brand": "Smart-ID",
       "sources": [
         "CertStream"
       ],
-      "scoreBand": "95-100",
+      "scoreBand": "85-94",
       "evidenceTier": "name-only",
       "reasonCodes": [
         "brand-joined-affix",
-        "different-tld",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "2-7d",
+      "firstSeen": "2026-10-08T17:11:25.298Z"
+    },
+    {
+      "signalId": "4fad2be71fbc6d88e000",
+      "recordPath": "/signals/4fad2be71fbc6d88e000/",
+      "brand": "DHL",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "85-94",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-exact-token",
+        "multiple-hyphens",
         "suspicious-context"
       ],
       "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-10-10T12:13:15.480Z"
+      "firstSeen": "2026-10-09T07:55:55.872Z"
     },
     {
       "signalId": "f0e130d496665eba0f6c",
@@ -320,9 +337,9 @@
       "firstSeen": "2026-10-06T10:39:26.092Z"
     },
     {
-      "signalId": "aac766c0fbd3f9106c90",
-      "recordPath": "/signals/aac766c0fbd3f9106c90/",
-      "brand": "Omniva",
+      "signalId": "515893ceabe1b12e4e3d",
+      "recordPath": "/signals/515893ceabe1b12e4e3d/",
+      "brand": "Swedbank",
       "sources": [
         "CertStream"
       ],
@@ -332,8 +349,8 @@
         "brand-joined-affix",
         "suspicious-context"
       ],
-      "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-10-06T08:50:18.132Z"
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-10-09T12:57:16.299Z"
     },
     {
       "signalId": "a1c9e0daa3cc9343ff60",
@@ -352,39 +369,6 @@
       "firstSeen": "2026-10-08T12:00:20.876Z"
     },
     {
-      "signalId": "4fad2be71fbc6d88e000",
-      "recordPath": "/signals/4fad2be71fbc6d88e000/",
-      "brand": "DHL",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "85-94",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-exact-token",
-        "multiple-hyphens",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-10-09T07:55:55.872Z"
-    },
-    {
-      "signalId": "515893ceabe1b12e4e3d",
-      "recordPath": "/signals/515893ceabe1b12e4e3d/",
-      "brand": "Swedbank",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "85-94",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-joined-affix",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-10-09T12:57:16.299Z"
-    },
-    {
       "signalId": "aa3326fff674656be870",
       "recordPath": "/signals/aa3326fff674656be870/",
       "brand": "MAXIMA",
@@ -400,6 +384,22 @@
       ],
       "candidateAgeBand": "0-1d",
       "firstSeen": "2026-10-09T15:27:21.821Z"
+    },
+    {
+      "signalId": "aac766c0fbd3f9106c90",
+      "recordPath": "/signals/aac766c0fbd3f9106c90/",
+      "brand": "Omniva",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "85-94",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-joined-affix",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "2-7d",
+      "firstSeen": "2026-10-06T08:50:18.132Z"
     },
     {
       "signalId": "50d97508436b825f6a3b",
