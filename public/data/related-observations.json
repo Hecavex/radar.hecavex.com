@@ -1,13 +1,18 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-related-observations",
-  "generatedAt": "2026-10-11T06:49:27.079Z",
+  "generatedAt": "2026-10-11T07:49:23.938Z",
   "semantics": "Shared evidence is a bounded association between public observations. It is not campaign, operator, malware, infrastructure ownership, or threat-actor attribution.",
   "nodes": [
     {
       "signalId": "0811565f4c67f195eb38",
       "domain": "mail[.]bite-service[.]ru",
       "clusterId": "3e08e66d70b709ed"
+    },
+    {
+      "signalId": "0ea4bb9063003d86d973",
+      "domain": "support-revolut[.]info",
+      "clusterId": "f1c77fe3298f0af5"
     },
     {
       "signalId": "148f9bf8587e8a3bc456",
@@ -23,6 +28,11 @@
       "signalId": "515893ceabe1b12e4e3d",
       "domain": "swedbankpay[.]lv",
       "clusterId": "fa5aea619c647de3"
+    },
+    {
+      "signalId": "543fb6629ad729415188",
+      "domain": "support-vinted[.]net",
+      "clusterId": "f1c77fe3298f0af5"
     },
     {
       "signalId": "54d5d7fc70db8709fc97",
@@ -220,6 +230,34 @@
         {
           "type": "certificate-sha256",
           "value": "3f2e7dcdaa50b6b052227008748c7c29aa951a4a5e6784636222a1f84d0fc629"
+        }
+      ]
+    },
+    {
+      "id": "6b841e57c696f2ad766b",
+      "source": "0ea4bb9063003d86d973",
+      "target": "543fb6629ad729415188",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "198[.]185[.]159[.]144"
+        },
+        {
+          "type": "dns-a",
+          "value": "198[.]185[.]159[.]145"
+        },
+        {
+          "type": "dns-a",
+          "value": "198[.]49[.]23[.]144"
+        },
+        {
+          "type": "dns-a",
+          "value": "198[.]49[.]23[.]145"
+        },
+        {
+          "type": "dns-mx",
+          "value": "smtp[.]google[.]com"
         }
       ]
     }
