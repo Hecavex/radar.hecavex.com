@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-related-observations",
-  "generatedAt": "2026-10-11T13:34:22.601Z",
+  "generatedAt": "2026-10-11T14:19:14.174Z",
   "semantics": "Shared evidence is a bounded association between public observations. It is not campaign, operator, malware, infrastructure ownership, or threat-actor attribution.",
   "nodes": [
     {
@@ -17,17 +17,32 @@
     {
       "signalId": "148f9bf8587e8a3bc456",
       "domain": "www[.]swedbankpay[.]lt",
-      "clusterId": "fa5aea619c647de3"
+      "clusterId": "4f273dc69765a554"
+    },
+    {
+      "signalId": "22e60ab83facd14b83be",
+      "domain": "msigypnc[.]xn--tl2mobile-b4ab[.]fr",
+      "clusterId": "8e0e4ed9a6993455"
     },
     {
       "signalId": "36fe2b022ca535218273",
       "domain": "swedbankpay[.]lt",
-      "clusterId": "fa5aea619c647de3"
+      "clusterId": "4f273dc69765a554"
+    },
+    {
+      "signalId": "3f8c07ce727e2065f85d",
+      "domain": "swedbankpay[.]fi",
+      "clusterId": "4f273dc69765a554"
+    },
+    {
+      "signalId": "407f79d989776bc658ee",
+      "domain": "kinjydqp[.]xn--tl2mobile-b4ab[.]com",
+      "clusterId": "8e0e4ed9a6993455"
     },
     {
       "signalId": "515893ceabe1b12e4e3d",
       "domain": "swedbankpay[.]lv",
-      "clusterId": "fa5aea619c647de3"
+      "clusterId": "4f273dc69765a554"
     },
     {
       "signalId": "543fb6629ad729415188",
@@ -47,20 +62,72 @@
     {
       "signalId": "68c6f2a92ecab91f3960",
       "domain": "www[.]swedbankpay[.]lv",
-      "clusterId": "fa5aea619c647de3"
+      "clusterId": "4f273dc69765a554"
+    },
+    {
+      "signalId": "80584d94964701a98bc7",
+      "domain": "api[.]xn--tl2mobile-b4ab[.]fr",
+      "clusterId": "8e0e4ed9a6993455"
+    },
+    {
+      "signalId": "93effa2fe924fc422e9b",
+      "domain": "apjxtrci[.]xn--tl2mobile-b4ab[.]fr",
+      "clusterId": "8e0e4ed9a6993455"
+    },
+    {
+      "signalId": "a0f068abecb03c691a96",
+      "domain": "qfwxkoit[.]xn--tl2mobile-b4ab[.]fr",
+      "clusterId": "8e0e4ed9a6993455"
+    },
+    {
+      "signalId": "b4f07059541bb7dbd386",
+      "domain": "kipjubzy[.]xn--tl2mobile-b4ab[.]fr",
+      "clusterId": "8e0e4ed9a6993455"
     },
     {
       "signalId": "b898951c41d47bc0ed96",
       "domain": "www[.]swedbankpay[.]ee",
-      "clusterId": "fa5aea619c647de3"
+      "clusterId": "4f273dc69765a554"
     },
     {
       "signalId": "bd6ebacc1acbc69830fa",
       "domain": "swedbankpay[.]ee",
-      "clusterId": "fa5aea619c647de3"
+      "clusterId": "4f273dc69765a554"
     }
   ],
   "edges": [
+    {
+      "id": "65ebad5b3861de12ed9a",
+      "source": "36fe2b022ca535218273",
+      "target": "bd6ebacc1acbc69830fa",
+      "strength": "strong",
+      "evidence": [
+        {
+          "type": "certificate-sha256",
+          "value": "3f2e7dcdaa50b6b052227008748c7c29aa951a4a5e6784636222a1f84d0fc629"
+        },
+        {
+          "type": "dns-a",
+          "value": "217[.]114[.]94[.]2"
+        },
+        {
+          "type": "dns-ns",
+          "value": "dns1[.]p01[.]nsone[.]net"
+        },
+        {
+          "type": "dns-ns",
+          "value": "dns2[.]p01[.]nsone[.]net"
+        },
+        {
+          "type": "dns-ns",
+          "value": "dns3[.]p01[.]nsone[.]net"
+        },
+        {
+          "type": "dns-ns",
+          "value": "dns4[.]p01[.]nsone[.]net"
+        }
+      ]
+    },
     {
       "id": "6b748eedf1b82c3c5807",
       "source": "0811565f4c67f195eb38",
@@ -162,18 +229,6 @@
       ]
     },
     {
-      "id": "a7c2dcd66b685e28642b",
-      "source": "36fe2b022ca535218273",
-      "target": "bd6ebacc1acbc69830fa",
-      "strength": "strong",
-      "evidence": [
-        {
-          "type": "certificate-sha256",
-          "value": "3f2e7dcdaa50b6b052227008748c7c29aa951a4a5e6784636222a1f84d0fc629"
-        }
-      ]
-    },
-    {
       "id": "99aec1218ff2e2f20eb1",
       "source": "515893ceabe1b12e4e3d",
       "target": "b898951c41d47bc0ed96",
@@ -260,11 +315,147 @@
           "value": "smtp[.]google[.]com"
         }
       ]
+    },
+    {
+      "id": "f687e6877d7ab0ba199d",
+      "source": "36fe2b022ca535218273",
+      "target": "3f8c07ce727e2065f85d",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "217[.]114[.]94[.]2"
+        },
+        {
+          "type": "dns-ns",
+          "value": "dns1[.]p01[.]nsone[.]net"
+        },
+        {
+          "type": "dns-ns",
+          "value": "dns2[.]p01[.]nsone[.]net"
+        },
+        {
+          "type": "dns-ns",
+          "value": "dns3[.]p01[.]nsone[.]net"
+        },
+        {
+          "type": "dns-ns",
+          "value": "dns4[.]p01[.]nsone[.]net"
+        }
+      ]
+    },
+    {
+      "id": "0cd5b65738bd1e5d170d",
+      "source": "3f8c07ce727e2065f85d",
+      "target": "bd6ebacc1acbc69830fa",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "217[.]114[.]94[.]2"
+        },
+        {
+          "type": "dns-ns",
+          "value": "dns1[.]p01[.]nsone[.]net"
+        },
+        {
+          "type": "dns-ns",
+          "value": "dns2[.]p01[.]nsone[.]net"
+        },
+        {
+          "type": "dns-ns",
+          "value": "dns3[.]p01[.]nsone[.]net"
+        },
+        {
+          "type": "dns-ns",
+          "value": "dns4[.]p01[.]nsone[.]net"
+        }
+      ]
+    },
+    {
+      "id": "07a708cebf6e945f02c3",
+      "source": "22e60ab83facd14b83be",
+      "target": "407f79d989776bc658ee",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "185[.]53[.]179[.]200"
+        },
+        {
+          "type": "dns-cname",
+          "value": "845192[.]parkingcrew[.]net"
+        }
+      ]
+    },
+    {
+      "id": "a20d1111bb562ee61198",
+      "source": "407f79d989776bc658ee",
+      "target": "80584d94964701a98bc7",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "185[.]53[.]179[.]200"
+        },
+        {
+          "type": "dns-cname",
+          "value": "845192[.]parkingcrew[.]net"
+        }
+      ]
+    },
+    {
+      "id": "ccdd4b784f102f6ff9e7",
+      "source": "407f79d989776bc658ee",
+      "target": "93effa2fe924fc422e9b",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "185[.]53[.]179[.]200"
+        },
+        {
+          "type": "dns-cname",
+          "value": "845192[.]parkingcrew[.]net"
+        }
+      ]
+    },
+    {
+      "id": "f7685fc11ca0a94192ce",
+      "source": "407f79d989776bc658ee",
+      "target": "a0f068abecb03c691a96",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "185[.]53[.]179[.]200"
+        },
+        {
+          "type": "dns-cname",
+          "value": "845192[.]parkingcrew[.]net"
+        }
+      ]
+    },
+    {
+      "id": "1d3fd4010d0144e61f01",
+      "source": "407f79d989776bc658ee",
+      "target": "b4f07059541bb7dbd386",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "185[.]53[.]179[.]200"
+        },
+        {
+          "type": "dns-cname",
+          "value": "845192[.]parkingcrew[.]net"
+        }
+      ]
     }
   ],
   "suppressedEvidence": {
-    "highFanoutValues": 4,
-    "temporalPairs": 11,
+    "highFanoutValues": 5,
+    "temporalPairs": 0,
     "edgeLimit": 0
   }
 }
