@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-stratified-review-queue",
-  "generatedAt": "2026-10-12T11:19:58.235Z",
+  "generatedAt": "2026-10-12T17:58:01.761Z",
   "samplingPolicy": {
     "method": "deterministic-greedy-facet-balancing",
     "dimensions": [
@@ -235,21 +235,37 @@
       "firstSeen": "2026-10-10T22:27:36.415Z"
     },
     {
-      "signalId": "7a3ad7e19da1a8d07d47",
-      "recordPath": "/signals/7a3ad7e19da1a8d07d47/",
-      "brand": "Luminor",
+      "signalId": "db798371a93ee9f49367",
+      "recordPath": "/signals/db798371a93ee9f49367/",
+      "brand": "DHL",
       "sources": [
         "CertStream"
       ],
       "scoreBand": "95-100",
       "evidenceTier": "name-only",
       "reasonCodes": [
-        "brand-joined-affix",
+        "brand-split-token",
         "different-tld",
         "suspicious-context"
       ],
       "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-10-10T12:13:15.480Z"
+      "firstSeen": "2026-10-11T19:43:55.420Z"
+    },
+    {
+      "signalId": "9c4c6128fb0bd5e73bb0",
+      "recordPath": "/signals/9c4c6128fb0bd5e73bb0/",
+      "brand": "Artea",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "85-94",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-joined-affix",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "2-7d",
+      "firstSeen": "2026-10-07T13:33:34.950Z"
     },
     {
       "signalId": "a1c9e0daa3cc9343ff60",
@@ -285,39 +301,6 @@
       "firstSeen": "2026-10-11T04:46:41.413Z"
     },
     {
-      "signalId": "9c4c6128fb0bd5e73bb0",
-      "recordPath": "/signals/9c4c6128fb0bd5e73bb0/",
-      "brand": "Artea",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "85-94",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-joined-affix",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-10-07T13:33:34.950Z"
-    },
-    {
-      "signalId": "db798371a93ee9f49367",
-      "recordPath": "/signals/db798371a93ee9f49367/",
-      "brand": "DHL",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "95-100",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-split-token",
-        "different-tld",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-10-11T19:43:55.420Z"
-    },
-    {
       "signalId": "148f9bf8587e8a3bc456",
       "recordPath": "/signals/148f9bf8587e8a3bc456/",
       "brand": "Swedbank",
@@ -332,23 +315,6 @@
       ],
       "candidateAgeBand": "2-7d",
       "firstSeen": "2026-10-09T12:57:16.299Z"
-    },
-    {
-      "signalId": "826daa6f58d6e4fece60",
-      "recordPath": "/signals/826daa6f58d6e4fece60/",
-      "brand": "SEB",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "85-94",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-exact-token",
-        "multiple-hyphens",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-10-06T12:37:39.129Z"
     },
     {
       "signalId": "407f79d989776bc658ee",
@@ -369,9 +335,9 @@
       "firstSeen": "2026-10-11T04:46:23.470Z"
     },
     {
-      "signalId": "50d97508436b825f6a3b",
-      "recordPath": "/signals/50d97508436b825f6a3b/",
-      "brand": "Lidl Lietuva",
+      "signalId": "826daa6f58d6e4fece60",
+      "recordPath": "/signals/826daa6f58d6e4fece60/",
+      "brand": "SEB",
       "sources": [
         "CertStream"
       ],
@@ -379,10 +345,44 @@
       "evidenceTier": "name-only",
       "reasonCodes": [
         "brand-exact-token",
+        "multiple-hyphens",
         "suspicious-context"
       ],
       "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-10-08T06:25:02.032Z"
+      "firstSeen": "2026-10-06T12:37:39.129Z"
+    },
+    {
+      "signalId": "2f3b66ef86388e1ca951",
+      "recordPath": "/signals/2f3b66ef86388e1ca951/",
+      "brand": "Luminor",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "95-100",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-exact-token",
+        "different-tld",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-10-11T11:41:05.677Z"
+    },
+    {
+      "signalId": "36fe2b022ca535218273",
+      "recordPath": "/signals/36fe2b022ca535218273/",
+      "brand": "Swedbank",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "85-94",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-joined-affix",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "2-7d",
+      "firstSeen": "2026-10-09T12:57:16.299Z"
     },
     {
       "signalId": "b433001c19dfae1ff58a",
@@ -401,20 +401,21 @@
       "firstSeen": "2026-10-11T19:41:02.265Z"
     },
     {
-      "signalId": "36fe2b022ca535218273",
-      "recordPath": "/signals/36fe2b022ca535218273/",
-      "brand": "Swedbank",
+      "signalId": "ce02faae7c1643371389",
+      "recordPath": "/signals/ce02faae7c1643371389/",
+      "brand": "MAXIMA",
       "sources": [
         "CertStream"
       ],
-      "scoreBand": "85-94",
+      "scoreBand": "95-100",
       "evidenceTier": "name-only",
       "reasonCodes": [
         "brand-joined-affix",
+        "different-tld",
         "suspicious-context"
       ],
       "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-10-09T12:57:16.299Z"
+      "firstSeen": "2026-10-06T07:19:35.399Z"
     }
   ]
 }
