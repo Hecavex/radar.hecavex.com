@@ -1,0 +1,235 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://radar.hecavex.com/data/schemas/observed-hostnames-index-v1.schema.json",
+  "title": "HECAVEX Radar complete observed-hostname index v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "dataset",
+    "generatedAt",
+    "asOf",
+    "recordCount",
+    "coverage",
+    "policyVersions",
+    "grouping",
+    "partitions"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "dataset": {
+      "const": "radar-observed-hostnames"
+    },
+    "generatedAt": {
+      "type": "string",
+      "maxLength": 160,
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+    },
+    "asOf": {
+      "type": "string",
+      "maxLength": 160,
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+    },
+    "recordCount": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 25000
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "availableFrom",
+        "recordedFrom",
+        "publicationRecordedFrom",
+        "recoveredFrom",
+        "recoveredThrough",
+        "recoveredDays",
+        "missingDays",
+        "historyComplete",
+        "collectionComplete",
+        "historicalRecordingTimesComplete",
+        "historicalPublicationTimesComplete",
+        "partialCurrentDay",
+        "basis"
+      ],
+      "properties": {
+        "availableFrom": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 160,
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+        },
+        "recordedFrom": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 160,
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+        },
+        "publicationRecordedFrom": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 160,
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+        },
+        "recoveredFrom": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 160,
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "recoveredThrough": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 160,
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "recoveredDays": {
+          "type": "array",
+          "uniqueItems": true,
+          "maxItems": 36600,
+          "items": {
+            "type": "string",
+            "maxLength": 160,
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          }
+        },
+        "missingDays": {
+          "type": "array",
+          "uniqueItems": true,
+          "maxItems": 36600,
+          "items": {
+            "type": "string",
+            "maxLength": 160,
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          }
+        },
+        "historyComplete": {
+          "type": "boolean"
+        },
+        "collectionComplete": {
+          "type": "boolean"
+        },
+        "historicalRecordingTimesComplete": {
+          "type": "boolean"
+        },
+        "historicalPublicationTimesComplete": {
+          "type": "boolean"
+        },
+        "partialCurrentDay": {
+          "type": "boolean"
+        },
+        "basis": {
+          "const": "recorded-and-recovered-observation-facts"
+        }
+      }
+    },
+    "policyVersions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identity",
+        "matching",
+        "review",
+        "metrics",
+        "store"
+      ],
+      "properties": {
+        "identity": {
+          "type": "string",
+          "maxLength": 160
+        },
+        "matching": {
+          "type": "string",
+          "maxLength": 160
+        },
+        "review": {
+          "type": "string",
+          "maxLength": 160
+        },
+        "metrics": {
+          "type": "string",
+          "maxLength": 160
+        },
+        "store": {
+          "type": "string",
+          "maxLength": 160
+        }
+      }
+    },
+    "grouping": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method",
+        "version",
+        "privateSuffixes",
+        "pslSha256"
+      ],
+      "properties": {
+        "method": {
+          "const": "private-psl-registrable-domain"
+        },
+        "version": {
+          "const": "tldextract-5.4.0"
+        },
+        "privateSuffixes": {
+          "const": true
+        },
+        "pslSha256": {
+          "type": "string",
+          "maxLength": 160,
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    "partitions": {
+      "type": "array",
+      "maxItems": 512,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "bytes",
+          "sha256",
+          "records"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "maxLength": 150,
+            "pattern": "^/data/observed-hostnames-parts/[a-f0-9]{64}\\.json$"
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 262144
+          },
+          "sha256": {
+            "type": "string",
+            "maxLength": 160,
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "records": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 25000
+          }
+        }
+      }
+    }
+  }
+}

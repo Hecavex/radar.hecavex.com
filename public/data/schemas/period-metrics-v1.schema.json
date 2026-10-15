@@ -1,0 +1,289 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://radar.hecavex.com/data/schemas/period-metrics-v1.schema.json",
+  "title": "HECAVEX Radar period-distinct recorded hostname metrics v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "dataset",
+    "generatedAt",
+    "asOf",
+    "timeBasis",
+    "identityUnit",
+    "population",
+    "hostnamesSha256",
+    "grouping",
+    "coverage",
+    "policyVersions",
+    "windows"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "dataset": {
+      "const": "radar-period-metrics"
+    },
+    "generatedAt": {
+      "type": "string",
+      "maxLength": 160,
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+    },
+    "asOf": {
+      "type": "string",
+      "maxLength": 160,
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+    },
+    "timeBasis": {
+      "const": "source-observation-time"
+    },
+    "identityUnit": {
+      "const": "canonical-hostname"
+    },
+    "population": {
+      "const": "public-eligible-recorded-hostnames"
+    },
+    "hostnamesSha256": {
+      "type": "string",
+      "maxLength": 160,
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "grouping": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method",
+        "version",
+        "privateSuffixes",
+        "pslSha256"
+      ],
+      "properties": {
+        "method": {
+          "const": "private-psl-registrable-domain"
+        },
+        "version": {
+          "const": "tldextract-5.4.0"
+        },
+        "privateSuffixes": {
+          "const": true
+        },
+        "pslSha256": {
+          "type": "string",
+          "maxLength": 160,
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "availableFrom",
+        "recordedFrom",
+        "publicationRecordedFrom",
+        "recoveredFrom",
+        "recoveredThrough",
+        "recoveredDays",
+        "missingDays",
+        "historyComplete",
+        "collectionComplete",
+        "historicalRecordingTimesComplete",
+        "historicalPublicationTimesComplete",
+        "partialCurrentDay",
+        "basis"
+      ],
+      "properties": {
+        "availableFrom": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 160,
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+        },
+        "recordedFrom": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 160,
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+        },
+        "publicationRecordedFrom": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 160,
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+        },
+        "recoveredFrom": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 160,
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "recoveredThrough": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 160,
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "recoveredDays": {
+          "type": "array",
+          "uniqueItems": true,
+          "maxItems": 36600,
+          "items": {
+            "type": "string",
+            "maxLength": 160,
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          }
+        },
+        "missingDays": {
+          "type": "array",
+          "uniqueItems": true,
+          "maxItems": 36600,
+          "items": {
+            "type": "string",
+            "maxLength": 160,
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          }
+        },
+        "historyComplete": {
+          "type": "boolean"
+        },
+        "collectionComplete": {
+          "type": "boolean"
+        },
+        "historicalRecordingTimesComplete": {
+          "type": "boolean"
+        },
+        "historicalPublicationTimesComplete": {
+          "type": "boolean"
+        },
+        "partialCurrentDay": {
+          "type": "boolean"
+        },
+        "basis": {
+          "const": "recorded-and-recovered-observation-facts"
+        }
+      }
+    },
+    "policyVersions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identity",
+        "matching",
+        "review",
+        "metrics",
+        "store"
+      ],
+      "properties": {
+        "identity": {
+          "type": "string",
+          "maxLength": 160
+        },
+        "matching": {
+          "type": "string",
+          "maxLength": 160
+        },
+        "review": {
+          "type": "string",
+          "maxLength": 160
+        },
+        "metrics": {
+          "type": "string",
+          "maxLength": 160
+        },
+        "store": {
+          "type": "string",
+          "maxLength": 160
+        }
+      }
+    },
+    "windows": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 10000,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "key",
+          "startInclusive",
+          "endExclusive",
+          "uniqueHostnames",
+          "domainGroups",
+          "candidateDays",
+          "firstRecordedHostnames",
+          "firstPublishedHostnames",
+          "exactWithinRecordedData",
+          "completeCollection"
+        ],
+        "properties": {
+          "key": {
+            "type": "string",
+            "maxLength": 160,
+            "pattern": "^(30d|90d|365d|all|month:\\d{4}-\\d{2}|year:\\d{4})$"
+          },
+          "startInclusive": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 160,
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+          },
+          "endExclusive": {
+            "type": "string",
+            "maxLength": 160,
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+          },
+          "uniqueHostnames": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          },
+          "domainGroups": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          },
+          "candidateDays": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          },
+          "firstRecordedHostnames": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 25000
+          },
+          "firstPublishedHostnames": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 25000
+          },
+          "exactWithinRecordedData": {
+            "const": true
+          },
+          "completeCollection": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  }
+}
