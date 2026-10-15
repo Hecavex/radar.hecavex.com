@@ -26,8 +26,14 @@ from .brands import (
     score_domain,
 )
 from .certstream_archive import read_recent_candidates, vilnius_date
-from .models import BrandEvidence, CandidateMatch, RadarSignal, RawDomainIntelligence, RawSignal
-from .normalize import merge_signals, prepare_signal
+from .models import BrandEvidence, CandidateMatch, RadarSignal, RawDomainIntelligence, RawSignal, SourceTimeEvidence
+from .normalize import (
+    legacy_source_time_evidence,
+    merge_signals,
+    prepare_signal,
+    resolve_signal_times,
+    validate_source_time_evidence,
+)
 from .safety import parse_and_defang_url, refang, safe_reference_url, safe_screenshot_url, stable_id
 from .seeds import IntelligenceSeed, load_intelligence_seeds
 from .signal_detail import archive_record, raw_from_archive_record
@@ -60,6 +66,7 @@ URLSCAN_ARCHIVE_FIELDS = frozenset(
         "referenceUrl",
         "hashes",
         "confidence",
+        "sourceTimeEvidence",
     }
 )
 MAXIMUM_RESPONSE_BYTES = 20 * 1024 * 1024
@@ -733,34 +740,36 @@ def _signal_from_scan(
         confidence = max(confidence, min(99, 95 + max(0, verdict.score) // 25))
     elif verdict.malicious:
         confidence = max(confidence, min(90, 80 + max(0, verdict.score)))
-    observed_at = _string(task.get("time")) or _timestamp(now)
+    provider_time = task.get("time")
+    observed_at = provider_time if isinstance(provider_time, str) else None
     hashes = _primary_hashes(detail, registry)
-    signal = prepare_signal(
-        RawSignal(
-            url=matched_url,
-            first_seen=observed_at,
-            last_seen=observed_at,
-            source="URLScan",
-            status="suspected",
-            brand=brand,
-            # URLScan's page object describes the final destination. When a
-            # submitted candidate redirects elsewhere, do not attribute that
-            # destination's network or screenshot evidence to the candidate.
-            country=_string(page.get("country")) if same_page_host else None,
-            host=_host_summary(page) if same_page_host else None,
-            screenshot_url=f"{API_ROOT}/screenshots/{uuid}.png" if same_page_host else None,
-            reference_url=f"{API_ROOT}/result/{uuid}/",
-            hashes=hashes,
-            confidence=confidence,
-        ),
-        _timestamp(now),
+    raw = RawSignal(
+        url=matched_url,
+        first_seen=observed_at,
+        last_seen=observed_at,
+        source="URLScan",
+        status="suspected",
+        brand=brand,
+        # URLScan's page object describes the final destination. When a
+        # submitted candidate redirects elsewhere, do not attribute that
+        # destination's network or screenshot evidence to the candidate.
+        country=_string(page.get("country")) if same_page_host else None,
+        host=_host_summary(page) if same_page_host else None,
+        screenshot_url=f"{API_ROOT}/screenshots/{uuid}.png" if same_page_host else None,
+        reference_url=f"{API_ROOT}/result/{uuid}/",
+        hashes=hashes,
+        confidence=confidence,
     )
+    time_evidence = resolve_signal_times(raw, _timestamp(now))
+    signal = prepare_signal(raw, _timestamp(now))
     if signal is None:
         return None
     signal["brandEvidence"] = brand_evidence.labels
     if primary_hash_pivot:
         signal["brandEvidence"].append("primary-html-sha256")
-    intelligence = _intelligence_from_scan(summary, detail, matched_url, observed_at)
+    # Internal archive metadata is deliberately absent from the strict snapshot v2.
+    cast(dict[str, Any], signal)["sourceTimeEvidence"] = time_evidence
+    intelligence = _intelligence_from_scan(summary, detail, matched_url, time_evidence[1]["timestamp"])
     if intelligence is not None and intelligence_sink is not None:
         intelligence_sink.append(intelligence)
     return signal
@@ -1276,7 +1285,104 @@ def hunt_urlscan(
             if signal:
                 signals.append(signal)
 
-    return merge_signals(signals, maximum)
+    return _merge_urlscan_signals(signals, maximum)
+
+
+def _merge_urlscan_signals(signals: list[RadarSignal], maximum: int) -> list[RadarSignal]:
+    """Rebind archive evidence to the two boundaries selected by the signal merge."""
+    by_id: dict[str, list[SourceTimeEvidence]] = {}
+    for signal in signals:
+        value = cast(dict[str, Any], signal).get("sourceTimeEvidence")
+        evidence = (
+            validate_source_time_evidence(value, first_seen=signal["firstSeen"],
+                                          last_seen=signal["lastSeen"], source="URLScan")
+            if value is not None
+            else legacy_source_time_evidence(signal["firstSeen"], signal["lastSeen"], "URLScan")
+        )
+        by_id.setdefault(signal["id"], []).extend(evidence)
+    merged = merge_signals(signals, maximum)
+    origin_priority = {"provider-observation-time": 0, "collector-time-fallback": 1, "legacy-normalized-unknown": 2}
+    for signal in merged:
+        selected: list[SourceTimeEvidence] = []
+        for boundary in ("firstSeen", "lastSeen"):
+            candidates = [row for row in by_id[signal["id"]]
+                          if row["boundary"] == boundary and row["timestamp"] == signal[boundary]]
+            selected.append(min(candidates, key=lambda row: (
+                origin_priority[row["origin"]], row["collectorTime"] or "",
+                json.dumps(row, sort_keys=True, separators=(",", ":")),
+            )))
+        cast(dict[str, Any], signal)["sourceTimeEvidence"] = validate_source_time_evidence(
+            selected, first_seen=signal["firstSeen"], last_seen=signal["lastSeen"], source="URLScan",
+        )
+    return merged
+
+
+def _archive_payload(signal: RadarSignal) -> dict[str, Any]:
+    """Serialize only archive fields, excluding derived public snapshot annotations."""
+    return {"schemaVersion": 2, "hashType": "primary-html-sha256",
+            **{key: value for key, value in signal.items() if key in URLSCAN_ARCHIVE_FIELDS}}
+
+
+def _pin_retained_fallback_times(root: str | Path, signals: list[RadarSignal], now: datetime) -> list[RadarSignal]:
+    """Reuse known scan receipts within retained archives, never inventing a provider clock.
+
+    The lookup spans at most the existing 91-day observation horizon and one
+    aggregate archive byte budget. Older/absent legacy provenance stays unknown.
+    """
+    references = {
+        reference for signal in signals
+        if isinstance(reference := signal.get("referenceUrl"), str)
+        and safe_reference_url(reference) == reference
+        and signal["firstSeen"] == signal["lastSeen"]
+        and (evidence := cast(dict[str, Any], signal).get("sourceTimeEvidence")) is not None
+        and all(row.get("origin") == "collector-time-fallback" for row in evidence if isinstance(row, dict))
+    }
+    if not references:
+        return signals
+    receipts: dict[str, SourceTimeEvidence] = {}
+
+    def remember(signal: RadarSignal) -> None:
+        reference = signal.get("referenceUrl")
+        value = cast(dict[str, Any], signal).get("sourceTimeEvidence")
+        if reference not in references or value is None:
+            return
+        evidence = validate_source_time_evidence(value, first_seen=signal["firstSeen"],
+                                                 last_seen=signal["lastSeen"], source="URLScan")
+        last = evidence[1]
+        if last["origin"] != "collector-time-fallback":
+            return
+        current = receipts.get(reference)
+        if current is None or cast(str, last["collectorTime"]) < cast(str, current["collectorTime"]):
+            receipts[reference] = last
+
+    today = date.fromisoformat(vilnius_date(now))
+    earliest = today - MAXIMUM_ARCHIVE_OBSERVATION_AGE
+    archive_root = _bounded_archive_root(root)
+    paths = sorted(archive_root.glob("*/signals.ndjson")) if archive_root.exists() else []
+    consumed = 0
+    for path in paths:
+        if not _valid_day(path.parent.name) or not earliest <= date.fromisoformat(path.parent.name) <= today:
+            continue
+        consumed += path.stat().st_size
+        if consumed > MAXIMUM_ARCHIVE_BYTES:
+            raise ValueError("URLScan fallback-time replay lookup exceeds 20 MiB.")
+        for archived in read_urlscan_file(path, now=now):
+            remember(archived)
+    for signal in signals:
+        remember(signal)
+    result: list[RadarSignal] = []
+    for signal in signals:
+        receipt = receipts.get(signal.get("referenceUrl") or "")
+        value = cast(dict[str, Any], signal).get("sourceTimeEvidence")
+        if (receipt is not None and signal["firstSeen"] == signal["lastSeen"] and value is not None
+                and all(row["origin"] == "collector-time-fallback" for row in value)):
+            signal = signal.copy()
+            signal["firstSeen"] = signal["lastSeen"] = receipt["timestamp"]
+            cast(dict[str, Any], signal)["sourceTimeEvidence"] = [
+                {**receipt, "boundary": boundary} for boundary in ("firstSeen", "lastSeen")
+            ]
+        result.append(signal)
+    return result
 
 
 def _bounded_archive_root(value: str | Path) -> Path:
@@ -1396,6 +1502,15 @@ def _archive_signal(
             or last_seen_utc > partition_end.astimezone(UTC) + MAXIMUM_TIMESTAMP_FUTURE_SKEW
         ):
             return None
+    time_evidence = None
+    if "sourceTimeEvidence" in value:
+        try:
+            time_evidence = validate_source_time_evidence(
+                value["sourceTimeEvidence"], first_seen=value["firstSeen"],
+                last_seen=value["lastSeen"], source="URLScan",
+            )
+        except ValueError:
+            return None
     return cast(
         RadarSignal,
         {
@@ -1422,6 +1537,7 @@ def _archive_signal(
             "reviewState": "unreviewed",
             "ltRelevance": "lithuanian-brand-relevance",
             "confidence": confidence,
+            **({"sourceTimeEvidence": time_evidence} if time_evidence is not None else {}),
         },
     )
 
@@ -1484,12 +1600,13 @@ def write_urlscan_archive(
         return 0
     existing = [signal for signal in archived if _reviewed_archive_signal(signal, brand_registry)]
     partition_day = date.fromisoformat(path.parent.name)
+    signals = _pin_retained_fallback_times(root, signals, now)
     signals = [
         validated
         for signal in signals
         if (
             validated := _archive_signal(
-                {"schemaVersion": 2, "hashType": "primary-html-sha256", **signal},
+                _archive_payload(signal),
                 partition_day=partition_day,
                 reference_time=now,
             )
@@ -1498,10 +1615,10 @@ def write_urlscan_archive(
         and _reviewed_archive_signal(validated, brand_registry)
     ]
     existing_ids = {signal["id"] for signal in existing}
-    merged = merge_signals(existing + signals, MAXIMUM_DAILY_RECORDS)
+    merged = _merge_urlscan_signals(existing + signals, MAXIMUM_DAILY_RECORDS)
     lines = [
         json.dumps(
-            {"schemaVersion": 2, "hashType": "primary-html-sha256", **signal},
+            _archive_payload(signal),
             ensure_ascii=False,
             separators=(",", ":"),
         )
@@ -1520,7 +1637,7 @@ def write_urlscan_archive(
     temporary.write_text(body, encoding="utf-8", newline="\n")
     temporary.chmod(0o600)
     os.replace(temporary, path)
-    return sum(signal["id"] not in existing_ids for signal in signals)
+    return sum(signal["id"] not in existing_ids for signal in merged)
 
 
 def _read_urlscan_intelligence_file(
@@ -1669,7 +1786,7 @@ def read_recent_urlscan(
                 reviewer=reviewer,
             )
         )
-    return merge_signals(records, maximum)
+    return _merge_urlscan_signals(records, maximum)
 
 
 def _hunt_state_path(root: str | Path) -> Path:

@@ -24,6 +24,7 @@ from .brands import (
     score_domain,
 )
 from .history import KNOWN_STATUSES, _load_summary, read_event_file
+from .normalize import legacy_source_time_evidence, validate_source_time_evidence
 from .observation_publication import atomic_write, encode
 from .observation_store import (
     IDENTITY_VERSION,
@@ -167,11 +168,25 @@ def record_observations(
                     }))
     versions = policy_versions(registry, review_export)
     for row in prepared:
-        for timestamp in dict.fromkeys((row["firstSeen"], row["lastSeen"])):
+        evidence = row.get("_sourceTimeEvidence")
+        if evidence is None:
+            # Old callers and already normalized archives cannot establish
+            # whether a historical boundary was provider time or a fallback.
+            evidence = legacy_source_time_evidence(row["firstSeen"], row["lastSeen"], ",".join(row["sources"]))
+        else:
+            if len(row["sources"]) != 1:
+                raise ValueError("Captured source time provenance requires one original source")
+            evidence = validate_source_time_evidence(evidence, first_seen=row["firstSeen"],
+                                                     last_seen=row["lastSeen"], source=row["sources"][0])
+        for boundary in evidence:
+            if boundary["collectorTime"] is not None and boundary["collectorTime"] > as_of:
+                raise ValueError("Source time provenance collector receipt exceeds capture asOf")
+            timestamp = boundary["timestamp"]
             item = _legacy_input(row, timestamp, {
                 "kind": "accepted-live-source", "signalId": row["id"], "policyVersion": versions["matching"],
+                **boundary,
             })
-            item["sourceTimeProvenance"] = "normalized-provider-boundary"
+            item["sourceTimeProvenance"] = boundary["origin"]
             item["radarRecordedAt"] = as_of
             item["originalMatch"] = {
                 "brand": row["brand"], "score": row.get("matchScore"),

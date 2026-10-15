@@ -1,3 +1,5 @@
+export type SourceTimeProvenance = "provider-observation-time" | "collector-time-fallback" | "legacy-normalized-unknown";
+
 export interface ObservedHostnameRecord {
   id: string;
   domain: string;
@@ -10,6 +12,7 @@ export interface ObservedHostnameRecord {
   observedDays: string[];
   observedDayLastSeen: Record<string, string>;
   sources: string[];
+  sourceTimeProvenances?: SourceTimeProvenance[];
   match: { score: number | null; reasonCodes: string[]; policyVersion: string };
   assessment: { verdict: "malicious" | "suspicious" | "benign" | "inconclusive"; assessedAt: string; evidenceReferences: string[]; decisionId: string; analystConfidence: number | null } | null;
   recordAvailable: boolean;
@@ -94,7 +97,7 @@ export interface ObservedHostnameIndex extends PeriodMetadata {
 }
 export interface PeriodMetricsArtifact extends PeriodMetadata {
   dataset: "radar-period-metrics";
-  timeBasis: "source-observation-time";
+  timeBasis: "source-observation-time" | "source-observation-or-explicit-collector-fallback";
   identityUnit: "canonical-hostname";
   population: "public-eligible-recorded-hostnames";
   hostnamesSha256: string;
@@ -109,8 +112,8 @@ export interface PeriodOverviewData {
 
 
 const object = (value: unknown): value is Record<string, unknown> => typeof value === "object" && value !== null && !Array.isArray(value);
-const shape = (value: unknown, fields: string[]): value is Record<string, unknown> =>
-  object(value) && Object.keys(value).length === fields.length && fields.every((key) => Object.hasOwn(value, key));
+const shape = (value: unknown, fields: string[], optionalFields: string[] = []): value is Record<string, unknown> =>
+  object(value) && fields.every((key) => Object.hasOwn(value, key)) && Object.keys(value).every((key) => fields.includes(key) || optionalFields.includes(key));
 const text = (value: unknown, max = 160): value is string => typeof value === "string" && value.trim().length > 0 && [...value].length <= max && !/[\p{Cc}\p{Cf}]/u.test(value);
 const integer = (value: unknown, max = MAXIMUM_RECORDS): value is number => typeof value === "number" && Number.isSafeInteger(value) && value >= 0 && value <= max;
 const timestamp = (value: unknown): value is string => typeof value === "string" && UTC.test(value) && !value.startsWith("0000-") && Number.isFinite(Date.parse(value)) && new Date(value).toISOString() === value;
@@ -173,7 +176,7 @@ function clockComplete(coverage: PeriodCoverage, clock: "recorded" | "published"
 
 export function parsePeriodMetrics(value: unknown): PeriodMetricsArtifact {
   if (!shape(value, [...METADATA_FIELDS, "timeBasis", "identityUnit", "population", "hostnamesSha256", "windows"]) || !metadata(value) || value.dataset !== "radar-period-metrics" ||
-    value.timeBasis !== "source-observation-time" || value.identityUnit !== "canonical-hostname" || value.population !== "public-eligible-recorded-hostnames" || typeof value.hostnamesSha256 !== "string" || !SHA256.test(value.hostnamesSha256) ||
+    typeof value.timeBasis !== "string" || !["source-observation-time", "source-observation-or-explicit-collector-fallback"].includes(value.timeBasis) || value.identityUnit !== "canonical-hostname" || value.population !== "public-eligible-recorded-hostnames" || typeof value.hostnamesSha256 !== "string" || !SHA256.test(value.hostnamesSha256) ||
     !Array.isArray(value.windows) || value.windows.length > 10_000 || !value.windows.every((window) => windowShape(window, value.asOf as string, value.coverage as unknown as PeriodCoverage)) ||
     new Set(value.windows.map((window) => window.key)).size !== value.windows.length || !["30d", "90d", "365d", "all"].every((key) => (value.windows as PeriodWindow[]).some((window) => window.key === key))) {
     throw new Error("The period metrics do not match their supported schema.");
@@ -183,13 +186,14 @@ export function parsePeriodMetrics(value: unknown): PeriodMetricsArtifact {
 
 export function parseObservedHostnameRecords(value: unknown, asOf: string): ObservedHostnameRecord[] {
   if (!Array.isArray(value) || value.length > MAXIMUM_RECORDS || !value.every((row) => {
-    if (!shape(row, ["id", "domain", "domainGroup", "brand", "firstSeen", "lastSeen", "firstRecordedAt", "firstPublishedAt", "observedDays", "observedDayLastSeen", "sources", "match", "assessment", "recordAvailable"]) ||
+    if (!shape(row, ["id", "domain", "domainGroup", "brand", "firstSeen", "lastSeen", "firstRecordedAt", "firstPublishedAt", "observedDays", "observedDayLastSeen", "sources", "match", "assessment", "recordAvailable"], ["sourceTimeProvenances"]) ||
       typeof row.id !== "string" || !/^[a-f\d]{20}$/.test(row.id) || !hostname(row.domain) || !hostname(row.domainGroup) || !(row.domain === row.domainGroup || row.domain.endsWith(`[.]${row.domainGroup}`)) ||
       !text(row.brand, 120) || !timestamp(row.firstSeen) || !timestamp(row.lastSeen) || row.firstSeen > row.lastSeen || row.lastSeen > asOf || !nullableTimestamp(row.firstRecordedAt) || !nullableTimestamp(row.firstPublishedAt) ||
       (row.firstRecordedAt !== null && row.firstRecordedAt > asOf) || (row.firstPublishedAt !== null && row.firstPublishedAt > asOf) ||
       (row.firstPublishedAt !== null && row.firstRecordedAt === null) ||
       !sortedUnique(row.observedDays, date) || row.observedDays.length === 0 || row.observedDays[0] !== row.firstSeen.slice(0, 10) || row.observedDays.at(-1) !== row.lastSeen.slice(0, 10) ||
       !object(row.observedDayLastSeen) || !sortedUnique(row.sources, (source) => ["CertStream", "URLScan", "HECAVEX"].includes(String(source)), 3) || row.sources.length === 0 ||
+      (Object.hasOwn(row, "sourceTimeProvenances") && (!sortedUnique(row.sourceTimeProvenances, (origin) => typeof origin === "string" && ["provider-observation-time", "collector-time-fallback", "legacy-normalized-unknown"].includes(origin), 3) || row.sourceTimeProvenances.length === 0)) ||
       !shape(row.match, ["score", "reasonCodes", "policyVersion"]) || !(row.match.score === null || integer(row.match.score, 100)) || !unique(row.match.reasonCodes, (reason) => typeof reason === "string" && /^[a-z][a-z0-9-]{1,79}$/.test(reason), 32) || !text(row.match.policyVersion, 160) || typeof row.recordAvailable !== "boolean") return false;
     const dayLast = row.observedDayLastSeen;
     const firstSeen = row.firstSeen;
@@ -218,6 +222,7 @@ export async function validatePeriodCohort(metrics: PeriodMetricsArtifact, index
   if (metrics.hostnamesSha256 !== indexSha256) throw new Error("The observed hostname index digest does not match the period metrics.");
   if (!matchingMetadata(metrics, index) || records.length !== index.recordCount) throw new Error("The observation cohort metadata or record count does not match.");
   parseObservedHostnameRecords(records, metrics.asOf);
+  if (metrics.timeBasis === "source-observation-time" && records.some((row) => row.sourceTimeProvenances?.includes("collector-time-fallback"))) throw new Error("The observation-only time basis cannot include explicit collector fallback.");
   if (new Set(records.map((row) => row.domain)).size !== records.length || records.some((row, position) => position > 0 && records[position - 1].id >= row.id)) throw new Error("Observed hostname identities must be sorted and unique.");
   const identities = await Promise.all(records.map(async (row) => (await digest(new TextEncoder().encode(row.domain))).slice(0, 20) === row.id));
   if (identities.some((valid) => !valid)) throw new Error("An observed hostname identity does not match its canonical domain.");
@@ -287,11 +292,11 @@ export function parsePeriodOverviewBootstrap(value: unknown): PeriodOverviewData
 
 export function observedHostnamesAsJson(records: ObservedHostnameRecord[], data: PeriodOverviewData, window: Pick<PeriodWindow, "key" | "startInclusive" | "endExclusive">): string {
   if (!data.complete) throw new Error("Complete verified observations are required for export.");
-  return `${JSON.stringify({ schemaVersion: 1, dataset: "filtered-recorded-hostnames", asOf: data.metrics.asOf, timeBasis: data.metrics.timeBasis, identityUnit: data.metrics.identityUnit, population: data.metrics.population, hostnamesSha256: data.metrics.hostnamesSha256, grouping: data.metrics.grouping, coverage: data.metrics.coverage, policyVersions: data.metrics.policyVersions, window, recordCount: records.length, warning: "Recorded automated candidates are not maliciousness verdicts. Defanged hostnames must not be made clickable. firstPublishedAt is the first captured verified publication receipt since activation for newly tracked hostnames with known recording times only, not the earliest-ever public date. Legacy hostnames with unknown firstRecordedAt keep firstPublishedAt null.", records }, null, 2)}\n`;
+  return `${JSON.stringify({ schemaVersion: 1, dataset: "filtered-recorded-hostnames", asOf: data.metrics.asOf, timeBasis: data.metrics.timeBasis, identityUnit: data.metrics.identityUnit, population: data.metrics.population, hostnamesSha256: data.metrics.hostnamesSha256, grouping: data.metrics.grouping, coverage: data.metrics.coverage, policyVersions: data.metrics.policyVersions, window, recordCount: records.length, warning: "Recorded automated candidates are not maliciousness verdicts. Defanged hostnames must not be made clickable. Observation times use provider observation time or declared collector fallback; legacy timing provenance is incomplete, and absent sourceTimeProvenances remains unknown. Per-hostname provenance summarizes all recorded observations, not the origin of each endpoint timestamp. firstPublishedAt is the first captured verified publication receipt since activation for newly tracked hostnames with known recording times only, not the earliest-ever public date. Legacy hostnames with unknown firstRecordedAt keep firstPublishedAt null.", records }, null, 2)}\n`;
 }
 export function observedHostnamesAsCsv(records: ObservedHostnameRecord[], data: PeriodOverviewData, window: Pick<PeriodWindow, "key" | "startInclusive" | "endExclusive">): string {
   if (!data.complete) throw new Error("Complete verified observations are required for export.");
-  const headings = ["canonical_hostname_id", "defanged_hostname", "defanged_private_psl_group", "potential_brand_match", "source_first_seen_utc", "source_last_seen_utc", "radar_first_recorded_at_utc", "first_verified_publication_receipt_utc", "sources", "explicit_assessment", "assessment_at_utc", "as_of_utc", "period_key", "period_start_inclusive_utc", "period_end_exclusive_utc", "hostname_index_sha256"];
-  const rows = records.map((row) => [row.id, row.domain, row.domainGroup, row.brand, row.firstSeen, row.lastSeen, row.firstRecordedAt, row.firstPublishedAt, row.sources.join(";"), row.assessment?.verdict ?? null, row.assessment?.assessedAt ?? null, data.metrics.asOf, window.key, window.startInclusive, window.endExclusive, data.metrics.hostnamesSha256]);
+  const headings = ["canonical_hostname_id", "defanged_hostname", "defanged_private_psl_group", "potential_brand_match", "source_first_seen_utc", "source_last_seen_utc", "radar_first_recorded_at_utc", "first_verified_publication_receipt_utc", "sources", "explicit_assessment", "assessment_at_utc", "as_of_utc", "period_key", "period_start_inclusive_utc", "period_end_exclusive_utc", "hostname_index_sha256", "source_time_provenances"];
+  const rows = records.map((row) => [row.id, row.domain, row.domainGroup, row.brand, row.firstSeen, row.lastSeen, row.firstRecordedAt, row.firstPublishedAt, row.sources.join(";"), row.assessment?.verdict ?? null, row.assessment?.assessedAt ?? null, data.metrics.asOf, window.key, window.startInclusive, window.endExclusive, data.metrics.hostnamesSha256, row.sourceTimeProvenances?.join(";") ?? null]);
   return `${[headings, ...rows].map((row) => row.map(safeCsvCell).join(",")).join("\r\n")}\r\n`;
 }

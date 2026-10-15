@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from http.client import HTTPMessage
 from itertools import islice
-from typing import IO, Any
+from typing import IO, Any, cast
 from urllib.error import HTTPError
 from urllib.parse import urljoin, urlsplit
 from urllib.request import HTTPRedirectHandler, Request, build_opener
@@ -15,6 +15,7 @@ from .brand_assets import read_brand_asset_hunt_state
 from .brands import load_brand_registry, score_domain
 from .certstream_archive import read_recent_candidates
 from .models import RadarSource, RawDomainIntelligence, RawSignal, SourceResult, SourceState
+from .normalize import legacy_source_time_evidence, validate_source_time_evidence
 from .provenance import reason_codes_from_evidence, reason_codes_from_match
 from .safety import refang, safe_feed_url
 from .urlscan import read_recent_urlscan, read_recent_urlscan_intelligence, read_urlscan_hunt_state
@@ -153,6 +154,9 @@ def load_certstream(now: str, archive_root: str, lookback_days: int) -> SourceRe
                 confidence=match.confidence,
                 reason_codes=reason_codes_from_match(match.reasons),
                 discovered_via=[candidate.get("collectionMethod", "certstream-live")],
+                source_time_evidence=(candidate.get("sourceTimeEvidence") or legacy_source_time_evidence(
+                    candidate["observedAt"], candidate["observedAt"], "CertStream",
+                )),
             )
         )
         certificate = candidate.get("certificate")
@@ -205,6 +209,13 @@ def load_urlscan(now: str, archive_root: str, lookback_days: int) -> SourceResul
             confidence=signal["confidence"],
             reason_codes=reason_codes_from_evidence(signal.get("brandEvidence", [])),
             discovered_via=["urlscan-public-report"],
+            source_time_evidence=(
+                validate_source_time_evidence(cast(dict[str, Any], signal)["sourceTimeEvidence"],
+                                              first_seen=signal["firstSeen"], last_seen=signal["lastSeen"],
+                                              source="URLScan")
+                if "sourceTimeEvidence" in signal
+                else legacy_source_time_evidence(signal["firstSeen"], signal["lastSeen"], "URLScan")
+            ),
         )
         for signal in archived
     ]
@@ -289,6 +300,14 @@ def _primary_html_hashes(value: dict[str, Any]) -> list[str] | None:
     return [digest for digest in hashes if isinstance(digest, str)]
 
 
+def _provider_time(value: dict[str, Any], primary: str, alternate: str) -> str | None:
+    # Preserve the raw provider string, including invalid/empty values, until
+    # the shared clock resolver records the actual fallback reason.
+    primary_value = value.get(primary)
+    raw = primary_value if isinstance(primary_value, str) else value.get(alternate)
+    return raw if isinstance(raw, str) else None
+
+
 def fetch_hecavex(now: str, source_url: str, token: str | None = None) -> SourceResult:
     headers = {"Accept": "application/json", "User-Agent": "hecavex-radar/0.1"}
     if token and token.strip():
@@ -304,8 +323,8 @@ def fetch_hecavex(now: str, source_url: str, token: str | None = None) -> Source
         signals.append(
             RawSignal(
                 url=url,
-                first_seen=_string(value.get("firstSeen")) or _string(value.get("first_seen")),
-                last_seen=_string(value.get("lastSeen")) or _string(value.get("last_seen")) or now,
+                first_seen=_provider_time(value, "firstSeen", "first_seen"),
+                last_seen=_provider_time(value, "lastSeen", "last_seen"),
                 source="HECAVEX",
                 status=_string(value.get("status")),
                 brand=_string(value.get("brand"))

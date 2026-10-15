@@ -34,6 +34,9 @@ TIMESTAMP = re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z")
 PART_PATH = re.compile(r"(?:months/\d{4}-\d{2}|hosts)/[a-f0-9]{64}\.json")
 MATCH_KEYS = {"brand", "score", "reasonCodes", "policyVersion", "legacyEventId", "legacyConfidence",
               "status", "previousStatus"}
+PUBLIC_SOURCE_TIME_PROVENANCES = frozenset({
+    "provider-observation-time", "collector-time-fallback", "legacy-normalized-unknown",
+})
 
 
 class ObservationInput(TypedDict):
@@ -205,10 +208,29 @@ def _unique(values: Sequence[dict[str, object]]) -> list[dict[str, object]]:
     return [value for _, value in sorted({encode(value): value for value in values}.items())]
 
 
+def _provenance(values: Sequence[dict[str, object]]) -> list[dict[str, object]]:
+    """Repeated polling retains the first receipt, not one trace per sync.
+
+    Actual distinct provider/raw/origin/policy/boundary variants remain. A
+    provider fact's repeated fetch times are not separate observation facts.
+    """
+    result: dict[bytes, dict[str, object]] = {}
+    for value in values:
+        provider = (value.get("kind") == "accepted-live-source"
+                    and value.get("origin") == "provider-observation-time"
+                    and isinstance(value.get("collectorTime"), str))
+        key = encode({name: item for name, item in value.items() if not provider or name != "collectorTime"})
+        current = result.get(key)
+        if current is None or (provider and cast(str, value["collectorTime"]) < cast(str, current["collectorTime"])):
+            result[key] = value
+    return _unique(list(result.values()))
+
+
 def _merge(existing: ObservationRecord, incoming: ObservationRecord) -> ObservationRecord:
     merged = cast(ObservationRecord, {**existing})
     for key in ("matchAnnotations", "assessments", "provenance"):
-        merged[key] = _unique([*existing[key], *incoming[key]])
+        values = [*existing[key], *incoming[key]]
+        merged[key] = _provenance(values) if key == "provenance" else _unique(values)
     merged["sourceTimeProvenances"] = sorted(set(existing["sourceTimeProvenances"] + incoming["sourceTimeProvenances"]))
     # Unknown historical recording time must not become the later replay time.
     times = (existing["radarRecordedAt"], incoming["radarRecordedAt"])
@@ -456,6 +478,10 @@ def build_public_records(
             "firstPublishedAt": published, "observedDays": sorted(day_last),
             "observedDayLastSeen": {day: day_last[day] for day in sorted(day_last)},
             "sources": sorted({source for fact in facts for source in fact["sources"]}),
+            "sourceTimeProvenances": sorted({
+                origin if origin in PUBLIC_SOURCE_TIME_PROVENANCES else "legacy-normalized-unknown"
+                for fact in facts for origin in fact["sourceTimeProvenances"]
+            }),
             "match": {key: annotation[key] for key in ("score", "reasonCodes", "policyVersion")},
             "assessment": assessment, "recordAvailable": hostname_id in available_record_ids,
         })

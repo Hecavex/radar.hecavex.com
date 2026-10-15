@@ -56,7 +56,7 @@ test("calendar membership does not interpolate unobserved days; partial lower da
 
 const bytes = (value) => new TextEncoder().encode(JSON.stringify(value));
 const sha256 = (value) => createHash("sha256").update(value).digest("hex");
-function cohort(rows = [record("a", ["2026-09-16T00:00:00.000Z", asOf])]) {
+function cohort(rows = [record("a", ["2026-09-16T00:00:00.000Z", asOf])], timeBasis = "source-observation-time") {
   rows.forEach((row) => { row.id = sha256(row.domain).slice(0, 20); });
   rows.sort((a, b) => a.id.localeCompare(b.id));
   const grouping = { method: "private-psl-registrable-domain", version: "tldextract-5.4.0", privateSuffixes: true, pslSha256: "a".repeat(64) };
@@ -69,7 +69,7 @@ function cohort(rows = [record("a", ["2026-09-16T00:00:00.000Z", asOf])]) {
   const windows = [30, 90, 365].map((days) => ({ key: `${days}d`, startInclusive: new Date(Date.parse(asOf) - days * 86400000).toISOString(), endExclusive: new Date(Date.parse(asOf) + 1).toISOString(), firstRecordedHostnames: null, firstPublishedHostnames: null, exactWithinRecordedData: true, completeCollection: false }));
   windows.push({ ...windows[0], key: "all", startInclusive: null });
   windows.forEach((window) => Object.assign(window, periodTotals(rows, window)));
-  const metrics = { schemaVersion: 1, dataset: "radar-period-metrics", generatedAt: asOf, asOf, timeBasis: "source-observation-time", identityUnit: "canonical-hostname", population: "public-eligible-recorded-hostnames", hostnamesSha256: sha256(indexBytes), grouping, policyVersions, coverage, windows };
+  const metrics = { schemaVersion: 1, dataset: "radar-period-metrics", generatedAt: asOf, asOf, timeBasis, identityUnit: "canonical-hostname", population: "public-eligible-recorded-hostnames", hostnamesSha256: sha256(indexBytes), grouping, policyVersions, coverage, windows };
   const files = new Map([["/data/period-metrics-v1.json", bytes(metrics)], ["/data/observed-hostnames-v1.json", indexBytes], ...(rows.length ? [[index.partitions[0].path, partBytes]] : [])]);
   return { rows, metrics, index, files, readBytes: async (path) => { assert(files.has(path), path); return files.get(path); } };
 }
@@ -83,6 +83,80 @@ test("complete cohort loader binds exact bytes, count, identity and metrics befo
   assert.equal(parseObservedHostnameIndex(fixture.index), fixture.index);
   fixture.files.set(fixture.index.partitions[0].path, bytes([{ ...fixture.rows[0], brand: "tampered" }]));
   await assert.rejects(loadPeriodOverview({ readBytes: fixture.readBytes }), /digest|bytes/i);
+});
+
+test("timing provenance is bounded and explicit while older records and metric time bases remain readable", async () => {
+  const legacy = cohort();
+  const old = await loadPeriodOverview({ readBytes: legacy.readBytes });
+  assert.equal(old.metrics.timeBasis, "source-observation-time");
+  assert.equal(Object.hasOwn(old.records[0], "sourceTimeProvenances"), false);
+  const row = { ...record("b", [asOf]), sourceTimeProvenances: ["collector-time-fallback", "legacy-normalized-unknown", "provider-observation-time"] };
+  const current = cohort([row]);
+  current.metrics.timeBasis = "source-observation-or-explicit-collector-fallback";
+  current.files.set("/data/period-metrics-v1.json", bytes(current.metrics));
+  const full = await loadPeriodOverview({ readBytes: current.readBytes });
+  assert.deepEqual(full.records[0].sourceTimeProvenances, row.sourceTimeProvenances);
+  assert.equal(full.metrics.windows[0].uniqueHostnames, 1);
+  assert.equal(full.records[0].firstRecordedAt, null);
+  assert.equal(full.records[0].firstPublishedAt, null);
+  for (const sourceTimeProvenances of [[], null, "provider-observation-time", ["unknown"], ["provider-observation-time", "provider-observation-time"], ["provider-observation-time", "collector-time-fallback"], ["collector-time-fallback", "legacy-normalized-unknown", "provider-observation-time", "unexpected"]]) {
+    assert.throws(() => parseObservedHostnameRecords([{ ...row, sourceTimeProvenances }], asOf));
+  }
+  assert.throws(() => parsePeriodMetrics({ ...current.metrics, timeBasis: "collector-time" }));
+});
+
+test("EN/LT observation times disclose provider, fallback and incomplete legacy provenance without changing counts", async () => {
+  const fixture = cohort([
+    { ...record("a", [asOf]), sourceTimeProvenances: ["provider-observation-time"] },
+    { ...record("b", [asOf]), sourceTimeProvenances: ["collector-time-fallback", "provider-observation-time"] },
+    { ...record("c", [asOf]), sourceTimeProvenances: ["legacy-normalized-unknown"] },
+    record("d", [asOf]),
+  ], "source-observation-or-explicit-collector-fallback");
+  const full = await loadPeriodOverview({ readBytes: fixture.readBytes });
+  for (const language of ["en", "lt"]) {
+    const html = renderToStaticMarkup(createElement(PeriodOverview, { initialData: full, language }));
+    const dom = new JSDOM(html);
+    try {
+      assert.match(html, /data-period-count="4"/);
+      assert.match(html, language === "en" ? /provider observation time or a declared collector fallback/i : /teikėjo stebėjimo laikas arba deklaruotas rinkiklio laikas/i);
+      assert.doesNotMatch(html, /First\/last seen are upstream source observation times/);
+      const rows = [...dom.window.document.querySelectorAll("tbody tr")];
+      const byDomain = (domain) => rows.find((row) => row.querySelector(".indicator-cell code").textContent === domain);
+      const fallback = dom.window.document.querySelectorAll(".period-time-fallback");
+      assert.equal(fallback.length, 1);
+      assert.match(fallback[0].textContent, language === "en" ? /Collector fallback used/ : /Naudotas rinkiklio laikas/);
+      assert.match(byDomain("a[.]example").querySelector("details").textContent, language === "en" ? /Provider observation time/ : /Teikėjo stebėjimo laikas/);
+      assert.match(byDomain("b[.]example").querySelector("details").textContent, language === "en" ? /Declared collector fallback/ : /Deklaruotas rinkiklio laikas/);
+      for (const domain of ["c[.]example", "d[.]example"]) assert.match(byDomain(domain).querySelector("details").textContent, language === "en" ? /Legacy timing provenance incomplete/ : /Ankstesnių laikų kilmė neišsami/);
+      assert.equal(dom.window.document.querySelectorAll('a[href^="https://a."], a[href^="https://b."]').length, 0);
+    } finally { dom.window.close(); }
+  }
+});
+
+test("matching exports retain declared timing provenance and leave absent legacy provenance unknown", async () => {
+  const fixture = cohort([
+    { ...record("a", [asOf]), sourceTimeProvenances: ["collector-time-fallback", "provider-observation-time"] },
+    record("b", [asOf]),
+  ], "source-observation-or-explicit-collector-fallback");
+  const full = await loadPeriodOverview({ readBytes: fixture.readBytes });
+  const json = JSON.parse(observedHostnamesAsJson(full.records, full, full.metrics.windows[0]));
+  assert.deepEqual(json.records.find((row) => row.domain === "a[.]example").sourceTimeProvenances, ["collector-time-fallback", "provider-observation-time"]);
+  assert.equal(Object.hasOwn(json.records.find((row) => row.domain === "b[.]example"), "sourceTimeProvenances"), false);
+  assert.match(json.warning, /provider observation time or declared collector fallback/);
+  const lines = observedHostnamesAsCsv(full.records, full, full.metrics.windows[0]).trimEnd().split("\r\n");
+  assert.match(lines[0], /,"source_time_provenances"$/);
+  assert.match(lines.find((line) => line.includes('"a[.]example"')), /,"collector-time-fallback;provider-observation-time"$/);
+  assert.match(lines.find((line) => line.includes('"b[.]example"')), /,""$/);
+});
+
+test("complete cohorts cannot hide explicit collector fallback behind the older observation-only time basis", async () => {
+  const fixture = cohort([{ ...record("a", [asOf]), sourceTimeProvenances: ["collector-time-fallback"] }], "source-observation-or-explicit-collector-fallback");
+  assert.equal((await loadPeriodOverview({ readBytes: fixture.readBytes })).records.length, 1);
+  fixture.metrics.timeBasis = "source-observation-time";
+  fixture.files.set("/data/period-metrics-v1.json", bytes(fixture.metrics));
+  await assert.rejects(loadPeriodOverview({ readBytes: fixture.readBytes }), /time basis|fallback/i);
+  const legacy = cohort([record("b", [asOf])], "source-observation-or-explicit-collector-fallback");
+  assert.equal((await loadPeriodOverview({ readBytes: legacy.readBytes })).complete, true);
 });
 
 test("every advertised part is required and duplicate canonical hostname rows cannot inflate totals", async () => {
@@ -172,6 +246,9 @@ test("real overview SSR and bootstrap preserve period counts independently of cu
   const lt = renderLithuanianPage("radar", snapshot, Date.parse(asOf), preview);
   for (const html of [en, lt]) assert.match(html, /data-period-count="1"/);
   assert.match(en, /Current shortlist<\/span><strong>0/);
+  assert.match(en, /Observation first seen 24h/);
+  assert.match(lt, /Pirmas stebėjimas per 24 val\./);
+  assert.doesNotMatch(en, /Source first seen 24h/);
   assert.doesNotMatch(en, /First published 24h/);
 });
 
@@ -202,6 +279,10 @@ test("EN/LT public documentation links the independent v1 schemas and distinguis
     assert.match(methodology, language === "en" ? /subdomains count separately/ : /subdomenai skaičiuojami atskirai/);
     assert.match(methodology, language === "en" ? /does not expire durable observation facts/ : /neištrina ilgalaikių stebėjimo faktų/);
     assert.match(methodology, language === "en" ? /clocks remain null/ : /laikai lieka null/);
+    assert.match(methodology, language === "en" ? /provider observation time or declared collector fallback/ : /teikėjo stebėjimo laikas arba deklaruotas rinkiklio laikas/);
+    assert.match(methodology, language === "en" ? /historical timing provenance remains incomplete/i : /istorinių laikų kilmė lieka neišsami/i);
+    assert.doesNotMatch(methodology, /First\/last seen are source observation times/);
+    assert.match(documentation, language === "en" ? /provider observation time or declared collector fallback/ : /teikėjo stebėjimo laikas arba deklaruotas rinkiklio laikas/);
   }
 });
 

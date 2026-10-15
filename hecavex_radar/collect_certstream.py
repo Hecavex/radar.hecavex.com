@@ -166,7 +166,9 @@ async def collect(metrics: CollectionMetrics | None = None) -> int:
                             if not match or match.confidence < minimum_confidence:
                                 continue
                             metrics.matches += 1
-                            candidate = candidate_from_match(match, observed_at, parsed_message.certificate)
+                            candidate = candidate_from_match(
+                                match, observed_at, parsed_message.certificate, collection_method="certstream-live",
+                            )
                             existing = pending.get(candidate["id"])
                             candidate_payload = cast(dict[str, object], candidate)
                             existing_payload = cast(dict[str, object], existing) if existing is not None else None

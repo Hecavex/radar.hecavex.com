@@ -28,9 +28,10 @@ and the SHA-256 of its bundled PSL snapshot. For a valid hostname without a
 recognized public suffix, the group is the hostname itself. Grouping does not
 merge hostname identities.
 
-An observation is an accepted source timestamp for a canonical hostname and a
+An observation is an accepted effective observation timestamp for a canonical hostname and a
 sorted source set. Its full SHA-256 identity includes `hostnameId`, `sources`,
-`sourceObservedAt` and a nullable `providerEventId`. A provider ID enters the key
+`sourceObservedAt` and a nullable `providerEventId`. This stored timestamp uses
+usable provider time or an explicitly marked collector-time fallback. A provider ID enters the key
 only when the provider actually supplies a trustworthy identity. Scores, status,
 reason labels, clocks, legacy event IDs and provenance are separate annotations.
 
@@ -50,7 +51,7 @@ markers remain legacy evidence; they do not independently create observations.
 The operational store is `data/history/observations/index.json`, with
 `schemaVersion: 1` and `dataset: radar-observation-store-v1`. It references
 content-addressed JSON arrays under `months/YYYY-MM/<sha256>.json` and
-`hosts/<sha256>.json`. Observation partitions use the source timestamp's UTC
+`hosts/<sha256>.json`. Observation partitions use the effective timestamp's UTC
 month. The hostname inventory is independent of current brand eligibility and
 the expiring compatibility summary.
 
@@ -96,7 +97,7 @@ Unknown historical clocks are explicit `null`.
 
 | Clock | Meaning |
 | --- | --- |
-| `sourceObservedAt` | Timestamp established by the source boundary, with separate time provenance. |
+| `sourceObservedAt` | Effective observation timestamp: usable provider boundary, or explicitly declared collector-time fallback. |
 | `radarRecordedAt` | Known time Radar accepted the individual fact after capture activation. |
 | `importedAt` | Separately supplied recovery/import time; it does not establish historical Radar admission. |
 | `firstRecordedAt` | First-ever tracked Radar recording for a public hostname, only when the retained evidence establishes it. |
@@ -107,6 +108,32 @@ is unknown. Importing or observing an old hostname again never substitutes the
 migration time for its first-ever recording. If any accepted legacy fact has an
 unknown recording clock, the hostname's `firstRecordedAt` remains null. Replaying
 an observation cannot replace an unknown original clock with the replay time.
+
+New capture retains the original nullable/bounded provider value, its usable
+`providerObservedAt` or null, the collector time, source, boundary, fallback
+reason and timing origin in durable provenance. Missing, invalid or more than
+five minutes future-dated provider values never become asserted provider time.
+The original value is bounded to 256 characters; an explicit truncation flag and
+full-value SHA-256 distinguish a retained prefix from the complete input.
+Fallbacks use the actual collector timestamp, preserved across archived replay.
+Earlier normalization lacks this proof and remains `legacy-normalized-unknown`.
+The stored `sourceObservedAt` name is a compatibility field; consult its
+provenance before interpreting it as a provider timestamp.
+
+CT and URLScan archives carry optional internal `sourceTimeEvidence`; new
+readers accept older rows without it as unknown legacy provenance. Older strict
+archive readers do not accept the extension. After new metadata is written, a
+source-only revert is insufficient: retain the original facts and use a
+validated trusted compatibility projection or coherent frozen release, with
+the normal publication guards. The compatible public snapshot v2 remains
+available independently of the new period reader.
+
+Indexed CT fallback clocks are pinned to trustworthy provider row IDs in the
+bounded CT search state; the unchanged 128 KiB state budget fails before archive
+writes if those clocks cannot be retained. A fresh URLScan fetch of the same
+scan reuses an attributable fallback from retained archive references within a
+bounded 91-day/20 MiB lookup. Outside that retained evidence, a new actual
+collector receipt does not establish the first-ever provider observation time.
 
 Preparation time, snapshot `generatedAt`, sync heartbeat, source `firstSeen` and
 legacy `first-publication` event time do not establish an actual publication.
@@ -137,13 +164,27 @@ review policy to those facts. A suppression changes public eligibility while
 retaining the archived observations. Public eligibility is a candidate rule,
 not a maliciousness verdict.
 
-The complete logical hostname record carries identity/group/brand, source first
+The complete logical hostname record carries identity/group/brand, effective observation first
 and last timestamps, nullable first recording/publication clocks, sorted
 `observedDays`, `observedDayLastSeen`, sorted sources, a versioned `match`, nullable
 `assessment` and `recordAvailable`. The day map has exactly the same keys as
-`observedDays`; each value is the latest retained source timestamp on that day,
+`observedDays`; each value is the latest retained effective timestamp on that day,
 at or before `asOf`. It supports the partial lower day of rolling queries without
 publishing every individual event.
+
+New public records also carry sorted unique `sourceTimeProvenances`, with at
+most three values: `provider-observation-time`, `collector-time-fallback`, and
+`legacy-normalized-unknown`. This additive v1 field summarizes all retained
+timing origins for the hostname. Its absence in an older artifact means unknown
+provenance. A later verified provider observation cannot retroactively establish
+the timing provenance of earlier facts. JSON and CSV period exports retain the
+summary; the interface explains fallback and legacy limits explicitly.
+
+The CSV columns `source_first_seen_utc` and `source_last_seen_utc` retain their
+existing names for consumer compatibility and contain these effective
+observation clocks. The appended `source_time_provenances` column declares the
+hostname-level origins. Do not interpret an old column name as proof of a
+provider timestamp, or the aggregate summary as provenance of each endpoint.
 
 `match.score` is a nullable candidate match score. Its `reasonCodes` describe the
 attributed matching evidence and `policyVersion` identifies that rule set. The

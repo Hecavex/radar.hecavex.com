@@ -423,16 +423,26 @@ Before the first instrumented workflow completes, the checked-in bootstrap docum
 ## Checkpointed CT-search state
 
 `data/ct-search/state.json` is the bounded operational contract for the hourly `crt.sh` keyword poller. It is not a
-public signal distribution or a CT-log checkpoint. The version 1 document has the exact top-level fields
-`schemaVersion`, `dataset`, `provider`, `generatedAt`, `queryCursor`, `queries`, and `latestRun`.
+public signal distribution or a CT-log checkpoint. The version 1 document has top-level fields
+`schemaVersion`, `dataset`, `provider`, `generatedAt`, `queryCursor`, `queries`, `latestRun`, and `providerHealth`.
+New writers also retain optional `fallbackClocks`; older documents without it remain readable.
 
 - `dataset` is `ct-search-state` and `provider` is `crt.sh`.
 - `queryCursor` rotates the bounded brand-query set. `queries` contains at most 128 entries keyed by stable `brand:`
   identifiers. Each exact entry holds the reviewed search `term`, resolved `brand`, monotonic `lastId`, nullable
   `lastEntryAt` and `lastRunAt`, and nullable `completed`, `partial`, or `failed` `lastOutcome`.
+  During initial bounded continuation, optional paired `bootstrapThroughId` and `bootstrapCutoffAt` preserve
+  the original bootstrap boundary. Undated rows and already pinned fallback receipts are not silently skipped.
+- `fallbackClocks` maps trustworthy numeric provider row IDs to original collector UTC timestamps for accepted
+  rows with missing, invalid or implausibly future provider time. It never evicts a replayable clock. Prospective
+  state capacity is checked before archive writes; a clock-only checkpoint retains old query cursors so an I/O
+  retry cannot skip an unwritten candidate. `lastEntryAt` advances only from usable provider timestamps.
+- `providerHealth` retains `lastSuccessAt`, `lastAttemptAt`, `lastFailureCodes`, `consecutiveFailures`,
+  `degradedSince`, and `nextAttemptAt`, with bounded failure codes and explicit backoff.
 - `latestRun` is null before the first run or contains `startedAt`, `endedAt`, `outcome`, `queriesAttempted`,
   `queriesCompleted`, `rowsProcessed`, `dnsNames`, `matches`, `newRecords`, and `queriesBacklogged`. Outcome is
-  `completed`, `partial`, or `failed`; counters are non-negative aggregate integers.
+  `completed`, `partial`, `failed`, or `deferred-backoff`; counters are non-negative aggregate integers.
+  New rows can also include bounded `failureCodes`.
 
 The file is capped at 128 KiB and contains no certificate name, unpublished domain, URL, or credential. A first query is
 bounded to the configured seven-day default bootstrap. Subsequent runs process up to 500 rows per query by default and
@@ -544,6 +554,9 @@ SANs are never retained.
 
 `collectionMethod` is optional on legacy rows and otherwise is `certstream-live` or `ct-search-api`. It preserves discovery
 lineage while both paths retain the compatible public source label `CertStream`; it is not corroboration or a verdict.
+New rows include optional internal `sourceTimeEvidence` for the two effective observation boundaries. Live stream
+receipt time is explicitly collector time; indexed CT records retain usable provider time or a declared fallback.
+Older rows without this evidence remain unknown legacy normalization. See [timing provenance](OBSERVATIONS.md#separate-clocks).
 The archive `id` hashes the normalized refanged domain, unlike the public snapshot ID, which hashes the defanged hostname.
 IDs from different artifact types are therefore not join keys. A daily CertStream file is capped at 25,000 valid records
 and 25 MiB. Reasons contain only contributions from the open heuristic.
@@ -561,6 +574,10 @@ and 25 MiB. Reasons contain only contributions from the open heuristic.
 ```
 
 Each complete record remains defanged and uses the same host-based ID namespace as the public snapshot. `brandEvidence` is a non-empty, duplicate-free list containing only `domain`, `title`, `verdict`, or `primary-html-sha256`, and at least one of the first three values is required. The hash label records supplemental pivot provenance; it is not brand evidence by itself.
+
+Optional internal `sourceTimeEvidence` preserves nullable provider time, original collector fallback and boundary
+provenance through archive merges and replay. Derived snapshot-only fields are excluded from archive serialization.
+These internal fields do not enter snapshot v2; see [observation clocks](OBSERVATIONS.md#separate-clocks).
 
 A current hostname match must agree with the declared brand. When the hostname no longer matches, only a row backed by title or verdict evidence may remain, and it must still resolve to a current registry brand and pass suppression and collision checks. Before a row can enter the archive, its URLScan search summary and result detail must both identify the scan as public; missing, unlisted, or private visibility is rejected. Version 1 rows and legacy version 2 rows without typed evidence are rejected. References use the canonical URLScan result path, screenshots use the fixed URLScan policy, and resource or empty-body hashes are rejected. A daily file is capped at 2,500 records and 20 MiB.
 

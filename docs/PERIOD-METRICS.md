@@ -14,7 +14,7 @@ complete-cohort reader or export. Durable identity and clocks are defined in
 ## Population and time basis
 
 The headline population is **distinct canonical hostnames observed during the
-selected source-time period**, among the complete currently eligible recorded
+selected observation-time period**, among the complete currently eligible recorded
 inventory. It includes subdomains as separate identities. Private-PSL domain
 groups are a separately deduplicated secondary count.
 
@@ -25,11 +25,33 @@ policy can therefore change the public eligible population while all original
 facts remain archived. Counts are exact within this declared recorded population;
 they are not a census of every domain registered or every phishing hostname.
 
-`timeBasis` is `source-observation-time`; `identityUnit` is
-`canonical-hostname`; `population` is `public-eligible-recorded-hostnames`.
-Source observation, Radar recording and actual publication clocks remain
-separate. A late imported source event belongs to its source period even when
-Radar records it much later.
+New publications use `timeBasis: source-observation-or-explicit-collector-fallback`;
+`identityUnit` is `canonical-hostname`; `population` is
+`public-eligible-recorded-hostnames`. A usable provider timestamp determines
+membership. Otherwise, the actual collector timestamp determines membership and
+the fact explicitly records `collector-time-fallback`; the unknown provider time
+is never asserted as known. This keeps an accepted hostname visible without
+claiming a provider observation date. Archive replay preserves the original
+collector fallback rather than moving the observation to every sync's current
+time.
+
+New hostname records summarize timing origins in the additive
+`sourceTimeProvenances` field. `provider-observation-time` establishes a usable
+provider boundary, `collector-time-fallback` identifies the declared fallback,
+and `legacy-normalized-unknown` means earlier normalization provenance cannot be
+reconstructed. These are per-host summaries, not a claim that every historical
+observation uses the same origin. Older v1 records without the summary and old
+metrics declaring `source-observation-time` remain valid archived artifacts;
+their missing provenance remains unknown. Consumers accept only these two
+declared time bases.
+
+A complete cohort explicitly containing a collector fallback cannot declare
+the older provider-only time basis. Producer and browser validation reject that
+contradiction; accepting archived formats does not weaken this semantic check.
+
+Provider observation, Radar recording and actual publication clocks remain
+separate. A late imported event with a trustworthy provider timestamp belongs
+to its source period even when Radar records it much later.
 
 A completed UTC month closes the time window, not the underlying evidence.
 Late observations, recovered facts and current-policy corrections can revise a
@@ -42,12 +64,12 @@ new live observation.
 
 All windows use canonical UTC milliseconds and half-open bounds
 `[startInclusive, endExclusive)`. The artifact has one explicit `asOf` cutoff.
-Public logical rows contain only source facts at or before that cutoff.
+Public logical rows contain only effective observation facts at or before that cutoff.
 
 | Key | Start | Exclusive end |
 | --- | --- | --- |
 | `30d`, `90d`, `365d` | `asOf` minus exactly that many UTC days | `asOf` plus one millisecond |
-| `all` | null: every retained recorded source observation | `asOf` plus one millisecond |
+| `all` | null: every retained recorded effective observation | `asOf` plus one millisecond |
 | `month:YYYY-MM` | UTC start of the calendar month | UTC start of the next month |
 
 The one-millisecond upper increment includes facts exactly equal to the
@@ -68,7 +90,7 @@ Each window carries:
 - `uniqueHostnames`: distinct eligible canonical IDs with an actual observation
   inside the window.
 - `domainGroups`: distinct private-PSL parents of those selected hostnames.
-- `candidateDays`: distinct `(hostname ID, UTC source day)` memberships inside
+- `candidateDays`: distinct `(hostname ID, UTC effective observation day)` memberships inside
   the window. Repeated providers or paths on that day do not multiply this count.
 - `firstRecordedHostnames`: nullable count querying first-ever Radar recording
   clocks across the complete eligible inventory.
@@ -77,7 +99,7 @@ Each window carries:
   first recording clocks.
 - `exactWithinRecordedData: true` and the separate `completeCollection` flag.
 
-Recording/publication counts query their own clocks independently of source-time
+Recording/publication counts query their own clocks independently of observation-time
 membership. A January source observation first recorded in October can contribute
 to October's recording count while contributing zero to October's observed-host
 count.
@@ -101,7 +123,7 @@ Coverage contains exactly these fields:
 
 | Field | Meaning |
 | --- | --- |
-| `availableFrom` | Earliest source timestamp in the public eligible recorded population, or null. |
+| `availableFrom` | Earliest effective observation timestamp in the public eligible recorded population, or null. |
 | `recordedFrom` | Activation watermark for reliable future Radar recording capture, or null. |
 | `publicationRecordedFrom` | Activation watermark for captured verified publication receipts in the modern tracked cohort, or null. |
 | `recoveredFrom`, `recoveredThrough` | First/last recovered UTC partition days, or null. |

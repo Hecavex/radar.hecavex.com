@@ -86,6 +86,11 @@ HOSTNAME_RECORD_SCHEMA: dict[str, Any] = {
         "recordAvailable": {"type": "boolean"},
     }),
 }
+# Additive evidence: older committed v1 cohorts omit it and remain readable.
+HOSTNAME_RECORD_SCHEMA["properties"]["sourceTimeProvenances"] = {
+    "type": "array", "minItems": 1, "maxItems": 3, "uniqueItems": True,
+    "items": {"enum": ["provider-observation-time", "collector-time-fallback", "legacy-normalized-unknown"]},
+}
 HOSTNAME_PART_SCHEMA: dict[str, Any] = {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$id": BASE + "observed-hostname-part-v1.schema.json",
@@ -128,7 +133,9 @@ PERIOD_METRICS_SCHEMA: dict[str, Any] = {
     **obj({
         "schemaVersion": {"const": 1}, "dataset": {"const": "radar-period-metrics"},
         "generatedAt": text(TIMESTAMP), "asOf": text(TIMESTAMP),
-        "timeBasis": {"const": "source-observation-time"}, "identityUnit": {"const": "canonical-hostname"},
+        "timeBasis": {"enum": [
+            "source-observation-time", "source-observation-or-explicit-collector-fallback",
+        ]}, "identityUnit": {"const": "canonical-hostname"},
         "population": {"const": "public-eligible-recorded-hostnames"}, "hostnamesSha256": text(HEX64),
         "grouping": GROUPING_SCHEMA, "coverage": COVERAGE_SCHEMA, "policyVersions": POLICY_VERSIONS_SCHEMA,
         "windows": {"type": "array", "minItems": 4, "maxItems": 10000, "items": PERIOD_WINDOW_SCHEMA},
