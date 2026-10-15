@@ -1,15 +1,17 @@
 import type { RadarHistory } from "../types.ts";
 import { parseHistory } from "./historyData.ts";
+import { parsePeriodOverviewBootstrap, type PeriodOverviewData } from "./periodMetrics.ts";
 
 export type HistoryBootstrap = {
   history: RadarHistory;
   renderedAt: number;
   totalSignals: number;
+  periodData?: PeriodOverviewData;
 };
 
-export function encodeHistoryBootstrap(history: RadarHistory, renderedAt: number, totalSignals = history.signals.length): string {
+export function encodeHistoryBootstrap(history: RadarHistory, renderedAt: number, totalSignals = history.signals.length, periodData?: PeriodOverviewData): string {
   if (!Number.isInteger(renderedAt) || renderedAt < 0) throw new Error("The prerender timestamp is invalid.");
-  return encodeURIComponent(JSON.stringify({ history, renderedAt, totalSignals }));
+  return encodeURIComponent(JSON.stringify({ history, renderedAt, totalSignals, periodData }));
 }
 
 export async function decodeHistoryBootstrap(value: string): Promise<HistoryBootstrap> {
@@ -26,5 +28,5 @@ export async function decodeHistoryBootstrap(value: string): Promise<HistoryBoot
   if (!Number.isInteger(totalSignals) || (totalSignals as number) < history.signals.length || (totalSignals as number) > 25_000) {
     throw new Error("Invalid embedded history total.");
   }
-  return { history, renderedAt: candidate.renderedAt as number, totalSignals: totalSignals as number };
+  return { history, renderedAt: candidate.renderedAt as number, totalSignals: totalSignals as number, periodData: candidate.periodData === undefined ? undefined : parsePeriodOverviewBootstrap(candidate.periodData) };
 }

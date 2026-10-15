@@ -1,6 +1,17 @@
 # Candidate history
 
-The history published at [radar.hecavex.com/history/](https://radar.hecavex.com/history/) answers two narrow questions: when did the operated public pipeline accept an observation for this host, and when did a supported source explicitly change its status? It is not a reputation database and does not infer current liveness.
+The legacy candidate history records accepted source observation boundaries and
+supported source status changes. Its event timestamps are source times; they do
+not establish original Radar recording or actual publication times. It is not a
+reputation database and does not infer current liveness.
+
+The primary period overview at
+[radar.hecavex.com/history/](https://radar.hecavex.com/history/) uses the separate
+[durable observation inventory](OBSERVATIONS.md) and
+[period metrics](PERIOD-METRICS.md). Their immutable facts and canonical hostname
+inventory survive the legacy 30/730-day retention windows. The legacy history
+below remains a compatibility projection for event, route and existing consumer
+behavior; it is not the population behind lifetime or calendar-period counts.
 
 Daily discovery aggregates are retained independently of detailed events; compacted
 per-host totals must never be treated as exact daily counts. See the
@@ -15,7 +26,7 @@ The 20-character `signalId` uses the same normalized defanged-host namespace as 
 Two event types exist:
 
 - `observation` records a validated first-seen or last-seen boundary from an accepted source record.
-- `status-transition` records first publication or an explicit change from one supported status to another.
+- `status-transition` records a legacy first-publication marker or an explicit change from one supported status to another. The marker uses a source timestamp and does not establish actual publication time. Separate verified receipts track first successful capture for modern tracked hostnames; failed/canceled capture gaps cannot establish earliest-ever publication.
 
 CertStream and URLScan always supply `suspected`. Only a validated HECAVEX input can supply `active`, `offline`, or `mitigated`. A host disappearing from recent archives creates no event.
 
@@ -31,11 +42,19 @@ After the detail window, events compact into `data/history/summary.json`. The su
 
 Small histories retain the inline v1 document. When compact serialization would exceed 512 KiB, the public document becomes a v2 partition index with `partitionFormat: hecavex-history-partitions-v1`, an exact `signalCount`, empty inline `signals`, and a `partitions` inventory. Each content-addressed `history-parts/<sha256>.json` contains at most 256 KiB and declares its exact hash, byte size and row count in the index. An empty inline array in a partition index is not an empty history. Consumers must resolve every partition and verify the declared count and hashes. Radar's browser, build, review admission, quality metrics, event routes and publication validator do this before using history.
 
-The durable 12 MiB summary uses the same format in `summary-parts/` when needed. Both stores have a finite maximum of 512 partitions, and retain the 25,000-host hard ceiling. Writers preflight all chunks, write content-addressed parts first and replace the index last. Missing, oversized, repeated, escaped or altered parts fail closed. This does not erase old history to improve coverage. Current public parts enter the atomic feed manifest and checksum set. The 256 MiB complete deployment budget and existing per-response gates still apply.
+The retained 12 MiB legacy summary uses the same format in `summary-parts/` when needed. Both legacy stores have a finite maximum of 512 partitions, and retain the 25,000-host hard ceiling. Writers preflight all chunks, write content-addressed parts first and replace the index last. Missing, oversized, repeated, escaped or altered parts fail closed. This does not erase old history to improve coverage. Current public parts enter the atomic feed manifest and checksum set. The 256 MiB complete deployment budget and existing per-response gates still apply.
+
+These wire versions remain independent: legacy inline history is v1, legacy
+partition-index history is v2 with `hecavex-history-partitions-v1`, the durable
+operational observation index is `radar-observation-store-v1`, and the new public
+hostname index/parts and period metrics use their own v1 schemas. A legacy v2
+index's empty inline `signals` never means empty history; the new hostname index
+has no inline records array at all. Resolve and validate the applicable complete
+part cohort before making absence or export claims.
 
 Growth regressions exercise 5,000 substantial public rows and 25,000 durable rows with the full 64-ID replay-hint allocation. Record cardinality and bytes are independent limits. Unusually large transitions can still exhaust the finite total deployment budget, in which case publication must fail visibly rather than claiming complete delivery.
 
-HTML embeds at most 64 KiB of history as an explicitly labelled preview. The archive browser loads and validates the complete index and every part. The local IOC checker is disabled until that succeeds, so a missing partition cannot turn into a false no-match result. Brand pages show at most 50 recent historical rows with the complete count and archive link. The original full records still receive durable bilingual signal routes. After an index is committed, only unreferenced generated content-addressed part files are removed from the working tree. Earlier committed releases remain recoverable in Git.
+HTML embeds at most 64 KiB of history as an explicitly labelled preview. The archive browser loads and validates the complete index and every part. The local IOC checker is disabled until that succeeds, so a missing partition cannot turn into a false no-match result. Brand pages show at most 50 recent historical rows with the complete count and archive link. Records in the emitted dashboard/history cohort receive bilingual signal routes. Other durable inventory members expose a defanged identity with `recordAvailable: false`. After an index is committed, only unreferenced generated content-addressed part files are removed from the working tree. Earlier committed releases remain recoverable in Git.
 
 The separate 30-day publication-event stream is filtered through the current matcher, registry, and review policy. Only
 events whose IDs still have an emitted route in the dashboard snapshot or filtered public history reach the Changes
@@ -52,4 +71,9 @@ Configuration:
 | `RADAR_HISTORY_ROOT` | `data/history` | repository-relative |
 | `RADAR_HISTORY_OUTPUT` | `public/data/history.json` | repository-relative |
 
-Running synchronization twice over unchanged inputs advances only the live snapshot's successful-sync heartbeat and source check times. Its `generatedAt` data-change timestamp, daily events, compacted summary, and public history remain unchanged.
+Running synchronization twice over unchanged inputs preserves the live
+snapshot's `generatedAt` data-change timestamp, daily events, compacted summary
+and legacy public history while advancing the successful-sync heartbeat and
+source check times. Durable observation identity is idempotent as well; new
+as-of period exports can change their explicit cutoff without inventing new
+observation facts.

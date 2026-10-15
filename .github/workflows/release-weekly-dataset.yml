@@ -310,6 +310,7 @@ jobs:
           os.chdir(os.environ["RELEASE_SOURCE_ROOT"])
           validate_publication(
               Path(os.environ["RELEASE_SOURCE_ROOT"]), validate_stix=True, trusted_registry=trusted_registry,
+              allow_legacy_observations=True,
           )
           PY
 

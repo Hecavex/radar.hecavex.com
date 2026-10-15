@@ -22,9 +22,10 @@ from .brands import (
 )
 from .domain_context import public_records as load_domain_context
 from .hecavex import write_hecavex_candidates
-from .history import build_history_events, previous_statuses, update_history
+from .history import build_history_events, previous_statuses, read_public_history, update_history
 from .models import RadarSignal, RadarSource, RawSignal, SignalStatus, SourceResult
 from .normalize import merge_signals, prepare_signal
+from .observation_runtime import record_observations
 from .provenance import normalize_reason_codes
 from .publication import apply_source_counts, fit_dashboard_signals, publish_supplemental_artifacts
 from .review import load_public_review
@@ -555,6 +556,7 @@ def synchronize(*, sync_time: datetime | None = None) -> Path:
         print(f"Existing snapshot: retained {len(retained)} recent signals", flush=True)
 
     prepared: list[RadarSignal] = []
+    scoped_observations: list[RadarSignal] = []
     for result in results:
         original_records = len(result.signals)
         accepted_records = 0
@@ -564,6 +566,8 @@ def synchronize(*, sync_time: datetime | None = None) -> Path:
                 continue
             raw_signal = scoped_signal
             signal = prepare_signal(raw_signal, now)
+            if signal:
+                scoped_observations.append(signal)
             if signal and not review_policy.suppresses(signal["domain"], signal["brand"]):
                 prepared.append(signal)
                 accepted_records += 1
@@ -650,7 +654,19 @@ def synchronize(*, sync_time: datetime | None = None) -> Path:
     history_detail_days = _bounded_integer(os.environ.get("RADAR_HISTORY_DETAIL_DAYS"), 30, 7, 90)
     history_summary_days = _bounded_integer(os.environ.get("RADAR_HISTORY_SUMMARY_DAYS"), 730, 30, 3_650)
     history_maximum = _bounded_integer(os.environ.get("RADAR_HISTORY_MAX_SIGNALS"), 5_000, 1, 25_000)
-    history_events = build_history_events(prepared, merged, previous_statuses(history_output))
+    review_export: dict[str, object] = {
+        "schemaVersion": 3, "dataset": "radar-review-decisions", "generatedAt": now,
+        "suppressions": list(review_policy.suppressions), "candidates": list(review_policy.candidates),
+        "assessments": list(review_policy.assessments),
+    }
+    prior_history = read_public_history(history_output)
+    record_observations(
+        Path.cwd(), scoped_observations, complete_merged,
+        previous_history=prior_history if isinstance(prior_history, dict) else None,
+        as_of=now, registry=registry, review_export=review_export,
+        legacy_history_root=history_root,
+    )
+    history_events = build_history_events(prepared, complete_merged, previous_statuses(history_output))
     history_path = update_history(
         root=history_root,
         output=history_output,
@@ -664,20 +680,11 @@ def synchronize(*, sync_time: datetime | None = None) -> Path:
     )
     print(f"Updated bounded public history at {history_path.relative_to(Path.cwd())}.", flush=True)
     try:
-        from .history import read_public_history
         history_value: object = read_public_history(history_path)
     except (OSError, UnicodeDecodeError, json.JSONDecodeError) as error:
         raise ValueError("The freshly written public history could not be reloaded safely.") from error
     if not isinstance(history_value, dict):
         raise ValueError("The freshly written public history is not a JSON object.")
-    review_export: dict[str, object] = {
-        "schemaVersion": 3,
-        "dataset": "radar-review-decisions",
-        "generatedAt": now,
-        "suppressions": list(review_policy.suppressions),
-        "candidates": list(review_policy.candidates),
-        "assessments": list(review_policy.assessments),
-    }
     candidate_output = os.environ.get("HECAVEX_CANDIDATE_OUTPUT", "").strip()
     if candidate_output:
         candidate_path = write_hecavex_candidates(

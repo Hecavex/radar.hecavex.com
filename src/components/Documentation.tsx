@@ -224,8 +224,22 @@ export function Documentation({ language = "en" }: { language?: "en" | "lt" }) {
         </div>
         <div className="docs-card-grid">
           <article>
+            <span>Primary recorded population · JSON v1</span>
+            <h3>Observed hostname inventory</h3>
+            <p>A durable-fact projection under current public eligibility policy. Canonical hostnames count once; subdomains count separately. The index names every required, digest-bound part. This complete inventory is independent of the bounded current shortlist and expiring legacy history.</p>
+            <a href="/data/observed-hostnames-v1.json">Open the complete hostname index</a>
+            <a href="/data/schemas/observed-hostnames-index-v1.schema.json">Hostname index schema v1</a>
+          </article>
+          <article>
+            <span>Primary period totals · JSON v1</span>
+            <h3>Unique hostnames observed in a period</h3>
+            <p>30/90/365-day, all-recorded and calendar-month totals use actual source observation times and a declared cutoff. Private-PSL domain groups are secondary. All recorded is not a complete lifetime census. Historical recording and captured verified publication receipt clocks remain null when unknown. Receipt clocks cover newly tracked hostnames with known recording times only; legacy hostnames with unknown first-recorded time keep null publication time. The first successfully captured receipt since activation is not an earliest-ever publication date.</p>
+            <a href="/data/period-metrics-v1.json">Open period metrics</a>
+            <a href="/data/schemas/period-metrics-v1.schema.json">Period metrics schema v1</a>
+          </article>
+          <article>
             <span>Current snapshot · JSON</span>
-            <h3>Radar signal snapshot</h3>
+            <h3>Current candidate shortlist</h3>
             <p>
               The generated dashboard input contains the current schema version, generation time, bounded recent signals,
               and per-source archive-read state. It is crawlable because it is advertised as the Dataset distribution.
@@ -280,11 +294,11 @@ export function Documentation({ language = "en" }: { language?: "en" | "lt" }) {
             <a href="/reporting/">Open reporting utility</a>
           </article>
           <article>
-            <span>Retained history · JSON</span>
-            <h3>Candidate history</h3>
+            <span>Legacy compatibility history · JSON</span>
+            <h3>Bounded candidate trail</h3>
             <p>
-              A bounded projection of accepted observation boundaries and explicit source status transitions. A missing
-              row never means benign, and disappearance from a current archive does not create an offline event.
+              A separate, expiring compatibility projection of accepted observation boundaries and explicit source status transitions.
+              Its preview does not define the primary hostname count. A missing row never means benign, and disappearance from a current archive does not create an offline event.
             </p>
             <a href="/data/history.json">Open public history.json</a>
           </article>
@@ -346,8 +360,9 @@ export function Documentation({ language = "en" }: { language?: "en" | "lt" }) {
         <div className="docs-callout">
           <strong>Freshness</strong>
           <p>
-            Consumers must read <code>lastSuccessfulSyncAt</code> for publisher health, <code>generatedAt</code> for the
-            latest material data change, and each source&apos;s <code>fetchedAt</code> and <code>state</code>. A source timestamp
+            Snapshot consumers must read <code>lastSuccessfulSyncAt</code> for publisher health and <code>generatedAt</code> for the
+            latest material snapshot change. The new hostname/metrics artifacts instead use <code>asOf</code> as their exact source-observation cutoff and set <code>generatedAt</code> equal to it.
+            Read each source&apos;s <code>fetchedAt</code> and <code>state</code>. A snapshot source timestamp
             is an archive-read time. CertStream connection evidence is reported separately in the bounded
             collection-health document and still does not prove continuous coverage.
           </p>
@@ -421,7 +436,7 @@ export function Documentation({ language = "en" }: { language?: "en" | "lt" }) {
         <div className="docs-section-heading">
           <p className="eyebrow">Public data contract</p>
           <h2 id="contract-title">Snapshot schema version 2</h2>
-          <p>The Python publisher is normative; browser validation is an additional structural check.</p>
+          <p>These fields describe the separate bounded current shortlist. The primary inventory and period totals use their own v1 schemas linked above. The Python publisher is normative; browser validation is an additional check.</p>
         </div>
         <pre className="docs-code" aria-label="Public snapshot example" tabIndex={0}><code>{`{
   "schemaVersion": 2,
@@ -577,16 +592,17 @@ export function Documentation({ language = "en" }: { language?: "en" | "lt" }) {
             <span>Stable identity</span>
             <h3>Replay does not inflate counts</h3>
             <p>
-              Signal IDs derive from normalized hosts. Event IDs derive from immutable observation and transition fields,
-              so rerunning unchanged archives cannot add another observation when scoring language changes.
+              Hostname IDs derive from canonical defanged A-labels. Durable observation identity combines the hostname,
+              sorted sources and source time; replaying score, review or legacy-event annotations cannot create another observation.
             </p>
           </article>
           <article>
-            <span>Bounded retention</span>
+            <span>Legacy compatibility retention</span>
             <h3>Detail compacts, boundaries remain</h3>
             <p>
               Daily event partitions retain 30 days by default. Older detail compacts into a two-year summary containing
               first and last observation time, bounded counts, source and reason unions, and explicit transitions.
+              Durable normalized observation facts remain retained independently of this compatibility expiry.
             </p>
           </article>
           <article>
@@ -608,6 +624,8 @@ export function Documentation({ language = "en" }: { language?: "en" | "lt" }) {
         <p className="docs-copy">
           Browse the <a href="/history/">retained candidate trail</a>. Repository operators can review the complete
           retention and operator-export contracts in{" "}
+          <a href="https://github.com/Hecavex/radar.hecavex.com/blob/main/docs/OBSERVATIONS.md">OBSERVATIONS.md</a>,{" "}
+          <a href="https://github.com/Hecavex/radar.hecavex.com/blob/main/docs/PERIOD-METRICS.md">PERIOD-METRICS.md</a>,{" "}
           <a href="https://github.com/Hecavex/radar.hecavex.com/blob/main/docs/HISTORY.md">HISTORY.md</a> and{" "}
           <a href="https://github.com/Hecavex/radar.hecavex.com/blob/main/docs/REVIEW-WORKFLOW.md">REVIEW-WORKFLOW.md</a>.
         </p>

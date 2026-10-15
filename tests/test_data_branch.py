@@ -70,6 +70,33 @@ def test_missing_branch_fails_closed_without_overlay(repo: Path, tmp_path: Path)
     assert not (tmp_path / "state").exists()
 
 
+def test_verified_publication_receipt_writer_preserves_concurrent_collection(repo: Path, tmp_path: Path) -> None:
+    bootstrap(repo)
+    state = tmp_path / "state"
+    base = hydrate(repo, state)
+    assert "publication-receipt" in transport.WRITERS, "verified publication writer is missing"
+    write(repo, "data/history/publications/activation.json", b'{"publishedAt":"verified"}')
+    concurrent = transport.blobs(repo, base)
+    concurrent["data/certstream/new.json"] = b'{"observed":"later"}'
+    advance_data(repo, base, concurrent, "certstream")
+    assert command(repo, "publish", "--state-file", str(state), "--writer", "publication-receipt") == 0
+    selected = transport.remote(repo, "radar-data")
+    assert selected is not None
+    result = transport.blobs(repo, selected)
+    assert result["data/certstream/new.json"] == concurrent["data/certstream/new.json"]
+    assert result["data/history/publications/activation.json"] == b'{"publishedAt":"verified"}'
+
+
+def test_publication_receipt_cannot_modify_snapshot(repo: Path, tmp_path: Path) -> None:
+    bootstrap(repo)
+    state = tmp_path / "state"
+    base = hydrate(repo, state)
+    assert "publication-receipt" in transport.WRITERS, "verified publication writer is missing"
+    write(repo, "public/data/radar.json", b'{"generatedAt":"forged"}')
+    assert command(repo, "publish", "--state-file", str(state), "--writer", "publication-receipt") == 1
+    assert transport.remote(repo, "radar-data") == base
+
+
 def test_bootstrap_exact_postmerge_inventory_retains_late_main_data(repo: Path) -> None:
     old = transport.head(repo)
     write(repo, "data/certstream/2026-09-07/attempts.ndjson", b'{"outcome":"partial"}\n')

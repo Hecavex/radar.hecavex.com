@@ -5,17 +5,20 @@ import { controlledFilterSearch, dashboardMetrics, DEFAULT_FILTERS, filterSignal
 import { formatDateTime, formatNumber, formatRelativeTime } from "../lib/format.ts";
 import { formatDateTimeLt, formatNumberLt, formatRelativeTimeLt } from "../lt/formatLt.ts";
 import type { Filters, RadarSnapshot } from "../types.ts";
+import type { PeriodOverviewData } from "../lib/periodMetrics.ts";
 import { CollectionDisclosure } from "./CollectionDisclosure.tsx";
 import { ExportActions } from "./ExportActions.tsx";
 import { FilterBar } from "./FilterBar.tsx";
 import { SignalTable } from "./SignalTable.tsx";
+import { PeriodOverview } from "./PeriodOverview.tsx";
 import type { SiteLanguage } from "./SiteHeader.tsx";
 
-export function Dashboard({ snapshot, now = Date.now(), language = "en", refreshError = null }: {
+export function Dashboard({ snapshot, now = Date.now(), language = "en", refreshError = null, initialPeriodData }: {
   snapshot: RadarSnapshot;
   now?: number;
   language?: SiteLanguage;
   refreshError?: string | null;
+  initialPeriodData?: PeriodOverviewData;
 }) {
   const lt = language === "lt";
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
@@ -64,7 +67,7 @@ export function Dashboard({ snapshot, now = Date.now(), language = "en", refresh
               : "Defanged potential phishing and impersonation domains discovered through sampled Certificate Transparency, URLScan, and sanitized HECAVEX inputs. Every row is a lead, never a verdict."}
           </p>
           <div className="hero-actions">
-            <a className="hero-action-primary" href={`#${signalsAnchor}`}><ArrowDown aria-hidden="true" /> {lt ? `Peržiūrėti ${number(summary.total)} kandidatų` : `Browse ${number(summary.total)} candidates`}</a>
+            <a className="hero-action-primary" href="#observed-hostnames"><ArrowDown aria-hidden="true" /> {lt ? "Peržiūrėti stebėtus domenų vardus" : "Browse observed hostnames"}</a>
             <a href={lt ? "/lt/metodologija/" : "/methodology/"}>{lt ? "Kaip renkami duomenys" : "How collection works"}</a>
           </div>
         </div>
@@ -91,9 +94,11 @@ export function Dashboard({ snapshot, now = Date.now(), language = "en", refresh
         </aside>
       </section>
 
-      <section className="activity-strip" aria-label={lt ? "Dabartinė Radaro veikla" : "Current Radar activity"}>
-        <div><Database aria-hidden="true" /><span>{lt ? "Dabartiniai kandidatai" : "Current candidates"}</span><strong>{number(summary.total)}</strong></div>
-        <div><Clock3 aria-hidden="true" /><span>{lt ? "Pirmos publikacijos per 24 val." : "First published 24h"}</span><strong>{number(newToday)}</strong></div>
+      <PeriodOverview initialData={initialPeriodData} language={language} />
+
+      <section className="activity-strip" aria-label={lt ? "Dabartinio trumpojo sąrašo rodikliai" : "Secondary current shortlist metrics"}>
+        <div><Database aria-hidden="true" /><span>{lt ? "Dabartinis trumpasis sąrašas" : "Current shortlist"}</span><strong>{number(summary.total)}</strong></div>
+        <div><Clock3 aria-hidden="true" /><span>{lt ? "Šaltinis pirmą kartą stebėjo per 24 val." : "Source first seen 24h"}</span><strong>{number(newToday)}</strong></div>
         <div><Activity aria-hidden="true" /><span>{lt ? "Pakartotinai stebėti per 24 val." : "Reobserved 24h"}</span><strong>{number(reobservedToday)}</strong></div>
         <div><ShieldCheck aria-hidden="true" /><span>{lt ? "Galimi prekių ženklai" : "Potential brands"}</span><strong>{number(summary.brands)}</strong></div>
         <a href={lt ? "/lt/pokyciai/" : "/changes/"}><span>{lt ? "Visas įvykių žurnalas" : "Full event record"}</span><strong>{lt ? "Pokyčiai" : "Changes"} <ArrowRight aria-hidden="true" /></strong></a>
@@ -101,7 +106,7 @@ export function Dashboard({ snapshot, now = Date.now(), language = "en", refresh
 
       <section className="signal-section" id={signalsAnchor} aria-labelledby="signals-title">
         <div className="section-heading">
-          <div><h2 id="signals-title">{lt ? "Neseniai pastebėti kandidatai" : "Recently observed candidates"}</h2></div>
+          <div><h2 id="signals-title">{lt ? "Dabartinis kandidatų trumpasis sąrašas" : "Current candidate shortlist"}</h2><p>{lt ? "Naujausių kandidatų atranka; šis skaičius nėra išsaugotos istorijos suma." : "A selection of recent candidates; this count is not the recorded history total."}</p></div>
           <div className="signal-heading-actions"><p>{lt ? <><strong>{number(filteredSignals.length)}</strong> atitinka iš {number(snapshot.signals.length)}</> : <><strong>{number(filteredSignals.length)}</strong> matching {number(snapshot.signals.length)}</>}</p><ExportActions signals={filteredSignals} snapshotGeneratedAt={snapshot.generatedAt} language={language} /></div>
         </div>
         <FilterBar signals={snapshot.signals} filters={filters} onChange={setFilters} language={language} />

@@ -166,7 +166,7 @@ const englishCopy: MethodologyCopy = {
   publicationEyebrow: "Publication",
   publicationTitle: "What the dashboard exposes",
   publicationBody:
-    "The hourly publisher revalidates recent archives against the current registry, merges compatible observations, limits output, and writes the dashboard snapshot and its observation-only STIX 2.1 projection from the same accepted signal set.",
+    "The publisher projects durable observations under the current registry and review policy into a complete hostname inventory and period metrics. The bounded current shortlist, snapshot v2 and observation-only STIX projection remain separate compatibility views.",
   publicFields: [
     ["Indicator", "A normalized, defanged domain or URL. Credentials, query strings, fragments, and unsafe path data are removed."],
     ["Timeline", "First-seen and last-seen timestamps from accepted observations, normalized to UTC."],
@@ -192,12 +192,20 @@ const englishCopy: MethodologyCopy = {
   historyEyebrow: "History and review",
   historyTitle: "Append observations; infer nothing from absence",
   historyBody:
-    "Each accepted source observation receives a deterministic event ID. Replaying the same archives therefore produces the same event rather than inflating observation counts.",
+    "Durable observation identity combines the canonical hostname, sorted sources and source observation time. Replays merge annotations without increasing observation counts. Legacy event IDs are provenance, not independent observation identities.",
   historyCards: [
     {
-      eyebrow: "Detailed trail",
+      eyebrow: "Primary period totals", title: "One hostname per selected period",
+      paragraphs: [<>The <a href="/data/observed-hostnames-v1.json">complete hostname index</a> and digest-bound <a href="/data/period-metrics-v1.json">period metrics</a> count unique canonical hostnames; subdomains count separately and private-PSL groups are secondary. 30/90/365-day and calendar views use actual source observations. Missing days are not filled between first and last seen. All recorded means the available retained history, not a complete lifetime census.</>],
+    },
+    {
+      eyebrow: "Separate clocks", title: "Observed, recorded and published",
+      paragraphs: ["First/last seen are source observation times. Radar recording and captured verified publication receipts use separate clocks. Receipts cover newly tracked hostnames with known recording times only; legacy hostnames with unknown first-recorded time retain a null first-publication clock. The first captured receipt since activation does not establish the earliest-ever public date. Unknown historical clocks remain null; a sync, import or legacy first-publication marker cannot substitute for them. Recording and publication totals query their own clocks independently of source-time membership."],
+    },
+    {
+      eyebrow: "Legacy compatibility trail",
       title: "Thirty-day event window",
-      paragraphs: ["Daily, defanged NDJSON partitions are append-only during the configured detail window. Older events compact into a bounded signal summary, which is retained for two years by default."],
+      paragraphs: ["Legacy daily, defanged NDJSON events compact after the configured detail window into a bounded signal summary, retained for two years by default. This compatibility expiry does not expire durable observation facts or define the primary period inventory."],
     },
     {
       eyebrow: "Status provenance",
@@ -316,7 +324,7 @@ const lithuanianCopy: MethodologyCopy = {
   publicationId: "skelbimas",
   publicationEyebrow: "Skelbimas",
   publicationTitle: "Ką pateikia suvestinė",
-  publicationBody: "Kas valandą veikiantis skelbėjas iš naujo patikrina naujausius archyvus pagal dabartinį registrą, sujungia suderinamus stebėjimus, apriboja išvestį ir iš to paties priimtų signalų rinkinio įrašo suvestinės momentinę kopiją bei tik stebėjimais pagrįstą STIX 2.1 projekciją.",
+  publicationBody: "Skelbėjas ilgalaikius stebėjimus pagal dabartinį registrą ir peržiūros politiką projektuoja į visą domenų vardų rinkinį bei laikotarpių rodiklius. Ribotas dabartinis trumpasis sąrašas, 2 versijos suvestinė ir tik stebėjimais pagrįsta STIX projekcija lieka atskiri suderinamumo vaizdai.",
   publicFields: [
     ["Indikatorius", "Normalizuotas ir neutralizuotas domenas arba URL. Prisijungimo duomenys, užklausų eilutės, fragmentai ir nesaugūs kelio duomenys pašalinami."],
     ["Laiko seka", "Pirmo ir paskutinio priimto stebėjimo laiko žymos, normalizuotos į UTC."],
@@ -333,9 +341,11 @@ const lithuanianCopy: MethodologyCopy = {
   historyId: "istorija",
   historyEyebrow: "Istorija ir peržiūra",
   historyTitle: "Stebėjimus pridėti, iš nebuvimo nieko nespręsti",
-  historyBody: "Kiekvienas priimtas šaltinio stebėjimas gauna deterministinį įvykio ID. Pakartotinai apdorojant tuos pačius archyvus sukuriamas tas pats įvykis, todėl stebėjimų skaičius dirbtinai nedidėja.",
+  historyBody: "Ilgalaikio stebėjimo tapatybę sudaro kanoninis domeno vardas, surikiuoti šaltiniai ir šaltinio stebėjimo laikas. Pakartotinis apdorojimas sujungia anotacijas nedidindamas stebėjimų skaičiaus. Ankstesni įvykių ID yra kilmės duomenys, o ne atskiros stebėjimų tapatybės.",
   historyCards: [
-    { eyebrow: "Detali seka", title: "30 dienų įvykių langas", paragraphs: ["Kasdienės neutralizuotos NDJSON dalys per nustatytą detalų laikotarpį yra tik papildomos. Senesni įvykiai sutraukiami į ribotą signalo suvestinę, kuri pagal numatytuosius nustatymus saugoma dvejus metus."] },
+    { eyebrow: "Pagrindiniai laikotarpio rodikliai", title: "Vienas domeno vardas laikotarpiu", paragraphs: [<>Viso <a href="/data/observed-hostnames-v1.json">domenų vardų rinkinio rodyklė</a> ir maiša susieti <a href="/data/period-metrics-v1.json">laikotarpių rodikliai</a> skaičiuoja unikalius kanoninius domenų vardus; subdomenai skaičiuojami atskirai, o grupės pagal privatų PSL yra antrinis rodiklis. 30, 90, 365 dienų ir kalendoriniai vaizdai naudoja tikrus šaltinio stebėjimus. Tarp pirmo ir paskutinio stebėjimo trūkstamos dienos neužpildomos. Visa išsaugota istorija reiškia turimą rinkinį, o ne pilną visų laikų apskaitą.</>] },
+    { eyebrow: "Atskiri laikai", title: "Stebėta, įrašyta ir paskelbta", paragraphs: ["Pirmas ir paskutinis stebėjimas yra šaltinio laikas. Įrašymas Radare ir užfiksuoti patikrinto paskelbimo įrašai naudoja atskirus laikus. Paskelbimo įrašai apima tik naujai sekamus domenų vardus, kurių įrašymo laikas žinomas; ankstesnių domenų vardų, kurių pirmo įrašymo laikas nežinomas, pirmo paskelbimo laikas lieka null. Pirmas užfiksuotas įrašas nuo apskaitos pradžios neįrodo pačios ankstyviausios viešos datos. Nežinomi istoriniai laikai lieka null; sinchronizavimas, importas ar ankstesnė pirmos publikacijos žyma jų nepakeičia. Įrašymo ir paskelbimo rodikliai naudoja savo laikus nepriklausomai nuo šaltinio stebėjimų laikotarpio."] },
+    { eyebrow: "Ankstesnio formato suderinamumo seka", title: "30 dienų įvykių langas", paragraphs: ["Ankstesnio formato kasdieniai neutralizuoti NDJSON įvykiai po nustatyto detalaus laikotarpio sutraukiami į ribotą signalo suvestinę, pagal numatytuosius nustatymus saugomą dvejus metus. Šio suderinamumo vaizdo saugojimo pabaiga neištrina ilgalaikių stebėjimo faktų ir nenustato pagrindinio laikotarpio rinkinio."] },
     { eyebrow: "Būsenos kilmė", title: "Tik aiškūs perėjimai", paragraphs: ["CertStream ir URLScan įrašai lieka įtariami. Perėjimas į aktyvią, nepasiekiamą ar suvaldytą būseną registruojamas tik tada, kai ją pateikia palaikomas HECAVEX stebėjimas. Iškritimas už peržiūrimo laikotarpio ribų nesukuria būsenos perėjimo."] },
     { eyebrow: "Pataisymai", title: "Privačios pastabos lieka privačios", paragraphs: ["HECAVEX operatoriaus peržiūrai naudojama tik papildoma duomenų bazė už Git ribų. Viešą procesą pasiekia tik aiškiai eksportuotos neutralizuotos išimtys ir kandidatai; analitiko pastabos bei tapatybės niekada neįtraukiamos."] },
   ],

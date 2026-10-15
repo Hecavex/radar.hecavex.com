@@ -10,8 +10,8 @@ if (!root) throw new Error("Missing Radar history root.");
 const language = document.documentElement.lang === "lt" ? "lt" : "en";
 const bootstrap = root.dataset.historyBootstrap;
 if (bootstrap) {
-  void decodeHistoryBootstrap(bootstrap).then(({ history, renderedAt, totalSignals }) => {
-    hydrateRoot(root, <StrictMode><HistoryApp language={language} initialHistory={history} initialNow={renderedAt} initialTotal={totalSignals} /></StrictMode>);
+  void decodeHistoryBootstrap(bootstrap).then(({ history, renderedAt, totalSignals, periodData }) => {
+    hydrateRoot(root, <StrictMode><HistoryApp language={language} initialHistory={history} initialNow={renderedAt} initialTotal={totalSignals} initialPeriodData={periodData} /></StrictMode>);
     delete root.dataset.historyBootstrap;
     root.dataset.hydrated = "true";
   });

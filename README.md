@@ -4,7 +4,7 @@ Source for [radar.hecavex.com](https://radar.hecavex.com/), a public, read-only 
 
 ## Read and explore
 
-- [Current candidates](https://radar.hecavex.com/) and [Lietuviškai](https://radar.hecavex.com/lt/): screened observations with source and freshness context.
+- [Observed hostnames](https://radar.hecavex.com/) and [Lietuviškai](https://radar.hecavex.com/lt/): unique hostnames over 30/90/365 days, calendar months or all recorded data, with a separate recent shortlist.
 - [History](https://radar.hecavex.com/history/), [Changes](https://radar.hecavex.com/changes/) and [Trends](https://radar.hecavex.com/trends/): retained observations, publication events and coverage-aware series.
 - [Brands](https://radar.hecavex.com/brands/), [dataset](https://radar.hecavex.com/dataset/) and [methodology](https://radar.hecavex.com/methodology/): registry scope, machine-readable releases and analytical limits.
 - [Public documentation](https://radar.hecavex.com/docs/): service usage and data interpretation.
@@ -13,12 +13,15 @@ Source for [radar.hecavex.com](https://radar.hecavex.com/), a public, read-only 
 
 Start with [the code map](docs/CODEMAP.md). `src/` owns the interface and static routes; `hecavex_radar/` owns collection, matching, normalization, review boundaries and publication; `.github/workflows/` owns scheduled operation and Pages; `requirements/` holds hash-locked Python environments.
 
+Current generated data lives on the [radar-data branch](https://github.com/Hecavex/radar.hecavex.com/tree/radar-data), while protected `main` owns trusted executable code and configuration. Generated copies on `main` are historical/CI inputs and may end at an earlier cutover date. The [live release identity](https://radar.hecavex.com/.well-known/hecavex-release.json) binds the served source and data revisions. See [data navigation](data/README.md).
+
 | Task | Authoritative guide |
 | --- | --- |
 | Local preparation, contribution and complete checks | [Change policy](CONTRIBUTING.md) and [Python locks](requirements/README.md) |
 | Trusted source/data revisions, schedules, limits and Pages | [Deployment runbook](docs/DEPLOYMENT.md) |
 | System responsibilities | [Architecture](docs/ARCHITECTURE.md) and [code map](docs/CODEMAP.md) |
 | Snapshot, history, feeds, schemas and integrity | [Public data contract](docs/DATA-CONTRACT.md) and [history](docs/HISTORY.md) |
+| Durable observed hostnames and period totals | [Observation records](docs/OBSERVATIONS.md) and [period metrics](docs/PERIOD-METRICS.md) |
 | Provider provenance and brand matching | [Sources](docs/DATA-SOURCES.md) and [detection](docs/DETECTION.md) |
 | Intentional sanitized analyst export | [Private review workflow](docs/REVIEW-WORKFLOW.md) |
 | Reproducible weekly packages and MISP gates | [Dataset releases](docs/DATASET-RELEASES.md) and [MISP sharing](docs/MISP-SHARING.md) |

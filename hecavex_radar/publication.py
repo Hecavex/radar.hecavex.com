@@ -35,6 +35,22 @@ from .event_feeds import (
 from .idn_evidence import MAXIMUM_IDN_EVIDENCE_BYTES, build_idn_evidence, validate_idn_evidence
 from .listening_coverage import coverage_bounds, intersects
 from .models import RadarSignal, RadarSource, SignalDetail
+from .observation_publication import (
+    INDEX as OBSERVED_INDEX,
+)
+from .observation_publication import (
+    METRICS as PERIOD_METRICS,
+)
+from .observation_publication import (
+    publication_paths as observation_paths,
+)
+from .observation_publication import (
+    validate_period_artifacts,
+    write_observed_hostnames,
+    write_period_artifact,
+)
+from .observation_runtime import public_record_inputs, record_observations
+from .observation_store import grouping_metadata
 from .public_schemas import (
     BRAND_FEEDS_SCHEMA,
     CHANGES_SCHEMA,
@@ -72,6 +88,10 @@ MAXIMUM_MISP_BYTES = 2 * 1024 * 1024
 MAXIMUM_WARNINGLIST_BYTES = 512 * 1024
 PUBLIC_DATA = Path("public/data")
 CHECKSUM_SUFFIX = ".sha256"
+OBSERVATION_SCHEMA_NAMES = frozenset({
+    "observed-hostname-v1.schema.json", "observed-hostname-part-v1.schema.json",
+    "observed-hostnames-index-v1.schema.json", "period-metrics-v1.schema.json",
+})
 RELATION_WINDOW = timedelta(days=7)
 STRONG_EVIDENCE = frozenset({"primary-html-sha256", "certificate-sha256"})
 SUPPORTING_EVIDENCE = frozenset(
@@ -1221,6 +1241,22 @@ def publish_supplemental_artifacts(
         cast(str, cast(dict[str, object], signal)["id"])
         for signal in route_signals
     }
+    # Direct publishers and immutable CI fixtures bootstrap only genuinely retained
+    # legacy facts. Live sync has already captured validated source rows before caps.
+    record_observations(
+        repository, [], [], previous_history=effective_history, as_of=generated_at,
+        registry=registry, review_export=effective_review,
+    )
+    observed_records, observed_coverage, observed_policies = public_record_inputs(
+        repository, as_of=generated_at, registry=registry, review_export=effective_review,
+        available_record_ids=route_signal_ids,
+    )
+    write_observed_hostnames(
+        repository, observed_records, as_of=generated_at, coverage=observed_coverage,
+        policy_versions=observed_policies, grouping=grouping_metadata(),
+    )
+    write_period_artifact(repository)
+    observed_paths = [*observation_paths(repository), repository / PERIOD_METRICS]
     recent_events = read_recent_history_events(repository / "data/history", generated_at)
     event_bundle = build_event_feeds(
         recent_events,
@@ -1337,6 +1373,8 @@ def publish_supplemental_artifacts(
     )
 
     schema_by_path: dict[Path, str | None] = {
+        OBSERVED_INDEX: f"{SCHEMA_BASE}observed-hostnames-index-v1.schema.json",
+        PERIOD_METRICS: f"{SCHEMA_BASE}period-metrics-v1.schema.json",
         PUBLIC_DATA / "radar.json": f"{SCHEMA_BASE}radar-v2.schema.json",
         PUBLIC_DATA / "radar.stix.json": "https://docs.oasis-open.org/cti/stix/v2.1/os/stix-v2.1-os.html",
         PUBLIC_DATA / "radar-reviewed.stix.json": "https://docs.oasis-open.org/cti/stix/v2.1/os/stix-v2.1-os.html",
@@ -1359,6 +1397,10 @@ def publish_supplemental_artifacts(
             f"{SCHEMA_BASE}misp-warninglist-v1.schema.json"
         ),
     }
+    for observed_path in observed_paths:
+        relative = observed_path.relative_to(repository)
+        if relative not in schema_by_path:
+            schema_by_path[relative] = f"{SCHEMA_BASE}observed-hostname-part-v1.schema.json"
     for path in brand_paths:
         relative = path.relative_to(repository)
         schema_by_path[relative] = (
@@ -1397,6 +1439,7 @@ def publish_supplemental_artifacts(
         *brand_paths,
         manifest_path,
         *schema_paths,
+        *observed_paths,
     ]
 
 
@@ -1409,7 +1452,20 @@ def _load_required_json(path: Path, maximum: int) -> object:
 
 def validate_publication(
     repository: Path, validate_stix: bool = False, *, trusted_registry: BrandRegistry | None = None,
+    allow_legacy_observations: bool = False,
 ) -> None:
+    # Only archival backfills may predate durable capture. Partial new cohorts
+    # cannot use this path; live and sync callers retain strict defaults.
+    parts_root = repository / "public/data/observed-hostnames-parts"
+    if parts_root.is_symlink() or parts_root.is_junction():
+        raise ValueError("Observation publication refuses a linked parts directory")
+    has_observations = ((repository / OBSERVED_INDEX).exists() or (repository / PERIOD_METRICS).exists()
+                        or (parts_root.exists() and any(parts_root.iterdir())))
+    legacy_observations = allow_legacy_observations and not has_observations
+    active_schemas = {
+        name: schema for name, schema in PUBLIC_SCHEMAS.items()
+        if not legacy_observations or name not in OBSERVATION_SCHEMA_NAMES
+    }
     if (repository / PUBLIC_DATA / "collection-health.json.sha256").exists():
         raise ValueError("Volatile collection health must not have a release checksum companion.")
     schema_targets = {
@@ -1454,7 +1510,7 @@ def validate_publication(
             raise ValueError("Reviewed MISP manifest metadata or event integrity does not match its event file.")
     elif misp_manifest or misp_event_row["published"] is not False:
         raise ValueError("An empty reviewed MISP event must remain unpublished and absent from its manifest.")
-    for name, expected_schema in PUBLIC_SCHEMAS.items():
+    for name, expected_schema in active_schemas.items():
         Draft202012Validator.check_schema(expected_schema)
         published_schema = _load_required_json(repository / PUBLIC_DATA / "schemas" / name, 128 * 1024)
         if published_schema != expected_schema:
@@ -1572,6 +1628,11 @@ def validate_publication(
             _load_required_json(repository / PUBLIC_DATA / "daily-trends.json", MAXIMUM_TRENDS_BYTES),
         ),
     }
+    if not legacy_observations:
+        observed_index, period_metrics = validate_period_artifacts(
+            repository, expected_as_of=cast(str, successful_sync_at),
+        )
+        generation_artifacts.update({"observed hostname index": observed_index, "period metrics": period_metrics})
     mismatched_generations = [
         label for label, artifact in generation_artifacts.items() if artifact.get("generatedAt") != successful_sync_at
     ]
@@ -1617,8 +1678,17 @@ def validate_publication(
         "/data/misp-warninglists/hecavex-official-domains/list.json": (
             f"{SCHEMA_BASE}misp-warninglist-v1.schema.json"
         ),
-        **{f"/data/schemas/{name}": None for name in PUBLIC_SCHEMAS},
+        **{f"/data/schemas/{name}": None for name in active_schemas},
     }
+    if not legacy_observations:
+        expected_manifest_schemas.update({
+            "/data/observed-hostnames-v1.json": f"{SCHEMA_BASE}observed-hostnames-index-v1.schema.json",
+            "/data/period-metrics-v1.json": f"{SCHEMA_BASE}period-metrics-v1.schema.json",
+        })
+        for observed_path in observation_paths(repository):
+            if observed_path != repository / OBSERVED_INDEX:
+                reference = "/" + observed_path.relative_to(repository / "public").as_posix()
+                expected_manifest_schemas[reference] = f"{SCHEMA_BASE}observed-hostname-part-v1.schema.json"
     brand_directory = cast(
         dict[str, object],
         _load_required_json(

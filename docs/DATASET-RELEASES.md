@@ -4,6 +4,8 @@ The Radar release workflow is designed to publish one ordinary point-in-time dat
 
 ## Release contract
 
+New publications include the complete observed-hostname index/parts and period metrics declared by their feed manifest; unknown legacy clocks and recovered coverage remain explicit. An intentional historical weekly backfill may predate these additions. Only that archival workflow opts into `allow_legacy_observations`: both new top-level artifacts and all cohort parts must be absent. A partial new cohort still fails, and all pre-existing schema, IDN, digest, scope and manifest checks remain active. Live/sync validation always requires the new complete cohort. Backfill never rewrites historical observations to look like a newly captured release.
+
 [`release-weekly-dataset.yml`](../.github/workflows/release-weekly-dataset.yml) runs at 06:29 UTC each Monday and can also be dispatched by a maintainer. A successful run creates the tag `radar-data-YYYY-Www` at the exact selected data-source commit and publishes four assets. The workflow code, Python package, schemas, validators, and dependency locks always come from the triggering current `main` commit; an optional historical source contributes data only.
 
 | Asset | Purpose |

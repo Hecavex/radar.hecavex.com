@@ -117,6 +117,8 @@ jobs:
           test -f dist/data/related-observations.json
           test -f dist/data/idn-matches-v1.json
           test -f dist/data/idn-matches-v1.json.sha256
+          test -f dist/data/observed-hostnames-v1.json
+          test -f dist/data/period-metrics-v1.json
           test -f dist/data/events.json
           test -f dist/data/events.atom.xml
           test -f dist/data/events.rss.xml
@@ -208,7 +210,7 @@ jobs:
     permissions:
       pages: write
       id-token: write
-      contents: read
+      contents: write
     steps:
       - name: Check out the exact deployed verification code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -238,3 +240,43 @@ jobs:
         run: |
           python -m hecavex_radar.live_smoke --expected-revision "${EXPECTED_REVISION}" \
             --expected-data-revision "${EXPECTED_DATA_REVISION}"
+      - name: Set up Python for the verified publication receipt
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - name: Install the pinned publication receipt runtime
+        run: |
+          python -m pip install --disable-pip-version-check --require-hashes -r requirements/automation-runtime-py312.lock
+          python -m pip install --disable-pip-version-check --no-deps --no-build-isolation -e .
+      - name: Preserve the exact verified hostname cohort
+        env:
+          VERIFIED_ROOT: ${{ runner.temp }}/radar-verified-publication
+        run: |
+          python - <<'PY'
+          import os
+          import shutil
+          from pathlib import Path
+          from hecavex_radar.observation_publication import METRICS, publication_paths
+          root = Path.cwd()
+          output = Path(os.environ["VERIFIED_ROOT"])
+          for path in [*publication_paths(root), root / METRICS]:
+              target = output / path.relative_to(root)
+              target.parent.mkdir(parents=True, exist_ok=True)
+              shutil.copyfile(path, target)
+          PY
+      - name: Append verified publication facts to the latest operational data
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SOURCE_SHA: ${{ needs.build.outputs.revision }}
+          VERIFIED_DATA_SHA: ${{ needs.build.outputs.data_revision }}
+        run: |
+          gh auth setup-git
+          python -m hecavex_radar.data_branch materialize --repository . --branch radar-data \
+            --view operational --state-file "${RUNNER_TEMP}/radar-receipt-base.json"
+          python -m hecavex_radar.publication_receipts --repository . \
+            --publication-root "${RUNNER_TEMP}/radar-verified-publication" \
+            --source-revision "${SOURCE_SHA}" --data-revision "${VERIFIED_DATA_SHA}" \
+            --live-base-url https://radar.hecavex.com
+          python -m hecavex_radar.data_branch publish --repository . \
+            --state-file "${RUNNER_TEMP}/radar-receipt-base.json" \
+            --writer publication-receipt --message "data: record verified publication"
