@@ -71,6 +71,7 @@ function decodePunycodeLabel(label: string): string {
     const increment = Math.floor(index / length);
     if (increment > 0x10ffff - codePoint) return label;
     codePoint += increment;
+    if (codePoint >= 0xd800 && codePoint <= 0xdfff) return label;
     index %= length;
     output.splice(index, 0, codePoint);
     index += 1;
@@ -87,38 +88,40 @@ export function domainToUnicode(domain: string): string {
 }
 
 function align(left: string, right: string): ComparisonOperation[] {
-  const rows = left.length + 1;
-  const columns = right.length + 1;
+  const leftCharacters = Array.from(left);
+  const rightCharacters = Array.from(right);
+  const rows = leftCharacters.length + 1;
+  const columns = rightCharacters.length + 1;
   const matrix = Array.from({ length: rows }, () => new Uint16Array(columns));
   for (let row = 0; row < rows; row += 1) matrix[row][0] = row;
   for (let column = 0; column < columns; column += 1) matrix[0][column] = column;
   for (let row = 1; row < rows; row += 1) {
     for (let column = 1; column < columns; column += 1) {
-      const substitution = matrix[row - 1][column - 1] + (left[row - 1] === right[column - 1] ? 0 : 1);
+      const substitution = matrix[row - 1][column - 1] + (leftCharacters[row - 1] === rightCharacters[column - 1] ? 0 : 1);
       matrix[row][column] = Math.min(substitution, matrix[row - 1][column] + 1, matrix[row][column - 1] + 1);
     }
   }
   const operations: ComparisonOperation[] = [];
-  let row = left.length;
-  let column = right.length;
+  let row = leftCharacters.length;
+  let column = rightCharacters.length;
   while (row > 0 || column > 0) {
     if (
       row > 0 &&
       column > 0 &&
-      matrix[row][column] === matrix[row - 1][column - 1] + (left[row - 1] === right[column - 1] ? 0 : 1)
+      matrix[row][column] === matrix[row - 1][column - 1] + (leftCharacters[row - 1] === rightCharacters[column - 1] ? 0 : 1)
     ) {
       operations.push({
-        official: left[row - 1],
-        observed: right[column - 1],
-        kind: left[row - 1] === right[column - 1] ? "same" : "changed",
+        official: leftCharacters[row - 1],
+        observed: rightCharacters[column - 1],
+        kind: leftCharacters[row - 1] === rightCharacters[column - 1] ? "same" : "changed",
       });
       row -= 1;
       column -= 1;
     } else if (column > 0 && matrix[row][column] === matrix[row][column - 1] + 1) {
-      operations.push({ official: "", observed: right[column - 1], kind: "added" });
+      operations.push({ official: "", observed: rightCharacters[column - 1], kind: "added" });
       column -= 1;
     } else {
-      operations.push({ official: left[row - 1], observed: "", kind: "removed" });
+      operations.push({ official: leftCharacters[row - 1], observed: "", kind: "removed" });
       row -= 1;
     }
   }
@@ -132,10 +135,10 @@ function distance(left: string, right: string): number {
 export function compareToOfficialDomain(observedValue: string, brand: BrandEntry | undefined, language: "en" | "lt" = "en"): DomainComparison | null {
   if (!brand?.officialDomains.length) return null;
   const observedDomain = refang(observedValue);
-  const officialDomain = [...brand.officialDomains]
-    .sort((left, right) => distance(left, observedDomain) - distance(right, observedDomain) || left.localeCompare(right))[0];
-  const officialUnicode = domainToUnicode(officialDomain);
   const observedUnicode = domainToUnicode(observedDomain);
+  const officialDomain = [...brand.officialDomains]
+    .sort((left, right) => distance(domainToUnicode(left), observedUnicode) - distance(domainToUnicode(right), observedUnicode) || left.localeCompare(right))[0];
+  const officialUnicode = domainToUnicode(officialDomain);
   const operations = align(officialUnicode, observedUnicode);
   const observations: string[] = [];
   const lt = language === "lt";

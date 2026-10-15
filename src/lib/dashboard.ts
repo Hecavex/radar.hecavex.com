@@ -1,5 +1,6 @@
 import type { EvidenceTier, Filters, RadarSignal, RadarSnapshot, ReasonCode } from "../types.ts";
 import { foldSearchText } from "./searchText.ts";
+import { domainToUnicode } from "./signalComparison.ts";
 
 export const DEFAULT_FILTERS: Filters = {
   query: "",
@@ -134,10 +135,14 @@ export function filterSignals(signals: RadarSignal[], filters: Filters, now = Da
   const query = foldSearchText(filters.query.trim());
   const cutoff = cutoffForRange(filters.timeRange, now);
   return signals.filter((signal) => {
+    const unicodeDomain = domainToUnicode(signal.domain);
     const queryMatches =
       query.length === 0 ||
       includes(signal.url, query) ||
       includes(signal.domain, query) ||
+      includes(signal.domain.replaceAll("[.]", "."), query) ||
+      includes(unicodeDomain, query) ||
+      includes(unicodeDomain.replaceAll(".", "[.]"), query) ||
       includes(signal.brand, query) ||
       includes(signal.country, query) ||
       includes(signal.host, query) ||

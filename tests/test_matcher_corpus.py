@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import tomllib
+from importlib.metadata import version
 from pathlib import Path
 
 from hecavex_radar.brands import (
@@ -20,8 +22,12 @@ def test_versioned_matcher_corpus() -> None:
     registry = load_brand_registry(ROOT / "data" / "brands-lt.json")
 
     assert corpus["schemaVersion"] == 1
-    assert corpus["unicodeProfile"]["uts46"] == UNICODE_SECURITY_PROFILE["uts46"]
-    assert corpus["unicodeProfile"]["uts39"] == UNICODE_SECURITY_PROFILE["uts39"]
+    project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+    pins = dict(dependency.split("==") for dependency in project["project"]["dependencies"])
+    assert corpus["unicodeProfile"]["uts46"] == f"idna-{pins['idna']}/nontransitional/std3"
+    assert corpus["unicodeProfile"]["uts39"] == f"confusable-homoglyphs-{pins['confusable-homoglyphs']}"
+    assert UNICODE_SECURITY_PROFILE["uts46"] == f"idna-{version('idna')}/nontransitional/std3"
+    assert UNICODE_SECURITY_PROFILE["uts39"] == f"confusable-homoglyphs-{version('confusable-homoglyphs')}"
     assert len({case["id"] for case in corpus["cases"]}) == len(corpus["cases"])
     for entry in registry.entries:
         cases = [case for case in corpus["cases"] if case.get("brand") == entry.brand]

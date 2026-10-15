@@ -35,6 +35,7 @@ Radar publishes automated candidates, not automatic maliciousness verdicts. Dash
 - [Complete-set index](https://radar.hecavex.com/data/radar.index.json): Hashed index for the accepted signal shards beyond the dashboard presentation prefix.
 - [Pipeline health](https://radar.hecavex.com/data/pipeline-health.json): Sanitized rolling collection and publication aggregates; contains no candidate domains.
 - [Related observations](https://radar.hecavex.com/data/related-observations.json): Bounded shared-evidence associations. These are not campaign or actor attribution.
+- [Curated IDN match evidence](https://radar.hecavex.com/data/idn-matches-v1.json): Release-bound character substitutions explaining current visual-match candidates; not browser predictions or maliciousness verdicts.
 - [Reviewed MISP manifest](https://radar.hecavex.com/data/misp/manifest.json): Disabled-by-default static-feed discovery for active, unexpired analyst confirmations only. `{}` is the valid output when no review qualifies; do not infer importer acceptance or an empty threat landscape.
 - [Official-domain MISP warning list](https://radar.hecavex.com/data/misp-warninglists/hecavex-official-domains/list.json): Reviewed first-party hostnames for custom warning-list installation. A hit is a false-positive warning, not proof that a page or subdomain is benign.
 - [Release manifest](https://radar.hecavex.com/data/feed-manifest.json): Artifact counts, lengths, source cut-offs, schemas, and SHA-256 digests.

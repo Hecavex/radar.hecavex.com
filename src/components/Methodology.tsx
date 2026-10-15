@@ -156,6 +156,7 @@ const englishCopy: MethodologyCopy = {
     "Match an alias as a complete hyphen-delimited token or complete token sequence within one DNS label. Suspicious context must normally occur in that same label.",
     "Allow narrowly joined forms such as a reviewed suspicious prefix or suffix attached directly to a sufficiently long brand alias.",
     "Apply opt-in restricted Damerau–Levenshtein matching only to reviewed single-word fuzzy aliases, with the same suspicious-context requirement.",
+    "Apply the separate reviewed IDN visual profile only within a matched alias in one label. Its curated substitutions supplement Radar's existing comparison derived from UTS #39 data; generic Punycode or unrelated Unicode decoration is insufficient.",
     "Reject excluded terms, multi-brand evidence, and any declared brand that conflicts with the current hostname match.",
   ],
   scoreTitle: "Scoring threshold",
@@ -215,6 +216,7 @@ const englishCopy: MethodologyCopy = {
   limitationsBody: "Coverage gaps and missing enrichment are expected. Neither a listing nor an absence from Radar is a verdict.",
   limitationCards: [
     { eyebrow: "Interpretation", title: "A lead, not attribution", paragraphs: ["A row indicates possible phishing or impersonation. It does not prove malicious intent, current liveness, ownership, attribution, compromise, or that a person has interacted with the domain."] },
+    { eyebrow: "IDN display", title: "Each application makes its own choice", paragraphs: [<>The <a href="https://haveibeensquatted.com/blog/turning-idn-edge-cases-into-typosquats">3 October 2026 IDN research</a> demonstrated separate browser-display, navigation, registry and email-client decisions. Those dated results do not predict a current application&apos;s behavior. Unicode display, valid TLS and no warning do not establish safety.</>] },
     { eyebrow: "Coverage", title: "Intentionally incomplete", paragraphs: ["Live CertStream is sampled, the checkpointed CT search is provider-indexed and bounded, URLScan exposes only existing public reports, and context is optional. Missing evidence does not make a candidate safe or prevent an independently qualifying CT candidate from appearing."] },
     { eyebrow: "Redirects and cloaking", title: "A redirect is behavior, not clearance", paragraphs: ["A submitted candidate remains the indicator when a public URLScan report redirects elsewhere. Radar records the defanged destination as context, but does not assign that destination's host data or screenshot to the candidate. Different visitors can receive different content or redirects."] },
     { eyebrow: "Browsing safety", title: "Indicators stay defanged", paragraphs: ["The dashboard never links to observed hosts. Evidence controls can contact exactly urlscan.io after a user chooses to open them; report and screenshot URLs are validated before publication."] },
@@ -306,6 +308,7 @@ const lithuanianCopy: MethodologyCopy = {
     "Pavadinimą atitikti kaip visą brūkšneliais atskirtą elementą arba visą elementų seką vienoje DNS žymoje. Įtartinas kontekstas paprastai turi būti toje pačioje žymoje.",
     "Leisti tik siaurai apibrėžtas sujungtas formas, pavyzdžiui, peržiūrėtą įtartiną priešdėlį ar priesagą, tiesiogiai prijungtą prie pakankamai ilgo prekių ženklo pavadinimo.",
     "Pasirinktinį ribotą Damerau–Levenshtein atitikimą taikyti tik peržiūrėtiems vieno žodžio apytikslės atitikties pavadinimams, reikalaujant tokio paties įtartino konteksto.",
+    "Atskirą peržiūrėtą IDN vaizdinio panašumo profilį taikyti tik sutampančiame pavadinime vienoje domeno dalyje. Peržiūrėtos pakaitos papildo esamą Radar palyginimą pagal UTS #39 duomenis; vien Punycode ar nesusijusių Unicode ženklų nepakanka.",
     "Atmesti neįtraukiamus terminus, kelių prekių ženklų įrodymus ir bet kurį deklaruotą prekių ženklą, kuris prieštarauja dabartinei pagrindinio kompiuterio vardo atitikčiai.",
   ],
   scoreTitle: "Balo riba",
@@ -348,6 +351,7 @@ const lithuanianCopy: MethodologyCopy = {
     { eyebrow: "Pataisymai", title: "Taisyklės taikomos iš naujo", paragraphs: ["Sinchronizuojant archyvuoti stebėjimai tikrinami pagal dabartinį registrą, todėl pataisytos prekių ženklų sąsajos ir pridėti oficialūs domenai iš vėlesnių suvestinių pašalina pasenusius klaidingai teigiamus rezultatus."] },
     { eyebrow: "Paslaugos riba", title: "Geriausios pastangos, be SLA", paragraphs: ["HECAVEX prižiūri Radarą kaip geriausiomis pastangomis vykdomą viešą tyrimą. Tai nėra nuolatinė prekių ženklų stebėsena, aukų informavimas, reagavimas į incidentus, turinio šalinimas ar pasiekiamumo bei reagavimo įsipareigojimas."] },
     { eyebrow: "Veikimo įrodymai", title: "Suvestinės būsena turi ribas", paragraphs: ["Šaltinių laiko žymos rodo skelbėjo atliktus archyvų nuskaitymus. Atskirame viešame rinkimo būklės dokumente pateikiamas tik naujausio CertStream bandymo tikras laikas, bendri skaičiai, vėlyvas paleidimas, rezultatas, paskutinė sėkmė ir duomenų naujumas. Kintanti proceso būklė taip pat pateikia neutralizuotas CT paieškos ir DNS bei RDAP vykdymo suvestines; nė vienas iš šių artefaktų neįrodo visiškos pasaulinės aprėpties."] },
+    { eyebrow: "IDN rodymas", title: "Kiekviena programa sprendžia atskirai", paragraphs: [<> <a href="https://haveibeensquatted.com/blog/turning-idn-edge-cases-into-typosquats">2026 m. spalio 3 d. IDN tyrime</a> atskirai nagrinėti naršyklės rodymo, navigacijos, registro ir el. pašto programų sprendimai. Tos datos rezultatai neprognozuoja dabartinės programos elgesio. Unicode forma, galiojantis TLS sertifikatas ir perspėjimo nebuvimas saugumo nepatvirtina.</>] },
   ],
   correctionReport: <><span>Manote, kad įrašas neteisingas? </span><a href="mailto:info@hecavex.com?subject=HECAVEX%20Radar%20klaidingas%20teigiamas%20rezultatas">Praneškite apie klaidingai teigiamą rezultatą</a>.</>,
 };
