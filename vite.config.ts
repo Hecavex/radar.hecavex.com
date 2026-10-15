@@ -8,6 +8,7 @@ import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import type { StaticPageData } from "./src/lib/staticPageBootstrap.ts";
 import { historyPreview } from "./src/lib/historyPreview.ts";
+import { completeSocialMetadata } from "./src/lib/socialMetadata.ts";
 
 const snapshotPath = fileURLToPath(new URL("./public/data/radar.json", import.meta.url));
 const historyPath = fileURLToPath(new URL("./public/data/history.json", import.meta.url));
@@ -110,14 +111,7 @@ function socialMetadataDefaultsPlugin() {
     transformIndexHtml: {
       order: "post" as const,
       handler(html: string) {
-        const tags: string[] = [];
-        if (!html.includes('property="og:image"')) {
-          tags.push('<meta property="og:image" content="https://hecavex.com/assets/img/og/hecavex-default-en.png" />');
-        }
-        if (!html.includes('name="twitter:card"')) {
-          tags.push('<meta name="twitter:card" content="summary_large_image" />');
-        }
-        return tags.length ? html.replace("</head>", `${tags.join("")}\n</head>`) : html;
+        return completeSocialMetadata(html);
       },
     },
   };
@@ -343,6 +337,9 @@ function dynamicRoutesPlugin() {
           .replaceAll("__ALTERNATE_LANG__", options.alternateLanguage)
           .replaceAll("__ENGLISH__", english)
           .replaceAll("__LITHUANIAN__", lithuanian)
+          .replaceAll("__LOCALE__", options.language === "lt" ? "lt_LT" : "en_GB")
+          .replaceAll("__ALTERNATE_LOCALE__", options.language === "lt" ? "en_GB" : "lt_LT")
+          .replaceAll("__IMAGE_ALT__", options.language === "lt" ? "HECAVEX Radar vieši tyrimo signalai" : "HECAVEX Radar public research signals")
           .replaceAll("__FEED_ROOT__", options.feedRoot ?? "")
           .replaceAll("__FEED_TITLE__", escapeHtml(options.feedTitle ?? "HECAVEX Radar brand changes"));
       };

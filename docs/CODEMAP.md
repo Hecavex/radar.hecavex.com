@@ -7,16 +7,18 @@ Use semantic ownership rather than generated pages as the starting point for a c
 | Responsibility | Source | Related checks |
 | --- | --- | --- |
 | Overview, snapshot loading and hydration | `src/main.tsx`, `src/App.tsx`, `src/lt/LtRadarApp.tsx` | Snapshot bootstrap contracts; browser refresh/error/no-JS checks |
-| Candidate view, filters and exports | `src/components/Dashboard.tsx`, `FilterBar.tsx`, `SignalTable.tsx`, `ExportActions.tsx` | `src/lib/dashboard.ts`, `src/lib/export.ts`; filter, clipboard, defanging and mobile tests |
+| Candidate view, filters and exports | `src/components/Dashboard.tsx`, `FilterBar.tsx`, `SignalTable.tsx`, `ExportActions.tsx` | `src/lib/dashboard.ts`, `src/lib/export.ts`; `scripts/verify-site.mjs` checks local query privacy, independent advanced disclosure, URL restoration and reset focus; row actions require 44px width and height |
 | Changes feed and filter recovery | `src/pages/ChangesPage.tsx` | Changes EN/LT filtering, pagination and empty-state browser checks |
 | Discovery trends and coverage presentation | `src/pages/TrendsPage.tsx`, `src/lib/trendFreshness.ts`, `src/lib/staticPageBootstrap.ts` | Trend bounds, cutoff, partial-day, sparse-series, collection-warning and route-scoped bootstrap checks |
 | Static-route dispatcher, associations/tools/dataset | `src/StaticPages.tsx`, `src/staticPage.tsx` | Static-page bootstrap and route checks |
+| Canonical/social metadata and EN/LT record previews | `vite.config.ts` (`socialMetadataDefaultsPlugin`), `src/lib/socialMetadata.ts`, `templates/signal/index.html`, `templates/brand/index.html` | `scripts/social-metadata.test.mjs` checks adversarial encoding, actual canonical/locale, explicit overrides and idempotence; `pnpm verify:site` checks the built pages |
+| Overview Dataset creator and JSON-LD authorization | `index.html` (`Dataset.creator` and CSP hash) | `scripts/social-metadata.test.mjs` parses the source graph; `scripts/verify-site.mjs` checks the built graph and exact CSP digest. Preserve the existing typed/named HECAVEX Organization identity and dataset distributions; see `docs/DATA-CONTRACT.md` |
 | Shared static-page framing and UTC formatting | `src/components/ArtifactPageShell.tsx`, `src/lib/staticPageFormat.ts` | EN/LT route and source geometry assertions |
 | Local indicator analysis and relationships | `src/components/BrowserIocChecker.tsx`, `AssociationExplorer.tsx`, `src/lib/iocCheck.ts`, `relatedObservations.ts` | Local-only/network-boundary and relationship evidence tests |
 | History, signal and brand pages | `src/HistoryApp.tsx`, `SignalPage.tsx`, `BrandActivityPage.tsx`, `BrandScopePage.tsx` | History partitions, retained data and signal-detail checks |
 | Methodology and technical documentation content | `src/components/Methodology.tsx`, `src/components/Documentation.tsx`, `src/lt/LtMethodologyPage.tsx`, `src/lt/LtDocumentation.tsx` | EN/LT documentation and terminology checks |
 | Documentation route wrapper and shared page framing | `src/DocumentationPage.tsx` | Selects EN/LT content with the shared header, main landmark and footer |
-| Portfolio navigation and footer | `src/components/SiteHeader.tsx`, `SiteFooter.tsx` | Exact routes/order, mobile navigation, focus and accessibility checks |
+| Portfolio navigation and footer | `src/components/SiteHeader.tsx`, `SiteFooter.tsx` | Exact routes/order, mobile navigation, focus and accessibility checks; the brand link's accessible name includes its visible EN/LT text |
 
 ## Presentation ownership
 

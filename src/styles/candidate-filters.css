@@ -68,6 +68,13 @@
   border-color: var(--blue);
 }
 
+.search-label {
+  display: block;
+  padding: .85rem 1rem 0;
+  color: var(--muted);
+  font: 600 .8125rem/1.5 var(--sans);
+}
+
 .search-field {
   display: grid;
   grid-template-columns: auto 1fr auto;
@@ -174,13 +181,21 @@
   display: inline-flex;
   align-items: center;
   gap: .4rem;
-  min-height: 2.25rem;
+  min-height: 2.75rem;
   padding: 0 .65rem;
   border: 1px solid var(--line);
   background: var(--surface);
   color: var(--muted);
   font: 600 .75rem var(--mono);
   cursor: pointer;
+}
+
+.filter-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .75rem;
+  padding: .75rem 1rem 0;
 }
 
 .share-filter-button:hover {

@@ -660,6 +660,12 @@ Each array is capped at 2,500 records and the file is capped at 2 MiB. Duplicate
 - Discovery-seed provider names and raw seed records.
 - Internal HECAVEX case history.
 
+## Website Dataset metadata
+
+The English overview's `index.html` declares the current snapshot as a Schema.org `Dataset`. Its `creator` must define the existing HECAVEX identity locally with `@id: https://hecavex.com/#organization`, `@type: Organization`, `name: HECAVEX` and `url: https://hecavex.com/`; an ID-only reference to an entity absent from the page does not supply a typed creator. This follows the site's visible “Public defensive research by HECAVEX” attribution and preserves the portfolio identity without adding legal-company claims. It does not change any observation, collector or data schema.
+
+Keep the declared license, measurement techniques, candidate limits and machine-readable distributions unchanged when correcting identity metadata. A JSON-LD edit also requires updating the exact source CSP hash. `scripts/social-metadata.test.mjs` parses the source graph and verifies authorization; `scripts/verify-site.mjs` verifies the built declaration and its CSP. Google's Dataset creator accepts `Person` or `Organization`; a served correction does not itself prove a later Search Console validation or indexing outcome. See [Google Dataset structured data](https://developers.google.com/search/docs/appearance/structured-data/dataset).
+
 ## Website analytics boundary
 
 Website measurement is separate from the public Radar data contract. When the public `HECAVEX_ANALYTICS_TOKEN` build variable is configured, and unless the browser reports `navigator.doNotTrack === "1"` or `window.doNotTrack === "1"`, each rendered page loads the cookieless Cloudflare Web Analytics beacon from `https://static.cloudflareinsights.com/beacon.min.js`; the beacon sends page-view and browser-performance metrics to `https://cloudflareinsights.com`. Cloudflare documents that the beacon does not set or access cookies or browser storage. Keyless local and CI builds omit the loader; the production Pages gate requires it.

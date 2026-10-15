@@ -152,7 +152,7 @@ export function SiteHeader({ currentPage, language = "en", alternateHref }: {
   return (
     <header className="site-header" data-portfolio-shell="v2">
       <div className="network-bar">
-        <a className="brand" href={researchHref} aria-label="HECAVEX Research">
+        <a className="brand" href={researchHref}>
           <img src="/hecavex-mark.svg" alt="" width="36" height="36" />
           <span className="brand-copy">
             <strong>HECAVEX</strong>

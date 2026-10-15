@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import hashlib
 import json
+import tomllib
 from pathlib import Path
+from urllib.parse import quote
 
 import pytest
 
@@ -230,9 +232,16 @@ def test_repository_locks_produce_a_complete_hybrid_inventory(tmp_path: Path) ->
         for package in packages
         for reference in package.get("externalRefs", [])
     }
-    assert "pkg:pypi/jsonschema@4.26.0" in purls
-    assert "pkg:npm/react@19.2.8" in purls
-    assert "pkg:npm/typescript@6.0.3" in purls
+    # Check the current declared direct dependencies, not a historical version.
+    # Fixed-version parser expectations remain covered by the synthetic fixtures.
+    project = tomllib.loads((repository / "pyproject.toml").read_text(encoding="utf-8"))
+    for requirement in project["project"]["dependencies"]:
+        name, version = requirement.split("==")
+        assert f"pkg:pypi/{name}@{version}" in purls
+    manifest = json.loads((repository / "package.json").read_text(encoding="utf-8"))
+    for group in ("dependencies", "devDependencies"):
+        for name, version in manifest[group].items():
+            assert f"pkg:npm/{quote(name, safe='/')}@{version}" in purls
 
 
 def test_weekly_workflow_uploads_checksums_sbom_and_attests_all_assets() -> None:
