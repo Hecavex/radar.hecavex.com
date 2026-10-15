@@ -1,4 +1,4 @@
-"""Exact source-time period queries over the complete eligible hostname cohort."""
+"""Exact effective-time queries over the complete eligible hostname cohort."""
 
 from __future__ import annotations
 
@@ -9,7 +9,9 @@ from typing import TypedDict, cast
 
 from .observation_store import canonical_hostname, grouping_metadata, validate_timestamp
 
-METRICS_VERSION = "radar-period-metrics-v1"
+METRICS_VERSION = "radar-period-metrics-effective-time-v2"
+TIME_BASIS = "source-observation-or-explicit-collector-fallback"
+TIME_BASES = frozenset({"source-observation-time", TIME_BASIS})
 MAXIMUM_CALENDAR_MONTHS = 1200
 POLICY_KEYS = {"identity", "matching", "review", "metrics", "store"}
 COVERAGE_KEYS = {
@@ -153,9 +155,11 @@ def _window(records: Sequence[Mapping[str, object]], key: str, start: str | None
 
 def build_period_metrics(
     records: Sequence[Mapping[str, object]], *, as_of: str, hostnames_sha256: str,
-    coverage: Mapping[str, object], policy_versions: Mapping[str, str],
+    coverage: Mapping[str, object], policy_versions: Mapping[str, str], time_basis: str = TIME_BASIS,
 ) -> PeriodMetrics:
     validate_timestamp(as_of)
+    if time_basis not in TIME_BASES:
+        raise ValueError("Unsupported observation time basis.")
     if re.fullmatch(r"[a-f0-9]{64}", hostnames_sha256) is None:
         raise ValueError("Period metrics require the exact hostname index SHA-256.")
     if (set(policy_versions) != POLICY_KEYS
@@ -163,6 +167,11 @@ def build_period_metrics(
         raise ValueError("Period metrics require every explicit policy version.")
     normalized_coverage = validate_coverage(coverage)
     normalized_records = _records(records, as_of)
+    if time_basis == "source-observation-time" and any(
+        "collector-time-fallback" in cast(list[str], record.get("sourceTimeProvenances", []))
+        for record in normalized_records
+    ):
+        raise ValueError("Source-only time basis contradicts explicit collector-time fallback.")
     current = datetime.fromisoformat(as_of.replace("Z", "+00:00"))
     end = _iso(current + timedelta(milliseconds=1))
     windows = [_window(normalized_records, f"{days}d", _iso(current - timedelta(days=days)), end,
@@ -186,7 +195,7 @@ def build_period_metrics(
     windows.extend(calendar_windows)
     return {
         "schemaVersion": 1, "dataset": "radar-period-metrics", "generatedAt": as_of, "asOf": as_of,
-        "timeBasis": "source-observation-time", "identityUnit": "canonical-hostname",
+        "timeBasis": time_basis, "identityUnit": "canonical-hostname",
         "population": "public-eligible-recorded-hostnames", "hostnamesSha256": hostnames_sha256,
         "grouping": grouping_metadata(), "coverage": normalized_coverage, "policyVersions": dict(policy_versions),
         "windows": windows,

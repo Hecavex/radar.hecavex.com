@@ -98,7 +98,7 @@ export function Dashboard({ snapshot, now = Date.now(), language = "en", refresh
 
       <section className="activity-strip" aria-label={lt ? "Dabartinio trumpojo sąrašo rodikliai" : "Secondary current shortlist metrics"}>
         <div><Database aria-hidden="true" /><span>{lt ? "Dabartinis trumpasis sąrašas" : "Current shortlist"}</span><strong>{number(summary.total)}</strong></div>
-        <div><Clock3 aria-hidden="true" /><span>{lt ? "Šaltinis pirmą kartą stebėjo per 24 val." : "Source first seen 24h"}</span><strong>{number(newToday)}</strong></div>
+        <div><Clock3 aria-hidden="true" /><span title={lt ? "Naudojamas teikėjo stebėjimo laikas arba deklaruotas rinkiklio laikas. Istorinių laikų kilmė neišsami." : "Uses provider observation time or declared collector fallback. Historical timing provenance is incomplete."}>{lt ? "Pirmas stebėjimas per 24 val." : "Observation first seen 24h"}</span><strong>{number(newToday)}</strong></div>
         <div><Activity aria-hidden="true" /><span>{lt ? "Pakartotinai stebėti per 24 val." : "Reobserved 24h"}</span><strong>{number(reobservedToday)}</strong></div>
         <div><ShieldCheck aria-hidden="true" /><span>{lt ? "Galimi prekių ženklai" : "Potential brands"}</span><strong>{number(summary.brands)}</strong></div>
         <a href={lt ? "/lt/pokyciai/" : "/changes/"}><span>{lt ? "Visas įvykių žurnalas" : "Full event record"}</span><strong>{lt ? "Pokyčiai" : "Changes"} <ArrowRight aria-hidden="true" /></strong></a>

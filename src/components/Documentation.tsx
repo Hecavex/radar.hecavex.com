@@ -233,7 +233,7 @@ export function Documentation({ language = "en" }: { language?: "en" | "lt" }) {
           <article>
             <span>Primary period totals · JSON v1</span>
             <h3>Unique hostnames observed in a period</h3>
-            <p>30/90/365-day, all-recorded and calendar-month totals use actual source observation times and a declared cutoff. Private-PSL domain groups are secondary. All recorded is not a complete lifetime census. Historical recording and captured verified publication receipt clocks remain null when unknown. Receipt clocks cover newly tracked hostnames with known recording times only; legacy hostnames with unknown first-recorded time keep null publication time. The first successfully captured receipt since activation is not an earliest-ever publication date.</p>
+            <p>30/90/365-day, all-recorded and calendar-month totals use provider observation time or declared collector fallback and a declared cutoff. Historical timing provenance is incomplete; older normalized times cannot be assumed to be provider times. Per-hostname origins summarize all recorded observations rather than each first/last timestamp. Private-PSL domain groups are secondary. All recorded is not a complete lifetime census. Historical recording and captured verified publication receipt clocks remain null when unknown. Receipt clocks cover newly tracked hostnames with known recording times only; legacy hostnames with unknown first-recorded time keep null publication time. The first successfully captured receipt since activation is not an earliest-ever publication date.</p>
             <a href="/data/period-metrics-v1.json">Open period metrics</a>
             <a href="/data/schemas/period-metrics-v1.schema.json">Period metrics schema v1</a>
           </article>
@@ -593,7 +593,7 @@ export function Documentation({ language = "en" }: { language?: "en" | "lt" }) {
             <h3>Replay does not inflate counts</h3>
             <p>
               Hostname IDs derive from canonical defanged A-labels. Durable observation identity combines the hostname,
-              sorted sources and source time; replaying score, review or legacy-event annotations cannot create another observation.
+              sorted sources and effective observation time. Replay preserves the original provider time or declared collector fallback; replaying score, review or legacy-event annotations cannot create another observation.
             </p>
           </article>
           <article>

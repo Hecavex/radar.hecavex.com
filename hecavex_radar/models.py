@@ -59,6 +59,19 @@ ReasonCode = Literal[
 ]
 
 
+class SourceTimeEvidence(TypedDict):
+    timestamp: str
+    providerObservedAt: str | None
+    originalProviderTime: str | None
+    originalProviderTimeTruncated: bool
+    originalProviderTimeSha256: str | None
+    collectorTime: str | None
+    source: str
+    boundary: str
+    reason: str | None
+    origin: str
+
+
 @dataclass(slots=True)
 class RawSignal:
     url: str
@@ -76,6 +89,8 @@ class RawSignal:
     reason_codes: Sequence[str] | None = None
     discovered_via: Sequence[str] | None = None
     corroborated_by: Sequence[str] | None = None
+    # Internal capture evidence; never serialized in snapshot v2.
+    source_time_evidence: list[SourceTimeEvidence] | None = None
 
 
 class RadarSource(TypedDict):
@@ -291,3 +306,4 @@ class CertStreamCandidate(TypedDict):
     reasons: list[str]
     collectionMethod: NotRequired[Literal["certstream-live", "ct-search-api"]]
     certificate: NotRequired[CertificateDetail]
+    sourceTimeEvidence: NotRequired[list[SourceTimeEvidence]]

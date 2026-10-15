@@ -1,13 +1,23 @@
 from __future__ import annotations
 
+import hashlib
 import ipaddress
 import math
 import re
 from collections.abc import Sequence
 from datetime import UTC, datetime, timedelta
+from typing import cast
 from urllib.parse import urlsplit
 
-from .models import CorroborationMethod, DiscoveryMethod, EvidenceTier, RadarSignal, RawSignal, SignalStatus
+from .models import (
+    CorroborationMethod,
+    DiscoveryMethod,
+    EvidenceTier,
+    RadarSignal,
+    RawSignal,
+    SignalStatus,
+    SourceTimeEvidence,
+)
 from .provenance import normalize_reason_codes
 from .safety import (
     clean_text,
@@ -52,12 +62,135 @@ def _parse_date(value: str | None, fallback: str) -> str:
         if parsed.tzinfo is None:
             parsed = parsed.replace(tzinfo=UTC)
         return parsed.astimezone(UTC).isoformat(timespec="milliseconds").replace("+00:00", "Z")
-    except ValueError:
+    except (ValueError, OverflowError):
         return fallback
 
 
 def _date_value(value: str) -> datetime:
     return datetime.fromisoformat(value.replace("Z", "+00:00"))
+
+
+def _canonical_time(value: object) -> str:
+    if not isinstance(value, str) or not value or _parse_date(value, "") != value:
+        raise ValueError("Invalid source time provenance timestamp.")
+    return value
+
+
+def validate_source_time_evidence(
+    value: object, *, first_seen: str, last_seen: str, source: str,
+) -> list[SourceTimeEvidence]:
+    """Validate internal archival evidence without promoting legacy clocks."""
+    if not isinstance(value, list) or len(value) != 2:
+        raise ValueError("Source time provenance requires both boundaries.")
+    fields = set(SourceTimeEvidence.__annotations__)
+    result: list[SourceTimeEvidence] = []
+    for item, boundary, timestamp in zip(value, ("firstSeen", "lastSeen"), (first_seen, last_seen), strict=True):
+        if (not isinstance(item, dict) or set(item) != fields or item["boundary"] != boundary
+                or item["source"] != source or item["timestamp"] != timestamp):
+            raise ValueError("Source time provenance boundary mismatch.")
+        _canonical_time(timestamp)
+        original, provider, collector = item["originalProviderTime"], item["providerObservedAt"], item["collectorTime"]
+        if original is not None and (not isinstance(original, str) or len(original) > 256):
+            raise ValueError("Source time provenance original value exceeds its finite budget.")
+        truncated, digest = item["originalProviderTimeTruncated"], item["originalProviderTimeSha256"]
+        if (type(truncated) is not bool
+                or (original is None and (truncated or digest is not None))
+                or (original is not None and (not isinstance(digest, str) or SHA256.fullmatch(digest) is None
+                    or (truncated and len(original) != 256)
+                    or (not truncated and digest != hashlib.sha256(original.encode("utf-8")).hexdigest())))):
+            raise ValueError("Source time provenance original value digest or truncation is invalid.")
+        if provider is not None:
+            _canonical_time(provider)
+        if collector is not None:
+            _canonical_time(collector)
+        origin, reason = item["origin"], item["reason"]
+        reasons = {None, "missing", "invalid", "future", "after-last-seen", "legacy-normalized-unknown"}
+        if (not isinstance(origin, str) or (reason is not None and not isinstance(reason, str))
+                or reason not in reasons):
+            raise ValueError("Invalid source time provenance fallback reason.")
+        if origin == "provider-observation-time":
+            valid = provider == timestamp and collector is not None and reason != "legacy-normalized-unknown"
+            if reason is None:
+                valid = valid and original is not None and _parse_date(original, "") == provider
+        elif origin == "collector-time-fallback":
+            valid = provider is None and collector == timestamp and reason in {
+                "missing", "invalid", "future", "after-last-seen",
+            }
+        elif origin == "legacy-normalized-unknown":
+            valid = provider is None and collector is None and original is None and reason == origin
+        else:
+            valid = False
+        if not valid:
+            raise ValueError("Source time provenance origin contradicts its clocks.")
+        parsed_original = _parse_date(original, "")
+        if ((reason == "missing" and original not in {None, ""})
+                or (reason == "invalid" and (not original or (parsed_original and not truncated)))
+                or (reason == "future" and (not parsed_original or collector is None
+                    or _date_value(parsed_original) <= _date_value(collector) + timedelta(minutes=5)))
+                or (reason == "after-last-seen" and (not parsed_original or parsed_original <= timestamp))):
+            raise ValueError("Source time provenance fallback reason contradicts its original value.")
+        if origin == "provider-observation-time" and reason is not None:
+            last = value[1]
+            if (boundary != "firstSeen" or not isinstance(last, dict) or provider != last.get("providerObservedAt")
+                    or timestamp != last.get("timestamp") or last.get("origin") != "provider-observation-time"):
+                raise ValueError("Source time provenance fallback does not reference the known last provider boundary.")
+        if (provider is not None and collector is not None
+                and _date_value(provider) > _date_value(collector) + timedelta(minutes=5)):
+            raise ValueError("Source time provenance provider clock is implausibly future-dated.")
+        result.append(cast(SourceTimeEvidence, dict(item)))
+    if first_seen > last_seen:
+        raise ValueError("Source time provenance boundaries are reversed.")
+    return result
+
+
+def legacy_source_time_evidence(first_seen: str, last_seen: str, source: str) -> list[SourceTimeEvidence]:
+    return validate_source_time_evidence([
+        {"timestamp": timestamp, "providerObservedAt": None, "originalProviderTime": None, "collectorTime": None,
+         "originalProviderTimeTruncated": False, "originalProviderTimeSha256": None,
+         "source": source, "boundary": boundary, "reason": "legacy-normalized-unknown",
+         "origin": "legacy-normalized-unknown"}
+        for boundary, timestamp in (("firstSeen", first_seen), ("lastSeen", last_seen))
+    ], first_seen=first_seen, last_seen=last_seen, source=source)
+
+
+def resolve_signal_times(raw: RawSignal, now: str) -> list[SourceTimeEvidence]:
+    """Keep the effective compatibility clock and its actual origin separate.
+
+    Missing/invalid provider values use collector time explicitly. A missing or
+    contradictory first boundary may reference a valid last provider boundary.
+    Archived evidence retains the original collector time on every replay.
+    """
+    source = clean_text(raw.source, 80) or ""
+    if raw.source_time_evidence is not None:
+        return validate_source_time_evidence(raw.source_time_evidence,
+                                             first_seen=raw.first_seen or "", last_seen=raw.last_seen or "",
+                                             source=source)
+    _canonical_time(now)
+    limit = _date_value(now) + timedelta(minutes=5)
+
+    def resolve(value: str | None, boundary: str, fallback: SourceTimeEvidence | None = None) -> SourceTimeEvidence:
+        parsed = _parse_date(value, "")
+        reason = ("missing" if not value else "invalid" if not parsed
+                  else "future" if _date_value(parsed) > limit else None)
+        if reason is None and fallback is not None and parsed > fallback["timestamp"]:
+            reason = "after-last-seen"
+        provider = parsed if reason is None else fallback["providerObservedAt"] if fallback is not None else None
+        timestamp = parsed if reason is None else fallback["timestamp"] if fallback is not None else now
+        return {
+            "timestamp": timestamp, "providerObservedAt": provider,
+            "originalProviderTime": value[:256] if value is not None else None,
+            "originalProviderTimeTruncated": value is not None and len(value) > 256,
+            "originalProviderTimeSha256": (
+                hashlib.sha256(value.encode("utf-8")).hexdigest() if value is not None else None
+            ),
+            "collectorTime": now, "source": source, "boundary": boundary, "reason": reason,
+            "origin": "provider-observation-time" if provider is not None else "collector-time-fallback",
+        }
+
+    last = resolve(raw.last_seen, "lastSeen")
+    first = resolve(raw.first_seen, "firstSeen", last)
+    return validate_source_time_evidence([first, last], first_seen=first["timestamp"],
+                                         last_seen=last["timestamp"], source=source)
 
 
 def _map_status(value: str | None) -> SignalStatus:
@@ -178,13 +311,8 @@ def prepare_signal(raw: RawSignal, now: str) -> RadarSignal | None:
     source = clean_text(raw.source, 80)
     if not safe_url or not source:
         return None
-    now_value = _date_value(now)
-    last_seen = _parse_date(raw.last_seen, now)
-    if _date_value(last_seen) > now_value + timedelta(minutes=5):
-        last_seen = now
-    first_seen = _parse_date(raw.first_seen, last_seen)
-    if _date_value(first_seen) > _date_value(last_seen):
-        first_seen = last_seen
+    first_time, last_time = resolve_signal_times(raw, now)
+    first_seen, last_seen = first_time["timestamp"], last_time["timestamp"]
     score = _confidence(raw.confidence)
     reason_codes = normalize_reason_codes(raw.reason_codes)
     signal: RadarSignal = {

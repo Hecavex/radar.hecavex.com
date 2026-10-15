@@ -95,6 +95,8 @@ def validate_records(records: list[dict[str, Any]], as_of: str) -> None:
             raise ValueError("A publication clock requires an earlier tracked recording")
         if row["sources"] != sorted(set(row["sources"])):
             raise ValueError("Observed sources are not canonical")
+        if "sourceTimeProvenances" in row and row["sourceTimeProvenances"] != sorted(row["sourceTimeProvenances"]):
+            raise ValueError("Observation timing provenance is not canonically ordered")
         ids.append(row["id"])
     if ids != sorted(set(ids)):
         raise ValueError("Public hostname IDs are duplicated or not canonically ordered")
@@ -247,11 +249,15 @@ def validate_period_artifacts(repository: Path, *, expected_as_of: str) -> tuple
         raise ValueError("Period metrics exceed the response budget")
     metrics = json.loads(target.read_bytes())
     _validate(METRICS_VALIDATOR, metrics, "Period metrics")
+    if metrics["timeBasis"] == "source-observation-time" and any(
+        "collector-time-fallback" in row.get("sourceTimeProvenances", []) for row in records
+    ):
+        raise ValueError("Explicit collector fallback contradicts the declared source-only time basis")
     if index["asOf"] != expected_as_of or index["grouping"] != grouping_metadata():
         raise ValueError("Observation cohort uses a different cutoff or grouping policy")
     expected = build_period_metrics(
         records, as_of=expected_as_of, hostnames_sha256=hashlib.sha256((repository / INDEX).read_bytes()).hexdigest(),
-        coverage=index["coverage"], policy_versions=index["policyVersions"],
+        coverage=index["coverage"], policy_versions=index["policyVersions"], time_basis=metrics["timeBasis"],
     )
     if metrics != expected:
         raise ValueError("Period metrics do not reconcile with the complete digest-bound hostname cohort")

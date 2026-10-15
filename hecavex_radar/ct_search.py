@@ -15,6 +15,7 @@ import re
 import tempfile
 import unicodedata
 from collections.abc import Callable
+from copy import deepcopy
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from email.utils import parsedate_to_datetime
@@ -28,6 +29,8 @@ from urllib.request import HTTPRedirectHandler, Request, build_opener
 from .brands import BrandRegistry, load_brand_registry, normalize_domain, score_domain
 from .certstream import CertificateEvidence
 from .certstream_archive import CandidateArchiveWriter, candidate_from_match
+from .models import CertStreamCandidate, RawSignal
+from .normalize import resolve_signal_times
 
 API_HOST = "crt.sh"
 API_ROOT = f"https://{API_HOST}/"
@@ -84,9 +87,10 @@ class QueryDefinition:
 @dataclass(frozen=True, slots=True)
 class ParsedRow:
     identifier: int
-    observed_at: datetime
+    observed_at: datetime | None
     domains: tuple[str, ...]
     certificate: CertificateEvidence | None
+    original_provider_time: str | None
 
 
 class _SameHostRedirectHandler(HTTPRedirectHandler):
@@ -135,11 +139,11 @@ def _parse_timestamp(value: object) -> datetime | None:
         candidate = candidate.removesuffix("Z") + "+00:00"
     try:
         parsed = datetime.fromisoformat(candidate)
-    except ValueError:
+        if parsed.tzinfo is None:
+            parsed = parsed.replace(tzinfo=UTC)
+        return parsed.astimezone(UTC)
+    except (ValueError, OverflowError):
         return None
-    if parsed.tzinfo is None:
-        parsed = parsed.replace(tzinfo=UTC)
-    return parsed.astimezone(UTC)
 
 
 def _safe_path(value: str | Path, *, expected_parent: str) -> Path:
@@ -318,11 +322,12 @@ def parse_row(value: object) -> ParsedRow | None:
         not isinstance(raw_identifier, int)
         or isinstance(raw_identifier, bool)
         or not 0 < raw_identifier <= 9_223_372_036_854_775_807
-        or observed_at is None
         or not domains
     ):
         return None
-    return ParsedRow(raw_identifier, observed_at, domains, _certificate(cast(dict[str, Any], value), domains))
+    original = value.get("entry_timestamp")
+    return ParsedRow(raw_identifier, observed_at, domains, _certificate(cast(dict[str, Any], value), domains),
+                     original if isinstance(original, str) else None)
 
 
 def _empty_state(now: datetime) -> dict[str, Any]:
@@ -333,6 +338,7 @@ def _empty_state(now: datetime) -> dict[str, Any]:
         "generatedAt": _timestamp(now),
         "queryCursor": 0,
         "queries": {},
+        "fallbackClocks": {},
         "latestRun": None,
         "providerHealth": {
             "lastSuccessAt": None,
@@ -394,9 +400,16 @@ def _normalize_state(value: object) -> object:
 
 
 def _valid_query_state(value: object) -> bool:
-    if not isinstance(value, dict) or set(value) != {
-        "term", "brand", "lastId", "lastEntryAt", "lastRunAt", "lastOutcome"
+    fields = {"term", "brand", "lastId", "lastEntryAt", "lastRunAt", "lastOutcome"}
+    if not isinstance(value, dict) or frozenset(value) not in {
+        frozenset(fields), frozenset({*fields, "bootstrapThroughId", "bootstrapCutoffAt"}),
     }:
+        return False
+    if "bootstrapThroughId" in value and (
+        type(value["bootstrapThroughId"]) is not int
+        or not 0 <= value["bootstrapThroughId"] <= 9_223_372_036_854_775_807
+        or _parse_timestamp(value["bootstrapCutoffAt"]) is None
+    ):
         return False
     return (
         isinstance(value["term"], str)
@@ -453,10 +466,12 @@ def _valid_provider_health(value: object, generated_at: datetime, latest: object
 
 
 def _valid_state(value: object) -> bool:
-    if not isinstance(value, dict) or set(value) != {
+    fields = {
         "schemaVersion", "dataset", "provider", "generatedAt", "queryCursor", "queries", "latestRun",
         "providerHealth",
-    }:
+    }
+    if (not isinstance(value, dict)
+            or frozenset(value) not in {frozenset(fields), frozenset({*fields, "fallbackClocks"})}):
         return False
     queries = value["queries"]
     latest = value["latestRun"]
@@ -477,6 +492,15 @@ def _valid_state(value: object) -> bool:
         or not _valid_provider_health(value["providerHealth"], generated_at, latest)
     ):
         return False
+    clocks = value.get("fallbackClocks", {})
+    if not isinstance(clocks, dict):
+        return False
+    for identifier, clock in clocks.items():
+        parsed = _parse_timestamp(clock)
+        if (not isinstance(identifier, str) or not 1 <= len(identifier) <= 19 or not identifier.isdecimal()
+                or str(int(identifier)) != identifier or not 0 < int(identifier) <= 9_223_372_036_854_775_807
+                or parsed is None or _timestamp(parsed) != clock or parsed > generated_at):
+            return False
     if latest is None:
         return True
     latest_fields = {
@@ -516,13 +540,18 @@ def read_state(path: str | Path = DEFAULT_STATE_PATH, *, now: datetime | None = 
     return cast(dict[str, Any], value)
 
 
-def write_state(value: dict[str, Any], path: str | Path = DEFAULT_STATE_PATH) -> Path:
+def _state_body(value: dict[str, Any]) -> str:
     if not _valid_state(value):
         raise ValueError("Refusing to write invalid CT search state.")
-    target = _safe_path(path, expected_parent="data/ct-search")
     body = json.dumps(value, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
     if len(body.encode("utf-8")) > MAXIMUM_STATE_BYTES:
         raise ValueError("Refusing to write CT search state larger than 128 KiB.")
+    return body
+
+
+def write_state(value: dict[str, Any], path: str | Path = DEFAULT_STATE_PATH) -> Path:
+    body = _state_body(value)
+    target = _safe_path(path, expected_parent="data/ct-search")
     target.parent.mkdir(parents=True, exist_ok=True)
     temporary: Path | None = None
     try:
@@ -588,6 +617,8 @@ def poll(
     registry = registry or load_brand_registry()
     definitions = build_queries(registry)
     state = read_state(state_path, now=started)
+    previous_state = deepcopy(state)
+    fallback_clocks = cast(dict[str, str], state.setdefault("fallbackClocks", {}))
     provider_health = cast(dict[str, Any], state["providerHealth"])
     next_attempt_at = _parse_timestamp(provider_health["nextAttemptAt"])
     circuit_open = next_attempt_at is not None and started < next_attempt_at
@@ -626,6 +657,7 @@ def poll(
         for offset in range(min(run_query_limit, len(definitions)))
     ]
     writer = CandidateArchiveWriter(archive_root)
+    pending_candidates: list[CertStreamCandidate] = []
     metrics = {
         "queriesAttempted": 0,
         "queriesCompleted": 0,
@@ -649,12 +681,19 @@ def poll(
                 raise CTSearchRequestError("invalid-response", "CT search response is not a JSON array.")
             parsed = sorted(
                 (row for value in payload if (row := parse_row(value)) is not None),
-                key=lambda row: (row.identifier, row.observed_at),
+                key=lambda row: (row.identifier, row.original_provider_time or ""),
             )
+            collected = datetime.now(UTC) if now is None else started
             last_id = cast(int, query_state["lastId"])
-            if last_id == 0:
-                older = [row.identifier for row in parsed if row.observed_at < cutoff]
-                last_id = max(older, default=0)
+            if last_id == 0 and "bootstrapThroughId" not in query_state:
+                query_state.update({"bootstrapThroughId": max((row.identifier for row in parsed), default=0),
+                                    "bootstrapCutoffAt": _timestamp(cutoff)})
+                # Skip only a contiguous old prefix. An undated row interrupts
+                # that prefix and must still be processed, even before an old ID.
+                for row in parsed:
+                    if row.observed_at is None or row.observed_at >= cutoff or str(row.identifier) in fallback_clocks:
+                        break
+                    last_id = row.identifier
             new_rows = [row for row in parsed if row.identifier > last_id]
             maximum_replay = min(
                 replay_row_count,
@@ -667,9 +706,23 @@ def poll(
             pending = [*overlap, *selected_new]
             has_backlog = len(selected_new) < len(new_rows)
             highest_processed = last_id
+            latest_provider = query_state["lastEntryAt"]
             for row in pending:
                 metrics["rowsProcessed"] += 1
                 highest_processed = max(highest_processed, row.identifier)
+                bootstrap_cutoff = _parse_timestamp(query_state.get("bootstrapCutoffAt"))
+                if (bootstrap_cutoff is not None and row.identifier <= query_state["bootstrapThroughId"]
+                        and row.observed_at is not None and row.observed_at < bootstrap_cutoff
+                        and str(row.identifier) not in fallback_clocks):
+                    continue
+                collector_time = fallback_clocks.get(str(row.identifier), _timestamp(collected))
+                evidence = resolve_signal_times(RawSignal(
+                    url=row.domains[0], source="CertStream", first_seen=row.original_provider_time,
+                    last_seen=row.original_provider_time,
+                ), collector_time)
+                observed = cast(datetime, _parse_timestamp(evidence[-1]["timestamp"]))
+                if evidence[-1]["origin"] == "provider-observation-time":
+                    latest_provider = max(latest_provider or "", evidence[-1]["providerObservedAt"] or "")
                 candidates = []
                 for domain in row.domains:
                     metrics["dnsNames"] += 1
@@ -677,28 +730,32 @@ def poll(
                     if match is None:
                         continue
                     metrics["matches"] += 1
+                    if evidence[-1]["origin"] == "collector-time-fallback":
+                        # No eviction: a capacity error must happen before any
+                        # archive append can make a clock impossible to replay.
+                        fallback_clocks.setdefault(str(row.identifier), collector_time)
                     candidates.append(
                         candidate_from_match(
                             match,
-                            row.observed_at,
+                            observed,
                             row.certificate,
                             collection_method="ct-search-api",
+                            source_time_evidence=evidence,
                         )
                     )
                 if candidates:
-                    metrics["newRecords"] += writer.append(candidates)
+                    pending_candidates.extend(candidates)
             query_state.update(
                 {
                     "lastId": highest_processed,
-                    "lastEntryAt": (
-                        _timestamp(selected_new[-1].observed_at)
-                        if selected_new
-                        else query_state["lastEntryAt"]
-                    ),
+                    "lastEntryAt": latest_provider,
                     "lastRunAt": _timestamp(started),
                     "lastOutcome": "partial" if has_backlog else "completed",
                 }
             )
+            if highest_processed >= query_state.get("bootstrapThroughId", highest_processed):
+                query_state.pop("bootstrapThroughId", None)
+                query_state.pop("bootstrapCutoffAt", None)
             metrics["queriesCompleted"] += 1
             if has_backlog:
                 metrics["queriesBacklogged"] += 1
@@ -755,6 +812,9 @@ def poll(
             "degradedSince": None,
             "nextAttemptAt": None,
         }
+    # Reserve the largest possible actual count in the complete prospective
+    # state. The hard state cap is checked before any candidate archive writes.
+    metrics["newRecords"] = len(pending_candidates)
     state.update(
         {
             "generatedAt": _timestamp(ended),
@@ -768,6 +828,15 @@ def poll(
             },
         }
     )
+    _state_body(state)
+    if fallback_clocks != previous_state.get("fallbackClocks", {}):
+        # Persist only original fallback receipts first, with old query cursors.
+        # Archive/state I/O retries therefore retain the clock without skipping
+        # candidates if the later append or final checkpoint fails.
+        clock_checkpoint = {**previous_state, "fallbackClocks": fallback_clocks, "generatedAt": _timestamp(ended)}
+        write_state(clock_checkpoint, state_path)
+    metrics["newRecords"] = writer.append(pending_candidates)
+    state["latestRun"]["newRecords"] = metrics["newRecords"]
     write_state(state, state_path)
     if failure_codes:
         print("CT search controlled failure codes: " + ", ".join(sorted(failure_codes)), flush=True)

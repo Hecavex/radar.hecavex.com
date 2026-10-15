@@ -52,6 +52,7 @@ See `docs/design-interface.md` for typography, layout and interaction invariants
 | Durable source facts and hostname inventory without expiry | `hecavex_radar/observation_store.py` | `tests/test_observation_store.py` |
 | UTC period membership and independent clocks | `hecavex_radar/period_metrics.py` | `tests/test_period_metrics.py` |
 | Live capture before review/display caps; current eligibility | `hecavex_radar/observation_runtime.py`, `sync.py` | `tests/test_observation_runtime.py` |
+| Provider time, explicit collector fallbacks and archive replay | `normalize.py`, `sources.py`, `urlscan.py`, `certstream_archive.py`, `ct_search.py`, `collect_certstream.py` | `tests/test_source_time_provenance.py`, `tests/test_observation_time_contract.py`, provider/archive tests |
 | Public cohort, digest binding and total recomputation | `observation_publication.py`, `observation_schemas.py`, `publication.py` | `tests/test_observation_publication.py`, `test_publication.py` |
 | Trusted Git recovery and reconciliation | `history_recovery.py`, `.github/workflows/sync-radar.yml` | `tests/test_history_recovery.py` |
 | Verified publication capture and narrow writer | `publication_receipts.py`, `data_branch.py`, `.github/workflows/deploy-pages.yml` | `tests/test_publication_receipts.py`, `test_data_branch.py` |

@@ -24,7 +24,7 @@ from .domain_context import public_records as load_domain_context
 from .hecavex import write_hecavex_candidates
 from .history import build_history_events, previous_statuses, read_public_history, update_history
 from .models import RadarSignal, RadarSource, RawSignal, SignalStatus, SourceResult
-from .normalize import merge_signals, prepare_signal
+from .normalize import merge_signals, prepare_signal, resolve_signal_times
 from .observation_runtime import record_observations
 from .provenance import normalize_reason_codes
 from .publication import apply_source_counts, fit_dashboard_signals, publish_supplemental_artifacts
@@ -567,7 +567,10 @@ def synchronize(*, sync_time: datetime | None = None) -> Path:
             raw_signal = scoped_signal
             signal = prepare_signal(raw_signal, now)
             if signal:
-                scoped_observations.append(signal)
+                # Keep collector/provider clock evidence out of snapshot v2.
+                scoped_observations.append(cast(RadarSignal, {
+                    **signal, "_sourceTimeEvidence": resolve_signal_times(raw_signal, now),
+                }))
             if signal and not review_policy.suppresses(signal["domain"], signal["brand"]):
                 prepared.append(signal)
                 accepted_records += 1

@@ -14,7 +14,8 @@ from zoneinfo import ZoneInfo
 
 from .brands import normalize_domain
 from .certstream import CertificateEvidence, certificate_for_domain, public_certificate_text
-from .models import CandidateMatch, CertStreamCandidate
+from .models import CandidateMatch, CertStreamCandidate, RawSignal, SourceTimeEvidence
+from .normalize import legacy_source_time_evidence, resolve_signal_times, validate_source_time_evidence
 from .safety import defang_host, refang, stable_id
 
 VILNIUS = ZoneInfo("Europe/Vilnius")
@@ -45,7 +46,7 @@ CANDIDATE_FIELDS = frozenset(
         "reasons",
     }
 )
-CANDIDATE_OPTIONAL_FIELDS = frozenset({"certificate", "collectionMethod"})
+CANDIDATE_OPTIONAL_FIELDS = frozenset({"certificate", "collectionMethod", "sourceTimeEvidence"})
 CANDIDATE_ID = re.compile(r"^[a-f\d]{20}$")
 ATTEMPT_ID = re.compile(r"^[a-f\d]{24}$")
 UTC_MILLISECONDS = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$")
@@ -80,6 +81,8 @@ def candidate_from_match(
     observed_at: datetime,
     certificate: CertificateEvidence | None = None,
     collection_method: str = "certstream-live",
+    *,
+    source_time_evidence: list[SourceTimeEvidence] | None = None,
 ) -> CertStreamCandidate:
     observed = _aware(observed_at).astimezone(UTC).isoformat(timespec="milliseconds").replace("+00:00", "Z")
     payload: dict[str, object] = {
@@ -98,6 +101,15 @@ def candidate_from_match(
     certificate_detail = certificate_for_domain(certificate, match.registrable_domain)
     if certificate_detail is not None:
         payload["certificate"] = certificate_detail
+    if source_time_evidence is None:
+        source_time_evidence = (
+            resolve_signal_times(RawSignal(url=match.domain, source="CertStream"), observed)
+            if collection_method == "certstream-live"
+            else legacy_source_time_evidence(observed, observed, "CertStream")
+        )
+    payload["sourceTimeEvidence"] = validate_source_time_evidence(
+        source_time_evidence, first_seen=observed, last_seen=observed, source="CertStream",
+    )
     candidate = cast(CertStreamCandidate, payload)
     if not _is_candidate(candidate):
         raise ValueError("Candidate match cannot be represented by the public CertStream schema.")
@@ -297,6 +309,12 @@ def _is_candidate(value: Any, expected_day: str | None = None) -> bool:
         )
     ):
         return False
+    if "sourceTimeEvidence" in value:
+        try:
+            validate_source_time_evidence(value["sourceTimeEvidence"], first_seen=value["observedAt"],
+                                          last_seen=value["observedAt"], source="CertStream")
+        except ValueError:
+            return False
     return expected_day is None or vilnius_date(observed_at) == expected_day
 
 
