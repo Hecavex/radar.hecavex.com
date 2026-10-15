@@ -1012,6 +1012,20 @@ function verifyBuiltHtml() {
         "Radar Dataset metadata omits a declared collection method or machine-readable distribution.",
       );
     }
+    if (["/", "/lt/", "/history/", "/lt/istorija/"].includes(route)) {
+      const periodMetricsPath = join(output, "data", "period-metrics-v1.json");
+      const primary = document.querySelector(".period-overview [data-period-count]");
+      assert(primary, `${route} omits the recorded-hostname primary metric.`);
+      if (existsSync(periodMetricsPath)) {
+        const metrics = JSON.parse(readFileSync(periodMetricsPath, "utf8"));
+        const defaultPeriod = metrics.windows.find((window) => window.key === "30d");
+        assert(primary.getAttribute("data-period-count") === String(defaultPeriod.uniqueHostnames), `${route} uses a preview or shortlist count for the authoritative period headline.`);
+        assert(document.querySelector(".period-overview noscript"), `${route} omits authoritative period totals for readers without JavaScript.`);
+      } else {
+        assert(primary.getAttribute("data-period-count") === "unknown", `${route} turns an unavailable period inventory into zero.`);
+      }
+      assert([...document.querySelectorAll(".period-overview .export-actions button")].every((button) => button.disabled), `${route} enables complete exports before verifying all hostname parts.`);
+    }
     if (route === "/" || route === "/lt/") {
       const signalPrefix = lithuanian ? "/lt/signalai/" : "/signals/";
       const privacyMarker = lithuanian ? "nėra pridedamas prie bendrinamo URL" : "never added to the shared URL";
@@ -2456,7 +2470,7 @@ async function verifyInBrowser(healthOnly = false, researchOnly = false) {
           const heroIntroStyle = heroIntro ? getComputedStyle(heroIntro) : null;
           const radarHeroCopy = document.querySelector(".radar-hero .hero-copy")?.getBoundingClientRect();
           const radarFreshness = document.querySelector(".radar-hero .freshness-card")?.getBoundingClientRect();
-          const metricGrid = document.querySelector(".activity-strip")?.getBoundingClientRect();
+          const metricGrid = document.querySelector(".period-overview")?.getBoundingClientRect();
           const contentToc = document.querySelector(".methodology-toc, .docs-toc");
           const contentTocStyle = contentToc ? getComputedStyle(contentToc) : null;
           const longFormCopy = document.querySelector(".methodology-heading > p, .docs-heading > p");
@@ -2486,6 +2500,7 @@ async function verifyInBrowser(healthOnly = false, researchOnly = false) {
           const hostStyle = longestHost ? getComputedStyle(longestHost) : null;
           const overviewBlocks = [
             ["hero", ".radar-hero"],
+            ["recorded periods", ".period-overview"],
             ["activity", ".activity-strip"],
             ["filters", ".filter-shell"],
             ["table", ".table-panel"],
@@ -2767,7 +2782,7 @@ async function verifyInBrowser(healthOnly = false, researchOnly = false) {
             `${entry.path} controlled source filter did not produce a safe shareable URL.`,
           );
           assert(
-            await page.locator(".export-actions button", { hasText: "CSV" }).isVisible(),
+            await page.locator(".signal-section .export-actions button", { hasText: "CSV" }).isVisible(),
             `${entry.path} defanged CSV export is not visible.`,
           );
           await advanced.locator("summary").click();
@@ -2795,6 +2810,28 @@ async function verifyInBrowser(healthOnly = false, researchOnly = false) {
           assert(!page.url().includes("source="), `${entry.path} reset did not remove controlled URL criteria.`);
           assert(await page.locator("#signal-search").evaluate((element) => element === document.activeElement), `${entry.path} controlled-view reset did not return focus to search.`);
           assert(await advanced.evaluate((element) => element.open), `${entry.path} reset unexpectedly collapsed the reader's open controls.`);
+        }
+
+        if ((width === 390 || width === 1440) && overview && existsSync(join(output, "data", "period-metrics-v1.json"))) {
+          const metrics = JSON.parse(readFileSync(join(output, "data", "period-metrics-v1.json"), "utf8"));
+          const period = page.locator(".period-overview");
+          await page.waitForFunction(() => document.querySelector(".period-overview .export-actions button")?.disabled === false);
+          await period.getByRole("button", { name: entry.path === "/lt/" ? "Visa išsaugota istorija" : "All recorded", exact: true }).click();
+          assert(await period.locator("[data-period-count]").getAttribute("data-period-count") === String(metrics.windows.find((window) => window.key === "all").uniqueHostnames), `${entry.path} does not select the complete recorded hostname period.`);
+          await period.locator('input[type="search"]').fill("private inventory query");
+          assert(!page.url().includes("private") && !page.url().includes("query="), `${entry.path} inventory search leaked into the URL.`);
+          assert(await period.locator("tbody tr").count() === 0, `${entry.path} inventory search does not filter the selected population.`);
+          assert(await period.locator("[data-period-count]").getAttribute("data-period-count") === String(metrics.windows.find((window) => window.key === "all").uniqueHostnames), `${entry.path} search overwrote the authoritative period headline.`);
+          await period.locator('input[type="search"]').fill("");
+          await period.getByRole("button", { name: entry.path === "/lt/" ? "30 dienų" : "30 days", exact: true }).click();
+          await period.evaluate((element) => element.scrollIntoView({ block: "start", behavior: "instant" }));
+          const primaryPlacement = await page.evaluate(() => ({
+            headerBottom: document.querySelector(".site-header").getBoundingClientRect().bottom,
+            titleTop: document.querySelector("#observed-hostnames-title").getBoundingClientRect().top,
+            countTop: document.querySelector(".period-primary").getBoundingClientRect().top,
+          }));
+          assert(primaryPlacement.titleTop >= primaryPlacement.headerBottom && primaryPlacement.countTop >= primaryPlacement.headerBottom,
+            `${entry.path} sticky header covers the anchored primary metric at ${width}px: ${JSON.stringify(primaryPlacement)}`);
         }
 
         if ((width === 390 || width === 1440) && ["/changes/", "/lt/pokyciai/"].includes(entry.path)) {

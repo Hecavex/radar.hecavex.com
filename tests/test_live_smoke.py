@@ -14,6 +14,10 @@ from hecavex_radar.live_smoke import evaluate_publication
 @pytest.fixture(autouse=True)
 def fixed_live_check_clock(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(live_smoke, "_now", lambda: datetime(2026, 8, 30, 12, tzinfo=UTC))
+    elapsed = [0.0]
+    monkeypatch.setattr(live_smoke, "monotonic", lambda: elapsed[0], raising=False)
+    monkeypatch.setattr(live_smoke, "sleep", lambda seconds: elapsed.__setitem__(0, elapsed[0] + seconds),
+                        raising=False)
 
 
 def test_matching_old_live_and_repository_snapshots_are_not_fresh() -> None:
@@ -72,7 +76,8 @@ def test_live_publication_rejects_stale_or_non_atomic_snapshot() -> None:
     live_snapshot = _snapshot("2026-08-30T09:00:00.000Z", "2026-08-30T10:00:00.000Z")
     live = _manifest("2026-08-30T10:00:00.000Z", live_snapshot)
     live["generatedAt"] = "2026-08-30T10:05:00.000Z"
-    findings = evaluate_publication(expected, live, live_snapshot, grace_minutes=30)
+    findings = evaluate_publication(expected, live, live_snapshot, grace_minutes=30,
+                                    now=datetime(2026, 8, 30, 12, 31, tzinfo=UTC))
     assert any("older than" in finding for finding in findings)
     assert any("atomic synchronization timestamp" in finding for finding in findings)
 
@@ -144,10 +149,16 @@ def test_deployment_checks_exact_commit_even_when_snapshot_is_current(
     expected_path = tmp_path / "public" / "data" / "feed-manifest.json"
     expected_path.parent.mkdir(parents=True)
     expected_path.write_text(json.dumps(manifest), encoding="utf-8")
+    timeouts: list[float] = []
+    identity_requests = 0
 
-    def fetch(base_url: str, path: str, maximum_bytes: int, nonce: str) -> tuple[int, bytes]:
+    def fetch(base_url: str, path: str, maximum_bytes: int, nonce: str, **kwargs) -> tuple[int, bytes]:
+        nonlocal identity_requests
         del base_url, maximum_bytes, nonce
+        if "timeout_seconds" in kwargs:
+            timeouts.append(kwargs["timeout_seconds"])
         if path == "/.well-known/hecavex-release.json":
+            identity_requests += 1
             return 200, json.dumps({"schemaVersion": 1, "repository": "Hecavex/radar.hecavex.com",
                                     "revision": "b" * 40}).encode()
         if path == "/data/feed-manifest.json":
@@ -160,3 +171,100 @@ def test_deployment_checks_exact_commit_even_when_snapshot_is_current(
 
     monkeypatch.setattr(live_smoke, "_fetch", fetch)
     assert live_smoke.main(["--repository", str(tmp_path), "--expected-revision", revision]) == 1
+    assert identity_requests == 6
+    assert live_smoke.monotonic() == 60
+    assert timeouts and all(0 < seconds <= 20 for seconds in timeouts)
+
+
+def test_propagation_grace_uses_elapsed_time_since_expected_sync() -> None:
+    expected_snapshot = _snapshot("2026-08-30T11:55:00.000Z")
+    expected = _manifest("2026-08-30T11:55:00.000Z", expected_snapshot)
+    live_snapshot = _snapshot("2026-08-30T11:02:00.000Z")
+    live = _manifest("2026-08-30T11:02:00.000Z", live_snapshot)
+    assert evaluate_publication(expected, live, live_snapshot,
+                                now=datetime(2026, 8, 30, 12, tzinfo=UTC)) == []
+    findings = evaluate_publication(expected, live, live_snapshot,
+                                    now=datetime(2026, 8, 30, 12, 26, tzinfo=UTC))
+    assert any("older than" in finding for finding in findings)
+
+
+@pytest.mark.parametrize("transient", ["identity", "manifest"])
+def test_exact_release_waits_until_identity_and_data_are_coherent(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, transient: str,
+) -> None:
+    now = "2026-08-30T12:00:00.000Z"
+    snapshot = _snapshot(now)
+    manifest = _manifest(now, snapshot)
+    old_snapshot = _snapshot("2026-08-30T11:50:00.000Z")
+    old_manifest = _manifest("2026-08-30T11:50:00.000Z", old_snapshot)
+    path = tmp_path / "public/data/feed-manifest.json"
+    path.parent.mkdir(parents=True)
+    path.write_text(json.dumps(manifest), encoding="utf-8")
+    calls = {"identity": 0}
+
+    def fetch(base_url: str, route: str, maximum_bytes: int, nonce: str, **kwargs) -> tuple[int, bytes]:
+        del base_url, maximum_bytes, nonce, kwargs
+        if route == "/.well-known/hecavex-release.json":
+            calls["identity"] += 1
+            source = "b" * 40 if transient == "identity" and calls["identity"] == 1 else "a" * 40
+            return 200, json.dumps({"schemaVersion": 1, "repository": "Hecavex/radar.hecavex.com",
+                                    "revision": source, "sourceRevision": source, "dataRevision": "c" * 40}).encode()
+        old = transient == "manifest" and calls["identity"] == 1
+        if route == "/data/feed-manifest.json":
+            return 200, json.dumps(old_manifest if old else manifest).encode()
+        if route == "/data/radar.json":
+            return 200, old_snapshot if old else snapshot
+        _, status, language, canonical = next(row for row in live_smoke.ROUTES if row[0] == route)
+        content = 'This route has no signal.' if status == 404 else '<main id="main-content">Radar</main>'
+        return status, f'<html lang="{language}"><link rel="canonical" href="{canonical}">{content}</html>'.encode()
+
+    monkeypatch.setattr(live_smoke, "_fetch", fetch)
+    assert live_smoke.main(["--repository", str(tmp_path), "--expected-revision", "a" * 40,
+                            "--expected-data-revision", "c" * 40]) == 0
+    assert calls["identity"] == 2
+    assert live_smoke.monotonic() == 10
+
+
+def test_corrupt_identity_fails_without_rollout_retry(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    path = tmp_path / "public/data/feed-manifest.json"
+    path.parent.mkdir(parents=True)
+    path.write_text(json.dumps(_manifest("2026-08-30T12:00:00.000Z", _snapshot("2026-08-30T12:00:00.000Z"))),
+                    encoding="utf-8")
+    calls = []
+
+    def fetch(*args, **kwargs):
+        calls.append(args)
+        return 200, b"not-json"
+
+    monkeypatch.setattr(live_smoke, "_fetch", fetch)
+    assert live_smoke.main(["--repository", str(tmp_path), "--expected-revision", "a" * 40]) == 1
+    assert len(calls) == 1
+    assert live_smoke.monotonic() == 0
+
+
+def test_exact_release_cannot_pass_after_retry_deadline(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    now = "2026-08-30T12:00:00.000Z"
+    snapshot = _snapshot(now)
+    manifest = _manifest(now, snapshot)
+    path = tmp_path / "public/data/feed-manifest.json"
+    path.parent.mkdir(parents=True)
+    path.write_text(json.dumps(manifest), encoding="utf-8")
+    elapsed = [0.0]
+    monkeypatch.setattr(live_smoke, "monotonic", lambda: elapsed[0])
+
+    def fetch(base_url: str, route: str, maximum_bytes: int, nonce: str, **kwargs) -> tuple[int, bytes]:
+        del base_url, maximum_bytes, nonce, kwargs
+        if route == "/.well-known/hecavex-release.json":
+            return 200, json.dumps({"schemaVersion": 1, "repository": "Hecavex/radar.hecavex.com",
+                                    "revision": "a" * 40}).encode()
+        if route == "/data/feed-manifest.json":
+            return 200, json.dumps(manifest).encode()
+        if route == "/data/radar.json":
+            elapsed[0] = 61.0
+            return 200, snapshot
+        _, status, language, canonical = next(row for row in live_smoke.ROUTES if row[0] == route)
+        content = 'This route has no signal.' if status == 404 else '<main id="main-content">Radar</main>'
+        return status, f'<html lang="{language}"><link rel="canonical" href="{canonical}">{content}</html>'.encode()
+
+    monkeypatch.setattr(live_smoke, "_fetch", fetch)
+    assert live_smoke.main(["--repository", str(tmp_path), "--expected-revision", "a" * 40]) == 1

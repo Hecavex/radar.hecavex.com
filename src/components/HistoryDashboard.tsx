@@ -1,4 +1,4 @@
-import { Archive, Database, Filter, History, RotateCcw, Search, ShieldCheck } from "lucide-react";
+import { Filter, History, RotateCcw, Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 import { formatDateTime, formatNumber, formatRelativeTime, sentenceCase } from "../lib/format.ts";
@@ -8,12 +8,14 @@ import { signalPath } from "../lib/signalRoutes.ts";
 import { trendFreshness } from "../lib/trendFreshness.ts";
 import type { SiteLanguage } from "./SiteHeader.tsx";
 import { SIGNAL_STATUSES, type RadarHistory, type SignalStatus } from "../types.ts";
+import type { PeriodOverviewData } from "../lib/periodMetrics.ts";
+import { PeriodOverview } from "./PeriodOverview.tsx";
 
 const PAGE_SIZE = 25;
 
 const reasonLabel = (value: string) => value.replaceAll("-", " ");
 
-export function HistoryDashboard({ history, now = Date.now(), totalSignals = history.signals.length, language = "en" }: { history: RadarHistory; now?: number; totalSignals?: number; language?: SiteLanguage }) {
+export function HistoryDashboard({ history, now = Date.now(), totalSignals = history.signals.length, language = "en", initialPeriodData }: { history: RadarHistory; now?: number; totalSignals?: number; language?: SiteLanguage; initialPeriodData?: PeriodOverviewData }) {
   const lt = language === "lt";
   const t = (en: string, translated: string) => lt ? translated : en;
   const relativeTime = lt ? formatRelativeTimeLt : formatRelativeTime;
@@ -38,8 +40,6 @@ export function HistoryDashboard({ history, now = Date.now(), totalSignals = his
   }, [brand, history.signals, query, status]);
   const pages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const visible = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-  const observations = history.signals.reduce((total, signal) => total + signal.observationCount, 0);
-  const transitions = history.signals.reduce((total, signal) => total + signal.statusTransitions.length, 0);
 
   useEffect(() => setPage(1), [brand, query, status]);
   useEffect(() => setPage((current) => Math.min(current, pages)), [pages]);
@@ -53,7 +53,7 @@ export function HistoryDashboard({ history, now = Date.now(), totalSignals = his
           <h1 id="history-title">{t("Candidate history.", "Kandidatų istorija.")}<br /><span>{t("Not a verdict log.", "Tai ne verdiktų žurnalas.")}</span></h1>
           <p className="hero-intro">{t("A bounded record of defanged candidate observations and explicit source-supplied status changes. Disappearance from the recent dashboard never means offline, benign, or mitigated.", "Ribotas neutralizuotų kandidatų stebėjimų ir aiškių šaltinių pateiktų būsenos pokyčių įrašas. Dingimas iš naujausios suvestinės nereiškia, kad svetainė neveikia, yra nekenksminga ar grėsmė pašalinta.")}</p>
           <div className="hero-actions">
-            <a className="hero-action-primary" href="#history-records">{t("Browse history", "Naršyti istoriją")}</a>
+            <a className="hero-action-primary" href="#observed-hostnames">{t("Browse recorded hostnames", "Naršyti išsaugotus domenų vardus")}</a>
             <a href={lt ? "/lt/metodologija/#istorija" : "/methodology/#history"}>{t("Read retention rules", "Duomenų saugojimo taisyklės")}</a>
           </div>
         </div>
@@ -68,17 +68,13 @@ export function HistoryDashboard({ history, now = Date.now(), totalSignals = his
         </div>
       </section>
 
-      <section className="metric-grid history-metrics" aria-label={t("History summary", "Istorijos suvestinė")}>
-        <article className="metric-card"><Database aria-hidden="true" /><span>{t("Historical candidates", "Istoriniai kandidatai")}</span><strong>{formatNumber(history.signals.length)}</strong></article>
-        <article className="metric-card"><Archive aria-hidden="true" /><span>{t("Observations retained", "Išsaugoti stebėjimai")}</span><strong>{formatNumber(observations)}</strong></article>
-        <article className="metric-card"><ShieldCheck aria-hidden="true" /><span>{t("Explicit transitions", "Aiškūs būsenos perėjimai")}</span><strong>{formatNumber(transitions)}</strong></article>
-      </section>
+      <PeriodOverview initialData={initialPeriodData} language={language} />
 
       {partial && <p role="status">{t(`Showing a bounded preview of ${history.signals.length} of ${totalSignals} retained records. Counts and filters describe only the loaded preview.`, `Rodoma ribota ${history.signals.length} įrašų peržiūra iš ${totalSignals}. Skaičiai ir filtrai taikomi tik įkeltai peržiūrai.`)} <a href="/data/history.json">{t("Complete history index", "Visa istorijos rodyklė")}</a>.</p>}
 
       <section className="signal-section" id="history-records" aria-labelledby="history-records-title">
         <div className="section-heading">
-          <div><p className="eyebrow">{t("Historical index", "Istorijos rodyklė")}</p><h2 id="history-records-title">{t("Retained candidate trail", "Išsaugota kandidato eiga")}</h2></div>
+          <div><p className="eyebrow">{t("Legacy compatibility history", "Ankstesnio formato suderinamumo istorija")}</p><h2 id="history-records-title">{t("Retained candidate trail", "Išsaugota kandidato eiga")}</h2><p>{t("This separate, expiring history supports existing readers. Its loaded rows do not define the recorded hostname headline.", "Ši atskira riboto saugojimo istorija palaiko esamus skaitytuvus. Jos įkeltos eilutės nenustato išsaugotų domenų vardų suvestinės.")}</p></div>
           <p><strong>{formatNumber(filtered.length)}</strong> {t("matching", "atitinka")} / {formatNumber(history.signals.length)} {t("retained", "išsaugota")}</p>
         </div>
         <div className="filter-shell">

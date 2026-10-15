@@ -27,13 +27,17 @@ WRITERS = {
     "brand-assets": ("data/urlscan/",),
     "domain-context": ("data/enrichment/domain-context.json", "data/history/context/"),
     "passive-context": ("data/enrichment/passive-context.json", "data/history/context/"),
+    "publication-receipt": ("data/history/publications/",),
     "snapshot": ("public/data/", "data/history/", "data/coverage/brand-coverage.json",
                  "data/review/review-queue.json"),
 }
 # CertStream depends on trusted source configuration and its own attempt/archive state.
 # Other computed writers conservatively invalidate on any operational input change.
-READ_SCOPES = {writer: (("data/certstream/", "public/data/collection-health.json")
-                       if writer == "certstream" else ("data/", "public/data/")) for writer in WRITERS}
+READ_SCOPES: dict[str, tuple[str, ...]] = {
+    writer: (("data/certstream/", "public/data/collection-health.json")
+             if writer == "certstream" else ("data/", "public/data/")) for writer in WRITERS
+}
+READ_SCOPES["publication-receipt"] = ("data/history/publications/",)
 
 
 def allowed(path: str) -> bool:

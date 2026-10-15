@@ -39,11 +39,12 @@ def test_release_validation_imports_trusted_code_then_anchors_external_data(tmp_
         calls.append(("registry", selected))
         return expected_registry
 
-    def validate(selected, *, validate_stix, trusted_registry):
+    def validate(selected, *, validate_stix, trusted_registry, allow_legacy_observations):
         assert selected == source
         assert Path.cwd() == source
         assert validate_stix is True
         assert trusted_registry is expected_registry
+        assert allow_legacy_observations is True
         calls.append(("publication", selected))
 
     monkeypatch.setattr(brands, "load_brand_registry", load_registry)

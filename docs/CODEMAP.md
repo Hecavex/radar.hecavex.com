@@ -6,6 +6,7 @@ Use semantic ownership rather than generated pages as the starting point for a c
 
 | Responsibility | Source | Related checks |
 | --- | --- | --- |
+| Primary period totals, local search and matching JSON/CSV export | `src/components/PeriodOverview.tsx`, `src/lib/periodMetrics.ts` | `scripts/period-metrics.test.mjs`; complete cohort, failure/preview and no-JS browser checks |
 | Overview, snapshot loading and hydration | `src/main.tsx`, `src/App.tsx`, `src/lt/LtRadarApp.tsx` | Snapshot bootstrap contracts; browser refresh/error/no-JS checks |
 | Candidate view, filters and exports | `src/components/Dashboard.tsx`, `FilterBar.tsx`, `SignalTable.tsx`, `ExportActions.tsx` | `src/lib/dashboard.ts`, `src/lib/export.ts`; `scripts/verify-site.mjs` checks local query privacy, independent advanced disclosure, URL restoration and reset focus; row actions require 44px width and height |
 | Changes feed and filter recovery | `src/pages/ChangesPage.tsx` | Changes EN/LT filtering, pagination and empty-state browser checks |
@@ -45,6 +46,16 @@ Import order is intentional: existing later refinements follow earlier component
 See `docs/design-interface.md` for typography, layout and interaction invariants. Avoid adding route-specific shell widths or parallel copies of the same shared styles.
 
 ## Data and trust boundaries
+
+| Responsibility | Source | Focused checks |
+| --- | --- | --- |
+| Durable source facts and hostname inventory without expiry | `hecavex_radar/observation_store.py` | `tests/test_observation_store.py` |
+| UTC period membership and independent clocks | `hecavex_radar/period_metrics.py` | `tests/test_period_metrics.py` |
+| Live capture before review/display caps; current eligibility | `hecavex_radar/observation_runtime.py`, `sync.py` | `tests/test_observation_runtime.py` |
+| Public cohort, digest binding and total recomputation | `observation_publication.py`, `observation_schemas.py`, `publication.py` | `tests/test_observation_publication.py`, `test_publication.py` |
+| Trusted Git recovery and reconciliation | `history_recovery.py`, `.github/workflows/sync-radar.yml` | `tests/test_history_recovery.py` |
+| Verified publication capture and narrow writer | `publication_receipts.py`, `data_branch.py`, `.github/workflows/deploy-pages.yml` | `tests/test_publication_receipts.py`, `test_data_branch.py` |
+| Operational headroom and exact-release convergence | `capacity.py`, `live_smoke.py` | `tests/test_capacity.py`, `test_live_smoke.py` |
 
 - `src/lib/*Bootstrap.ts` validates data embedded during static rendering and fetched for hydration. `src/types.ts` describes frontend records; validation remains required at boundaries.
 - `vite.config.ts` and `src/prerender.ts` produce static HTML, safe bootstrap payloads and deployment manifests. They must retain usable no-JavaScript output and content-security policy compatibility.

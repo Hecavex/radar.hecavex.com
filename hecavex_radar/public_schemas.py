@@ -4,6 +4,13 @@ from __future__ import annotations
 
 from typing import Final
 
+from .observation_schemas import (
+    HOSTNAME_INDEX_SCHEMA,
+    HOSTNAME_PART_SCHEMA,
+    HOSTNAME_RECORD_SCHEMA,
+    PERIOD_METRICS_SCHEMA,
+)
+
 SCHEMA_BASE: Final = "https://radar.hecavex.com/data/schemas/"
 COVERAGE_BOUNDS = {
     "type": "object", "additionalProperties": False,
@@ -1345,6 +1352,10 @@ IDN_MATCHES_SCHEMA: Final[dict[str, object]] = {
 
 
 PUBLIC_SCHEMAS: Final[dict[str, dict[str, object]]] = {
+    "observed-hostname-v1.schema.json": HOSTNAME_RECORD_SCHEMA,
+    "observed-hostname-part-v1.schema.json": HOSTNAME_PART_SCHEMA,
+    "observed-hostnames-index-v1.schema.json": HOSTNAME_INDEX_SCHEMA,
+    "period-metrics-v1.schema.json": PERIOD_METRICS_SCHEMA,
     "radar-v2.schema.json": RADAR_SCHEMA,
     "radar-shard-v1.schema.json": RADAR_SHARD_SCHEMA,
     "radar-index-v1.schema.json": RADAR_INDEX_SCHEMA,

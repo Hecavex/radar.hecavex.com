@@ -120,3 +120,43 @@ def test_offline_fixture_refuses_dns_even_if_publisher_swallows_error(
     monkeypatch.setattr(offline_publication, "validate_publication", lambda *args, **kwargs: None)
     with pytest.raises(AssertionError, match="attempted a network connection"):
         regenerate_fixture(tmp_path)
+
+
+def test_explicit_archival_validation_accepts_legacy_without_weakening_live_gate(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import hashlib
+
+    repository = Path(__file__).resolve().parents[1]
+    registry = load_brand_registry(repository / "data/brands-lt.json")
+    shutil.copytree(repository / "public/data", tmp_path / "public/data")
+    public = tmp_path / "public/data"
+    new_schemas = {
+        "observed-hostname-v1.schema.json", "observed-hostname-part-v1.schema.json",
+        "observed-hostnames-index-v1.schema.json", "period-metrics-v1.schema.json",
+    }
+    def new_path(value: str) -> bool:
+        return (value.startswith("/data/observed-hostnames") or value == "/data/period-metrics-v1.json"
+                or value.removeprefix("/data/schemas/") in new_schemas)
+    manifest_path = public / "feed-manifest.json"
+    manifest = json.loads(manifest_path.read_bytes())
+    for artifact in manifest["artifacts"]:
+        if new_path(artifact["path"]):
+            target = tmp_path / "public" / artifact["path"].removeprefix("/")
+            target.unlink()
+            target.with_name(target.name + ".sha256").unlink()
+    manifest["artifacts"] = [row for row in manifest["artifacts"] if not new_path(row["path"])]
+    manifest["counts"]["artifacts"] = len(manifest["artifacts"])
+    body = (json.dumps(manifest) + "\n").encode()
+    manifest_path.write_bytes(body)
+    manifest_path.with_name("feed-manifest.json.sha256").write_text(
+        hashlib.sha256(body).hexdigest() + "  feed-manifest.json\n", encoding="ascii",
+    )
+    monkeypatch.chdir(tmp_path)
+    with pytest.raises(ValueError):
+        validate_publication(tmp_path, trusted_registry=registry)
+    validate_publication(tmp_path, trusted_registry=registry, allow_legacy_observations=True)
+    # Opt-in cannot disguise an incomplete new cohort as an old archive.
+    (public / "observed-hostnames-v1.json").write_text("{}", encoding="utf-8")
+    with pytest.raises(ValueError):
+        validate_publication(tmp_path, trusted_registry=registry, allow_legacy_observations=True)

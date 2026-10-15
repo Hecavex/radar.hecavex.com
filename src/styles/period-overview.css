@@ -1,0 +1,40 @@
+.period-overview { margin: 2rem 0 3.5rem; padding: 1.75rem 0; border-bottom: 1px solid var(--line); scroll-margin-top: calc(var(--header-offset) + 1rem); }
+.period-heading { display: flex; align-items: center; justify-content: space-between; gap: 2rem; }
+.period-heading h2 { margin: 0; color: var(--text); font-size: clamp(1.35rem, 2.7vw, 2rem); font-weight: 550; line-height: 1.1; letter-spacing: -.03em; }
+.period-heading p:not(.eyebrow) { max-width: 66ch; color: var(--muted); line-height: 1.65; }
+.period-primary { min-width: 9rem; text-align: right; }
+.period-primary strong { display: block; color: var(--ember-bright); font: 500 clamp(3.5rem, 7vw, 5rem)/1 var(--mono); letter-spacing: -.06em; }
+.period-primary span { display: block; margin-top: .5rem; color: var(--text-soft); font-size: .85rem; }
+.period-controls { display: flex; flex-wrap: wrap; align-items: end; gap: .5rem; margin: 1.25rem 0; }
+.period-controls button, .period-custom button, .period-load-notice button { min-height: 2.75rem; padding: .55rem .85rem; border: 1px solid var(--line-strong); background: var(--surface); color: var(--text-soft); font: 600 .8rem var(--sans); cursor: pointer; }
+.period-controls button[aria-pressed="true"] { border-color: var(--ember); background: var(--ember); color: var(--ink); }
+.period-controls label { display: grid; gap: .4rem; margin-left: auto; color: var(--muted); font-size: .75rem; }
+.period-controls select, .period-search input, .period-custom input { min-height: 2.75rem; padding: .55rem .7rem; border: 1px solid var(--line-strong); background: var(--surface); color: var(--text); font: .8rem var(--sans); }
+.period-cutoff { margin: 1rem 0; color: var(--muted); font-size: .8rem; line-height: 1.85; overflow-wrap: anywhere; }
+.period-cutoff time { display: inline; }
+.period-secondary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; margin: 1.5rem 0; padding: 1.2rem 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.period-secondary dt { color: var(--muted); font-size: .75rem; line-height: 1.5; }
+.period-secondary dd { margin: .45rem 0 0; color: var(--text-soft); font: 500 1.1rem var(--mono); }
+.period-coverage { max-width: 92ch; margin: 1.2rem 0; color: var(--muted); font-size: .8rem; line-height: 1.7; overflow-wrap: anywhere; }
+.period-coverage summary, .period-custom summary { min-height: 2.75rem; color: var(--text-soft); cursor: pointer; line-height: 2.75rem; }
+.period-list-heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 2rem; }
+.period-list-heading h3 { font-size: 1rem; font-weight: 550; }
+.period-search { display: grid; flex: 1; gap: .45rem; min-width: 10rem; color: var(--muted); font-size: .8rem; }
+.period-search input { width: 100%; }
+.period-custom { padding: 0 .5rem; color: var(--muted); font-size: .8rem; }
+.period-custom label { display: inline-grid; gap: .4rem; margin: 0 .65rem .65rem 0; }
+.period-list-status, .period-load-notice { color: var(--muted); font-size: .8rem; line-height: 1.7; }
+.period-table { min-width: 65rem; }
+.period-table th { text-align: left; }
+.period-table td { vertical-align: top; }
+.period-table time { display: inline; white-space: nowrap; font-size: .75rem; }
+.period-overview button:disabled, .period-overview input:disabled, .period-overview select:disabled { opacity: .5; cursor: not-allowed; }
+@media (max-width: 700px) {
+  .period-heading { align-items: start; gap: 1rem; }
+  .period-primary { min-width: 6rem; }
+  .period-primary strong { font-size: 3rem; }
+  .period-secondary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .period-controls label { width: 100%; margin: .5rem 0 0; }
+  .period-list-heading { flex-wrap: wrap; }
+}
+@media (max-width: 420px) { .period-heading { display: block; } .period-primary { text-align: left; margin-top: 1rem; } }

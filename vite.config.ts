@@ -9,6 +9,7 @@ import { defineConfig } from "vite";
 import type { StaticPageData } from "./src/lib/staticPageBootstrap.ts";
 import { historyPreview } from "./src/lib/historyPreview.ts";
 import { completeSocialMetadata } from "./src/lib/socialMetadata.ts";
+import { loadPeriodOverview, periodOverviewPreview, type PeriodOverviewData } from "./src/lib/periodMetrics.ts";
 
 const snapshotPath = fileURLToPath(new URL("./public/data/radar.json", import.meta.url));
 const historyPath = fileURLToPath(new URL("./public/data/history.json", import.meta.url));
@@ -123,6 +124,17 @@ function socialMetadataDefaultsPlugin() {
 }
 
 function staticPagePlugin() {
+  let periodOverview: Promise<PeriodOverviewData> | undefined;
+  const observedPreview = () => {
+    if (!existsSync(resolve(publicDataPath, "period-metrics-v1.json")) && !existsSync(resolve(publicDataPath, "observed-hostnames-v1.json"))) return undefined;
+    periodOverview ??= loadPeriodOverview({ readBytes: async (path, maximumBytes) => {
+      const target = resolve(publicDataPath, "..", `.${path}`);
+      const withinData = relative(publicDataPath, target);
+      if (withinData.startsWith("..") || isAbsolute(withinData) || statSync(target).size > maximumBytes) throw new Error("Invalid observation artifact path or byte limit.");
+      return new Uint8Array(readFileSync(target));
+    } }).then((data) => periodOverviewPreview(data));
+    return periodOverview;
+  };
   return {
     name: "hecavex-static-pages",
     transformIndexHtml: {
@@ -203,6 +215,7 @@ function staticPagePlugin() {
           new Uint8Array(readFileSync(resolve(dirname(historyPath), path))));
         const renderedAt = Date.parse(page === "history" ? history.generatedAt : snapshot.lastSuccessfulSyncAt);
         const embeddedHistory = historyPreview(history);
+        const periodData = page === "radar" || page === "history" || lithuanianPage === "radar" ? await observedPreview() : undefined;
         let staticMarkup: string;
         let bootstrap = "";
         if (staticPage) {
@@ -224,16 +237,16 @@ function staticPagePlugin() {
           const encodedData = staticPage.kind === "trends" ? encodeTrendsPageBootstrap(data) : encodeStaticPageBootstrap(data);
           bootstrap = ` data-page-kind="${staticPage.kind}" data-page-language="${staticPage.language}" data-page-bootstrap="${encodedData}"`;
         } else if (lithuanianPage) {
-          staticMarkup = renderLithuanianPage(lithuanianPage, snapshot, renderedAt);
+          staticMarkup = renderLithuanianPage(lithuanianPage, snapshot, renderedAt, periodData);
           bootstrap = lithuanianPage === "radar"
-            ? ` data-radar-bootstrap="${encodeSnapshotBootstrap(snapshot, renderedAt)}"`
+            ? ` data-radar-bootstrap="${encodeSnapshotBootstrap(snapshot, renderedAt, periodData)}"`
             : "";
         } else {
-          staticMarkup = renderPrerenderedPage(page!, snapshot, renderedAt, embeddedHistory, pageLanguage, history.signals.length);
+          staticMarkup = renderPrerenderedPage(page!, snapshot, renderedAt, embeddedHistory, pageLanguage, history.signals.length, periodData);
           bootstrap = page === "radar"
-            ? ` data-radar-bootstrap="${encodeSnapshotBootstrap(snapshot, renderedAt)}"`
+            ? ` data-radar-bootstrap="${encodeSnapshotBootstrap(snapshot, renderedAt, periodData)}"`
             : page === "history"
-              ? ` data-history-bootstrap="${encodeHistoryBootstrap(embeddedHistory, renderedAt, history.signals.length)}"`
+              ? ` data-history-bootstrap="${encodeHistoryBootstrap(embeddedHistory, renderedAt, history.signals.length, periodData)}"`
               : page === "documentation"
                 ? ` data-page-language="${pageLanguage}"`
               : "";

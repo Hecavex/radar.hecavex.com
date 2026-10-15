@@ -2,9 +2,11 @@ import { AlertTriangle, RadioTower } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { Dashboard } from "./components/Dashboard.tsx";
+import { PeriodOverview } from "./components/PeriodOverview.tsx";
 import { SiteFooter } from "./components/SiteFooter.tsx";
 import { SiteHeader } from "./components/SiteHeader.tsx";
 import { loadSnapshot } from "./lib/data.ts";
+import type { PeriodOverviewData } from "./lib/periodMetrics.ts";
 import { useCurrentTime } from "./lib/useCurrentTime.ts";
 import type { RadarSnapshot } from "./types.ts";
 
@@ -14,7 +16,7 @@ type LoadState =
   | { status: "error"; message: string };
 
 export function App(
-  { initialSnapshot, initialNow }: { initialSnapshot?: RadarSnapshot; initialNow?: number } = {},
+  { initialSnapshot, initialNow, initialPeriodData }: { initialSnapshot?: RadarSnapshot; initialNow?: number; initialPeriodData?: PeriodOverviewData } = {},
 ) {
   const now = useCurrentTime(initialNow);
   const [state, setState] = useState<LoadState>(
@@ -47,6 +49,7 @@ export function App(
           <RadioTower className="state-icon pulse" aria-hidden="true" />
           <p className="eyebrow">Receiving snapshot</p>
           <h1>Loading recent signals</h1>
+          <PeriodOverview initialData={initialPeriodData} />
         </main>
       )}
 
@@ -59,11 +62,12 @@ export function App(
           <button className="button" type="button" onClick={() => window.location.reload()}>
             Try again
           </button>
+          <PeriodOverview initialData={initialPeriodData} />
         </main>
       )}
 
       {state.status === "ready" && (
-        <Dashboard snapshot={state.snapshot} now={now} refreshError={state.refreshError} />
+        <Dashboard snapshot={state.snapshot} now={now} refreshError={state.refreshError} initialPeriodData={initialPeriodData} />
       )}
 
       <SiteFooter />

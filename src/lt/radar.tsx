@@ -9,8 +9,8 @@ const root = document.getElementById("root");
 if (!root) throw new Error("Nerastas Radaro programos elementas.");
 const bootstrap = root.dataset.radarBootstrap;
 if (bootstrap) {
-  const { snapshot, renderedAt } = decodeSnapshotBootstrap(bootstrap);
-  hydrateRoot(root, <StrictMode><LtRadarApp initialSnapshot={snapshot} initialNow={renderedAt} /></StrictMode>);
+  const { snapshot, renderedAt, periodData } = decodeSnapshotBootstrap(bootstrap);
+  hydrateRoot(root, <StrictMode><LtRadarApp initialSnapshot={snapshot} initialNow={renderedAt} initialPeriodData={periodData} /></StrictMode>);
   delete root.dataset.radarBootstrap;
   root.dataset.hydrated = "true";
 } else {

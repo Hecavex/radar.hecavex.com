@@ -124,6 +124,9 @@ def test_readers_keep_trusted_tooling_separate_from_selected_data() -> None:
     assert "publication_source_revision" in deploy
     assert "--expected-data-revision" in deploy
     assert deploy.index("Refuse source or data superseded") < deploy.index("- name: Deploy to GitHub Pages")
+    assert deploy.index("Verify live release identity") < deploy.index("--live-base-url https://radar.hecavex.com")
+    assert "--writer publication-receipt" in deploy
+    assert 'ref: ${{ needs.build.outputs.revision }}' in deploy
     for name in ("deploy-pages", "release-weekly-dataset", "verify-live-publication",
                  "evaluate-pipeline-health", "analyst-provider-check"):
         value = (workflows / f"{name}.yml").read_text(encoding="utf-8")

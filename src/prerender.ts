@@ -17,6 +17,7 @@ import { LtMethodologyPage } from "./lt/LtMethodologyPage.tsx";
 import { LtRadarApp } from "./lt/LtRadarApp.tsx";
 import type { SiteLanguage } from "./components/SiteHeader.tsx";
 import type { RadarHistory, RadarSnapshot } from "./types.ts";
+import type { PeriodOverviewData } from "./lib/periodMetrics.ts";
 
 export type PrerenderPage = "radar" | "history" | "brands" | "methodology" | "documentation" | "not-found";
 
@@ -27,23 +28,26 @@ export function renderPrerenderedPage(
   history?: RadarHistory,
   language: SiteLanguage = "en",
   historyTotal?: number,
+  periodData?: PeriodOverviewData,
 ): string {
   if (page === "radar") {
     return renderToString(
-      createElement<{ initialSnapshot?: RadarSnapshot; initialNow?: number }>(App, {
+      createElement<{ initialSnapshot?: RadarSnapshot; initialNow?: number; initialPeriodData?: PeriodOverviewData }>(App, {
         initialSnapshot: snapshot,
         initialNow: renderedAt,
+        initialPeriodData: periodData,
       }),
     );
   }
   if (page === "history") {
     if (!history) throw new Error("History data is required to prerender the history page.");
     return renderToString(
-      createElement<{ initialHistory?: RadarHistory; initialNow?: number; initialTotal?: number; language?: SiteLanguage }>(HistoryApp, {
+      createElement<{ initialHistory?: RadarHistory; initialNow?: number; initialTotal?: number; language?: SiteLanguage; initialPeriodData?: PeriodOverviewData }>(HistoryApp, {
         initialHistory: history,
         initialNow: renderedAt,
         initialTotal: historyTotal,
         language,
+        initialPeriodData: periodData,
       }),
     );
   }
@@ -75,9 +79,10 @@ export function renderLithuanianPage(
   page: "radar" | "brands" | "methodology",
   snapshot: RadarSnapshot,
   renderedAt: number,
+  periodData?: PeriodOverviewData,
 ): string {
   if (page === "radar") {
-    return renderToString(createElement<{ initialSnapshot?: RadarSnapshot; initialNow?: number }>(LtRadarApp, { initialSnapshot: snapshot, initialNow: renderedAt }));
+    return renderToString(createElement<{ initialSnapshot?: RadarSnapshot; initialNow?: number; initialPeriodData?: PeriodOverviewData }>(LtRadarApp, { initialSnapshot: snapshot, initialNow: renderedAt, initialPeriodData: periodData }));
   }
   if (page === "brands") return renderToString(createElement(LtBrandRegistryPage));
   return renderToString(createElement(LtMethodologyPage));

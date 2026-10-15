@@ -10,11 +10,11 @@ if (!root) throw new Error("Missing Radar application root.");
 
 const bootstrap = root.dataset.radarBootstrap;
 if (bootstrap) {
-  const { snapshot, renderedAt } = decodeSnapshotBootstrap(bootstrap);
+  const { snapshot, renderedAt, periodData } = decodeSnapshotBootstrap(bootstrap);
   hydrateRoot(
     root,
     <StrictMode>
-      <App initialSnapshot={snapshot} initialNow={renderedAt} />
+      <App initialSnapshot={snapshot} initialNow={renderedAt} initialPeriodData={periodData} />
     </StrictMode>,
   );
   delete root.dataset.radarBootstrap;

@@ -17,7 +17,7 @@ permissions:
 jobs:
   check:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -55,8 +55,8 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: Verify project
         run: pnpm check
-      - name: Report durable-store headroom
-        run: python -m hecavex_radar.capacity
+      - name: Report isolated CI fixture headroom
+        run: python -m hecavex_radar.capacity --scope ci-fixture
       - name: Build the supported retained-history growth fixture
         if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
         run: pnpm verify:growth

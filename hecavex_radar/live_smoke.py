@@ -11,6 +11,7 @@ import urllib.parse
 import urllib.request
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
+from time import monotonic, sleep
 from typing import Any
 
 MAXIMUM_JSON_BYTES = 2 * 1024 * 1024
@@ -18,6 +19,9 @@ MAXIMUM_HTML_BYTES = 512 * 1024
 DEFAULT_BASE_URL = "https://radar.hecavex.com"
 DEFAULT_GRACE_MINUTES = 30
 DEFAULT_MAXIMUM_SYNC_AGE_MINUTES = 180
+IDENTITY_FINDING = "The live release identity does not match the deployed build revision."
+EXACT_PUBLICATION_FINDING = "The live manifest does not match the exact selected publication timestamp."
+ROLLOUT_FINDINGS = frozenset({IDENTITY_FINDING, EXACT_PUBLICATION_FINDING})
 ROUTES = (
     ("/", 200, "en", "https://radar.hecavex.com/"),
     ("/lt/", 200, "lt", "https://radar.hecavex.com/lt/"),
@@ -115,7 +119,8 @@ def evaluate_publication(
         findings.append("The checked-in feed manifest has an invalid generatedAt timestamp.")
     if live_generated is None:
         findings.append("The live feed manifest has an invalid generatedAt timestamp.")
-    elif expected_generated is not None and expected_generated - live_generated > timedelta(minutes=grace_minutes):
+    elif (expected_generated is not None and live_generated < expected_generated
+          and (now or _now()).astimezone(UTC) - expected_generated > timedelta(minutes=grace_minutes)):
         findings.append(
             "The live publication is older than the checked-in manifest beyond the propagation grace period: "
             f"live={live_manifest.get('generatedAt')}, expected={expected_manifest.get('generatedAt')}."
@@ -153,7 +158,8 @@ def evaluate_publication(
     return findings
 
 
-def _fetch(base_url: str, path: str, maximum_bytes: int, nonce: str) -> tuple[int, bytes]:
+def _fetch(base_url: str, path: str, maximum_bytes: int, nonce: str, *,
+           timeout_seconds: float = 20) -> tuple[int, bytes]:
     target = urllib.parse.urljoin(base_url.rstrip("/") + "/", path.lstrip("/"))
     separator = "&" if "?" in target else "?"
     request = urllib.request.Request(  # noqa: S310 - fixed operator-controlled HTTPS origin
@@ -165,7 +171,7 @@ def _fetch(base_url: str, path: str, maximum_bytes: int, nonce: str) -> tuple[in
         },
     )
     try:
-        response = urllib.request.urlopen(request, timeout=20)  # noqa: S310 - fixed operator-controlled HTTPS origin
+        response = urllib.request.urlopen(request, timeout=timeout_seconds)  # noqa: S310 - fixed operator-controlled HTTPS origin
     except urllib.error.HTTPError as error:
         response = error
     with response:
@@ -197,6 +203,47 @@ def matches_release_identity(release: dict[str, object], source: str, data: str 
     return data is None or (release.get("sourceRevision") == source and release.get("dataRevision") == data)
 
 
+def _publication_check(
+    options: argparse.Namespace, expected_manifest: dict[str, Any], nonce: str, deadline: float,
+) -> list[str]:
+    def request(path: str, maximum: int, suffix: str) -> tuple[int, bytes]:
+        if options.expected_revision and options.rollout_wait_seconds:
+            remaining = deadline - monotonic()
+            if remaining <= 0:
+                raise TimeoutError("Exact-release rollout verification exhausted its time budget.")
+            return _fetch(options.base_url, path, maximum, suffix, timeout_seconds=min(20, remaining))
+        return _fetch(options.base_url, path, maximum, suffix)
+
+    findings: list[str] = []
+    if options.expected_revision:
+        status, body = request("/.well-known/hecavex-release.json", 4096, nonce)
+        release = _json_object(body, "Live release identity")
+        if status != 200 or not matches_release_identity(
+            release, options.expected_revision, options.expected_data_revision,
+        ):
+            findings.append(IDENTITY_FINDING)
+    for attempt in range(2):
+        publication_nonce = f"{nonce}-publication-{attempt + 1}"
+        manifest_status, manifest_payload = request("/data/feed-manifest.json", MAXIMUM_JSON_BYTES, publication_nonce)
+        snapshot_status, snapshot_payload = request("/data/radar.json", MAXIMUM_JSON_BYTES, publication_nonce)
+        current: list[str] = []
+        if manifest_status != 200:
+            current.append(f"Live feed manifest returned HTTP {manifest_status}, expected 200.")
+        if snapshot_status != 200:
+            current.append(f"Live radar snapshot returned HTTP {snapshot_status}, expected 200.")
+        if manifest_status == 200 and snapshot_status == 200:
+            live_manifest = _json_object(manifest_payload, "Live feed manifest")
+            current.extend(evaluate_publication(expected_manifest, live_manifest, snapshot_payload,
+                                               grace_minutes=options.grace_minutes, now=_now()))
+            if options.expected_revision and live_manifest.get("generatedAt") != expected_manifest.get("generatedAt"):
+                current.append(EXACT_PUBLICATION_FINDING)
+        if attempt == 0 and _needs_pair_retry(current):
+            continue
+        findings.extend(current)
+        break
+    return findings
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Verify the deployed Radar publication against selected data blobs.")
     parser.add_argument("--repository", type=Path, default=Path.cwd())
@@ -204,10 +251,16 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--grace-minutes", type=int, default=DEFAULT_GRACE_MINUTES)
     parser.add_argument("--expected-revision", help="Require this exact deployed build commit after Pages rollout.")
     parser.add_argument("--expected-data-revision", help="Require this exact selected data commit after Pages rollout.")
+    parser.add_argument("--rollout-wait-seconds", type=int, default=60,
+                        help="Exact-release retry budget, 0-60 seconds; zero disables retries.")
+    parser.add_argument("--rollout-retry-seconds", type=int, default=10)
     parser.add_argument("--json-output", type=Path)
     parser.add_argument("--markdown-output", type=Path)
     parser.add_argument("--github-output", type=Path)
     options = parser.parse_args(argv)
+    if not 0 <= options.rollout_wait_seconds <= 60 or not 1 <= options.rollout_retry_seconds <= 60:
+        print("Rollout verification requires a 0-60 second budget and 1-60 second interval.", file=sys.stderr)
+        return 2
     if not options.base_url.startswith("https://") or not 5 <= options.grace_minutes <= 180:
         print("Live smoke check requires an HTTPS base URL and a 5-180 minute grace period.", file=sys.stderr)
         return 2
@@ -229,41 +282,21 @@ def main(argv: list[str] | None = None) -> int:
     nonce = os.environ.get("GITHUB_RUN_ID", "local")
     findings: list[str] = []
     route_results: list[dict[str, object]] = []
+    rollout_attempts = 0
+    deadline = monotonic() + options.rollout_wait_seconds
     try:
-        if options.expected_revision:
-            status, body = _fetch(options.base_url, "/.well-known/hecavex-release.json", 4096, nonce)
-            release = _json_object(body, "Live release identity")
-            if status != 200 or not matches_release_identity(
-                release, options.expected_revision, options.expected_data_revision,
-            ):
-                findings.append("The live release identity does not match the deployed build revision.")
-        for attempt in range(2):
-            publication_nonce = f"{nonce}-publication-{attempt + 1}"
-            manifest_status, live_manifest_payload = _fetch(
-                options.base_url, "/data/feed-manifest.json", MAXIMUM_JSON_BYTES, publication_nonce
-            )
-            snapshot_status, live_snapshot_payload = _fetch(
-                options.base_url, "/data/radar.json", MAXIMUM_JSON_BYTES, publication_nonce
-            )
-            publication_findings: list[str] = []
-            if manifest_status != 200:
-                publication_findings.append(f"Live feed manifest returned HTTP {manifest_status}, expected 200.")
-            if snapshot_status != 200:
-                publication_findings.append(f"Live radar snapshot returned HTTP {snapshot_status}, expected 200.")
-            if manifest_status == 200 and snapshot_status == 200:
-                live_manifest = _json_object(live_manifest_payload, "Live feed manifest")
-                publication_findings.extend(
-                    evaluate_publication(
-                        expected_manifest,
-                        live_manifest,
-                        live_snapshot_payload,
-                        grace_minutes=options.grace_minutes,
-                        now=_now(),
-                    )
-                )
-            if attempt == 0 and _needs_pair_retry(publication_findings):
-                continue
-            findings.extend(publication_findings)
+        while True:
+            rollout_attempts += 1
+            current = _publication_check(options, expected_manifest, f"{nonce}-rollout-{rollout_attempts}", deadline)
+            remaining = deadline - monotonic()
+            if options.expected_revision and options.rollout_wait_seconds and remaining < 0:
+                raise TimeoutError("Exact-release rollout verification exhausted its time budget.")
+            retryable = bool(current) and all(item in ROLLOUT_FINDINGS for item in current)
+            if options.expected_revision and retryable and remaining > 0 and options.rollout_wait_seconds:
+                sleep(min(options.rollout_retry_seconds, remaining))
+                if monotonic() < deadline:
+                    continue
+            findings.extend(current)
             break
         for route, expected_status, expected_language, expected_canonical in ROUTES:
             status, payload = _fetch(options.base_url, route, MAXIMUM_HTML_BYTES, nonce)
@@ -286,7 +319,7 @@ def main(argv: list[str] | None = None) -> int:
     except (OSError, TimeoutError, ValueError, urllib.error.URLError) as error:
         findings.append(f"Live publication request failed safely: {error}")
 
-    checked_at = datetime.now(UTC).isoformat(timespec="milliseconds").replace("+00:00", "Z")
+    checked_at = _now().isoformat(timespec="milliseconds").replace("+00:00", "Z")
     report: dict[str, object] = {
         "schemaVersion": 1,
         "dataset": "radar-live-smoke",
@@ -295,6 +328,7 @@ def main(argv: list[str] | None = None) -> int:
         "healthy": not findings,
         "findings": findings,
         "routes": route_results,
+        "rolloutAttempts": rollout_attempts,
     }
     if options.json_output is not None:
         _write_report(options.json_output, report)
@@ -308,7 +342,7 @@ def main(argv: list[str] | None = None) -> int:
     if findings:
         markdown.extend(["## Findings", "", *(f"- {finding}" for finding in findings), ""])
     else:
-        markdown.extend(["The live publication matches or is newer than the checked-in atomic snapshot.", ""])
+        markdown.extend(["The live publication passed the configured identity, integrity and freshness checks.", ""])
     if options.markdown_output is not None:
         options.markdown_output.parent.mkdir(parents=True, exist_ok=True)
         options.markdown_output.write_text("\n".join(markdown), encoding="utf-8")
