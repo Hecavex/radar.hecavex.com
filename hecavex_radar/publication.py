@@ -23,7 +23,7 @@ import tldextract
 from jsonschema import Draft202012Validator  # type: ignore[import-untyped]
 
 from . import __version__
-from .brands import load_brand_registry
+from .brands import BrandRegistry, load_brand_registry
 from .daily_trends import build_daily_trends_from_repository
 from .event_feeds import (
     MAXIMUM_EVENT_JSON_BYTES,
@@ -1407,7 +1407,9 @@ def _load_required_json(path: Path, maximum: int) -> object:
     return value
 
 
-def validate_publication(repository: Path, validate_stix: bool = False) -> None:
+def validate_publication(
+    repository: Path, validate_stix: bool = False, *, trusted_registry: BrandRegistry | None = None,
+) -> None:
     if (repository / PUBLIC_DATA / "collection-health.json.sha256").exists():
         raise ValueError("Volatile collection health must not have a release checksum companion.")
     schema_targets = {
@@ -1500,7 +1502,8 @@ def validate_publication(repository: Path, validate_stix: bool = False) -> None:
     dashboard_signals = cast(list[dict[str, object]], snapshot["signals"])
     idn_artifact = _load_required_json(repository / PUBLIC_DATA / "idn-matches-v1.json", MAXIMUM_IDN_EVIDENCE_BYTES)
     validate_idn_evidence(
-        idn_artifact, complete_signals, load_brand_registry(repository / "data" / "brands-lt.json"),
+        idn_artifact, complete_signals,
+        trusted_registry if trusted_registry is not None else load_brand_registry(repository / "data/brands-lt.json"),
         cast(str, snapshot["lastSuccessfulSyncAt"]), _sha256(repository / PUBLIC_DATA / "radar.json"),
     )
     dashboard_ids = [cast(str, signal["id"]) for signal in dashboard_signals]

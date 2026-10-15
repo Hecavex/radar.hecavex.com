@@ -1,16 +1,23 @@
 """Exercise the real publisher, not merely schema-check already published fixtures."""
 
 import json
+import os
 import shutil
 import socket
+import subprocess
+import sys
+import textwrap
 from contextlib import suppress
 from pathlib import Path
 
 import pytest
 
 from hecavex_radar import offline_publication
+from hecavex_radar.brands import load_brand_registry, score_domain
+from hecavex_radar.certstream_archive import CandidateArchiveWriter, candidate_from_match
 from hecavex_radar.offline_publication import regenerate_fixture
 from hecavex_radar.public_schemas import PUBLIC_SCHEMAS
+from hecavex_radar.publication import validate_publication
 
 
 def test_fixture_cutoff_uses_observations_not_expiry_and_does_not_advance_on_rebuild(tmp_path: Path) -> None:
@@ -54,6 +61,49 @@ def test_source_ci_regenerates_only_its_fixture_before_publication_validation() 
     deploy = (repository / ".github/workflows/deploy-pages.yml").read_text(encoding="utf-8")
     assert "offline_publication" not in deploy
     assert "--publication-source" in deploy
+
+
+def test_code_free_weekly_export_uses_trusted_registry_and_rejects_tampered_idn_trace(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    repository = Path(__file__).resolve().parents[1]
+    trusted_registry = load_brand_registry(repository / "data/brands-lt.json")
+    source, extracted = tmp_path / "source", tmp_path / "extracted"
+    for relative in ("data", "public/data"):
+        shutil.copytree(repository / relative, source / relative)
+    monkeypatch.chdir(source)
+    cutoff = offline_publication.fixture_cutoff(source)
+    match = score_domain("weekly-luminөr.example", trusted_registry)
+    assert match is not None
+    CandidateArchiveWriter("data/certstream").append([candidate_from_match(match, cutoff)])
+    regenerate_fixture(source, cutoff=cutoff)
+    idn_path = Path("public/data/idn-matches-v1.json")
+    artifact = json.loads(idn_path.read_bytes())
+    assert any(record["domain"] == match.domain.replace(".", "[.]") for record in artifact["records"])
+    for relative in ("public/data", "data/history/context"):
+        if (source / relative).exists():
+            shutil.copytree(source / relative, extracted / relative)
+    monkeypatch.chdir(extracted)
+    assert not (extracted / "hecavex_radar").exists()
+    assert not (extracted / "data/brands-lt.json").exists()
+    with pytest.raises(FileNotFoundError, match="brands-lt.json"):
+        validate_publication(extracted)
+    workflow = (repository / ".github/workflows/release-weekly-dataset.yml").read_text(encoding="utf-8")
+    validation_code = textwrap.dedent(workflow.split("python - <<'PY'", 1)[1].split("\n          PY", 1)[0])
+    subprocess.run(  # noqa: S603 - reviewed local workflow snippet and fixed interpreter; no shell or network.
+        [sys.executable, "-c", validation_code], cwd=extracted, check=True, capture_output=True, text=True,
+        env={**os.environ, "GITHUB_WORKSPACE": str(repository), "RELEASE_SOURCE_ROOT": str(extracted),
+             "PYTHONPATH": str(repository)},
+    )
+    # A registry-like file from an untrusted export cannot override source policy.
+    untrusted_registry = extracted / "data/brands-lt.json"
+    untrusted_registry.parent.mkdir(parents=True, exist_ok=True)
+    untrusted_registry.write_text("untrusted registry must not be parsed", encoding="utf-8")
+    validate_publication(extracted, trusted_registry=trusted_registry)
+    artifact["records"][0]["substitutions"][0]["position"] = 62
+    idn_path.write_text(json.dumps(artifact), encoding="utf-8")
+    with pytest.raises(ValueError, match="IDN evidence differs"):
+        validate_publication(extracted, trusted_registry=trusted_registry)
 
 
 def test_offline_fixture_refuses_dns_even_if_publisher_swallows_error(
