@@ -301,12 +301,16 @@ jobs:
           import os
           from pathlib import Path
 
+          from hecavex_radar.brands import load_brand_registry
           from hecavex_radar.publication import validate_publication
 
-          # Import only the installed trusted toolchain before changing the
-          # data-relative validation boundary. The extracted root has no code.
+          # Resolve policy from trusted source before entering the code-free
+          # data root. An extracted publication never supplies brand rules.
+          trusted_registry = load_brand_registry(Path(os.environ["GITHUB_WORKSPACE"]) / "data/brands-lt.json")
           os.chdir(os.environ["RELEASE_SOURCE_ROOT"])
-          validate_publication(Path(os.environ["RELEASE_SOURCE_ROOT"]), validate_stix=True)
+          validate_publication(
+              Path(os.environ["RELEASE_SOURCE_ROOT"]), validate_stix=True, trusted_registry=trusted_registry,
+          )
           PY
 
       - name: Build a reproducible dataset package
