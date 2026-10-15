@@ -885,7 +885,11 @@ function verifyBuiltHtml() {
     assert(document.querySelector('link[rel="apple-touch-icon"][href="/apple-touch-icon.png"]'), `${route} has no shared Apple touch icon.`);
     assert(document.querySelector('link[rel="manifest"][href="/site.webmanifest"]'), `${route} has no origin web manifest.`);
     assert(document.querySelector('header.site-header[data-portfolio-shell="v2"]'), `${route} has no shared portfolio shell marker.`);
-    assert(document.querySelector(`.brand[href="https://hecavex.com/${lithuanian ? "lt" : "en"}/"]`), `${route} does not link the HECAVEX brand to the correct Research edition.`);
+    const brandLink = document.querySelector(`.brand[href="https://hecavex.com/${lithuanian ? "lt" : "en"}/"]`);
+    assert(brandLink, `${route} does not link the HECAVEX brand to the correct Research edition.`);
+    const visibleBrandName = brandLink.textContent.replace(/\s+/g, " ").trim();
+    const accessibleBrandName = (brandLink.getAttribute("aria-label") ?? visibleBrandName).replace(/\s+/g, " ").trim();
+    assert(visibleBrandName && accessibleBrandName.includes(visibleBrandName), `${route} brand link accessible name omits its visible text.`);
     assert(document.querySelector(`.product-identity[href="${lithuanian ? "/lt/" : "/"}"]`), `${route} does not link the Radar identity to its localized overview.`);
     assert(
       document.querySelectorAll(".portfolio-navigation a").length === portfolioNavigation.length,
