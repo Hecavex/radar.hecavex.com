@@ -18,7 +18,7 @@ Use semantic ownership rather than generated pages as the starting point for a c
 | History, signal and brand pages | `src/HistoryApp.tsx`, `SignalPage.tsx`, `BrandActivityPage.tsx`, `BrandScopePage.tsx` | History partitions, retained data and signal-detail checks |
 | Methodology and technical documentation content | `src/components/Methodology.tsx`, `src/components/Documentation.tsx`, `src/lt/LtMethodologyPage.tsx`, `src/lt/LtDocumentation.tsx` | EN/LT documentation and terminology checks |
 | Documentation route wrapper and shared page framing | `src/DocumentationPage.tsx` | Selects EN/LT content with the shared header, main landmark and footer |
-| Portfolio navigation and footer | `src/components/SiteHeader.tsx`, `SiteFooter.tsx` | Exact routes/order, mobile navigation, focus and accessibility checks |
+| Portfolio navigation and footer | `src/components/SiteHeader.tsx`, `SiteFooter.tsx` | Exact routes/order, mobile navigation, focus and accessibility checks; the brand link's accessible name includes its visible EN/LT text |
 
 ## Presentation ownership
 
