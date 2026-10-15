@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-stratified-review-queue",
-  "generatedAt": "2026-10-15T13:25:00.756Z",
+  "generatedAt": "2026-10-15T15:25:00.880Z",
   "samplingPolicy": {
     "method": "deterministic-greedy-facet-balancing",
     "dimensions": [
@@ -15,7 +15,7 @@
     "excludes": "Signals already represented by a sanitized assessment.",
     "semantics": "A review worklist, not a random or prevalence-representative sample."
   },
-  "availableUnreviewed": 123,
+  "availableUnreviewed": 124,
   "selected": 24,
   "candidates": [
     {
@@ -320,6 +320,23 @@
       "firstSeen": "2026-10-11T19:43:55.420Z"
     },
     {
+      "signalId": "608c8bdbab6dbe077545",
+      "recordPath": "/signals/608c8bdbab6dbe077545/",
+      "brand": "SEB",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "85-94",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-exact-token",
+        "multiple-hyphens",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-10-15T15:21:14.106Z"
+    },
+    {
       "signalId": "515893ceabe1b12e4e3d",
       "recordPath": "/signals/515893ceabe1b12e4e3d/",
       "brand": "Swedbank",
@@ -353,6 +370,24 @@
       "firstSeen": "2026-10-15T07:03:45.695Z"
     },
     {
+      "signalId": "407f79d989776bc658ee",
+      "recordPath": "/signals/407f79d989776bc658ee/",
+      "brand": "Tele2",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "95-100",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-joined-affix",
+        "punycode",
+        "suspicious-context",
+        "unicode-confusable"
+      ],
+      "candidateAgeBand": "2-7d",
+      "firstSeen": "2026-10-11T04:46:23.470Z"
+    },
+    {
       "signalId": "68c6f2a92ecab91f3960",
       "recordPath": "/signals/68c6f2a92ecab91f3960/",
       "brand": "Swedbank",
@@ -384,41 +419,6 @@
       ],
       "candidateAgeBand": "0-1d",
       "firstSeen": "2026-10-14T21:53:16.434Z"
-    },
-    {
-      "signalId": "407f79d989776bc658ee",
-      "recordPath": "/signals/407f79d989776bc658ee/",
-      "brand": "Tele2",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "95-100",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-joined-affix",
-        "punycode",
-        "suspicious-context",
-        "unicode-confusable"
-      ],
-      "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-10-11T04:46:23.470Z"
-    },
-    {
-      "signalId": "fc060130a58c19e5e305",
-      "recordPath": "/signals/fc060130a58c19e5e305/",
-      "brand": "IKI",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "85-94",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-exact-token",
-        "different-tld",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-10-13T14:57:35.205Z"
     }
   ]
 }
