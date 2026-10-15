@@ -195,6 +195,19 @@
     },
     "recordAvailable": {
       "type": "boolean"
+    },
+    "sourceTimeProvenances": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "provider-observation-time",
+          "collector-time-fallback",
+          "legacy-normalized-unknown"
+        ]
+      }
     }
   }
 }
