@@ -1,27 +1,31 @@
 {
   "dataset": "ct-search-state",
-  "generatedAt": "2026-10-15T06:28:24.091Z",
+  "generatedAt": "2026-10-15T12:10:01.639Z",
   "latestRun": {
     "dnsNames": 0,
-    "endedAt": "2026-10-15T06:28:24.091Z",
-    "failureCodes": [],
+    "endedAt": "2026-10-15T12:10:01.639Z",
+    "failureCodes": [
+      "provider-http"
+    ],
     "matches": 0,
     "newRecords": 0,
-    "outcome": "completed",
-    "queriesAttempted": 6,
+    "outcome": "partial",
+    "queriesAttempted": 2,
     "queriesBacklogged": 0,
-    "queriesCompleted": 6,
+    "queriesCompleted": 1,
     "rowsProcessed": 0,
-    "startedAt": "2026-10-15T06:28:19.058Z"
+    "startedAt": "2026-10-15T12:09:58.797Z"
   },
   "provider": "crt.sh",
   "providerHealth": {
-    "consecutiveFailures": 0,
-    "degradedSince": null,
-    "lastAttemptAt": "2026-10-15T06:28:24.091Z",
-    "lastFailureCodes": [],
+    "consecutiveFailures": 1,
+    "degradedSince": "2026-10-15T12:09:58.797Z",
+    "lastAttemptAt": "2026-10-15T12:10:01.639Z",
+    "lastFailureCodes": [
+      "provider-http"
+    ],
     "lastSuccessAt": "2026-10-15T06:28:24.091Z",
-    "nextAttemptAt": null
+    "nextAttemptAt": "2026-10-15T12:15:01.639Z"
   },
   "queries": {
     "brand:artea": {
@@ -213,15 +217,15 @@
       "lastEntryAt": null,
       "lastId": 0,
       "lastOutcome": "completed",
-      "lastRunAt": "2026-10-08T02:17:39.488Z",
+      "lastRunAt": "2026-10-15T12:09:58.797Z",
       "term": "manobank"
     },
     "brand:manovmi": {
       "brand": "VMI",
       "lastEntryAt": null,
       "lastId": 0,
-      "lastOutcome": "completed",
-      "lastRunAt": "2026-10-08T02:17:39.488Z",
+      "lastOutcome": "failed",
+      "lastRunAt": "2026-10-15T12:09:58.797Z",
       "term": "manovmi"
     },
     "brand:maxima": {
@@ -393,6 +397,6 @@
       "term": "vinted"
     }
   },
-  "queryCursor": 23,
+  "queryCursor": 25,
   "schemaVersion": 1
 }
