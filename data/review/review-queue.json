@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-stratified-review-queue",
-  "generatedAt": "2026-10-15T00:55:30.810Z",
+  "generatedAt": "2026-10-15T02:54:24.607Z",
   "samplingPolicy": {
     "method": "deterministic-greedy-facet-balancing",
     "dimensions": [
@@ -15,7 +15,7 @@
     "excludes": "Signals already represented by a sanitized assessment.",
     "semantics": "A review worklist, not a random or prevalence-representative sample."
   },
-  "availableUnreviewed": 105,
+  "availableUnreviewed": 107,
   "selected": 24,
   "candidates": [
     {
@@ -286,9 +286,9 @@
       "firstSeen": "2026-10-11T04:46:23.470Z"
     },
     {
-      "signalId": "3c3bbf8c55d1238640ca",
-      "recordPath": "/signals/3c3bbf8c55d1238640ca/",
-      "brand": "DPD",
+      "signalId": "70bf1c2a7d3280c5ef6b",
+      "recordPath": "/signals/70bf1c2a7d3280c5ef6b/",
+      "brand": "DHL",
       "sources": [
         "CertStream"
       ],
@@ -296,11 +296,45 @@
       "evidenceTier": "name-only",
       "reasonCodes": [
         "brand-exact-token",
+        "multiple-hyphens",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-10-13T04:14:21.708Z"
+    },
+    {
+      "signalId": "ebfed99a1847d57a7408",
+      "recordPath": "/signals/ebfed99a1847d57a7408/",
+      "brand": "Tele2",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "85-94",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-lookalike-edit",
+        "different-tld",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "2-7d",
+      "firstSeen": "2026-10-11T04:46:41.413Z"
+    },
+    {
+      "signalId": "898d7b2e4617c4e46687",
+      "recordPath": "/signals/898d7b2e4617c4e46687/",
+      "brand": "Revolut",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "95-100",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-joined-affix",
         "different-tld",
         "suspicious-context"
       ],
       "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-10-13T01:57:18.762Z"
+      "firstSeen": "2026-10-13T05:26:03.493Z"
     },
     {
       "signalId": "515893ceabe1b12e4e3d",
@@ -336,57 +370,6 @@
       "firstSeen": "2026-10-13T08:40:42.226Z"
     },
     {
-      "signalId": "ebfed99a1847d57a7408",
-      "recordPath": "/signals/ebfed99a1847d57a7408/",
-      "brand": "Tele2",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "85-94",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-lookalike-edit",
-        "different-tld",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-10-11T04:46:41.413Z"
-    },
-    {
-      "signalId": "70bf1c2a7d3280c5ef6b",
-      "recordPath": "/signals/70bf1c2a7d3280c5ef6b/",
-      "brand": "DHL",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "85-94",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-exact-token",
-        "multiple-hyphens",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-10-13T04:14:21.708Z"
-    },
-    {
-      "signalId": "898d7b2e4617c4e46687",
-      "recordPath": "/signals/898d7b2e4617c4e46687/",
-      "brand": "Revolut",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "95-100",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-joined-affix",
-        "different-tld",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-10-13T05:26:03.493Z"
-    },
-    {
       "signalId": "68c6f2a92ecab91f3960",
       "recordPath": "/signals/68c6f2a92ecab91f3960/",
       "brand": "Swedbank",
@@ -401,6 +384,23 @@
       ],
       "candidateAgeBand": "2-7d",
       "firstSeen": "2026-10-09T12:57:16.299Z"
+    },
+    {
+      "signalId": "3a7f0bac7dfe66accec9",
+      "recordPath": "/signals/3a7f0bac7dfe66accec9/",
+      "brand": "DHL",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "85-94",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-exact-token",
+        "multiple-hyphens",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-10-14T21:53:16.434Z"
     },
     {
       "signalId": "db798371a93ee9f49367",
