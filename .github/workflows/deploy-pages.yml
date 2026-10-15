@@ -7,6 +7,9 @@ on:
   repository_dispatch:
     types: [certstream_writer_completed, snapshot_writer_completed]
 
+env:
+  HECAVEX_IDN_VISUAL_MATCHING: ${{ vars.HECAVEX_IDN_VISUAL_MATCHING || 'true' }}
+
 permissions:
   contents: read
 
@@ -112,6 +115,8 @@ jobs:
           test -f dist/data/pipeline-health.json
           test -f dist/data/changes.json
           test -f dist/data/related-observations.json
+          test -f dist/data/idn-matches-v1.json
+          test -f dist/data/idn-matches-v1.json.sha256
           test -f dist/data/events.json
           test -f dist/data/events.atom.xml
           test -f dist/data/events.rss.xml

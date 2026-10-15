@@ -5,7 +5,7 @@ import { SiteFooter } from "./components/SiteFooter.tsx";
 import { ResearchBrief } from "./components/ResearchBrief.tsx";
 import { ContextChanges, CopyableValue, DetailItem, DomainContext, ObservationDetail } from "./components/ScreenshotModal.tsx";
 import { SiteHeader } from "./components/SiteHeader.tsx";
-import { brandPath } from "./lib/brandRegistry.ts";
+import { brandPath, defangDomain } from "./lib/brandRegistry.ts";
 import { evidenceTierLabel, explainReasons, signalEvidenceTier, signalMatchScore } from "./lib/dashboard.ts";
 import { statusLt } from "./lt/formatLt.ts";
 import { formatDateTime, sentenceCase } from "./lib/format.ts";
@@ -42,6 +42,14 @@ const copy = {
   },
 } as const;
 
+function scriptLabel(character: string, language: "en" | "lt"): string {
+  if (/\p{Script=Latin}/u.test(character)) return language === "lt" ? "lotynų raštas" : "Latin script";
+  if (/\p{Script=Cyrillic}/u.test(character)) return language === "lt" ? "kirilica" : "Cyrillic script";
+  if (/\p{Script=Greek}/u.test(character)) return language === "lt" ? "graikų raštas" : "Greek script";
+  if (/\p{Script=Inherited}/u.test(character)) return language === "lt" ? "paveldėtas raštas" : "Inherited script";
+  return language === "lt" ? "kita rašto sistema" : "Other script";
+}
+
 export function SignalPage({ data }: { data: SignalPageData }) {
   const [showImage, setShowImage] = useState(false);
   const language = data.language;
@@ -49,6 +57,9 @@ export function SignalPage({ data }: { data: SignalPageData }) {
   const tier = signalEvidenceTier(data.signal);
   const reasons = explainReasons(data.signal, language);
   const comparison = compareToOfficialDomain(data.signal.domain, data.brand ?? undefined, language);
+  const idnMatch = data.idnMatch?.signalId === data.signal.id && data.idnMatch.domain === data.signal.domain &&
+    data.idnMatch.brand === data.signal.brand ? data.idnMatch : null;
+  const unicodeCharacters = comparison ? [...new Set(Array.from(comparison.observedUnicode).filter((character) => character.codePointAt(0)! > 127))] : [];
   const alternatePath = signalPath(data.signal, language === "en" ? "lt" : "en");
   const relatedById = new Map(data.relatedNodes.map((node) => [node.signalId, node]));
   const connected = data.relatedEdges.map((edge) => ({
@@ -89,6 +100,23 @@ export function SignalPage({ data }: { data: SignalPageData }) {
               <p className="eyebrow">01 / {text.explanation}</p>
               <h2 id="explanation-title">{text.explanation}</h2>
               {reasons.length ? <ul className="reason-explanations">{reasons.map((reason) => <li key={reason}>{reason}</li>)}</ul> : <p>{text.none}</p>}
+              {idnMatch ? <div className="idn-explanation">
+                <h3>{language === "lt" ? "Peržiūrėtas IDN vaizdinio panašumo profilis" : "Curated IDN visual profile"}</h3>
+                <p>{language === "lt"
+                  ? "Šiame leidinyje pritaikytas ribotas vaizdinio panašumo profilis, papildantis esamą Radar palyginimą pagal UTS #39 duomenis. Tai nėra tikslus UTS #39 sutapimas, naršyklės patikros rezultatas ar analitiko patvirtinimas."
+                  : "This release used a bounded visual profile that supplements Radar's existing comparison derived from UTS #39 data. This is not an exact UTS #39 match, a browser-check result, or analyst confirmation."}</p>
+                <dl className="candidate-provenance">
+                  <DetailItem label={language === "lt" ? "Profilis" : "Profile"}><code>radar-idn-visual-v1</code></DetailItem>
+                  <DetailItem label={language === "lt" ? "Registro pavadinimas" : "Registry alias"}><code>{idnMatch.alias}</code></DetailItem>
+                  <DetailItem label={language === "lt" ? "Sutapusi dalis" : "Matched label"}><code>{idnMatch.matchedLabel}</code></DetailItem>
+                  <DetailItem label={language === "lt" ? "Dalies vieta" : "Label position"}><span>{idnMatch.labelIndex + 1} · {idnMatch.labelRole === "registrable" ? (language === "lt" ? "registruojama dalis" : "registrable label") : (language === "lt" ? "subdomenas" : "subdomain")}</span></DetailItem>
+                </dl>
+                <ul className="comparison-notes">{idnMatch.substitutions.map((substitution) => <li key={substitution.position}>
+                  {language === "lt" ? "Ženklas" : "Character"} {substitution.position + 1}: <code>{Array.from(idnMatch.matchedLabel)[substitution.position]} {substitution.codePoint} → {substitution.replacement}</code> · {scriptLabel(Array.from(idnMatch.matchedLabel)[substitution.position], language)}
+                </li>)}</ul>
+                <p className="boundary-note">{language === "lt" ? "Rodoma dabartinio leidinio analizė, o ne ankstesnio stebėjimo aptikimo istorija." : "This is current-release analysis, not a reconstruction of detection at an earlier observation."}</p>
+                <a href="/data/idn-matches-v1.json">{language === "lt" ? "IDN paaiškinimų JSON" : "IDN explanation JSON"}</a>
+              </div> : null}
               <dl className="candidate-provenance">
                 <DetailItem label={language === "lt" ? "Galimas prekės ženklas" : "Potential brand match"}>
                   {data.brand ? <a href={brandPath(data.brand.brand, language)}>{data.brand.brand}</a> : <span>{language === "lt" ? "Nepriskirta" : "Unclassified"}</span>}
@@ -104,11 +132,17 @@ export function SignalPage({ data }: { data: SignalPageData }) {
                 <p className="eyebrow"><GitCompareArrows aria-hidden="true" /> 02 / {text.comparison}</p>
                 <h2 id="comparison-title">{text.comparison}</h2>
                 <div className="domain-comparison">
-                  <div><span>{language === "lt" ? "Oficialus" : "Official"}</span><code>{comparison.officialUnicode}</code></div>
-                  <div><span>{language === "lt" ? "Stebėtas" : "Observed"}</span><code>{comparison.operations.map((operation, index) => <mark className={operation.kind} key={`${operation.kind}-${index}`}>{operation.observed || "∅"}</mark>)}</code></div>
+                  <div><span>{language === "lt" ? "Oficialus · A-label" : "Official · A-label"}</span><code>{defangDomain(comparison.officialDomain)}</code></div>
+                  <div><span>{language === "lt" ? "Stebėtas · A-label" : "Observed · A-label"}</span><code>{defangDomain(comparison.observedDomain)}</code></div>
+                  <div><span>{language === "lt" ? "Oficialus · Unicode" : "Official · Unicode"}</span><code>{defangDomain(comparison.officialUnicode)}</code></div>
+                  <div><span>{language === "lt" ? "Stebėtas · Unicode" : "Observed · Unicode"}</span><code><span className="sr-only">{defangDomain(comparison.observedUnicode)}</span><span aria-hidden="true">{comparison.operations.map((operation, index) => <mark className={operation.kind} key={`${operation.kind}-${index}`}>{operation.observed ? defangDomain(operation.observed) : "∅"}</mark>)}</span></code></div>
                 </div>
+                {unicodeCharacters.length ? <p className="unicode-codepoints">{language === "lt" ? "Ne ASCII ženklai:" : "Non-ASCII characters:"} {unicodeCharacters.map((character) => <span key={character}><code>{character} U+{character.codePointAt(0)!.toString(16).toUpperCase().padStart(4, "0")}</code> · {scriptLabel(character, language)};{" "}</span>)}</p> : null}
                 <ul className="comparison-notes">{comparison.observations.map((observation) => <li key={observation}>{observation}</li>)}</ul>
-                <p className="boundary-note">{language === "lt" ? `Levenšteino atstumas ${comparison.distance}. Panašumas padeda atrankai, bet neįrodo ketinimo ar nuosavybės.` : `Levenshtein distance ${comparison.distance}. Similarity supports triage only; it does not prove intent or ownership.`}</p>
+                <p className="boundary-note">{language === "lt" ? `Unicode kodų taškų Levenšteino atstumas ${comparison.distance}. Oficialus palyginimo domenas parinktas pagal tą patį matą. Tai vaizdinis palyginimas, ne aptikimo balas ar ketinimo bei nuosavybės įrodymas.` : `Unicode code-point Levenshtein distance ${comparison.distance}. The official comparison domain is selected using the same metric. This visual comparison is not the detection score or proof of intent or ownership.`}</p>
+                <p className="boundary-note">{language === "lt"
+                  ? "Naršyklės adresų juostos ir el. pašto rodomos formos priklauso nuo programos bei jos versijos. Unicode forma, galiojantis TLS sertifikatas ar perspėjimo nebuvimas saugumo nepatvirtina."
+                  : "Address-bar and email display depend on the application and its version. Unicode display, a valid TLS certificate, or absence of a warning does not establish safety."}</p>
               </section>
             ) : null}
 

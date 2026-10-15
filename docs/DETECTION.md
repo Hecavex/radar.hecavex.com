@@ -15,7 +15,7 @@ A different top-level domain or repeated hyphens can increase a score only after
 
 ## Unicode handling
 
-Internationalized hostnames are normalized with the pinned `idna==3.19` implementation of UTS #46 in nontransitional mode with STD3 rules. Confusable and script evidence is derived from the pinned `confusable-homoglyphs==3.3.1` UTS #39 data. This makes Unicode behavior reviewable and repeatable across the collectors, archive revalidation, and synchronization.
+Internationalized hostnames are normalized with the pinned `idna==3.20` implementation of UTS #46 in nontransitional mode with STD3 rules. Confusable and script evidence is derived from the pinned `confusable-homoglyphs==3.3.1` UTS #39 data. The runtime profile reports the actual installed package versions; a stale local installation must not be described as the maintained lock. This makes Unicode behavior reviewable and repeatable across the collectors, archive revalidation, and synchronization.
 
 The public matcher can emit three bounded Unicode-related reason codes only when a non-ASCII code point contributes to the matched alias span:
 
@@ -24,6 +24,18 @@ The public matcher can emit three bounded Unicode-related reason codes only when
 - `restricted-identifier` means Radar's conservative alias-confusable heuristic observed an identifier outside the expected Latin-only profile.
 
 The confusable skeleton is internal comparison material and is never displayed or published. `restricted-identifier` is not an implementation of Unicode's formal restriction-level algorithm and must not be described as one. A genuine alias-span substitution can establish brand resemblance without a generic threat word; the A-label marker alone cannot. Unicode evidence never establishes phishing, malicious intent, or a review disposition by itself.
+
+### Curated IDN visual profile
+
+`radar-idn-visual-v1` adds narrowly reviewed hostname comparisons for `ƙ` (`U+0199`) to `k`, `ө` (`U+04E9`) to `o` or `e`, and `ӏ` (`U+04CF`) to `i` or `l`. The target alias determines the alternative; the matcher does not generate permutations or contact candidate domains. Existing `ү` and `ї` handling stays in the established confusable path. Unmapped non-ASCII characters remain mismatches in hostname tokens and cannot disappear to join surrounding ASCII text.
+
+A new visual admission requires a complete alias match and at least one supplemental substitution inside that alias span. Existing same-label reviewed affix/context rules still apply. Aliases of four or fewer canonical characters remain boundary-delimited; generic edit-distance-two admission is not enabled. Official domains, exclusions and multi-brand ambiguity remain enforced. Existing valid baseline matches keep their score and provenance. New visual matches use the established long/short alias bases (80/70) and contextual contributions; Punycode itself contributes 10 only after a valid match. Hyphen evidence counts decoded label hyphens, not encoding syntax.
+
+These admissions use existing `brand-domain-match` and `punycode` reason codes. They do not claim an exact `unicode-confusable` or literal `brand-exact-token` match. The separate [IDN evidence contract](DATA-CONTRACT.md#curated-idn-match-evidence) supplies current-release character provenance. A name-only observation remains suspected and unreviewed; the profile does not promote reviewed STIX/MISP admission or imply browser behavior, registrability or maliciousness.
+
+Set `HECAVEX_IDN_VISUAL_MATCHING=false` consistently for collection and publication to disable supplemental admissions and traces. Hostname mismatch preservation remains active. Existing immutable observations and analyst review records are retained; current archive revalidation still applies the selected matcher.
+
+This profile is informed by [Have I Been Squatted's October 2026 research](https://haveibeensquatted.com/blog/turning-idn-edge-cases-into-typosquats), [Unicode security mechanisms](https://www.unicode.org/reports/tr39/#Confusable_Detection) and [Chromium's skeleton generator](https://chromium.googlesource.com/chromium/src/+/main/components/url_formatter/spoof_checks/skeleton_generator.cc). The article's `ө`-to-`e` assessment was visual judgment without a reader study. Browser display policy, navigation warnings, webmail rendering and registry repertoires are independent, version-dependent systems. Their observed behavior is not a Radar verdict. Existing ASCII substring discovery queries also do not establish comprehensive IDN coverage.
 
 CertStream and URLScan observations remain `suspected`. A CertStream candidate does not need a corresponding URLScan report: after it passes the current brand rules and CertStream match-score threshold, it is eligible for the public candidate list with evidence fields left empty. A later URLScan observation can enrich and merge with that row. A URLScan phishing verdict can raise `matchScore` and `evidenceTier` but cannot establish current liveness or replace same-brand evidence. Only a configured HECAVEX export can publish lifecycle states such as `active`, `offline`, or `mitigated`; only an explicitly exported analyst assessment can set review disposition.
 

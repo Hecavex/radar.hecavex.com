@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import unicodedata
 from dataclasses import dataclass
 from datetime import date
+from importlib.metadata import version
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlsplit
@@ -85,9 +87,11 @@ KNOWN_CT_REWRITE_SUFFIXES = {
     "rs-mcas.ms",
 }
 UNICODE_SECURITY_PROFILE = {
-    "uts46": "idna-3.19/nontransitional/std3",
-    "uts39": "confusable-homoglyphs-3.3.1",
+    "uts46": f"idna-{version('idna')}/nontransitional/std3",
+    "uts39": f"confusable-homoglyphs-{version('confusable-homoglyphs')}",
 }
+IDN_VISUAL_PROFILE = "radar-idn-visual-v1"
+IDN_VISUAL_REPLACEMENTS = {"ƙ": ("k",), "ө": ("o", "e"), "ӏ": ("i", "l")}
 IGNORED_SCRIPT_ALIASES = frozenset({"COMMON", "INHERITED"})
 SHORT_ALIAS_MAXIMUM_LENGTH = 4
 
@@ -287,6 +291,14 @@ def _canonical(value: str) -> str:
     )
 
 
+def _host_canonical(value: str) -> str:
+    """Keep unmapped host characters as mismatches instead of deleting them."""
+    return "".join(
+        _canonical(character) or ("" if unicodedata.combining(character) else character)
+        for character in value
+    )
+
+
 def _ascii_confusable(value: str) -> str | None:
     candidates = confusables.confusables_data.get(value, [])
     ascii_candidates = sorted(
@@ -483,7 +495,7 @@ def _label_groups(domain: str) -> list[tuple[list[str], bool, str]]:
             decoded_label = idna.decode(label, uts46=True, std3_rules=True)
         except idna.IDNAError:
             decoded_label = label
-        parts = [part for item in decoded_label.split("-") if (part := _canonical(item))]
+        parts = [part for item in decoded_label.split("-") if (part := _host_canonical(item))]
         groups.append((parts, label.startswith("xn--"), decoded_label))
     return groups
 
@@ -493,7 +505,7 @@ def _label_parts(domain: str) -> list[list[str]]:
 
 
 def _domain_hyphen_count(domain: str) -> int:
-    return sum(label.removeprefix("xn--").count("-") for label in domain.split("."))
+    return idna.decode(domain, uts46=True, std3_rules=True).count("-")
 
 
 def _contains_sequence(parts: list[str], sequence: list[str]) -> bool:
@@ -693,6 +705,7 @@ def _score_domain_matches(value: str, registry: BrandRegistry) -> list[Candidate
                     part
                     for part in group
                     if part not in SUSPICIOUS_WORDS
+                    and part.isascii()
                     and (
                         not alias_digits
                         or "".join(character for character in part if character.isdigit()) == alias_digits
@@ -746,11 +759,156 @@ def _score_domain_matches(value: str, registry: BrandRegistry) -> list[Candidate
     return matches
 
 
+def _idn_visual_enabled() -> bool:
+    return os.environ.get("HECAVEX_IDN_VISUAL_MATCHING", "true").strip().lower() != "false"
+
+
+def _visual_equivalence(
+    value: str,
+    target: str,
+    source_offset: int,
+    alias_start: int,
+    alias_end: int,
+    *,
+    fold_hyphens: bool = False,
+) -> list[dict[str, object]] | None:
+    """Compare to one reviewed alias without generating domain permutations."""
+    position = 0
+    substitutions: list[dict[str, object]] = []
+    for index, character in enumerate(value):
+        if character == "-" and fold_hyphens:
+            continue
+        inside_alias = alias_start <= position < alias_end
+        choices = (
+            IDN_VISUAL_REPLACEMENTS[character]
+            if inside_alias and character in IDN_VISUAL_REPLACEMENTS
+            else (_host_canonical(character),)
+        )
+        replacement = next((item for item in choices if target.startswith(item, position)), None)
+        if replacement is None:
+            return None
+        if inside_alias and character in IDN_VISUAL_REPLACEMENTS:
+            substitutions.append(
+                {"position": source_offset + index, "codePoint": f"U+{ord(character):04X}",
+                 "replacement": replacement}
+            )
+        position += len(replacement)
+    return substitutions if position == len(target) and substitutions else None
+
+
+def _curated_idn_matches(
+    value: str, registry: BrandRegistry,
+) -> list[tuple[CandidateMatch, dict[str, object]]]:
+    if not _idn_visual_enabled() or (domain := normalize_domain(value)) is None:
+        return []
+    if not any(label.startswith("xn--") for label in domain.split(".")):
+        return []
+    if is_suppressed_domain(domain, registry):
+        return []
+    label_groups = _label_groups(domain)
+    grouped_parts = [parts for parts, _, _ in label_groups]
+    candidate_parts = {part for group in grouped_parts for part in group}
+    candidate_parts.update("".join(group) for group in grouped_parts)
+    registrable_domain = _registrable_domain(domain)
+    decoded_hyphens = sum(label.count("-") for _, _, label in label_groups)
+    results: list[tuple[CandidateMatch, dict[str, object]]] = []
+    for entry in registry.entries:
+        if {_canonical(term) for term in entry.excluded_terms}.intersection(candidate_parts):
+            continue
+        for label_index, (parts, _, label) in enumerate(label_groups):
+            if not any(character in IDN_VISUAL_REPLACEMENTS for character in label):
+                continue
+            tokens = list(re.finditer(r"[^-]+", label))
+            for raw_alias in entry.aliases:
+                alias_parts = _alias_parts(raw_alias)
+                alias = "".join(alias_parts)
+                if not alias:
+                    continue
+                options: list[tuple[str, int, str, int, int, list[str], bool]] = []
+                context = _context_words(parts, set(alias_parts))
+                for start in range(len(tokens) - len(alias_parts) + 1):
+                    first, last = tokens[start], tokens[start + len(alias_parts) - 1]
+                    fragment = label[first.start() : last.end()]
+                    options.append((fragment, first.start(), alias, 0, len(alias), context, True))
+                if len(alias) > SHORT_ALIAS_MAXIMUM_LENGTH:
+                    fragments = [(match.group(), match.start(), False) for match in tokens]
+                    if len(tokens) > 1:
+                        fragments.append((label, 0, True))
+                    for fragment, offset, fold_hyphens in fragments:
+                        compact = _host_canonical(fragment)
+                        if fold_hyphens:
+                            compact = compact.replace("-", "")
+                        for word in sorted(SUSPICIOUS_WORDS - set(alias_parts)):
+                            if len(compact) != len(alias) + len(word):
+                                continue
+                            options.append((fragment, offset, alias + word, 0, len(alias), [word], fold_hyphens))
+                            options.append((fragment, offset, word + alias, len(word), len(word + alias),
+                                            [word], fold_hyphens))
+                for fragment, offset, target, alias_start, alias_end, context, fold in options:
+                    substitutions = _visual_equivalence(
+                        fragment, target, offset, alias_start, alias_end, fold_hyphens=fold,
+                    )
+                    if substitutions is None:
+                        continue
+                    score = 70 if len(alias) <= SHORT_ALIAS_MAXIMUM_LENGTH else 80
+                    reasons = [f"curated IDN visual match: {raw_alias}", "internationalized domain (punycode)"]
+                    score += 10
+                    if context:
+                        score += 15
+                        reasons.append(f"suspicious token: {', '.join(dict.fromkeys(context))}")
+                    if registrable_domain.rsplit(".", 1)[-1] not in {
+                        official.rsplit(".", 1)[-1] for official in entry.official_domains
+                    }:
+                        score += 5
+                        reasons.append("different top-level domain from registry")
+                    if decoded_hyphens >= 2:
+                        score += 5
+                        reasons.append("multiple hyphens")
+                    match = CandidateMatch(domain, registrable_domain, entry.brand, min(100, score), reasons)
+                    evidence: dict[str, object] = {
+                        "brand": entry.brand, "alias": raw_alias, "matchedLabel": label,
+                        "labelIndex": label_index,
+                        "labelRole": "registrable" if label_index == len(label_groups) - 1 else "subdomain",
+                        "substitutions": substitutions,
+                    }
+                    results.append((match, evidence))
+    return results
+
+
+def _combined_domain_matches(
+    value: str,
+    registry: BrandRegistry,
+    curated: list[tuple[CandidateMatch, dict[str, object]]] | None = None,
+) -> list[CandidateMatch]:
+    # Existing valid matches retain their established score and provenance.
+    matches = {match.brand: match for match in _score_domain_matches(value, registry)}
+    if curated is None:
+        curated = _curated_idn_matches(value, registry)
+    for match, _ in sorted(curated, key=lambda item: -item[0].confidence):
+        matches.setdefault(match.brand, match)
+    return list(matches.values())
+
+
+def idn_match_evidence(value: str, registry: BrandRegistry) -> dict[str, object] | None:
+    """Return the winning curated trace using the same admission and rollback rules."""
+    curated = _curated_idn_matches(value, registry)
+    if not curated:
+        return None
+    matches = _combined_domain_matches(value, registry, curated)
+    if len(matches) != 1 or not any(reason.startswith("curated IDN visual match:") for reason in matches[0].reasons):
+        return None
+    candidates = [item for item in curated if item[0].brand == matches[0].brand]
+    if not candidates:
+        return None
+    candidates.sort(key=lambda item: (-item[0].confidence, int(str(item[1]["labelIndex"])), str(item[1]["alias"])))
+    return candidates[0][1]
+
+
 def domain_match_brands(value: str, registry: BrandRegistry) -> frozenset[str]:
     """Return every independently matching brand before ambiguity is rejected."""
-    return frozenset(match.brand for match in _score_domain_matches(value, registry))
+    return frozenset(match.brand for match in _combined_domain_matches(value, registry))
 
 
 def score_domain(value: str, registry: BrandRegistry) -> CandidateMatch | None:
-    matches = _score_domain_matches(value, registry)
+    matches = _combined_domain_matches(value, registry)
     return matches[0] if len(matches) == 1 else None

@@ -545,6 +545,16 @@ export function Documentation({ language = "en" }: { language?: "en" | "lt" }) {
           </p>
         </div>
         <div className="docs-callout">
+          <strong>Separate IDN visual explanations</strong>
+          <p>
+            The bounded <a href="/data/idn-matches-v1.json">IDN explanation artifact</a> uses profile
+            <code> radar-idn-visual-v1</code> and binds each curated substitution to a current published signal,
+            registry alias and Unicode code-point position. Curated visual resemblance is separate from an exact
+            UTS #39 match. It cannot establish maliciousness, browser display or analyst review, and it never exposes
+            internal skeleton strings. The snapshot retains its existing version 2 vocabulary.
+          </p>
+        </div>
+        <div className="docs-callout">
           <strong>Merge rules</strong>
           <p>
             One public row represents one normalized host. The publisher unions sources and hashes, keeps earliest and

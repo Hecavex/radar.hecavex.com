@@ -53,6 +53,8 @@ def reason_codes_from_match(reasons: Iterable[str]) -> list[ReasonCode]:
         lowered = reason.casefold()
         if lowered.startswith(("brand text match:", "exact short brand token:")):
             codes.append("brand-exact-token")
+        elif lowered.startswith("curated idn visual match:"):
+            codes.append("brand-domain-match")
         elif lowered.startswith("brand text with suspicious affix:"):
             codes.append("brand-joined-affix")
         elif lowered.startswith("brand text split across label:"):

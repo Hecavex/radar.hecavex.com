@@ -1,5 +1,6 @@
 import type { BrandEntry } from "./brandRegistry.ts";
 import type { RelatedObservationEdge, RelatedObservationNode } from "./relatedObservations.ts";
+import type { IdnMatchEvidence } from "./idnEvidence.ts";
 import type { RadarHistorySignal, RadarSignal, SignalDetail } from "../types.ts";
 
 export type PageLanguage = "en" | "lt";
@@ -11,6 +12,7 @@ export type SignalPageData = {
     recordScope: "snapshot" | "history" };
   history: RadarHistorySignal | null;
   detail: SignalDetail | null;
+  idnMatch?: IdnMatchEvidence | null;
   brand: BrandEntry | null;
   relatedNodes: RelatedObservationNode[];
   relatedEdges: RelatedObservationEdge[];

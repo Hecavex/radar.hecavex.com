@@ -5,6 +5,9 @@ on:
     - cron: "37 */2 * * *"
   workflow_dispatch:
 
+env:
+  HECAVEX_IDN_VISUAL_MATCHING: ${{ vars.HECAVEX_IDN_VISUAL_MATCHING || 'true' }}
+
 permissions:
   contents: write
 

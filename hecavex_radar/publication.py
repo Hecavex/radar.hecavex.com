@@ -32,6 +32,7 @@ from .event_feeds import (
     build_event_feeds,
     read_recent_history_events,
 )
+from .idn_evidence import MAXIMUM_IDN_EVIDENCE_BYTES, build_idn_evidence, validate_idn_evidence
 from .listening_coverage import coverage_bounds, intersects
 from .models import RadarSignal, RadarSource, SignalDetail
 from .public_schemas import (
@@ -39,6 +40,7 @@ from .public_schemas import (
     CHANGES_SCHEMA,
     DAILY_TRENDS_SCHEMA,
     EVENTS_SCHEMA,
+    IDN_MATCHES_SCHEMA,
     JSON_FEED_SCHEMA,
     MANIFEST_SCHEMA,
     MISP_EVENT_SCHEMA,
@@ -1167,6 +1169,10 @@ def publish_supplemental_artifacts(
     if not isinstance(dashboard_signals, list):
         raise ValueError("Supplemental publication requires snapshot signals.")
     _validate(snapshot, RADAR_SCHEMA, "live snapshot")
+    registry = load_brand_registry(repository / "data" / "brands-lt.json")
+    idn_evidence = build_idn_evidence(
+        complete_signals, registry, generated_at, _sha256(repository / PUBLIC_DATA / "radar.json")
+    )
     schema_paths = write_schema_documents()
     index_path, _ = write_signal_shards(complete_signals, len(dashboard_signals), generated_at)
     changes = build_change_aggregate(repository, generated_at)
@@ -1179,6 +1185,9 @@ def publish_supplemental_artifacts(
         relations,
         MAXIMUM_RELATION_BYTES,
         pretty=True,
+    )
+    idn_path = _write_json(
+        PUBLIC_DATA / "idn-matches-v1.json", idn_evidence, MAXIMUM_IDN_EVIDENCE_BYTES, pretty=True
     )
 
     effective_history = history
@@ -1336,6 +1345,7 @@ def publish_supplemental_artifacts(
         PUBLIC_DATA / "changes.json": f"{SCHEMA_BASE}changes-v1.schema.json",
         PUBLIC_DATA / "pipeline-health.json": f"{SCHEMA_BASE}pipeline-health-v1.schema.json",
         PUBLIC_DATA / "related-observations.json": f"{SCHEMA_BASE}related-observations-v1.schema.json",
+        PUBLIC_DATA / "idn-matches-v1.json": f"{SCHEMA_BASE}idn-matches-v1.schema.json",
         PUBLIC_DATA / "events.json": f"{SCHEMA_BASE}events-v1.schema.json",
         PUBLIC_DATA / "events.atom.xml": None,
         PUBLIC_DATA / "events.rss.xml": None,
@@ -1373,6 +1383,7 @@ def publish_supplemental_artifacts(
         changes_path,
         health_path,
         relations_path,
+        idn_path,
         events_path,
         atom_path,
         rss_path,
@@ -1405,6 +1416,7 @@ def validate_publication(repository: Path, validate_stix: bool = False) -> None:
         PUBLIC_DATA / "pipeline-health.json": (PIPELINE_HEALTH_SCHEMA, MAXIMUM_AGGREGATE_BYTES),
         PUBLIC_DATA / "changes.json": (CHANGES_SCHEMA, MAXIMUM_AGGREGATE_BYTES),
         PUBLIC_DATA / "related-observations.json": (RELATED_SCHEMA, MAXIMUM_RELATION_BYTES),
+        PUBLIC_DATA / "idn-matches-v1.json": (IDN_MATCHES_SCHEMA, MAXIMUM_IDN_EVIDENCE_BYTES),
         PUBLIC_DATA / "events.json": (EVENTS_SCHEMA, MAXIMUM_EVENT_JSON_BYTES),
         PUBLIC_DATA / "events.feed.json": (JSON_FEED_SCHEMA, MAXIMUM_SYNDICATION_BYTES),
         PUBLIC_DATA / "brand-feeds.json": (BRAND_FEEDS_SCHEMA, MAXIMUM_BRAND_FEED_DIRECTORY_BYTES),
@@ -1452,6 +1464,7 @@ def validate_publication(repository: Path, validate_stix: bool = False) -> None:
     index = cast(dict[str, object], _load_required_json(repository / PUBLIC_DATA / "radar.index.json", 256 * 1024))
     public_root = (repository / "public").resolve()
     complete_ids: list[str] = []
+    complete_signals: list[RadarSignal] = []
     seen_ids: set[str] = set()
     shard_paths: set[str] = set()
     for expected_number, raw_shard in enumerate(cast(list[object], index["shards"]), start=1):
@@ -1471,6 +1484,7 @@ def validate_publication(repository: Path, validate_stix: bool = False) -> None:
             raise ValueError(f"{path.as_posix()} does not match its shard index digest.")
         shard = cast(dict[str, object], value)
         shard_signals = cast(list[dict[str, object]], shard["signals"])
+        complete_signals.extend(cast(list[RadarSignal], shard_signals))
         shard_ids = [cast(str, signal["id"]) for signal in shard_signals]
         if (
             shard["shard"] != expected_number
@@ -1484,6 +1498,11 @@ def validate_publication(repository: Path, validate_stix: bool = False) -> None:
         complete_ids.extend(shard_ids)
         seen_ids.update(shard_ids)
     dashboard_signals = cast(list[dict[str, object]], snapshot["signals"])
+    idn_artifact = _load_required_json(repository / PUBLIC_DATA / "idn-matches-v1.json", MAXIMUM_IDN_EVIDENCE_BYTES)
+    validate_idn_evidence(
+        idn_artifact, complete_signals, load_brand_registry(repository / "data" / "brands-lt.json"),
+        cast(str, snapshot["lastSuccessfulSyncAt"]), _sha256(repository / PUBLIC_DATA / "radar.json"),
+    )
     dashboard_ids = [cast(str, signal["id"]) for signal in dashboard_signals]
     if (
         len(complete_ids) != index["signalCount"]
@@ -1533,6 +1552,7 @@ def validate_publication(repository: Path, validate_stix: bool = False) -> None:
             dict[str, object],
             _load_required_json(repository / PUBLIC_DATA / "related-observations.json", MAXIMUM_RELATION_BYTES),
         ),
+        "IDN match evidence": cast(dict[str, object], idn_artifact),
         "event stream": event_stream,
         "brand feed directory": cast(
             dict[str, object],
@@ -1581,6 +1601,7 @@ def validate_publication(repository: Path, validate_stix: bool = False) -> None:
         "/data/changes.json": f"{SCHEMA_BASE}changes-v1.schema.json",
         "/data/pipeline-health.json": f"{SCHEMA_BASE}pipeline-health-v1.schema.json",
         "/data/related-observations.json": f"{SCHEMA_BASE}related-observations-v1.schema.json",
+        "/data/idn-matches-v1.json": f"{SCHEMA_BASE}idn-matches-v1.schema.json",
         "/data/events.json": f"{SCHEMA_BASE}events-v1.schema.json",
         "/data/events.atom.xml": None,
         "/data/events.rss.xml": None,

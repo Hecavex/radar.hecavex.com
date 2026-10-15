@@ -1301,6 +1301,49 @@ MANIFEST_SCHEMA: Final[dict[str, object]] = {
 }
 
 
+IDN_MATCHES_SCHEMA: Final[dict[str, object]] = {
+    **_base("idn-matches-v1.schema.json", "HECAVEX Radar curated IDN evidence v1"),
+    "additionalProperties": False,
+    "required": ["schemaVersion", "dataset", "generatedAt", "snapshotSha256", "profile", "records"],
+    "properties": {
+        "schemaVersion": {"const": 1},
+        "dataset": {"const": "radar-idn-matches"},
+        "generatedAt": {"type": "string", "pattern": TIMESTAMP_PATTERN},
+        "snapshotSha256": {"type": "string", "pattern": SHA256_PATTERN},
+        "profile": {"const": "radar-idn-visual-v1"},
+        "records": {
+            "type": "array", "maxItems": 2500,
+            "items": {
+                "type": "object", "additionalProperties": False,
+                "required": ["signalId", "domain", "brand", "alias", "matchedLabel", "labelIndex",
+                             "labelRole", "substitutions"],
+                "properties": {
+                    "signalId": {"type": "string", "pattern": HEX20_PATTERN},
+                    "domain": {"type": "string", "maxLength": 512, "pattern": DEFANGED_DOMAIN_PATTERN},
+                    "brand": {"type": "string", "minLength": 1, "maxLength": 120},
+                    "alias": {"type": "string", "minLength": 1, "maxLength": 63},
+                    "matchedLabel": {"type": "string", "minLength": 1, "maxLength": 63},
+                    "labelIndex": {"type": "integer", "minimum": 0, "maximum": 126},
+                    "labelRole": {"enum": ["registrable", "subdomain"]},
+                    "substitutions": {
+                        "type": "array", "minItems": 1, "maxItems": 63,
+                        "items": {
+                            "type": "object", "additionalProperties": False,
+                            "required": ["position", "codePoint", "replacement"],
+                            "properties": {
+                                "position": {"type": "integer", "minimum": 0, "maximum": 62},
+                                "codePoint": {"enum": ["U+0199", "U+04E9", "U+04CF"]},
+                                "replacement": {"enum": ["k", "o", "e", "i", "l"]},
+                            },
+                        },
+                    },
+                },
+            },
+        },
+    },
+}
+
+
 PUBLIC_SCHEMAS: Final[dict[str, dict[str, object]]] = {
     "radar-v2.schema.json": RADAR_SCHEMA,
     "radar-shard-v1.schema.json": RADAR_SHARD_SCHEMA,
@@ -1308,6 +1351,7 @@ PUBLIC_SCHEMAS: Final[dict[str, dict[str, object]]] = {
     "pipeline-health-v1.schema.json": PIPELINE_HEALTH_SCHEMA,
     "changes-v1.schema.json": CHANGES_SCHEMA,
     "related-observations-v1.schema.json": RELATED_SCHEMA,
+    "idn-matches-v1.schema.json": IDN_MATCHES_SCHEMA,
     "events-v1.schema.json": EVENTS_SCHEMA,
     "json-feed-v1.schema.json": JSON_FEED_SCHEMA,
     "brand-feeds-v1.schema.json": BRAND_FEEDS_SCHEMA,

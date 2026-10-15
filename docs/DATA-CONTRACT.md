@@ -660,6 +660,18 @@ Each array is capped at 2,500 records and the file is capped at 2 MiB. Duplicate
 - Discovery-seed provider names and raw seed records.
 - Internal HECAVEX case history.
 
+## Curated IDN match evidence
+
+`/data/idn-matches-v1.json` is an independently versioned supplemental artifact. It preserves the snapshot-v2, shard-v1, history and signal-detail-v1 shapes and their controlled reason vocabulary. A qualifying curated visual admission uses existing `brand-domain-match` and `punycode` reasons rather than falsely asserting a literal token or exact confusable-skeleton match.
+
+The top-level fields are exactly `schemaVersion: 1`, `dataset: "radar-idn-matches"`, `generatedAt`, `snapshotSha256`, `profile: "radar-idn-visual-v1"` and `records`. `generatedAt` is the release's `lastSuccessfulSyncAt`; `snapshotSha256` hashes the exact serialized `/data/radar.json` bytes. This is current-release analysis, distinct from the signal's observation times. The feed manifest advertises its schema, byte length and SHA-256, with a separate checksum companion.
+
+Each record contains exactly `signalId`, canonical defanged A-label `domain`, reviewed `brand` and `alias`, decoded NFC `matchedLabel`, zero-based full-hostname `labelIndex`, `labelRole` (`registrable` or `subdomain`) and `substitutions`. Each substitution contains zero-based Unicode-code-point `position`, `codePoint` and `replacement`. The only supplemental pairs are `U+0199` to `k`, `U+04E9` to `o` or `e`, and `U+04CF` to `i` or `l`. Source positions refer to the original decoded label. The producer determines the registrable boundary using its pinned Public Suffix List, including private suffixes; consumers must not assume the final two labels always form the registrable domain.
+
+The artifact is capped at 2 MiB and 2,500 unique signal records, with at most 63 substitutions per record. Overflow fails publication rather than truncating evidence. Publication recomputes traces against the complete current shard set and reviewed registry; mismatched identity, brand, alias, label, mapping, role, generation or snapshot digest fails validation. Suppressed, orphan and duplicate records are rejected. Raw skeletons, private notes and browser/client predictions are excluded.
+
+An empty artifact is valid. Older coherent releases may omit it; absence means explanation unavailable, not absence of resemblance. Website builds validate present artifacts against the complete shard set and embed only the relevant record into existing snapshot/history detail routes. This does not create detail routes for every complete-set shard record or reconstruct historical detection decisions. Existing reviewed-feed admission and immutable assessment provenance remain independent.
+
 ## Website Dataset metadata
 
 The English overview's `index.html` declares the current snapshot as a Schema.org `Dataset`. Its `creator` must define the existing HECAVEX identity locally with `@id: https://hecavex.com/#organization`, `@type: Organization`, `name: HECAVEX` and `url: https://hecavex.com/`; an ID-only reference to an entity absent from the page does not supply a typed creator. This follows the site's visible “Public defensive research by HECAVEX” attribution and preserves the portfolio identity without adding legal-company claims. It does not change any observation, collector or data schema.

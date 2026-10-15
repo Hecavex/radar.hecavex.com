@@ -11,6 +11,9 @@ on:
         default: false
         type: boolean
 
+env:
+  HECAVEX_IDN_VISUAL_MATCHING: ${{ vars.HECAVEX_IDN_VISUAL_MATCHING || 'true' }}
+
 permissions:
   contents: write
 
