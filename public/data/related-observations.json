@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-related-observations",
-  "generatedAt": "2026-10-16T16:57:25.915Z",
+  "generatedAt": "2026-10-16T17:57:26.242Z",
   "semantics": "Shared evidence is a bounded association between public observations. It is not campaign, operator, malware, infrastructure ownership, or threat-actor attribution.",
   "nodes": [
     {
@@ -12,7 +12,7 @@
     {
       "signalId": "3a7f0bac7dfe66accec9",
       "domain": "service-information-dhl[.]com",
-      "clusterId": "5aca6502061e2464"
+      "clusterId": "c86553016282b8a7"
     },
     {
       "signalId": "3e51d4c252a41023a46c",
@@ -22,7 +22,12 @@
     {
       "signalId": "407f79d989776bc658ee",
       "domain": "kinjydqp[.]xn--tl2mobile-b4ab[.]com",
-      "clusterId": "c5a7795e9fae183f"
+      "clusterId": "504d1f019b6b9809"
+    },
+    {
+      "signalId": "4b808c2479f58b6d5102",
+      "domain": "mgtzjfws[.]xn--tl2mobile-b4ab[.]fr",
+      "clusterId": "504d1f019b6b9809"
     },
     {
       "signalId": "64f15e71aa29ddb7d63d",
@@ -32,12 +37,17 @@
     {
       "signalId": "713ae264ea3883331870",
       "domain": "46ee4d70-141a-4776-8a01-7ead33f6506a[.]xn--tl2mobile-b4ab[.]fr",
-      "clusterId": "c5a7795e9fae183f"
+      "clusterId": "504d1f019b6b9809"
     },
     {
       "signalId": "743ab1764b8b03bdb477",
       "domain": "swedbankpay[.]dk",
       "clusterId": "102f60bb5c9bebbb"
+    },
+    {
+      "signalId": "7ccb3ccb57d1df508600",
+      "domain": "service-dhl[.]com",
+      "clusterId": "c86553016282b8a7"
     },
     {
       "signalId": "9bafcf13420a64e14466",
@@ -47,7 +57,7 @@
     {
       "signalId": "ae06c39c6e8fd4e39d83",
       "domain": "aflymgrs[.]xn--tl2mobile-b4ab[.]fr",
-      "clusterId": "c5a7795e9fae183f"
+      "clusterId": "504d1f019b6b9809"
     },
     {
       "signalId": "b608c214223d59c8be17",
@@ -57,7 +67,7 @@
     {
       "signalId": "b8b738bbccfea5be586c",
       "domain": "ghqcvjnx[.]xn--tl2mobile-b4ab[.]fr",
-      "clusterId": "c5a7795e9fae183f"
+      "clusterId": "504d1f019b6b9809"
     },
     {
       "signalId": "dc7f590f2c78f533a845",
@@ -77,7 +87,7 @@
     {
       "signalId": "f5b4c5db6fa05fc7c40a",
       "domain": "revolutpayment[.]com",
-      "clusterId": "5aca6502061e2464"
+      "clusterId": "c86553016282b8a7"
     }
   ],
   "edges": [
@@ -118,30 +128,6 @@
         {
           "type": "dns-ns",
           "value": "dns4[.]p01[.]nsone[.]net"
-        }
-      ]
-    },
-    {
-      "id": "b3cac5c24840b7a2806a",
-      "source": "3a7f0bac7dfe66accec9",
-      "target": "f5b4c5db6fa05fc7c40a",
-      "strength": "shared-context",
-      "evidence": [
-        {
-          "type": "dns-a",
-          "value": "216[.]198[.]79[.]1"
-        },
-        {
-          "type": "dns-a",
-          "value": "64[.]29[.]17[.]65"
-        },
-        {
-          "type": "dns-ns",
-          "value": "ns1[.]vercel-dns[.]com"
-        },
-        {
-          "type": "dns-ns",
-          "value": "ns2[.]vercel-dns[.]com"
         }
       ]
     },
@@ -334,6 +320,62 @@
         {
           "type": "dns-ns",
           "value": "ina3[.]registrar[.]eu"
+        }
+      ]
+    },
+    {
+      "id": "b3a4c799742962c284b6",
+      "source": "3a7f0bac7dfe66accec9",
+      "target": "7ccb3ccb57d1df508600",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "216[.]198[.]79[.]65"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns1[.]vercel-dns[.]com"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns2[.]vercel-dns[.]com"
+        }
+      ]
+    },
+    {
+      "id": "1f7f78821b47c49d950b",
+      "source": "3a7f0bac7dfe66accec9",
+      "target": "f5b4c5db6fa05fc7c40a",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "216[.]198[.]79[.]1"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns1[.]vercel-dns[.]com"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns2[.]vercel-dns[.]com"
+        }
+      ]
+    },
+    {
+      "id": "7eff23699f3dfa5c8cc9",
+      "source": "407f79d989776bc658ee",
+      "target": "4b808c2479f58b6d5102",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "185[.]53[.]179[.]200"
+        },
+        {
+          "type": "dns-cname",
+          "value": "845192[.]parkingcrew[.]net"
         }
       ]
     },
