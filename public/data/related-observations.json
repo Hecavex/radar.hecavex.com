@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-related-observations",
-  "generatedAt": "2026-10-16T12:11:46.508Z",
+  "generatedAt": "2026-10-16T12:29:05.871Z",
   "semantics": "Shared evidence is a bounded association between public observations. It is not campaign, operator, malware, infrastructure ownership, or threat-actor attribution.",
   "nodes": [
     {
@@ -10,9 +10,14 @@
       "clusterId": "f381643171cbda07"
     },
     {
+      "signalId": "3a7f0bac7dfe66accec9",
+      "domain": "service-information-dhl[.]com",
+      "clusterId": "5aca6502061e2464"
+    },
+    {
       "signalId": "3e51d4c252a41023a46c",
       "domain": "delivery-dhl-uae[.]com",
-      "clusterId": "b06dd268a1148085"
+      "clusterId": "3ac3e58f79957a11"
     },
     {
       "signalId": "407f79d989776bc658ee",
@@ -22,7 +27,7 @@
     {
       "signalId": "64f15e71aa29ddb7d63d",
       "domain": "www[.]confirm-revolut[.]es",
-      "clusterId": "b06dd268a1148085"
+      "clusterId": "3ac3e58f79957a11"
     },
     {
       "signalId": "713ae264ea3883331870",
@@ -47,7 +52,7 @@
     {
       "signalId": "b608c214223d59c8be17",
       "domain": "jqjzayerwr21[.]dhl-support-del[.]com",
-      "clusterId": "b06dd268a1148085"
+      "clusterId": "3ac3e58f79957a11"
     },
     {
       "signalId": "b8b738bbccfea5be586c",
@@ -62,7 +67,17 @@
     {
       "signalId": "e86f606e9f0cc3c28a51",
       "domain": "5aedlradc0o0cowi[.]delivery-dhl-uae[.]com",
-      "clusterId": "b06dd268a1148085"
+      "clusterId": "3ac3e58f79957a11"
+    },
+    {
+      "signalId": "e92abb8d76774feec61e",
+      "domain": "help[.]dhl-support-del[.]com",
+      "clusterId": "3ac3e58f79957a11"
+    },
+    {
+      "signalId": "f5b4c5db6fa05fc7c40a",
+      "domain": "revolutpayment[.]com",
+      "clusterId": "5aca6502061e2464"
     }
   ],
   "edges": [
@@ -107,6 +122,30 @@
       ]
     },
     {
+      "id": "b3cac5c24840b7a2806a",
+      "source": "3a7f0bac7dfe66accec9",
+      "target": "f5b4c5db6fa05fc7c40a",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "216[.]198[.]79[.]1"
+        },
+        {
+          "type": "dns-a",
+          "value": "64[.]29[.]17[.]65"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns1[.]vercel-dns[.]com"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ns2[.]vercel-dns[.]com"
+        }
+      ]
+    },
+    {
       "id": "f557c26a6ad0d3b71e6d",
       "source": "3e51d4c252a41023a46c",
       "target": "64f15e71aa29ddb7d63d",
@@ -134,6 +173,30 @@
       "id": "db2072a87a26e52e625a",
       "source": "3e51d4c252a41023a46c",
       "target": "b608c214223d59c8be17",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "185[.]53[.]179[.]136"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ina1[.]registrar[.]eu"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ina2[.]registrar[.]eu"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ina3[.]registrar[.]eu"
+        }
+      ]
+    },
+    {
+      "id": "a39c6873fe9da71d817d",
+      "source": "3e51d4c252a41023a46c",
+      "target": "e92abb8d76774feec61e",
       "strength": "shared-context",
       "evidence": [
         {
@@ -203,9 +266,57 @@
       ]
     },
     {
+      "id": "db9b2b579392344ff88b",
+      "source": "64f15e71aa29ddb7d63d",
+      "target": "e92abb8d76774feec61e",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "185[.]53[.]179[.]136"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ina1[.]registrar[.]eu"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ina2[.]registrar[.]eu"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ina3[.]registrar[.]eu"
+        }
+      ]
+    },
+    {
       "id": "f5e39aca3373164d432d",
       "source": "b608c214223d59c8be17",
       "target": "e86f606e9f0cc3c28a51",
+      "strength": "shared-context",
+      "evidence": [
+        {
+          "type": "dns-a",
+          "value": "185[.]53[.]179[.]136"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ina1[.]registrar[.]eu"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ina2[.]registrar[.]eu"
+        },
+        {
+          "type": "dns-ns",
+          "value": "ina3[.]registrar[.]eu"
+        }
+      ]
+    },
+    {
+      "id": "bad531904f14cb22355e",
+      "source": "e86f606e9f0cc3c28a51",
+      "target": "e92abb8d76774feec61e",
       "strength": "shared-context",
       "evidence": [
         {
