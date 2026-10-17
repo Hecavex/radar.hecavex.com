@@ -23,7 +23,7 @@ Use semantic ownership rather than generated pages as the starting point for a c
 
 ## Presentation ownership
 
-`src/styles.css` is the stable bundler entry point. It imports the ordered module index `src/styles/foundation.css`, then `src/styles/portfolio-interface.css` (the September 2026 portfolio presentation layer) and `src/styles/portfolio-typography.css` (shared Research/Radar/APT/Labs type roles). The foundation index is not a monolithic implementation; these semantic modules own its rules:
+`src/styles.css` is the stable bundler entry point. It imports the ordered module index `src/styles/foundation.css`, then `src/styles/portfolio-interface.css` (the September 2026 portfolio presentation layer) and `src/styles/portfolio-typography.css` (shared Research/Radar type roles). The foundation index is not a monolithic implementation; these semantic modules own its rules:
 
 | Module under `src/styles/` | Responsibility |
 | --- | --- |
