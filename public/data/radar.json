@@ -1,8 +1,8 @@
 {
   "schemaVersion": 2,
   "dataset": "live",
-  "generatedAt": "2026-10-17T21:58:02.244Z",
-  "lastSuccessfulSyncAt": "2026-10-17T22:21:54.776Z",
+  "generatedAt": "2026-10-17T22:58:20.130Z",
+  "lastSuccessfulSyncAt": "2026-10-17T22:58:20.130Z",
   "signals": [
     {
       "id": "e6817e3161e0afe51a16",
@@ -102,29 +102,37 @@
       "id": "3ae9ad0ba99eb74f24f5",
       "url": "hxxps://payserawallet[.]com",
       "domain": "payserawallet[.]com",
-      "firstSeen": "2026-10-17T20:08:42.245Z",
+      "firstSeen": "2026-10-14T19:28:39.361Z",
       "lastSeen": "2026-10-17T20:08:42.245Z",
       "sources": [
-        "CertStream"
+        "CertStream",
+        "URLScan"
       ],
       "status": "suspected",
       "brand": "Paysera",
-      "country": null,
-      "host": null,
-      "screenshotUrl": null,
-      "referenceUrl": null,
-      "hashes": [],
+      "country": "US",
+      "host": "AS16509 · AMAZON-02 - Amazon[.]com, Inc., US · 216[.]198[.]79[.]65",
+      "screenshotUrl": "https://urlscan.io/screenshots/01a13c14-d8bf-75e6-8202-aa1a1f6f57be.png",
+      "referenceUrl": "https://urlscan.io/result/01a13c14-d8bf-75e6-8202-aa1a1f6f57be/",
+      "hashes": [
+        "a53688c5eb7affe962b82fb68411973dffb1178f58438cdf2dbcb503b493919d"
+      ],
       "matchScore": 93,
-      "evidenceTier": "name-only",
+      "evidenceTier": "corroborated",
       "reviewState": "unreviewed",
       "ltRelevance": "lithuanian-brand-relevance",
       "confidence": 93,
       "discoveredVia": [
-        "certstream-live"
+        "certstream-live",
+        "urlscan-public-report"
       ],
       "reasonCodes": [
         "brand-joined-affix",
-        "suspicious-context"
+        "suspicious-context",
+        "brand-domain-match"
+      ],
+      "corroboratedBy": [
+        "urlscan-public-report"
       ],
       "detailAvailable": true
     },
@@ -627,6 +635,42 @@
       "reasonCodes": [
         "brand-exact-token",
         "suspicious-context"
+      ],
+      "detailAvailable": true
+    },
+    {
+      "id": "66e7dd3d131c0e88a629",
+      "url": "hxxp://mojebonboniera[.]cz",
+      "domain": "mojebonboniera[.]cz",
+      "firstSeen": "2026-10-17T10:25:16.677Z",
+      "lastSeen": "2026-10-17T10:25:16.677Z",
+      "sources": [
+        "URLScan"
+      ],
+      "status": "suspected",
+      "brand": "Revolut",
+      "country": null,
+      "host": "AS13335 · CLOUDFLARENET - Cloudflare, Inc., US · 172[.]67[.]147[.]173",
+      "screenshotUrl": "https://urlscan.io/screenshots/01a14964-df91-76e9-8dbe-0f7742eeea3e.png",
+      "referenceUrl": "https://urlscan.io/result/01a14964-df91-76e9-8dbe-0f7742eeea3e/",
+      "hashes": [
+        "c2993cebb37c5d03f2ab4295f3af45d6e36da5a622220f3e9ea5b95c11791ac4"
+      ],
+      "matchScore": 94,
+      "evidenceTier": "corroborated",
+      "reviewState": "unreviewed",
+      "ltRelevance": "lithuanian-brand-relevance",
+      "confidence": 94,
+      "discoveredVia": [
+        "urlscan-public-report"
+      ],
+      "corroboratedBy": [
+        "urlscan-page-title",
+        "urlscan-primary-html-sha256"
+      ],
+      "reasonCodes": [
+        "brand-title-match",
+        "primary-html-hash-pivot"
       ],
       "detailAvailable": true
     },
@@ -3443,6 +3487,36 @@
       "detailAvailable": true
     },
     {
+      "id": "cf58839a93d53ee171a6",
+      "url": "hxxp://www2[.]revolutbank[.]info",
+      "domain": "www2[.]revolutbank[.]info",
+      "firstSeen": "2026-10-10T23:37:15.884Z",
+      "lastSeen": "2026-10-10T23:37:15.884Z",
+      "sources": [
+        "URLScan"
+      ],
+      "status": "suspected",
+      "brand": "Revolut",
+      "country": null,
+      "host": null,
+      "screenshotUrl": null,
+      "referenceUrl": "https://urlscan.io/result/01a1282d-6faf-753f-b686-54dbb0d7ee1b/",
+      "hashes": [
+        "aa59990567729788f7e481b15994328a06123aaa457babbe64359198ced79ce0"
+      ],
+      "matchScore": 98,
+      "evidenceTier": "name-only",
+      "reviewState": "unreviewed",
+      "ltRelevance": "lithuanian-brand-relevance",
+      "confidence": 98,
+      "discoveredVia": [
+        "urlscan-public-report"
+      ],
+      "reasonCodes": [
+        "brand-domain-match"
+      ]
+    },
+    {
       "id": "3e51d4c252a41023a46c",
       "url": "hxxps://delivery-dhl-uae[.]com",
       "domain": "delivery-dhl-uae[.]com",
@@ -3576,7 +3650,7 @@
     {
       "name": "CertStream",
       "homepage": "https://certstream.dev/",
-      "fetchedAt": "2026-10-17T22:21:54.776Z",
+      "fetchedAt": "2026-10-17T22:58:20.130Z",
       "records": 87,
       "state": "healthy",
       "note": "Open heuristic candidates from the last 7 days"
@@ -3584,15 +3658,15 @@
     {
       "name": "URLScan",
       "homepage": "https://urlscan.io/",
-      "fetchedAt": "2026-10-17T18:46:04.982Z",
-      "records": 38,
+      "fetchedAt": "2026-10-17T22:36:15.556Z",
+      "records": 41,
       "state": "healthy",
       "note": "Passive public results validated from the last 30 days; the latest scheduled hunt completed; 197 stable official asset hashes are pivot-eligible"
     },
     {
       "name": "HECAVEX",
       "homepage": "https://hecavex.com/",
-      "fetchedAt": "2026-10-17T22:21:54.776Z",
+      "fetchedAt": "2026-10-17T22:58:20.130Z",
       "records": 1,
       "state": "healthy",
       "note": "Sanitized local review export"
