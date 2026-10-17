@@ -48,7 +48,7 @@ const pages = [
   { path: "/lt/dokumentacija/", marker: "HECAVEX Radaro techninis žinynas" },
   { path: "/404.html", marker: "This route has no signal." },
 ];
-const portfolioNavigation = ["Research", "Radar", "APT Notes", "Labs", "Data"];
+const portfolioNavigation = ["Research", "Radar", "Data"];
 const productNavigation = ["Overview", "Changes", "Brands", "Trends", "Associations", "Tools", "Methodology", "Docs"];
 const lithuanianProductNavigation = ["Apžvalga", "Pokyčiai", "Prekių ženklai", "Tendencijos", "Sąsajos", "Įrankiai", "Metodologija", "Dokumentacija"];
 

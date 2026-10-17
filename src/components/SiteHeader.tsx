@@ -22,8 +22,6 @@ export type SiteLanguage = "en" | "lt";
 const portfolioNavigation = [
   { label: "Research", href: "https://hecavex.com/en/research/", current: false },
   { label: "Radar", href: "/", current: true },
-  { label: "APT Notes", href: "https://apt.hecavex.com/", current: false },
-  { label: "Labs", href: "https://labs.hecavex.com/", current: false },
   { label: "Data", href: "https://hecavex.com/data/", current: false },
 ] as const;
 

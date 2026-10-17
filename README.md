@@ -37,4 +37,4 @@ Private notes, raw case evidence, identities and credentials stay outside Git. P
 
 Original software and documentation are [Apache-2.0](LICENSE). Third-party observations, screenshots, trademarks and source material retain their terms under [DATA-LICENSE.md](DATA-LICENSE.md). Package and data-directory READMEs remain with their owning files to preserve provenance, safety and reproduction details. Report vulnerabilities privately using [SECURITY.md](SECURITY.md).
 
-Related HECAVEX properties: [Research](https://hecavex.com/en/), [APT Notes](https://apt.hecavex.com/) and [Labs](https://labs.hecavex.com/).
+Related HECAVEX property: [Research](https://hecavex.com/en/).
