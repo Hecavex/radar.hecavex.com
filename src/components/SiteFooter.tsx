@@ -6,8 +6,6 @@ export function SiteFooter({ language = "en" }: { language?: SiteLanguage }) {
     ? [
         ["Research", "https://hecavex.com/lt/tyrimai/"],
         ["Radar", "/lt/"],
-        ["APT Notes", "https://apt.hecavex.com/"],
-        ["Labs", "https://labs.hecavex.com/"],
         ["Data", "https://hecavex.com/data/"],
         ["Pokyčiai", "/lt/pokyciai/"],
         ["Prekių ženklai", "/lt/prekes-zenklai/"],
@@ -25,8 +23,6 @@ export function SiteFooter({ language = "en" }: { language?: SiteLanguage }) {
     : [
         ["Research", "https://hecavex.com/en/research/"],
         ["Radar", "/"],
-        ["APT Notes", "https://apt.hecavex.com/"],
-        ["Labs", "https://labs.hecavex.com/"],
         ["Data", "https://hecavex.com/data/"],
         ["Changes", "/changes/"],
         ["Brands", "/brands/"],
