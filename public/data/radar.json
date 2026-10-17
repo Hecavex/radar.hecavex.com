@@ -1,8 +1,8 @@
 {
   "schemaVersion": 2,
   "dataset": "live",
-  "generatedAt": "2026-10-17T06:58:01.929Z",
-  "lastSuccessfulSyncAt": "2026-10-17T06:58:01.929Z",
+  "generatedAt": "2026-10-17T07:57:53.343Z",
+  "lastSuccessfulSyncAt": "2026-10-17T07:57:53.343Z",
   "signals": [
     {
       "id": "4bc089ef00de9b5b0f37",
@@ -104,31 +104,39 @@
       "id": "a71c1fdddf4777d95f68",
       "url": "hxxps://dpd-tracking-redelivery[.]ph",
       "domain": "dpd-tracking-redelivery[.]ph",
-      "firstSeen": "2026-10-17T06:07:41.846Z",
+      "firstSeen": "2026-10-17T06:01:29.484Z",
       "lastSeen": "2026-10-17T06:07:41.846Z",
       "sources": [
-        "CertStream"
+        "CertStream",
+        "URLScan"
       ],
       "status": "suspected",
       "brand": "DPD",
-      "country": null,
-      "host": null,
-      "screenshotUrl": null,
-      "referenceUrl": null,
-      "hashes": [],
+      "country": "US",
+      "host": "AS63949 · AKAMAI-LINODE-AP - Akamai Connected Cloud, SG · 45[.]79[.]222[.]138",
+      "screenshotUrl": "https://urlscan.io/screenshots/01a14873-6048-71e8-b106-687bf85dcd5a.png",
+      "referenceUrl": "https://urlscan.io/result/01a14873-6048-71e8-b106-687bf85dcd5a/",
+      "hashes": [
+        "76dcab2dbab071b1d754d148e85e976cc9f97329f3f3b42acc26cba9cad4335b"
+      ],
       "matchScore": 95,
-      "evidenceTier": "name-only",
+      "evidenceTier": "corroborated",
       "reviewState": "unreviewed",
       "ltRelevance": "lithuanian-brand-relevance",
       "confidence": 95,
       "discoveredVia": [
-        "certstream-live"
+        "certstream-live",
+        "urlscan-public-report"
       ],
       "reasonCodes": [
         "brand-exact-token",
         "suspicious-context",
         "different-tld",
-        "multiple-hyphens"
+        "multiple-hyphens",
+        "brand-domain-match"
+      ],
+      "corroboratedBy": [
+        "urlscan-public-report"
       ],
       "detailAvailable": true
     },
@@ -197,6 +205,35 @@
       "detailAvailable": true
     },
     {
+      "id": "9d59d066a17114ad5d87",
+      "url": "hxxp://revolut-mobile[.]net",
+      "domain": "revolut-mobile[.]net",
+      "firstSeen": "2026-10-17T05:02:35.005Z",
+      "lastSeen": "2026-10-17T05:02:35.005Z",
+      "sources": [
+        "URLScan"
+      ],
+      "status": "suspected",
+      "brand": "Revolut",
+      "country": "US",
+      "host": "AS16509 · AMAZON-02 - Amazon[.]com, Inc., US · 207[.]207[.]210[.]229",
+      "screenshotUrl": "https://urlscan.io/screenshots/01a1483d-6364-740e-9310-b299f8988ff2.png",
+      "referenceUrl": "https://urlscan.io/result/01a1483d-6364-740e-9310-b299f8988ff2/",
+      "hashes": [],
+      "matchScore": 100,
+      "evidenceTier": "name-only",
+      "reviewState": "unreviewed",
+      "ltRelevance": "lithuanian-brand-relevance",
+      "confidence": 100,
+      "discoveredVia": [
+        "urlscan-public-report"
+      ],
+      "reasonCodes": [
+        "brand-domain-match"
+      ],
+      "detailAvailable": true
+    },
+    {
       "id": "f10809d333a130fb1c6d",
       "url": "hxxps://melibwvz[.]xn--tl2mobile-b4ab[.]fr",
       "domain": "melibwvz[.]xn--tl2mobile-b4ab[.]fr",
@@ -234,28 +271,38 @@
       "url": "hxxps://www2[.]revolut-bank[.]com",
       "domain": "www2[.]revolut-bank[.]com",
       "firstSeen": "2026-10-17T02:05:34.622Z",
-      "lastSeen": "2026-10-17T02:05:34.622Z",
+      "lastSeen": "2026-10-17T03:14:16.517Z",
       "sources": [
-        "CertStream"
+        "CertStream",
+        "URLScan"
       ],
       "status": "suspected",
       "brand": "Revolut",
       "country": null,
       "host": null,
       "screenshotUrl": null,
-      "referenceUrl": null,
-      "hashes": [],
+      "referenceUrl": "https://urlscan.io/result/01a147da-3a4a-752c-ab0f-d42c29165e0c/",
+      "hashes": [
+        "c35c7275aa98568e364a618c4444fb090bdf979fd5f00bce1ba5a52b66a4bbbd"
+      ],
       "matchScore": 95,
-      "evidenceTier": "name-only",
+      "evidenceTier": "corroborated",
       "reviewState": "unreviewed",
       "ltRelevance": "lithuanian-brand-relevance",
       "confidence": 95,
       "discoveredVia": [
-        "certstream-live"
+        "certstream-live",
+        "urlscan-public-report"
       ],
       "reasonCodes": [
         "brand-exact-token",
-        "suspicious-context"
+        "suspicious-context",
+        "brand-domain-match",
+        "brand-title-match"
+      ],
+      "corroboratedBy": [
+        "urlscan-page-title",
+        "urlscan-public-report"
       ],
       "detailAvailable": true
     },
@@ -3366,7 +3413,7 @@
     {
       "name": "CertStream",
       "homepage": "https://certstream.dev/",
-      "fetchedAt": "2026-10-17T06:58:01.929Z",
+      "fetchedAt": "2026-10-17T07:57:53.343Z",
       "records": 90,
       "state": "healthy",
       "note": "Open heuristic candidates from the last 7 days"
@@ -3374,15 +3421,15 @@
     {
       "name": "URLScan",
       "homepage": "https://urlscan.io/",
-      "fetchedAt": "2026-10-17T00:44:30.815Z",
-      "records": 28,
+      "fetchedAt": "2026-10-17T07:09:53.819Z",
+      "records": 31,
       "state": "healthy",
       "note": "Passive public results validated from the last 30 days; the latest scheduled hunt completed; 200 stable official asset hashes are pivot-eligible"
     },
     {
       "name": "HECAVEX",
       "homepage": "https://hecavex.com/",
-      "fetchedAt": "2026-10-17T06:58:01.929Z",
+      "fetchedAt": "2026-10-17T07:57:53.343Z",
       "records": 1,
       "state": "healthy",
       "note": "Sanitized local review export"
