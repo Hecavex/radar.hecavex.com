@@ -215,7 +215,9 @@ function staticPagePlugin() {
           new Uint8Array(readFileSync(resolve(dirname(historyPath), path))));
         const renderedAt = Date.parse(page === "history" ? history.generatedAt : snapshot.lastSuccessfulSyncAt);
         const embeddedHistory = historyPreview(history);
-        const periodData = page === "radar" || page === "history" || lithuanianPage === "radar" ? await observedPreview() : undefined;
+        const preview = page === "radar" || page === "history" || lithuanianPage === "radar" ? await observedPreview() : undefined;
+        // The overview shows only the headline count; the bounded record preview belongs to the history page.
+        const periodData = preview && page !== "history" ? { ...preview, records: [] } : preview;
         let staticMarkup: string;
         let bootstrap = "";
         if (staticPage) {

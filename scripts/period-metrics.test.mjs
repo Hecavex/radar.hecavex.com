@@ -217,7 +217,8 @@ test("SSR preserves authoritative EN/LT counts with a bounded preview, disabled 
     assert.match(html, /data-period-count="1"/);
     assert.match(html, /aria-pressed="true"/);
     assert.match(html, /<noscript>/);
-    assert.match(html, language === "en" ? /Unavailable/ : /Nepasiekiama/);
+    assert.match(html, language === "en" ? /Not tracked yet/ : /Dar neskaičiuojama/);
+    assert.doesNotMatch(html, /period-clock-pending">(?:Unavailable|Nepasiekiama)/);
     assert.match(html, /disabled=""[^>]*>JSON/);
     assert.doesNotMatch(html, /href="https?:\/\/a\./);
   }
@@ -244,7 +245,15 @@ test("real overview SSR and bootstrap preserve period counts independently of cu
   assert.equal(decoded.periodData.records.length, 0);
   const en = renderPrerenderedPage("radar", snapshot, Date.parse(asOf), undefined, "en", undefined, preview);
   const lt = renderLithuanianPage("radar", snapshot, Date.parse(asOf), preview);
-  for (const html of [en, lt]) assert.match(html, /data-period-count="1"/);
+  for (const html of [en, lt]) {
+    assert.match(html, /data-period-count="1"/);
+    // Shortlist first; the overview keeps only a compact summary that links to the complete inventory.
+    assert(html.indexOf('id="signals-title"') < html.indexOf('id="observed-hostnames"'));
+    assert.doesNotMatch(html, /period-table|period-controls|>JSON</);
+  }
+  assert.match(en, /href="\/history\/#observed-hostnames"/);
+  assert.match(lt, /href="\/lt\/istorija\/#observed-hostnames"/);
+  assert.match(en, /Last 30 days: <strong>1<\/strong> unique hostnames recorded/);
   assert.match(en, /Current shortlist<\/span><strong>0/);
   assert.match(en, /Observation first seen 24h/);
   assert.match(lt, /Pirmas stebėjimas per 24 val\./);

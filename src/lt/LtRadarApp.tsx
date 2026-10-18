@@ -2,7 +2,7 @@ import { AlertTriangle, RadioTower } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { Dashboard } from "../components/Dashboard.tsx";
-import { PeriodOverview } from "../components/PeriodOverview.tsx";
+import { ObservedHostnamesSummary } from "../components/PeriodOverview.tsx";
 import { SiteHeader } from "../components/SiteHeader.tsx";
 import { loadSnapshot } from "../lib/data.ts";
 import type { PeriodOverviewData } from "../lib/periodMetrics.ts";
@@ -39,8 +39,8 @@ export function LtRadarApp({ initialSnapshot, initialNow, initialPeriodData }: {
   return (
     <div className="site-shell">
       <SiteHeader currentPage="radar" language="lt" alternateHref="/" />
-      {state.status === "loading" && <main className="state-page" id="main-content" aria-live="polite"><RadioTower className="state-icon pulse" aria-hidden="true" /><p className="eyebrow">Gaunama suvestinė</p><h1>Kraunami naujausi signalai</h1><PeriodOverview initialData={initialPeriodData} language="lt" /></main>}
-      {state.status === "error" && <main className="state-page" id="main-content" aria-live="assertive"><AlertTriangle className="state-icon danger" aria-hidden="true" /><p className="eyebrow">Duomenys nepasiekiami</p><h1>Nepavyko įkelti radaro suvestinės</h1><p>{state.message}</p><button className="button" type="button" onClick={() => window.location.reload()}>Bandyti dar kartą</button><PeriodOverview initialData={initialPeriodData} language="lt" /></main>}
+      {state.status === "loading" && <main className="state-page" id="main-content" aria-live="polite"><RadioTower className="state-icon pulse" aria-hidden="true" /><p className="eyebrow">Gaunama suvestinė</p><h1>Kraunami naujausi signalai</h1><ObservedHostnamesSummary data={initialPeriodData} language="lt" /></main>}
+      {state.status === "error" && <main className="state-page" id="main-content" aria-live="assertive"><AlertTriangle className="state-icon danger" aria-hidden="true" /><p className="eyebrow">Duomenys nepasiekiami</p><h1>Nepavyko įkelti radaro suvestinės</h1><p>{state.message}</p><button className="button" type="button" onClick={() => window.location.reload()}>Bandyti dar kartą</button><ObservedHostnamesSummary data={initialPeriodData} language="lt" /></main>}
       {state.status === "ready" && (
         <Dashboard snapshot={state.snapshot} now={now} language="lt" refreshError={state.refreshError} initialPeriodData={initialPeriodData} />
       )}
