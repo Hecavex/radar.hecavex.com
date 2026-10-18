@@ -1,6 +1,6 @@
 # Radar source map
 
-Use semantic ownership rather than generated pages as the starting point for a change. Paths are relative to this repository. `dist/` is build output; `public/data/` and `data/` are governed publication inputs/artifacts, not UI source.
+Use semantic ownership rather than generated pages as the starting point for a change. Paths are relative to this repository. `dist/` is build output; `public/data/` and `data/` are governed publication inputs/artifacts, not UI source. Their copies on `main` are a frozen 2026-09-07 dev fixture and bootstrap seed, not current data: Vite reads `public/data/*` at dev and build time, CI overwrites both trees with `data_branch materialize-fixture` before its checks, and deploys materialize `radar-data`. `data/brands-lt.json` and `data/matcher/` are source (imported by `src/lib/brandRegistry.ts` and the matcher), outside the data-branch allowlist. See [README](../README.md#find-and-change-the-source).
 
 ## Interface entry points
 

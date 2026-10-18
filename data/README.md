@@ -1,6 +1,6 @@
 # Find Radar data
 
-This source branch owns trusted configuration, matcher fixtures and sanitized review policy. Its generated JSON/NDJSON copies are historical compatibility/CI inputs. They are not the current operational dataset.
+This source branch owns trusted configuration, matcher fixtures and sanitized review policy. Its generated JSON/NDJSON copies here and under `public/data/` are a frozen 2026-09-07 snapshot: the local dev fixture, and the seed a missing-branch `data_branch bootstrap` copies. They are not the current operational dataset, and they are not regenerated when code changes. Source CI replaces them with its pinned fixture (`data_branch materialize-fixture`, see `.github/workflows/ci.yml`). `brands-lt.json`, `matcher/` and the README files are trusted source, not generated data.
 
 | Need | Location |
 | --- | --- |

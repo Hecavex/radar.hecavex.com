@@ -17,6 +17,7 @@ from hecavex_radar.certstream_archive import CandidateArchiveWriter, candidate_f
 from hecavex_radar.offline_publication import regenerate_fixture
 from hecavex_radar.public_schemas import PUBLIC_SCHEMAS
 from hecavex_radar.publication import validate_publication
+from tests.ci_fixture import require_ci_fixture
 
 
 def test_fixture_cutoff_uses_observations_not_expiry_and_does_not_advance_on_rebuild(tmp_path: Path) -> None:
@@ -36,6 +37,7 @@ def test_real_offline_sync_validates_newly_derived_publication(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     repository = Path(__file__).resolve().parents[1]
+    require_ci_fixture(repository)
     original_schemas = {name: (repository / "public/data/schemas" / name).read_bytes()
                         for name in PUBLIC_SCHEMAS}
     for relative in ("data", "public/data"):
@@ -126,6 +128,7 @@ def test_explicit_archival_validation_accepts_legacy_without_weakening_live_gate
     import hashlib
 
     repository = Path(__file__).resolve().parents[1]
+    require_ci_fixture(repository)
     registry = load_brand_registry(repository / "data/brands-lt.json")
     shutil.copytree(repository / "public/data", tmp_path / "public/data")
     public = tmp_path / "public/data"
