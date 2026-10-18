@@ -85,3 +85,26 @@ def test_workflow_queue_serializes_entire_build_and_deploy_with_revision_guards(
         workflow.index("Refuse source or data superseded while building")
         < workflow.index("uses: actions/deploy-pages@")
     )
+
+
+def test_superseded_refusal_is_neutral_and_gates_every_publishing_step() -> None:
+    deploy = WORKFLOW.read_text().split("\n  deploy:\n", 1)[1]
+    steps = deploy.split("\n      - name: ")[1:]
+    names = [step.split("\n", 1)[0] for step in steps]
+    guard = names.index("Refuse source or data superseded while building")
+    assert "id: guard" in steps[guard]
+    assert '"${rc}" -eq 3' in steps[guard] and 'exit "${rc}"' in steps[guard]
+    later = steps[guard + 1:]
+    assert len(later) == 6  # deploy, live smoke, receipt setup/install/preserve/append
+    for step in later:
+        assert "if: steps.guard.outputs.superseded != 'true'" in step, step.split("\n", 1)[0]
+    assert "needs: build" in deploy and "\n  publish" not in deploy  # no further job to gate
+
+
+def test_build_waits_for_newer_runs_as_neutral_but_never_marks_them_deployable() -> None:
+    build = WORKFLOW.read_text().split("\n  build:\n", 1)[1].split("\n  deploy:\n", 1)[0]
+    step = "\n      - name: Reject stale source or unproven writer completions\n"
+    freshness = build.split(step, 1)[1].split("\n      - name: ", 1)[0]
+    neutral = freshness.index('"${rc}" -eq 3')
+    assert freshness.index("exit 0", neutral) < freshness.index('exit "${rc}"') < freshness.index("should_deploy=true")
+    assert "\n  deploy:\n    if: needs.build.outputs.should_deploy == 'true'" in WORKFLOW.read_text()

@@ -605,10 +605,6 @@ class CandidateArchiveWriter:
         return written
 
 
-def append_candidates(root: str | Path, records: list[CertStreamCandidate]) -> int:
-    return CandidateArchiveWriter(root).append(records)
-
-
 def read_recent_candidates(
     root: str | Path,
     lookback_days: int,
