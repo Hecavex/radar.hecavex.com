@@ -125,8 +125,9 @@ export function findFangedStrings(dataRoot, { brandNames = [], officialDomains =
       if (document.querySelector("parsererror")) throw new Error(`${file} is not well-formed XML.`);
       walkXml(file, document, "");
     } else if (file.endsWith(".sha256")) {
-      // A checksum sidecar holds exactly "<sha256>  <sibling file name>".
-      if (!new RegExp(`^[a-f\\d]{64}  ${basename(file, ".sha256").replace(/[.]/gu, "\\.")}\\r?\\n?$`, "u").test(text)) {
+      // A checksum sidecar holds exactly "<sha256>  <sibling file name>"; the name is compared literally, never as a regex.
+      const line = text.replace(/\r?\n$/u, "");
+      if (!/^[a-f\d]{64} {2}/u.test(line) || line.slice(66) !== basename(file, ".sha256")) {
         findings.push(`${file}: unexpected checksum sidecar content.`);
       }
     } else {

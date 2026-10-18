@@ -95,7 +95,16 @@ const planted = [
   ["NDJSON file the sweep does not parse", (files) => { files["extra.ndjson"] = '{"note":"login[.]example[.]com"}\n'; }],
   ["text file", (files) => { files["notes.txt"] = "nothing fanged"; }],
   ["checksum sidecar with extra text", (files) => { files["radar.json.sha256"] = `${"0".repeat(64)}  radar.json login.example.com\n`; }],
+  // As a regex, "a.b+.json" would also match "a.bb.json"; the name must be compared literally.
+  ["checksum sidecar naming a regex look-alike", (files) => { files["a.b+.json.sha256"] = `${"0".repeat(64)}  a.bb.json\n`; }],
 ];
+
+test("checksum sidecars match file names containing regex metacharacters literally", () => {
+  const files = cleanFixture();
+  files["a+b(c)[d]$.json"] = {};
+  files["a+b(c)[d]$.json.sha256"] = `${"0".repeat(64)}  a+b(c)[d]$.json\r\n`;
+  assert.deepEqual(sweep(files), []);
+});
 
 for (const [name, plant] of planted) {
   test(`a planted value fails the sweep: ${name}`, () => {
