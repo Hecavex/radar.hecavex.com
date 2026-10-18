@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-stratified-review-queue",
-  "generatedAt": "2026-10-18T19:13:03.972Z",
+  "generatedAt": "2026-10-18T19:57:58.915Z",
   "samplingPolicy": {
     "method": "deterministic-greedy-facet-balancing",
     "dimensions": [
@@ -15,7 +15,7 @@
     "excludes": "Signals already represented by a sanitized assessment.",
     "semantics": "A review worklist, not a random or prevalence-representative sample."
   },
-  "availableUnreviewed": 134,
+  "availableUnreviewed": 137,
   "selected": 24,
   "candidates": [
     {
@@ -197,22 +197,21 @@
       "firstSeen": "2026-10-12T11:35:11.011Z"
     },
     {
-      "signalId": "57d07ff286f411dfa993",
-      "recordPath": "/signals/57d07ff286f411dfa993/",
-      "brand": "Telia",
+      "signalId": "45ec17509d7b0a97e88f",
+      "recordPath": "/signals/45ec17509d7b0a97e88f/",
+      "brand": "Tele2",
       "sources": [
         "CertStream"
       ],
-      "scoreBand": "95-100",
+      "scoreBand": "85-94",
       "evidenceTier": "name-only",
       "reasonCodes": [
-        "brand-exact-token",
+        "brand-lookalike-edit",
         "different-tld",
-        "punycode",
-        "unicode-confusable"
+        "suspicious-context"
       ],
-      "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-10-12T08:56:40.815Z"
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-10-18T19:54:57.768Z"
     },
     {
       "signalId": "60ed7a03aa16392f2c33",
@@ -230,20 +229,22 @@
       "firstSeen": "2026-09-28T12:41:14.220Z"
     },
     {
-      "signalId": "278fe44decfd896e42be",
-      "recordPath": "/signals/278fe44decfd896e42be/",
-      "brand": "DPD",
+      "signalId": "57d07ff286f411dfa993",
+      "recordPath": "/signals/57d07ff286f411dfa993/",
+      "brand": "Telia",
       "sources": [
         "CertStream"
       ],
-      "scoreBand": "85-94",
+      "scoreBand": "95-100",
       "evidenceTier": "name-only",
       "reasonCodes": [
         "brand-exact-token",
-        "suspicious-context"
+        "different-tld",
+        "punycode",
+        "unicode-confusable"
       ],
-      "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-10-17T11:24:48.078Z"
+      "candidateAgeBand": "2-7d",
+      "firstSeen": "2026-10-12T08:56:40.815Z"
     },
     {
       "signalId": "d6aee63d133c297e817c",
@@ -294,22 +295,67 @@
       "firstSeen": "2026-10-18T13:49:28.977Z"
     },
     {
-      "signalId": "e9f9e0f0c3a348d29093",
-      "recordPath": "/signals/e9f9e0f0c3a348d29093/",
-      "brand": "Sodra",
+      "signalId": "608c8bdbab6dbe077545",
+      "recordPath": "/signals/608c8bdbab6dbe077545/",
+      "brand": "SEB",
       "sources": [
         "CertStream"
+      ],
+      "scoreBand": "85-94",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-exact-token",
+        "multiple-hyphens",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "2-7d",
+      "firstSeen": "2026-10-15T15:21:14.106Z"
+    },
+    {
+      "signalId": "c04742f5eb96129248c4",
+      "recordPath": "/signals/c04742f5eb96129248c4/",
+      "brand": "Revolut",
+      "sources": [
+        "URLScan"
       ],
       "scoreBand": "95-100",
       "evidenceTier": "name-only",
       "reasonCodes": [
+        "brand-domain-match"
+      ],
+      "candidateAgeBand": "8-30d",
+      "firstSeen": "2026-10-09T07:22:13.377Z"
+    },
+    {
+      "signalId": "278fe44decfd896e42be",
+      "recordPath": "/signals/278fe44decfd896e42be/",
+      "brand": "DPD",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "85-94",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
         "brand-exact-token",
-        "different-tld",
-        "punycode",
-        "unicode-confusable"
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-10-17T11:24:48.078Z"
+    },
+    {
+      "signalId": "54f4184b3225454a3624",
+      "recordPath": "/signals/54f4184b3225454a3624/",
+      "brand": "Luminor",
+      "sources": [
+        "URLScan"
+      ],
+      "scoreBand": "95-100",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-domain-match"
       ],
       "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-10-15T05:06:16.977Z"
+      "firstSeen": "2026-10-15T11:19:07.845Z"
     },
     {
       "signalId": "2213204eff4198758a2d",
@@ -328,53 +374,6 @@
       "firstSeen": "2026-10-17T17:53:34.710Z"
     },
     {
-      "signalId": "c04742f5eb96129248c4",
-      "recordPath": "/signals/c04742f5eb96129248c4/",
-      "brand": "Revolut",
-      "sources": [
-        "URLScan"
-      ],
-      "scoreBand": "95-100",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-domain-match"
-      ],
-      "candidateAgeBand": "8-30d",
-      "firstSeen": "2026-10-09T07:22:13.377Z"
-    },
-    {
-      "signalId": "2d3d796e336067a30570",
-      "recordPath": "/signals/2d3d796e336067a30570/",
-      "brand": "DHL",
-      "sources": [
-        "URLScan"
-      ],
-      "scoreBand": "85-94",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-domain-match"
-      ],
-      "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-10-10T23:23:47.105Z"
-    },
-    {
-      "signalId": "608c8bdbab6dbe077545",
-      "recordPath": "/signals/608c8bdbab6dbe077545/",
-      "brand": "SEB",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "85-94",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-exact-token",
-        "multiple-hyphens",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-10-15T15:21:14.106Z"
-    },
-    {
       "signalId": "6e934214cc4ffe9eb118",
       "recordPath": "/signals/6e934214cc4ffe9eb118/",
       "brand": "Revolut",
@@ -391,21 +390,22 @@
       "firstSeen": "2026-10-13T13:34:36.155Z"
     },
     {
-      "signalId": "7d4b77b5252a6da03eb7",
-      "recordPath": "/signals/7d4b77b5252a6da03eb7/",
-      "brand": "MAXIMA",
+      "signalId": "e9f9e0f0c3a348d29093",
+      "recordPath": "/signals/e9f9e0f0c3a348d29093/",
+      "brand": "Sodra",
       "sources": [
         "CertStream"
       ],
       "scoreBand": "95-100",
       "evidenceTier": "name-only",
       "reasonCodes": [
-        "brand-joined-affix",
+        "brand-exact-token",
         "different-tld",
-        "suspicious-context"
+        "punycode",
+        "unicode-confusable"
       ],
-      "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-10-18T01:21:39.962Z"
+      "candidateAgeBand": "2-7d",
+      "firstSeen": "2026-10-15T05:06:16.977Z"
     }
   ]
 }
