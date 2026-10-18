@@ -28,3 +28,10 @@ export function formatNumber(value: number): string {
 export function sentenceCase(value: string): string {
   return value.length > 0 ? value[0].toUpperCase() + value.slice(1) : value;
 }
+
+const pluralRules = { en: new Intl.PluralRules("en"), lt: new Intl.PluralRules("lt") };
+
+/** Picks the CLDR plural form; Lithuanian needs one/few/other (e.g. 1 stebėjimas, 2 stebėjimai, 10 stebėjimų). */
+export function pluralize(count: number, language: "en" | "lt", forms: Partial<Record<Intl.LDMLPluralRule, string>> & { other: string }): string {
+  return forms[pluralRules[language].select(count)] ?? forms.other;
+}

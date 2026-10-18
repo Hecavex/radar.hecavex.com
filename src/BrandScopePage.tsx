@@ -68,7 +68,7 @@ export function BrandScopePage() {
               <p className="eyebrow">Current registry</p>
               <h2 id="registry-title">Brands and official properties</h2>
             </div>
-            <p><strong>{filteredEntries.length}</strong> matching {entries.length} entries</p>
+            <p>Showing <strong>{filteredEntries.length}</strong> of {entries.length} brands</p>
           </div>
           <div className="brand-filter-shell">
             <label>

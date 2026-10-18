@@ -69,7 +69,7 @@ export function LtBrandRegistryPage() {
               <p className="eyebrow">Dabartinis registras</p>
               <h2 id="registry-title">Prekių ženklai ir oficialios svetainės</h2>
             </div>
-            <p><strong>{formatNumberLt(filteredEntries.length)}</strong> iš {formatNumberLt(brandEntries.length)} įrašų</p>
+            <p>Rodoma <strong>{formatNumberLt(filteredEntries.length)}</strong> iš {formatNumberLt(brandEntries.length)}</p>
           </div>
           <div className="brand-filter-shell">
             <label>

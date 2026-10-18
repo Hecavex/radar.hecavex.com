@@ -327,11 +327,11 @@ test("interactive presets and Unicode local search use the verified cohort; fail
     assert.equal(dom.window.document.querySelector("[data-period-count]").textContent, "2");
     const input = dom.window.document.querySelector('input[type="search"]');
     await act(async () => { Object.getOwnPropertyDescriptor(dom.window.HTMLInputElement.prototype, "value").set.call(input, "swedbanƙ"); input.dispatchEvent(new dom.window.Event("input", { bubbles: true })); });
-    assert.match(dom.window.document.querySelector(".period-list-status").textContent, /1 matching of 2/);
+    assert.match(dom.window.document.querySelector(".period-list-status").textContent, /Showing 1 of 2/);
     assert.equal(dom.window.document.querySelectorAll("tbody tr").length, 1);
     for (const query of [unicodeRow.domain, unicodeRow.domain.replaceAll("[.]", "."), "swedbanƙ.example", "swedbanƙ[.]example"]) {
       await act(async () => { Object.getOwnPropertyDescriptor(dom.window.HTMLInputElement.prototype, "value").set.call(input, query); input.dispatchEvent(new dom.window.Event("input", { bubbles: true })); });
-      assert.match(dom.window.document.querySelector(".period-list-status").textContent, /1 matching of 2/, query);
+      assert.match(dom.window.document.querySelector(".period-list-status").textContent, /Showing 1 of 2/, query);
     }
     await act(async () => buttons().find((button) => button.textContent === "JSON").click());
     const exported = JSON.parse(await downloads[0].text());

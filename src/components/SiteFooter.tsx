@@ -16,7 +16,7 @@ export function SiteFooter({ language = "en" }: { language?: SiteLanguage }) {
         ["Metodologija", "/lt/metodologija/"],
         ["Dokumentacija", "/lt/dokumentacija/"],
         ["Saugumas", "/.well-known/security.txt"],
-        ["Pataisymai", "mailto:info@hecavex.com?subject=HECAVEX%20Radar%20klaidingas%20teigiamas%20rezultatas"],
+        ["Pranešti apie klaidingą rezultatą", "mailto:info@hecavex.com?subject=HECAVEX%20Radar%20klaidingas%20teigiamas%20rezultatas"],
         ["Privatumas", "https://hecavex.com/lt/privatumas/"],
         ["Duomenų sąlygos", "/lt/dokumentacija/#duomenu-salygos"],
       ]
@@ -33,7 +33,7 @@ export function SiteFooter({ language = "en" }: { language?: SiteLanguage }) {
         ["Methodology", "/methodology/"],
         ["Docs", "/docs/"],
         ["Security", "/.well-known/security.txt"],
-        ["Corrections", "mailto:info@hecavex.com?subject=HECAVEX%20Radar%20false%20positive"],
+        ["Report a false positive", "mailto:info@hecavex.com?subject=HECAVEX%20Radar%20false%20positive"],
         ["Privacy", "https://hecavex.com/en/privacy/"],
         ["Data terms", "/docs/#data-terms"],
       ];

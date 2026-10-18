@@ -5,7 +5,7 @@ import { SiteHeader } from "./components/SiteHeader.tsx";
 import { brandPath, brandSlug, defangDomain } from "./lib/brandRegistry.ts";
 import { signalMatchScore } from "./lib/dashboard.ts";
 import { statusLt } from "./lt/formatLt.ts";
-import { formatDateTime } from "./lib/format.ts";
+import { formatDateTime, pluralize } from "./lib/format.ts";
 import type { BrandPageData } from "./lib/pageBootstrap.ts";
 import { signalPath } from "./lib/signalRoutes.ts";
 
@@ -44,7 +44,7 @@ export function BrandActivityPage({ data }: { data: BrandPageData }) {
         </section>
 
         {(data.historyTotal ?? data.history.length) > data.history.length && <p className="boundary-note">{lt ? `Čia pateikiami ${data.history.length} naujausių įrašų iš ${data.historyTotal}. Visą išsaugotą istoriją rasite archyve.` : `Showing ${data.history.length} recent records of ${data.historyTotal}. The complete retained record remains in the history archive.`} <a href={lt ? "/lt/istorija/" : "/history/"}>{lt ? "Visa istorija" : "Complete history"} →</a></p>}
-        <section className="profile-section brand-history" aria-labelledby="brand-history-title"><p className="eyebrow">04 / {lt ? "Istorija" : "History"}</p><h2 id="brand-history-title">{lt ? "Išsaugota veikla" : "Retained activity"}</h2>{data.history.length ? <ol className="signal-timeline">{data.history.map((record) => <li key={record.id}><time dateTime={record.lastSeen}>{formatDateTime(record.lastSeen)} UTC</time><a href={signalPath(record.id, data.language)}>{record.domain}</a><span>{record.observationCount} {lt ? "stebėjimų" : "observations"} · {lt ? statusLt[record.latestStatus] : record.latestStatus}</span></li>)}</ol> : <p>{lt ? "Viešoje istorijoje įrašų nėra." : "No records are present in public history."}</p>}</section>
+        <section className="profile-section brand-history" aria-labelledby="brand-history-title"><p className="eyebrow">04 / {lt ? "Istorija" : "History"}</p><h2 id="brand-history-title">{lt ? "Išsaugota veikla" : "Retained activity"}</h2>{data.history.length ? <ol className="signal-timeline">{data.history.map((record) => <li key={record.id}><time dateTime={record.lastSeen}>{formatDateTime(record.lastSeen)} UTC</time><a href={signalPath(record.id, data.language)}>{record.domain}</a><span>{record.observationCount} {pluralize(record.observationCount, data.language, lt ? { one: "stebėjimas", few: "stebėjimai", other: "stebėjimų" } : { one: "observation", other: "observations" })} · {lt ? statusLt[record.latestStatus] : record.latestStatus}</span></li>)}</ol> : <p>{lt ? "Viešoje istorijoje įrašų nėra." : "No records are present in public history."}</p>}</section>
 
         <section className="profile-section brand-sources"><p className="eyebrow">05 / {lt ? "Šaltiniai" : "Registry sources"}</p><h2>{lt ? "Tapatybės nuorodos" : "Identity references"}</h2><div className="source-link-list">{data.brand.sources.map((source) => <a href={source} target="_blank" rel="noreferrer noopener" key={source}>{new URL(source).hostname} <ExternalLink aria-hidden="true" /></a>)}</div><p className="boundary-note">{lt ? "Šaltiniai pagrindžia viešą prekės ženklo tapatybę ir oficialių domenų apimtį. Jie nėra įrodymai prieš kandidatą." : "Sources establish public brand identity and official-domain coverage. They are not evidence against a candidate."}</p></section>
       </main>
