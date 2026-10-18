@@ -6,10 +6,11 @@ import { dirname, isAbsolute, relative, resolve } from "node:path";
 
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
-import type { StaticPageData } from "./src/lib/staticPageBootstrap.ts";
-import { historyPreview } from "./src/lib/historyPreview.ts";
 import { completeSocialMetadata } from "./src/lib/socialMetadata.ts";
 import { loadPeriodOverview, periodOverviewPreview, type PeriodOverviewData } from "./src/lib/periodMetrics.ts";
+import {
+  brandPages, buildSitemap, entryRoute, needsPeriodPreview, publishedSignals, renderEntryPage, signalPages,
+} from "./src/prerenderPages.ts";
 
 const snapshotPath = fileURLToPath(new URL("./public/data/radar.json", import.meta.url));
 const historyPath = fileURLToPath(new URL("./public/data/history.json", import.meta.url));
@@ -38,63 +39,12 @@ const cloudflareAnalyticsLoader =
   `const token=document.currentScript?.dataset.hecavexAnalyticsToken;if(!token)return;` +
   `const beacon=document.createElement("script");beacon.type="module";beacon.src="${cloudflareAnalyticsScript}";` +
   `beacon.dataset.cfBeacon=JSON.stringify({token});document.head.appendChild(beacon)})();`;
-type PrerenderPage = "radar" | "history" | "brands" | "methodology" | "documentation" | "not-found";
-type StaticPageKind = "changes" | "trends" | "associations" | "tools" | "dataset";
-type PageLanguage = "en" | "lt";
-type StaticPageRoute = { kind: StaticPageKind; language: PageLanguage };
-
 function readJson(path: string): unknown {
   return JSON.parse(readFileSync(path, "utf8"));
 }
 
 function hasExactKeys(value: object, fields: readonly string[]): boolean {
   return Object.keys(value).length === fields.length && fields.every((field) => Object.hasOwn(value, field));
-}
-
-function escapeHtml(value: string): string {
-  return value.replaceAll("&", "&amp;").replaceAll('"', "&quot;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
-}
-
-function replacePageRoot(html: string, markup: string, bootstrap: string): string {
-  const root = '<div id="root"></div>';
-  if (!html.includes(root)) throw new Error("Missing dynamic page root.");
-  return html.replace(root, () => `<div id="root" data-page-bootstrap="${bootstrap}">${markup}</div>`);
-}
-
-export function decoratePage(template: string, options: {
-  title: string;
-  description: string;
-  canonical: string;
-  alternate: string;
-  alternateLanguage: "en" | "lt";
-  language: "en" | "lt";
-  markup: string;
-  bootstrap: string;
-  feedRoot?: string;
-  feedTitle?: string;
-}): string {
-  const english = options.language === "en" ? options.canonical : options.alternate;
-  const lithuanian = options.language === "lt" ? options.canonical : options.alternate;
-  const values: Record<string, string> = {
-    TITLE: escapeHtml(options.title),
-    DESCRIPTION: escapeHtml(options.description),
-    CANONICAL: options.canonical,
-    ALTERNATE: options.alternate,
-    ALTERNATE_LANG: options.alternateLanguage,
-    ENGLISH: english,
-    LITHUANIAN: lithuanian,
-    LOCALE: options.language === "lt" ? "lt_LT" : "en_GB",
-    ALTERNATE_LOCALE: options.language === "lt" ? "en_GB" : "lt_LT",
-    IMAGE_ALT: options.language === "lt" ? "HECAVEX Radar vieši tyrimo signalai" : "HECAVEX Radar public research signals",
-    FEED_ROOT: options.feedRoot ?? "",
-    FEED_TITLE: escapeHtml(options.feedTitle ?? "HECAVEX Radar brand changes"),
-  };
-  // One pass, before inserting rendered data: substituted values (a title containing
-  // "__CANONICAL__" or "$&") are never expanded again. Unknown placeholders stay as-is.
-  const filled = template
-    .replace('<html lang="en">', () => `<html lang="${options.language}">`)
-    .replace(/__([A-Z]+(?:_[A-Z]+)*)__/g, (placeholder, key: string) => Object.hasOwn(values, key) ? values[key] : placeholder);
-  return replacePageRoot(filled, options.markup, options.bootstrap);
 }
 
 function writeGeneratedPage(relativePath: string, html: string): void {
@@ -176,122 +126,22 @@ function staticPagePlugin() {
     transformIndexHtml: {
       order: "pre" as const,
       async handler(html: string, context: { path: string }) {
-        const pages: Record<string, PrerenderPage> = {
-          "/index.html": "radar",
-          "/": "radar",
-          "/history/index.html": "history",
-          "/history/": "history",
-          "/lt/istorija/index.html": "history",
-          "/lt/istorija/": "history",
-          "/brands/index.html": "brands",
-          "/brands/": "brands",
-          "/methodology/index.html": "methodology",
-          "/methodology/": "methodology",
-          "/docs/index.html": "documentation",
-          "/docs/": "documentation",
-          "/lt/dokumentacija/index.html": "documentation",
-          "/lt/dokumentacija/": "documentation",
-          "/404.html": "not-found",
-        };
-        const staticPages: Record<string, StaticPageRoute> = {
-          "/changes/index.html": { kind: "changes", language: "en" },
-          "/changes/": { kind: "changes", language: "en" },
-          "/lt/pokyciai/index.html": { kind: "changes", language: "lt" },
-          "/lt/pokyciai/": { kind: "changes", language: "lt" },
-          "/trends/index.html": { kind: "trends", language: "en" },
-          "/trends/": { kind: "trends", language: "en" },
-          "/associations/index.html": { kind: "associations", language: "en" },
-          "/associations/": { kind: "associations", language: "en" },
-          "/tools/index.html": { kind: "tools", language: "en" },
-          "/tools/": { kind: "tools", language: "en" },
-          "/dataset/index.html": { kind: "dataset", language: "en" },
-          "/dataset/": { kind: "dataset", language: "en" },
-          "/lt/tendencijos/index.html": { kind: "trends", language: "lt" },
-          "/lt/tendencijos/": { kind: "trends", language: "lt" },
-          "/lt/sasajos/index.html": { kind: "associations", language: "lt" },
-          "/lt/sasajos/": { kind: "associations", language: "lt" },
-          "/lt/irankiai/index.html": { kind: "tools", language: "lt" },
-          "/lt/irankiai/": { kind: "tools", language: "lt" },
-          "/lt/duomenys/index.html": { kind: "dataset", language: "lt" },
-          "/lt/duomenys/": { kind: "dataset", language: "lt" },
-        };
-        const lithuanianPages: Record<string, "radar" | "brands" | "methodology"> = {
-          "/lt/index.html": "radar",
-          "/lt/": "radar",
-          "/lt/prekes-zenklai/index.html": "brands",
-          "/lt/prekes-zenklai/": "brands",
-          "/lt/metodologija/index.html": "methodology",
-          "/lt/metodologija/": "methodology",
-        };
-        const page = pages[context.path];
-        const staticPage = staticPages[context.path];
-        const lithuanianPage = lithuanianPages[context.path];
-        const pageLanguage: PageLanguage = context.path.startsWith("/lt/") ? "lt" : "en";
-        if (!page && !staticPage && !lithuanianPage) return html;
+        const route = entryRoute(context.path);
+        if (!route) return html;
 
-        const [
-          { parseSnapshot },
-          { parseHistory },
-          { encodeSnapshotBootstrap },
-          { encodeHistoryBootstrap },
-          { encodeStaticPageBootstrap, encodeTrendsPageBootstrap, parseEventArtifact },
-          { parseRelatedObservations },
-          { renderLithuanianPage, renderPrerenderedPage, renderStaticPage },
-        ] = await Promise.all([
+        const [{ parseSnapshot }, { parseHistory }, renderers] = await Promise.all([
           import("./src/lib/data.ts"),
           import("./src/lib/historyData.ts"),
-          import("./src/lib/snapshotBootstrap.ts"),
-          import("./src/lib/historyBootstrap.ts"),
-          import("./src/lib/staticPageBootstrap.ts"),
-          import("./src/lib/relatedObservations.ts"),
           import("./src/prerender.ts"),
         ]);
         const snapshot = parseSnapshot(readJson(snapshotPath));
         const history = await parseHistory(readJson(historyPath), async (path) =>
           new Uint8Array(readFileSync(resolve(dirname(historyPath), path))));
-        const renderedAt = Date.parse(page === "history" ? history.generatedAt : snapshot.lastSuccessfulSyncAt);
-        const embeddedHistory = historyPreview(history);
-        const preview = page === "radar" || page === "history" || lithuanianPage === "radar" ? await observedPreview() : undefined;
-        // The overview shows only the headline count; the bounded record preview belongs to the history page.
-        const periodData = preview && page !== "history" ? { ...preview, records: [] } : preview;
-        let staticMarkup: string;
-        let bootstrap = "";
-        if (staticPage) {
-          const availableSignalIds = new Set([
-            ...snapshot.signals.map((signal) => signal.id),
-            ...history.signals.map((signal) => signal.id),
-          ]);
-          const data = {
-            snapshot,
-            history: embeddedHistory,
-            historyTotal: history.signals.length,
-            events: parseEventArtifact(readJson(eventsPath), availableSignalIds),
-            trends: readJson(trendsPath),
-            quality: readJson(qualityPath),
-            related: parseRelatedObservations(readJson(relatedPath)),
-            renderedAt,
-          } as StaticPageData;
-          staticMarkup = renderStaticPage(staticPage.kind, data, staticPage.language);
-          const encodedData = staticPage.kind === "trends" ? encodeTrendsPageBootstrap(data) : encodeStaticPageBootstrap(data);
-          bootstrap = ` data-page-kind="${staticPage.kind}" data-page-language="${staticPage.language}" data-page-bootstrap="${encodedData}"`;
-        } else if (lithuanianPage) {
-          staticMarkup = renderLithuanianPage(lithuanianPage, snapshot, renderedAt, periodData);
-          bootstrap = lithuanianPage === "radar"
-            ? ` data-radar-bootstrap="${encodeSnapshotBootstrap(snapshot, renderedAt, periodData)}"`
-            : "";
-        } else {
-          staticMarkup = renderPrerenderedPage(page!, snapshot, renderedAt, embeddedHistory, pageLanguage, history.signals.length, periodData);
-          bootstrap = page === "radar"
-            ? ` data-radar-bootstrap="${encodeSnapshotBootstrap(snapshot, renderedAt, periodData)}"`
-            : page === "history"
-              ? ` data-history-bootstrap="${encodeHistoryBootstrap(embeddedHistory, renderedAt, history.signals.length, periodData)}"`
-              : page === "documentation"
-                ? ` data-page-language="${pageLanguage}"`
-              : "";
-        }
-        const root = '<div id="root"></div>';
-        if (!html.includes(root)) throw new Error(`Missing static-render root in ${context.path}`);
-        return html.replace(root, () => `<div id="root"${bootstrap}>${staticMarkup}</div>`);
+        const periodPreview = needsPeriodPreview(route) ? await observedPreview() : undefined;
+        const artifacts = route.type === "static"
+          ? { events: readJson(eventsPath), trends: readJson(trendsPath), quality: readJson(qualityPath), related: readJson(relatedPath) }
+          : undefined;
+        return renderEntryPage(html, context.path, route, { snapshot, history, periodPreview, artifacts }, renderers);
       },
     },
   };
@@ -311,23 +161,15 @@ function dynamicRoutesPlugin() {
       const [
         { parseSnapshot },
         { parseHistory },
-        { parseSignalDetail },
         { parseRelatedObservations },
         { parseIdnEvidence, MAXIMUM_IDN_EVIDENCE_BYTES },
-        { brandEntries, brandPath, brandSlug, findBrand },
-        { signalPath },
-        { encodePageBootstrap },
         { parseEventArtifact },
         { renderBrandPage, renderSignalPage },
       ] = await Promise.all([
         import("./src/lib/data.ts"),
         import("./src/lib/historyData.ts"),
-        import("./src/lib/signalDetail.ts"),
         import("./src/lib/relatedObservations.ts"),
         import("./src/lib/idnEvidence.ts"),
-        import("./src/lib/brandRegistry.ts"),
-        import("./src/lib/signalRoutes.ts"),
-        import("./src/lib/pageBootstrap.ts"),
         import("./src/lib/staticPageBootstrap.ts"),
         import("./src/prerender.ts"),
       ]);
@@ -402,116 +244,28 @@ function dynamicRoutesPlugin() {
           createHash("sha256").update(readFileSync(snapshotPath)).digest("hex"),
         ).records;
       }
-      const idnById = new Map(idnMatches.map((record) => [record.signalId, record]));
-      const currentById = new Map(snapshot.signals.map((signal) => [signal.id, signal]));
-      const historicalById = new Map(history.signals.map((signal) => [signal.id, signal]));
-      const allSignals = new Map(currentById);
-      for (const record of history.signals) {
-        if (allSignals.has(record.id)) continue;
-        allSignals.set(record.id, {
-          id: record.id,
-          url: `hxxps://${record.domain}`,
-          domain: record.domain,
-          firstSeen: record.firstSeen,
-          lastSeen: record.lastSeen,
-          sources: record.sources,
-          status: record.latestStatus,
-          brand: record.brand,
-          country: null,
-          host: null,
-          screenshotUrl: null,
-          matchScore: 0,
-          evidenceTier: "name-only",
-          reasonCodes: record.reasonCodes,
-        });
-      }
+      const allSignals = publishedSignals(snapshot, history);
       parseEventArtifact(readJson(eventsPath), new Set(allSignals.keys()));
-      const nodesById = new Map(related.nodes.map((node) => [node.signalId, node]));
-      const sitemapUrls = new Set<string>([
-        "/", "/changes/", "/history/", "/lt/istorija/", "/brands/", "/trends/", "/associations/", "/tools/",
-        "/dataset/", "/methodology/", "/docs/", "/lt/", "/lt/pokyciai/", "/lt/prekes-zenklai/",
-        "/lt/tendencijos/", "/lt/sasajos/", "/lt/irankiai/", "/lt/duomenys/", "/lt/metodologija/",
-        "/lt/dokumentacija/",
-      ]);
-
-      for (const signal of [...allSignals.values()].sort((left, right) => left.id.localeCompare(right.id))) {
-        const detailPath = resolve(publicDataPath, "signals", signal.id.slice(0, 2), `${signal.id}.json`);
-        const detail = existsSync(detailPath) ? parseSignalDetail(readJson(detailPath), signal) : null;
-        const attachedEdges = related.edges.filter((edge) => edge.source === signal.id || edge.target === signal.id);
-        const attachedIds = new Set(attachedEdges.flatMap((edge) => [edge.source, edge.target]));
-        const attachedNodes = [...attachedIds].map((id) => nodesById.get(id)).filter((node) => node !== undefined);
-        for (const language of ["en", "lt"] as const) {
-          const path = signalPath(signal, language);
-          const alternate = signalPath(signal, language === "en" ? "lt" : "en");
-          const data = {
-            signal,
-            generatedAt: snapshot.generatedAt,
-            publicationIdentity: {
-              sourceRevision: releaseRevision,
-              dataRevision: releaseDataRevision,
-              manifestSha256: createHash("sha256").update(readFileSync(resolve(publicDataPath, "feed-manifest.json"))).digest("hex"),
-              recordScope: currentById.has(signal.id) ? "snapshot" as const : "history" as const,
-            },
-            history: historicalById.get(signal.id) ?? null,
-            detail,
-            idnMatch: idnById.get(signal.id) ?? null,
-            brand: signal.brand ? findBrand(signal.brand) ?? null : null,
-            relatedNodes: attachedNodes,
-            relatedEdges: attachedEdges,
-            language,
-          };
-          const title = `${signal.domain} · HECAVEX Radar`;
-          const description = language === "lt"
-            ? `Išsaugotas galimo apsimetimo signalo įrašas: ${signal.domain}. Įrašas galioja viešos istorijos saugojimo laikotarpiu; tai automatinis tyrimo kandidatas, ne kenkėjiškumo verdiktas.`
-            : `Durable potential impersonation signal record for ${signal.domain}. Retained under the public history policy; an automated research candidate, not a maliciousness verdict.`;
-          const html = decoratePage(signalTemplate, {
-            title,
-            description,
-            canonical: `https://radar.hecavex.com${path}`,
-            alternate: `https://radar.hecavex.com${alternate}`,
-            alternateLanguage: language === "en" ? "lt" : "en",
-            language,
-            markup: renderSignalPage(data),
-            bootstrap: encodePageBootstrap(data),
-          });
-          writeGeneratedPage(`${path.slice(1)}index.html`, html);
-          sitemapUrls.add(path);
+      const generatedPaths: string[] = [];
+      const writePages = (generated: Iterable<{ path: string; html: string }>) => {
+        for (const page of generated) {
+          writeGeneratedPage(`${page.path.slice(1)}index.html`, page.html);
+          generatedPaths.push(page.path);
         }
-      }
-
-      for (const brand of brandEntries) {
-        const currentSignals = snapshot.signals.filter((signal) => signal.brand === brand.brand)
-          .sort((left, right) => Date.parse(right.lastSeen) - Date.parse(left.lastSeen));
-        const brandHistory = history.signals.filter((signal) => signal.brand === brand.brand)
-          .sort((left, right) => Date.parse(right.lastSeen) - Date.parse(left.lastSeen));
-        const feedRoot = `/data/brands/${brandSlug(brand.brand)}`;
-        for (const language of ["en", "lt"] as const) {
-          const path = brandPath(brand.brand, language);
-          const alternate = brandPath(brand.brand, language === "en" ? "lt" : "en");
-          const data = {
-            brand, generatedAt: snapshot.generatedAt, signals: currentSignals,
-            history: historyPreview({ ...history, signals: brandHistory }).signals.slice(0, 50),
-            historyTotal: brandHistory.length, language,
-          };
-          const description = language === "lt"
-            ? `${brand.brand} vieša HECAVEX Radar aptikimo apimtis, naujausi galimo apsimetimo kandidatai ir pokyčių srautai.`
-            : `${brand.brand} public HECAVEX Radar detection scope, recent potential impersonation candidates, and change feeds.`;
-          const html = decoratePage(brandTemplate, {
-            title: `${brand.brand} activity · HECAVEX Radar`,
-            description,
-            canonical: `https://radar.hecavex.com${path}`,
-            alternate: `https://radar.hecavex.com${alternate}`,
-            alternateLanguage: language === "en" ? "lt" : "en",
-            language,
-            markup: renderBrandPage(data),
-            bootstrap: encodePageBootstrap(data),
-            feedRoot: `https://radar.hecavex.com${feedRoot}`,
-            feedTitle: `${brand.brand} HECAVEX Radar changes`,
-          });
-          writeGeneratedPage(`${path.slice(1)}index.html`, html);
-          sitemapUrls.add(path);
-        }
-      }
+      };
+      let manifestSha256: string | undefined;
+      writePages(signalPages({
+        template: signalTemplate, snapshot, history, allSignals, related, idnMatches,
+        readDetail: (signal) => {
+          const detailPath = resolve(publicDataPath, "signals", signal.id.slice(0, 2), `${signal.id}.json`);
+          return existsSync(detailPath) ? readJson(detailPath) : undefined;
+        },
+        sourceRevision: releaseRevision,
+        dataRevision: releaseDataRevision,
+        manifestSha256: () => manifestSha256 ??=
+          createHash("sha256").update(readFileSync(resolve(publicDataPath, "feed-manifest.json"))).digest("hex"),
+      }, renderSignalPage));
+      writePages(brandPages({ template: brandTemplate, snapshot, history }, renderBrandPage));
 
       const templateDirectory = resolve(outputPath, "templates");
       const templateRelative = relative(resolve(outputPath), templateDirectory);
@@ -520,8 +274,7 @@ function dynamicRoutesPlugin() {
       }
       rmSync(templateDirectory, { recursive: true, force: false });
 
-      const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${[...sitemapUrls].sort().map((path) => `  <url><loc>https://radar.hecavex.com${path}</loc></url>`).join("\n")}\n</urlset>\n`;
-      writeGeneratedPage("sitemap.xml", sitemap);
+      writeGeneratedPage("sitemap.xml", buildSitemap(generatedPaths));
       writeGeneratedPage(".well-known/security.txt", readFileSync(resolve("public", ".well-known", "security.txt"), "utf8"));
     },
   };
