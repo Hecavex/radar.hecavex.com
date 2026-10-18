@@ -130,7 +130,8 @@ def test_live_smoke_retries_one_transitional_manifest_snapshot_pair(
         expected_route = next(route for route in live_smoke.ROUTES if route[0] == path)
         _, expected_status, language, canonical = expected_route
         canonical_markup = f'<link rel="canonical" href="{canonical}">' if canonical else ""
-        marker = "This route has no signal." if expected_status == 404 else '<main id="main-content">Radar</main>'
+        main = '<main id="main-content">Radar</main>'
+        marker = live_smoke.NOT_FOUND_MARKER.decode() if expected_status == 404 else main
         return expected_status, f'<html lang="{language}">{canonical_markup}{marker}</html>'.encode()
 
     monkeypatch.setattr(live_smoke, "_fetch", fake_fetch)
@@ -166,7 +167,7 @@ def test_deployment_checks_exact_commit_even_when_snapshot_is_current(
         if path == "/data/radar.json":
             return 200, snapshot
         _, status, language, canonical = next(route for route in live_smoke.ROUTES if route[0] == path)
-        content = 'This route has no signal.' if status == 404 else '<main id="main-content">Radar</main>'
+        content = live_smoke.NOT_FOUND_MARKER.decode() if status == 404 else '<main id="main-content">Radar</main>'
         return status, f'<html lang="{language}"><link rel="canonical" href="{canonical}">{content}</html>'.encode()
 
     monkeypatch.setattr(live_smoke, "_fetch", fetch)
@@ -215,7 +216,7 @@ def test_exact_release_waits_until_identity_and_data_are_coherent(
         if route == "/data/radar.json":
             return 200, old_snapshot if old else snapshot
         _, status, language, canonical = next(row for row in live_smoke.ROUTES if row[0] == route)
-        content = 'This route has no signal.' if status == 404 else '<main id="main-content">Radar</main>'
+        content = live_smoke.NOT_FOUND_MARKER.decode() if status == 404 else '<main id="main-content">Radar</main>'
         return status, f'<html lang="{language}"><link rel="canonical" href="{canonical}">{content}</html>'.encode()
 
     monkeypatch.setattr(live_smoke, "_fetch", fetch)
@@ -263,7 +264,7 @@ def test_exact_release_cannot_pass_after_retry_deadline(tmp_path: Path, monkeypa
             elapsed[0] = 61.0
             return 200, snapshot
         _, status, language, canonical = next(row for row in live_smoke.ROUTES if row[0] == route)
-        content = 'This route has no signal.' if status == 404 else '<main id="main-content">Radar</main>'
+        content = live_smoke.NOT_FOUND_MARKER.decode() if status == 404 else '<main id="main-content">Radar</main>'
         return status, f'<html lang="{language}"><link rel="canonical" href="{canonical}">{content}</html>'.encode()
 
     monkeypatch.setattr(live_smoke, "_fetch", fetch)

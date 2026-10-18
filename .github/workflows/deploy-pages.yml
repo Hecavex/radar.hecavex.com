@@ -113,7 +113,7 @@ jobs:
           test -f dist/.well-known/security.txt
           test -f dist/llms.txt
           test -f dist/404.html
-          grep -Fq 'This route has no signal.' dist/404.html
+          grep -Fq '<h1 id="not-found-title">Page not found</h1>' dist/404.html
           grep -Fq '<meta name="robots" content="noindex, follow"' dist/404.html
           ! grep -Fq '<link rel="canonical"' dist/404.html
           test -f dist/data/radar.stix.json
