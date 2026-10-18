@@ -13,7 +13,7 @@ import pytest
 from hecavex_radar import weekly_release
 
 REPOSITORY = Path(__file__).resolve().parents[1]
-TRUSTED = "a" * 40
+TOOLING_SHA = "a" * 40
 SOURCE = "b" * 40
 OTHER = "c" * 40
 BLOB = "d" * 40
@@ -49,7 +49,7 @@ def release(tag: str = "radar-data-2026-W41", *, draft: bool = False, target: st
 def base_answers(*, page: str = "[]", manifest: str = MANIFEST, size: str | None = None,
                  entry: str | None = None) -> dict[tuple[str, ...], tuple[int, str]]:
     return {
-        ("git", "rev-parse", "HEAD"): (0, TRUSTED + "\n"),
+        ("git", "rev-parse", "HEAD"): (0, TOOLING_SHA + "\n"),
         ("git", "ls-tree", SOURCE, "--", "public/data/feed-manifest.json"):
             (0, entry if entry is not None else f"100644 blob {BLOB}\tpublic/data/feed-manifest.json\n"),
         ("git", "cat-file", "-s", BLOB): (0, (size or str(len(manifest))) + "\n"),
@@ -59,7 +59,7 @@ def base_answers(*, page: str = "[]", manifest: str = MANIFEST, size: str | None
 
 
 def env(**overrides: str) -> dict[str, str]:
-    value = {"GITHUB_SHA": TRUSTED, "GITHUB_REPOSITORY": REPO, "REQUESTED_RELEASE_WEEK": "",
+    value = {"GITHUB_SHA": TOOLING_SHA, "GITHUB_REPOSITORY": REPO, "REQUESTED_RELEASE_WEEK": "",
              "REQUESTED_SOURCE_SHA": "", "REQUESTED_DATA_SHA": "", "SELECTED_DATA_SHA": SOURCE,
              "CORRECTION_REVISION": ""}
     value.update(overrides)
@@ -80,7 +80,7 @@ def refused(answers: dict[tuple[str, ...], tuple[int, str]], message: str, **ove
 def test_select_new_weekly_release_from_publication_snapshot() -> None:
     assert select(base_answers()) == {
         "week": "2026-W41", "base_tag": "radar-data-2026-W41", "tag": "radar-data-2026-W41",
-        "correction_revision": "", "source_sha": SOURCE, "trusted_sha": TRUSTED,
+        "correction_revision": "", "source_sha": SOURCE, "trusted_sha": TOOLING_SHA,
         "should_release": "true", "resume_draft": "false",
     }
 
@@ -157,7 +157,7 @@ def test_select_legacy_source_must_descend_into_main() -> None:
             SELECTED_DATA_SHA="")
     answers[compare] = (0, "ahead\n")
     answers[("git", "cat-file", "-e", f"{SOURCE}^{{commit}}")] = (0, "")
-    answers[("git", "merge-base", "--is-ancestor", SOURCE, TRUSTED)] = (0, "")
+    answers[("git", "merge-base", "--is-ancestor", SOURCE, TOOLING_SHA)] = (0, "")
     assert select(answers, REQUESTED_SOURCE_SHA=SOURCE, SELECTED_DATA_SHA="")["source_sha"] == SOURCE
     answers[compare] = (4, "")
     with pytest.raises(weekly_release.CommandFailed) as failure:
@@ -240,7 +240,7 @@ def dataset(root: Path) -> Path:
     return data
 
 
-PACKAGE_ENV = {"RELEASE_TAG": "radar-data-2026-W41", "SOURCE_SHA": SOURCE, "TRUSTED_TOOLING_SHA": TRUSTED,
+PACKAGE_ENV = {"RELEASE_TAG": "radar-data-2026-W41", "SOURCE_SHA": SOURCE, "TRUSTED_TOOLING_SHA": TOOLING_SHA,
                "GITHUB_REPOSITORY": REPO}
 
 
@@ -261,7 +261,7 @@ def test_build_stage_writes_canonical_manifest(tmp_path: Path, monkeypatch: pyte
         "data/shards/radar-0.json", "data/signals/01/0123456789abcdef0123.json",
     ]
     assert (manifest["releaseWeek"], manifest["sourceCommit"], manifest["toolingCommit"]) == (
-        "2026-W41", SOURCE, TRUSTED)
+        "2026-W41", SOURCE, TOOLING_SHA)
     assert not (tmp_path / "_release/stage/radar-data-2026-W41/data/collection-health.json").exists()
 
 
@@ -324,7 +324,7 @@ def test_notes_name_assets_and_correction_supersession(tmp_path: Path, monkeypat
     monkeypatch.chdir(tmp_path)
     (tmp_path / "_release").mkdir()
     values = {"RELEASE_TAG": "radar-data-2026-W41", "BASE_RELEASE_TAG": "radar-data-2026-W41",
-              "CORRECTION_REVISION": "", "SOURCE_SHA": SOURCE, "TRUSTED_TOOLING_SHA": TRUSTED,
+              "CORRECTION_REVISION": "", "SOURCE_SHA": SOURCE, "TRUSTED_TOOLING_SHA": TOOLING_SHA,
               "GITHUB_REPOSITORY": REPO}
     weekly_release.write_notes(values)
     notes = (tmp_path / "_release/notes.md").read_text(encoding="utf-8")
