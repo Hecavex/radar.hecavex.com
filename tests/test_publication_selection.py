@@ -142,3 +142,12 @@ def test_readers_keep_trusted_tooling_separate_from_selected_data() -> None:
         value = (workflows / f"{name}.yml").read_text(encoding="utf-8")
         assert "continue-on-error: true" in value
         assert "unhealthy=true" in value
+
+
+def test_main_exits_3_only_when_superseded(monkeypatch: pytest.MonkeyPatch) -> None:
+    argv = ["--source", SOURCE, "--data", DATA, "--publication-source", SOURCE, "--expected-source", SOURCE]
+    monkeypatch.setattr(publication_selection, "_git", lambda *args:
+        f"{OLD}\trefs/heads/main\n{DATA}\trefs/heads/radar-data")
+    assert publication_selection.main(argv) == publication_selection.SUPERSEDED_EXIT == 3
+    assert publication_selection.main([*argv[:-1], OLD]) == 1  # source mismatch stays a plain failure
+    assert publication_selection.main(["--source", "x", *argv[2:]]) == 1  # malformed stays a plain failure

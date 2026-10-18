@@ -48,6 +48,7 @@ jobs:
         with:
           ref: main
           fetch-depth: 0
+          persist-credentials: false
       - name: Materialize allowlisted operational data with trusted source tooling
         id: data
         run: |
@@ -224,16 +225,29 @@ jobs:
           python -m hecavex_radar.data_branch materialize --repository . --branch radar-data \
             --view operational --revision "${DATA_SHA}" --state-file "${RUNNER_TEMP}/radar-deploy-data.json"
       - name: Refuse source or data superseded while building
+        id: guard
         env:
           SOURCE_SHA: ${{ needs.build.outputs.revision }}
           DATA_SHA: ${{ needs.build.outputs.data_revision }}
+        shell: bash
         run: |
+          # Exit 3 means only "a newer main or radar-data head exists": a by-design skip, not a failure.
+          # Any other non-zero exit (malformed or mismatched revisions, ls-remote error) still fails the job.
+          rc=0
           python -m hecavex_radar.publication_selection --source "${SOURCE_SHA}" --data "${DATA_SHA}" \
-            --publication-source "${SOURCE_SHA}" --expected-source "${SOURCE_SHA}"
+            --publication-source "${SOURCE_SHA}" --expected-source "${SOURCE_SHA}" || rc=$?
+          if [[ "${rc}" -eq 3 ]]; then
+            echo "superseded=true" >> "${GITHUB_OUTPUT}"
+            echo "::notice::Deployment skipped: source or operational data was superseded while building."
+          elif [[ "${rc}" -ne 0 ]]; then
+            exit "${rc}"
+          fi
       - name: Deploy to GitHub Pages
         id: deployment
+        if: steps.guard.outputs.superseded != 'true'
         uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5
       - name: Verify live release identity and bilingual data freshness
+        if: steps.guard.outputs.superseded != 'true'
         env:
           EXPECTED_REVISION: ${{ needs.build.outputs.revision }}
           EXPECTED_DATA_REVISION: ${{ needs.build.outputs.data_revision }}
@@ -241,14 +255,17 @@ jobs:
           python -m hecavex_radar.live_smoke --expected-revision "${EXPECTED_REVISION}" \
             --expected-data-revision "${EXPECTED_DATA_REVISION}"
       - name: Set up Python for the verified publication receipt
+        if: steps.guard.outputs.superseded != 'true'
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.12"
       - name: Install the pinned publication receipt runtime
+        if: steps.guard.outputs.superseded != 'true'
         run: |
           python -m pip install --disable-pip-version-check --require-hashes -r requirements/automation-runtime-py312.lock
           python -m pip install --disable-pip-version-check --no-deps --no-build-isolation -e .
       - name: Preserve the exact verified hostname cohort
+        if: steps.guard.outputs.superseded != 'true'
         env:
           VERIFIED_ROOT: ${{ runner.temp }}/radar-verified-publication
         run: |
@@ -265,6 +282,7 @@ jobs:
               shutil.copyfile(path, target)
           PY
       - name: Append verified publication facts to the latest operational data
+        if: steps.guard.outputs.superseded != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           SOURCE_SHA: ${{ needs.build.outputs.revision }}

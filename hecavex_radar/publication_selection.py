@@ -9,6 +9,12 @@ import subprocess
 import sys
 from pathlib import Path
 
+SUPERSEDED_EXIT = 3  # lets the deploy workflow report a by-design supersession as neutral
+
+
+class SupersededError(ValueError):
+    """The selected source or data is no longer the head of its branch."""
+
 
 def validate_selection(source: str, data: str, publication_source: str, expected_source: str) -> None:
     for value in (source, data, publication_source, expected_source):
@@ -36,7 +42,7 @@ def verify_current(repository: Path, source: str, data: str, trigger_data: str |
     heads = _git(repository, "ls-remote", "origin", "refs/heads/main", "refs/heads/radar-data")
     selected = {row.split()[1]: row.split()[0] for row in heads.splitlines() if len(row.split()) == 2}
     if selected.get("refs/heads/main") != source or selected.get("refs/heads/radar-data") != data:
-        raise ValueError("Source or operational data advanced; refuse a stale deployment.")
+        raise SupersededError("Source or operational data advanced; refuse a stale deployment.")
     if trigger_data is not None:
         if re.fullmatch(r"[a-f0-9]{40}", trigger_data) is None:
             raise ValueError("A writer completion must identify its exact data revision.")
@@ -55,6 +61,9 @@ def main(argv: list[str] | None = None) -> int:
     try:
         validate_selection(options.source, options.data, options.publication_source, options.expected_source)
         verify_current(options.repository, options.source, options.data, options.trigger_data)
+    except SupersededError as error:
+        print(f"Publication selection refused: {error}", file=sys.stderr)
+        return SUPERSEDED_EXIT
     except (ValueError, OSError, subprocess.SubprocessError) as error:
         print(f"Publication selection refused: {error}", file=sys.stderr)
         return 1
