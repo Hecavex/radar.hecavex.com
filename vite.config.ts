@@ -58,7 +58,39 @@ function escapeHtml(value: string): string {
 function replacePageRoot(html: string, markup: string, bootstrap: string): string {
   const root = '<div id="root"></div>';
   if (!html.includes(root)) throw new Error("Missing dynamic page root.");
-  return html.replace(root, `<div id="root" data-page-bootstrap="${bootstrap}">${markup}</div>`);
+  return html.replace(root, () => `<div id="root" data-page-bootstrap="${bootstrap}">${markup}</div>`);
+}
+
+export function decoratePage(template: string, options: {
+  title: string;
+  description: string;
+  canonical: string;
+  alternate: string;
+  alternateLanguage: "en" | "lt";
+  language: "en" | "lt";
+  markup: string;
+  bootstrap: string;
+  feedRoot?: string;
+  feedTitle?: string;
+}): string {
+  const english = options.language === "en" ? options.canonical : options.alternate;
+  const lithuanian = options.language === "lt" ? options.canonical : options.alternate;
+  // Fill placeholders before inserting rendered data; function replacers keep `$` patterns literal.
+  const filled = template
+    .replace('<html lang="en">', () => `<html lang="${options.language}">`)
+    .replaceAll("__TITLE__", () => escapeHtml(options.title))
+    .replaceAll("__DESCRIPTION__", () => escapeHtml(options.description))
+    .replaceAll("__CANONICAL__", () => options.canonical)
+    .replaceAll("__ALTERNATE__", () => options.alternate)
+    .replaceAll("__ALTERNATE_LANG__", () => options.alternateLanguage)
+    .replaceAll("__ENGLISH__", () => english)
+    .replaceAll("__LITHUANIAN__", () => lithuanian)
+    .replaceAll("__LOCALE__", () => options.language === "lt" ? "lt_LT" : "en_GB")
+    .replaceAll("__ALTERNATE_LOCALE__", () => options.language === "lt" ? "en_GB" : "lt_LT")
+    .replaceAll("__IMAGE_ALT__", () => options.language === "lt" ? "HECAVEX Radar vieši tyrimo signalai" : "HECAVEX Radar public research signals")
+    .replaceAll("__FEED_ROOT__", () => options.feedRoot ?? "")
+    .replaceAll("__FEED_TITLE__", () => escapeHtml(options.feedTitle ?? "HECAVEX Radar brand changes"));
+  return replacePageRoot(filled, options.markup, options.bootstrap);
 }
 
 function writeGeneratedPage(relativePath: string, html: string): void {
@@ -255,7 +287,7 @@ function staticPagePlugin() {
         }
         const root = '<div id="root"></div>';
         if (!html.includes(root)) throw new Error(`Missing static-render root in ${context.path}`);
-        return html.replace(root, `<div id="root"${bootstrap}>${staticMarkup}</div>`);
+        return html.replace(root, () => `<div id="root"${bootstrap}>${staticMarkup}</div>`);
       },
     },
   };
@@ -398,37 +430,6 @@ function dynamicRoutesPlugin() {
         "/lt/dokumentacija/",
       ]);
 
-      const decorate = (template: string, options: {
-        title: string;
-        description: string;
-        canonical: string;
-        alternate: string;
-        alternateLanguage: "en" | "lt";
-        language: "en" | "lt";
-        markup: string;
-        bootstrap: string;
-        feedRoot?: string;
-        feedTitle?: string;
-      }) => {
-        const withRoot = replacePageRoot(template, options.markup, options.bootstrap);
-        const english = options.language === "en" ? options.canonical : options.alternate;
-        const lithuanian = options.language === "lt" ? options.canonical : options.alternate;
-        return withRoot
-          .replace('<html lang="en">', `<html lang="${options.language}">`)
-          .replaceAll("__TITLE__", escapeHtml(options.title))
-          .replaceAll("__DESCRIPTION__", escapeHtml(options.description))
-          .replaceAll("__CANONICAL__", options.canonical)
-          .replaceAll("__ALTERNATE__", options.alternate)
-          .replaceAll("__ALTERNATE_LANG__", options.alternateLanguage)
-          .replaceAll("__ENGLISH__", english)
-          .replaceAll("__LITHUANIAN__", lithuanian)
-          .replaceAll("__LOCALE__", options.language === "lt" ? "lt_LT" : "en_GB")
-          .replaceAll("__ALTERNATE_LOCALE__", options.language === "lt" ? "en_GB" : "lt_LT")
-          .replaceAll("__IMAGE_ALT__", options.language === "lt" ? "HECAVEX Radar vieši tyrimo signalai" : "HECAVEX Radar public research signals")
-          .replaceAll("__FEED_ROOT__", options.feedRoot ?? "")
-          .replaceAll("__FEED_TITLE__", escapeHtml(options.feedTitle ?? "HECAVEX Radar brand changes"));
-      };
-
       for (const signal of [...allSignals.values()].sort((left, right) => left.id.localeCompare(right.id))) {
         const detailPath = resolve(publicDataPath, "signals", signal.id.slice(0, 2), `${signal.id}.json`);
         const detail = existsSync(detailPath) ? parseSignalDetail(readJson(detailPath), signal) : null;
@@ -459,7 +460,7 @@ function dynamicRoutesPlugin() {
           const description = language === "lt"
             ? `Išsaugotas galimo apsimetimo signalo įrašas: ${signal.domain}. Įrašas galioja viešos istorijos saugojimo laikotarpiu; tai automatinis tyrimo kandidatas, ne kenkėjiškumo verdiktas.`
             : `Durable potential impersonation signal record for ${signal.domain}. Retained under the public history policy; an automated research candidate, not a maliciousness verdict.`;
-          const html = decorate(signalTemplate, {
+          const html = decoratePage(signalTemplate, {
             title,
             description,
             canonical: `https://radar.hecavex.com${path}`,
@@ -491,7 +492,7 @@ function dynamicRoutesPlugin() {
           const description = language === "lt"
             ? `${brand.brand} vieša HECAVEX Radar aptikimo apimtis, naujausi galimo apsimetimo kandidatai ir pokyčių srautai.`
             : `${brand.brand} public HECAVEX Radar detection scope, recent potential impersonation candidates, and change feeds.`;
-          const html = decorate(brandTemplate, {
+          const html = decoratePage(brandTemplate, {
             title: `${brand.brand} activity · HECAVEX Radar`,
             description,
             canonical: `https://radar.hecavex.com${path}`,
