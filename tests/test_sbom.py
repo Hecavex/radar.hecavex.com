@@ -245,13 +245,13 @@ def test_repository_locks_produce_a_complete_hybrid_inventory(tmp_path: Path) ->
 
 
 def test_weekly_workflow_uploads_checksums_sbom_and_attests_all_assets() -> None:
-    workflow = (
-        Path(__file__).resolve().parents[1] / ".github/workflows/release-weekly-dataset.yml"
-    ).read_text(encoding="utf-8")
+    repository = Path(__file__).resolve().parents[1]
+    workflow = (repository / ".github/workflows/release-weekly-dataset.yml").read_text(encoding="utf-8")
+    module = (repository / "hecavex_radar/weekly_release.py").read_text(encoding="utf-8")
 
-    assert 'sha256sum "${archive_name}" "${manifest_name}" "${sbom_name}" > SHA256SUMS' in workflow
+    assert "names = (archive_name, manifest_name, sbom_name)" in module
     assert '"${RELEASE_TAG}.spdx.json" "${RELEASE_TAG}.tar.gz"' in workflow
     assert "${{ steps.package.outputs.sbom_path }}" in workflow
     assert "${{ steps.package.outputs.checksums_path }}" in workflow
-    assert '--commit "${TRUSTED_TOOLING_SHA}"' in workflow
-    assert '--commit "${SOURCE_SHA}"' not in workflow
+    assert '"--commit", environ["TRUSTED_TOOLING_SHA"]' in module
+    assert '"--commit", environ["SOURCE_SHA"]' not in module

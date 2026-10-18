@@ -1,19 +1,21 @@
-"""Exercise the actual workflow's embedded Python validation command."""
+"""Exercise the weekly release workflow's validation command."""
 import ast
+import inspect
 import textwrap
 from pathlib import Path
 
-from hecavex_radar import brands, publication
+from hecavex_radar import brands, publication, weekly_release
 
 
 def test_release_validation_imports_trusted_code_then_anchors_external_data(tmp_path, monkeypatch):
     repository = Path(__file__).resolve().parents[1]
     workflow = (repository / ".github/workflows/release-weekly-dataset.yml").read_text(encoding="utf-8")
     step = workflow.split("- name: Validate selected publication data with current tooling", 1)[1]
-    script = textwrap.dedent(step.split("python - <<'PY'\n", 1)[1].split("\n          PY\n", 1)[0])
-    tree = ast.parse(script)
+    assert step.split("- name:", 1)[0].rstrip().endswith("run: python -m hecavex_radar.weekly_release validate")
+    tree = ast.parse(textwrap.dedent(inspect.getsource(weekly_release.validate_release_source)))
     imported = next(node.lineno for node in ast.walk(tree)
-                    if isinstance(node, ast.ImportFrom) and node.module == "hecavex_radar.publication")
+                    if isinstance(node, ast.ImportFrom) and node.module == "hecavex_radar"
+                    and {alias.name for alias in node.names} >= {"brands", "publication"})
     changed = next(node.lineno for node in ast.walk(tree)
                    if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute) and node.func.attr == "chdir")
     assert imported < changed
@@ -49,5 +51,5 @@ def test_release_validation_imports_trusted_code_then_anchors_external_data(tmp_
 
     monkeypatch.setattr(brands, "load_brand_registry", load_registry)
     monkeypatch.setattr(publication, "validate_publication", validate)
-    exec(compile(script, "actual-release-workflow-validation", "exec"), {})  # noqa: S102 - trusted source workflow
+    assert weekly_release.main(["validate"]) == 0
     assert calls == [("registry", registry_path), ("publication", source)]
