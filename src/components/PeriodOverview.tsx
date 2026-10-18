@@ -7,7 +7,8 @@ import { signalPath } from "../lib/signalRoutes.ts";
 import { loadPeriodOverview, observedHostnamesAsCsv, observedHostnamesAsJson, periodTotals, selectPeriodRecords, type ObservedHostnameRecord, type PeriodOverviewData, type PeriodWindow } from "../lib/periodMetrics.ts";
 import type { SiteLanguage } from "./SiteHeader.tsx";
 
-const utcDateTime = (value: string, language: SiteLanguage) => new Intl.DateTimeFormat(language === "lt" ? "lt-LT" : "en-GB", { dateStyle: "medium", timeStyle: "short", timeZone: "UTC" }).format(Date.parse(value));
+// Unparseable values fall back to the raw string instead of throwing during render.
+const utcDateTime = (value: string, language: SiteLanguage) => Number.isFinite(Date.parse(value)) ? new Intl.DateTimeFormat(language === "lt" ? "lt-LT" : "en-GB", { dateStyle: "medium", timeStyle: "short", timeZone: "UTC" }).format(Date.parse(value)) : value;
 
 const PAGE_SIZE = 25;
 const PRESETS = ["30d", "90d", "365d", "all"];

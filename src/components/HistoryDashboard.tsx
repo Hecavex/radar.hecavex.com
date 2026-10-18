@@ -1,7 +1,8 @@
 import { Filter, History, RotateCcw, Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
-import { formatDateTime, formatNumber, formatRelativeTime, pluralize, sentenceCase } from "../lib/format.ts";
+import { formatNumber, formatRelativeTime, pluralize, sentenceCase } from "../lib/format.ts";
+import { formatEventDateTime } from "../lib/staticPageFormat.ts";
 import { formatRelativeTimeLt, statusLt } from "../lt/formatLt.ts";
 import { foldSearchText } from "../lib/searchText.ts";
 import { signalPath } from "../lib/signalRoutes.ts";
@@ -115,13 +116,13 @@ export function HistoryDashboard({ history, now = Date.now(), totalSignals = his
                       <td data-label={t("Target", "Prekės ženklas")}><strong className="brand-target">{signal.brand}</strong></td>
                       <td data-label={t("Sources", "Šaltiniai")}><div className="source-chips">{signal.sources.map((source) => <span key={source}>{source}</span>)}</div></td>
                       <td data-label={t("Latest status", "Naujausia būsena")}><span className={`status-pill ${signal.latestStatus}`}><i aria-hidden="true" />{statusLabel(signal.latestStatus)}</span></td>
-                      <td data-label={t("Observed", "Stebėta")}><time dateTime={signal.lastSeen} title={formatDateTime(signal.lastSeen)}>{relativeTime(signal.lastSeen, now)}</time><span className="first-seen">{t("First", "Pirmą kartą")} {relativeTime(signal.firstSeen, now)} · {signal.observationCount} {pluralize(signal.observationCount, language, lt ? { one: "stebėjimas", few: "stebėjimai", other: "stebėjimų" } : { one: "observation", other: "observations" })}</span></td>
+                      <td data-label={t("Observed", "Stebėta")}><time dateTime={signal.lastSeen} title={formatEventDateTime(signal.lastSeen, language)}>{relativeTime(signal.lastSeen, now)}</time><span className="first-seen">{t("First", "Pirmą kartą")} {relativeTime(signal.firstSeen, now)} · {signal.observationCount} {pluralize(signal.observationCount, language, lt ? { one: "stebėjimas", few: "stebėjimai", other: "stebėjimų" } : { one: "observation", other: "observations" })}</span></td>
                       <td data-label={t("Provenance", "Kilmė")}>
                         <details className="history-provenance">
                           <summary>{signal.reasonCodes.length} {t("reasons", "priežasčių")} · {signal.statusTransitions.length} {t("transitions", "perėjimų")}</summary>
                           <ul>{signal.reasonCodes.map((reason) => <li key={reason}>{reasonLabel(reason)}</li>)}</ul>
                           {signal.statusTransitions.map((transition) => (
-                            <p key={transition.eventId}><time dateTime={transition.observedAt}>{formatDateTime(transition.observedAt)}</time>: {transition.previousStatus ? statusLabel(transition.previousStatus) : t("First publication", "Pirma publikacija")} → {statusLabel(transition.status)}</p>
+                            <p key={transition.eventId}><time dateTime={transition.observedAt}>{formatEventDateTime(transition.observedAt, language)}</time>: {transition.previousStatus ? statusLabel(transition.previousStatus) : t("First publication", "Pirma publikacija")} → {statusLabel(transition.status)}</p>
                           ))}
                         </details>
                       </td>

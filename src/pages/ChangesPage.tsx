@@ -12,7 +12,7 @@ const windows = [
 ] as const;
 type WindowValue = (typeof windows)[number]["value"];
 
-const windowFromSearch = (search: string): WindowValue => windows.find((item) => item.value === new URLSearchParams(search).get("window"))?.value ?? "30d";
+export const windowFromSearch = (search: string): WindowValue => windows.find((item) => item.value === new URLSearchParams(search).get("window"))?.value ?? "30d";
 
 export function ChangesPage({ data, language = "en" }: { data: StaticPageData; language?: StaticPageLanguage }) {
   const lt = language === "lt";
@@ -31,7 +31,8 @@ export function ChangesPage({ data, language = "en" }: { data: StaticPageData; l
   const chooseWindow = (value: WindowValue) => {
     const url = new URL(window.location.href);
     if (value === "30d") url.searchParams.delete("window"); else url.searchParams.set("window", value);
-    window.history.pushState(null, "", url);
+    // Re-selecting the current window must not add a dead Back entry.
+    if (url.href !== window.location.href) window.history.pushState(null, "", url);
     setWindowValue(value);
     setPage(1);
   };

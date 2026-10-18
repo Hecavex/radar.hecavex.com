@@ -114,7 +114,7 @@ export function FilterBar({
       </div>
       <div className="sort-row">
         <label htmlFor="signal-sort">{lt ? "Rikiuoti" : "Sort by"}</label>
-        <select id="signal-sort" aria-label={lt ? "Rikiuoti kandidatus" : "Sort candidates"} value={filters.sort} onChange={(event) => update("sort", event.target.value as Filters["sort"])}>
+        <select id="signal-sort" value={filters.sort} onChange={(event) => update("sort", event.target.value as Filters["sort"])}>
           <option value="last-seen-desc">{lt ? "Naujausias stebėjimas" : "Newest observation"}</option>
           <option value="first-seen-desc">{lt ? "Naujausias aptikimas" : "Newest discovery"}</option>
           <option value="match-score-desc">{lt ? "Didžiausias atitikties balas" : "Highest match score"}</option>

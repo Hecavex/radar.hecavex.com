@@ -121,7 +121,7 @@ export function LtBrandRegistryPage() {
               </tbody>
             </table>
           </div>
-          {filteredEntries.length === 0 ? <p className="registry-empty">Nė vienas registro įrašas neatitinka šios paieškos, todėl šis prekių ženklas nepatenka į Radar apimtį. Prekių ženklai pridedami tik po peržiūros. <a href="mailto:info@hecavex.com?subject=HECAVEX%20Radar%20prek%C4%97s%20%C5%BEenklo%20prid%C4%97jimas">Paprašykite pridėti el. paštu</a>.</p> : null}
+          {filteredEntries.length === 0 ? <p className="registry-empty">Nė vienas registro įrašas neatitinka šios paieškos, todėl šis prekės ženklas nepatenka į Radaro apimtį. Prekių ženklai pridedami tik po peržiūros. <a href="mailto:info@hecavex.com?subject=HECAVEX%20Radar%20prek%C4%97s%20%C5%BEenklo%20prid%C4%97jimas">Paprašykite pridėti el. paštu</a>.</p> : null}
         </section>
       </main>
       <LtFooter />
