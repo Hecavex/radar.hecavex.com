@@ -105,11 +105,11 @@ export function Dashboard({ snapshot, now = Date.now(), language = "en", refresh
 
       <section className="signal-section" id={signalsAnchor} aria-labelledby="signals-title">
         <div className="section-heading">
-          <div><h2 id="signals-title">{lt ? "Dabartinis kandidatų trumpasis sąrašas" : "Current candidate shortlist"}</h2><p className="count-legend">{observed30d === undefined
+          <div><h2 id="signals-title">{lt ? "Dabartinis kandidatų trumpasis sąrašas" : "Current candidate shortlist"}</h2><p>{observed30d === undefined
             ? (lt ? "Naujausių kandidatų atranka; šis skaičius nėra išsaugotos istorijos suma." : "A selection of recent candidates; this count is not the recorded history total.")
             : lt
-              ? <>Trumpasis sąrašas: <strong>{number(snapshot.signals.length)}</strong> dabartinių kandidatų, atrinktų peržiūrai. Per 30 dienų išsaugota unikalių domenų vardų: <strong>{observed30d.toLocaleString("lt-LT")}</strong>; jie skaičiuojami atskirai žemiau.</>
-              : <>Shortlist: <strong>{number(snapshot.signals.length)}</strong> current candidates selected for review. Last 30 days: <strong>{observed30d.toLocaleString("en-GB")}</strong> unique hostnames recorded, counted separately below.</>}</p></div>
+              ? <>Trumpasis sąrašas: <strong>{snapshot.signals.length.toLocaleString("lt-LT")}</strong> dabartinių kandidatų, atrinktų peržiūrai. Per 30 dienų išsaugota unikalių domenų vardų: <strong>{observed30d.toLocaleString("lt-LT")}</strong>; jie skaičiuojami atskirai žemiau.</>
+              : <>Shortlist: <strong>{snapshot.signals.length.toLocaleString("en-GB")}</strong> current candidates selected for review. Last 30 days: <strong>{observed30d.toLocaleString("en-GB")}</strong> unique hostnames recorded, counted separately below.</>}</p></div>
           <div className="signal-heading-actions"><p>{lt ? <><strong>{number(filteredSignals.length)}</strong> atitinka iš {number(snapshot.signals.length)}</> : <><strong>{number(filteredSignals.length)}</strong> matching {number(snapshot.signals.length)}</>}</p><ExportActions signals={filteredSignals} snapshotGeneratedAt={snapshot.generatedAt} language={language} /></div>
         </div>
         <FilterBar signals={snapshot.signals} filters={filters} onChange={setFilters} language={language} />

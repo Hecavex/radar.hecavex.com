@@ -6,7 +6,7 @@ Use semantic ownership rather than generated pages as the starting point for a c
 
 | Responsibility | Source | Related checks |
 | --- | --- | --- |
-| Primary period totals, local search and matching JSON/CSV export | `src/components/PeriodOverview.tsx`, `src/lib/periodMetrics.ts` | `scripts/period-metrics.test.mjs`; complete cohort, failure/preview and no-JS browser checks |
+| Primary period totals, local search and matching JSON/CSV export (full panel on `/history/` and `/lt/istorija/`; the overview shows only the 30-day `ObservedHostnamesSummary`) | `src/components/PeriodOverview.tsx`, `src/lib/periodMetrics.ts` | `scripts/period-metrics.test.mjs`; complete cohort, failure/preview and no-JS browser checks |
 | Overview, snapshot loading and hydration | `src/main.tsx`, `src/App.tsx`, `src/lt/LtRadarApp.tsx` | Snapshot bootstrap contracts; browser refresh/error/no-JS checks |
 | Candidate view, filters and exports | `src/components/Dashboard.tsx`, `FilterBar.tsx`, `SignalTable.tsx`, `ExportActions.tsx` | `src/lib/dashboard.ts`, `src/lib/export.ts`; `scripts/verify-site.mjs` checks local query privacy, independent advanced disclosure, URL restoration and reset focus; row actions require 44px width and height |
 | Changes feed and filter recovery | `src/pages/ChangesPage.tsx` | Changes EN/LT filtering, pagination and empty-state browser checks |
