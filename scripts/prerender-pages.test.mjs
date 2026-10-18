@@ -10,6 +10,7 @@ import {
   entryRoute,
   fixedSitemapRoutes,
   lithuanianPages,
+  needsPeriodPreview,
   pages,
   publishedSignals,
   renderEntryPage,
@@ -82,6 +83,28 @@ test("the route tables map every HTML entry in rollupOptions.input and nothing e
     assert.deepEqual(entryRoute(path.slice(0, -"index.html".length)), entryRoute(path));
   }
   assert.equal(entryRoute("/signals/0123456789abcdef0123/"), undefined);
+});
+
+test("only the history pages receive the period record preview; overview pages keep the counts only", () => {
+  const periodPreview = { metrics: { windows: [] }, index: {}, records: [{ id: "r" }], complete: false };
+  const seen = {};
+  const capture = {
+    ...renderers,
+    renderPrerenderedPage: (page, _snapshot, _renderedAt, _history, language, _total, periodData) => { seen[`${page}:${language}`] = periodData; return "<main></main>"; },
+    renderLithuanianPage: (page, _snapshot, _renderedAt, periodData) => { seen[`lt-${page}`] = periodData; return "<main></main>"; },
+  };
+  for (const path of ["/", "/lt/", "/history/", "/lt/istorija/"]) {
+    assert.equal(needsPeriodPreview(entryRoute(path)), true, path);
+    renderEntryPage(entryTemplate, path, entryRoute(path), { ...pageData, periodPreview }, capture);
+  }
+  assert.deepEqual(seen["radar:en"].records, []);
+  assert.deepEqual(seen["lt-radar"].records, []);
+  assert.deepEqual(seen["history:en"].records, [{ id: "r" }]);
+  assert.deepEqual(seen["history:lt"].records, [{ id: "r" }]);
+  assert.equal(periodPreview.records.length, 1, "the shared preview must not be mutated");
+  for (const path of ["/brands/", "/methodology/", "/changes/", "/lt/prekes-zenklai/", "/404.html"]) {
+    assert.equal(needsPeriodPreview(entryRoute(path)), false, path);
+  }
 });
 
 test("the radar page carries the snapshot bootstrap and the LT history page renders in Lithuanian", () => {

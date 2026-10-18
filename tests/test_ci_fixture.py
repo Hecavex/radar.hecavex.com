@@ -32,3 +32,16 @@ def test_materialized_fixture_runs(tmp_path: Path, monkeypatch: pytest.MonkeyPat
 def test_ci_never_skips(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("CI", "true")
     require_ci_fixture(_repository(tmp_path))
+
+
+def test_source_edits_under_data_do_not_unskip(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("CI", raising=False)
+    repository = _repository(tmp_path)
+    (repository / "data/x.json").write_text('{"brand": "edited"}\n', encoding="utf-8")
+    with pytest.raises(pytest.skip.Exception):
+        require_ci_fixture(repository)
+
+
+def test_unknown_git_status_runs_the_test(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("CI", raising=False)
+    require_ci_fixture(tmp_path)  # not a repository: git status fails, so nothing is skipped
