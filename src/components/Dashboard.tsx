@@ -110,7 +110,7 @@ export function Dashboard({ snapshot, now = Date.now(), language = "en", refresh
             : lt
               ? <>Trumpasis sąrašas: <strong>{snapshot.signals.length.toLocaleString("lt-LT")}</strong> dabartinių kandidatų, atrinktų peržiūrai. Per 30 dienų išsaugota unikalių domenų vardų: <strong>{observed30d.toLocaleString("lt-LT")}</strong>; jie skaičiuojami atskirai žemiau.</>
               : <>Shortlist: <strong>{snapshot.signals.length.toLocaleString("en-GB")}</strong> current candidates selected for review. Last 30 days: <strong>{observed30d.toLocaleString("en-GB")}</strong> unique hostnames recorded, counted separately below.</>}</p></div>
-          <div className="signal-heading-actions"><p>{lt ? <><strong>{number(filteredSignals.length)}</strong> atitinka iš {number(snapshot.signals.length)}</> : <><strong>{number(filteredSignals.length)}</strong> matching {number(snapshot.signals.length)}</>}</p><ExportActions signals={filteredSignals} snapshotGeneratedAt={snapshot.generatedAt} language={language} /></div>
+          <div className="signal-heading-actions"><p>{lt ? <>Rodoma <strong>{number(filteredSignals.length)}</strong> iš {number(snapshot.signals.length)}</> : <>Showing <strong>{number(filteredSignals.length)}</strong> of {number(snapshot.signals.length)}</>}</p><ExportActions signals={filteredSignals} snapshotGeneratedAt={snapshot.generatedAt} language={language} /></div>
         </div>
         <FilterBar signals={snapshot.signals} filters={filters} onChange={setFilters} language={language} />
         <SignalTable signals={filteredSignals} now={now} snapshotGeneratedAt={snapshot.generatedAt} onFacet={updateFacet} language={language} />

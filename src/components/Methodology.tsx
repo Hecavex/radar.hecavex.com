@@ -232,7 +232,7 @@ const englishCopy: MethodologyCopy = {
     { eyebrow: "Service boundary", title: "Best effort, no SLA", paragraphs: ["HECAVEX operates Radar as best-effort public research. It is not continuous brand monitoring, victim notification, incident response, takedown, or an availability or response commitment."] },
     { eyebrow: "Operational evidence", title: "Snapshot state has limits", paragraphs: ["Source timestamps show archive reads performed by the publisher. The separate public collection-health document reports actual timing, aggregate counts, late starts, outcome, last success, and freshness for only the latest CertStream attempt. Rolling pipeline health also reports sanitized CT-search and DNS/RDAP run summaries; none of these artifacts proves complete global coverage."] },
   ],
-  correctionReport: <><span>Believe a listing is incorrect? </span><a href="mailto:info@hecavex.com?subject=HECAVEX%20Radar%20false%20positive">Report a false positive</a>.</>,
+  correctionReport: <><span>Believe a listing is incorrect? </span><a href="mailto:info@hecavex.com?subject=HECAVEX%20Radar%20false%20positive">Report a false positive</a> or <a href="https://github.com/Hecavex/radar.hecavex.com/issues/new?template=false-positive.yml">open a public GitHub issue</a>.</>,
 };
 
 const lithuanianCopy: MethodologyCopy = {
@@ -363,7 +363,7 @@ const lithuanianCopy: MethodologyCopy = {
     { eyebrow: "Veikimo įrodymai", title: "Suvestinės būsena turi ribas", paragraphs: ["Šaltinių laiko žymos rodo skelbėjo atliktus archyvų nuskaitymus. Atskirame viešame rinkimo būklės dokumente pateikiamas tik naujausio CertStream bandymo tikras laikas, bendri skaičiai, vėlyvas paleidimas, rezultatas, paskutinė sėkmė ir duomenų naujumas. Kintanti proceso būklė taip pat pateikia neutralizuotas CT paieškos ir DNS bei RDAP vykdymo suvestines; nė vienas iš šių artefaktų neįrodo visiškos pasaulinės aprėpties."] },
     { eyebrow: "IDN rodymas", title: "Kiekviena programa sprendžia atskirai", paragraphs: [<> <a href="https://haveibeensquatted.com/blog/turning-idn-edge-cases-into-typosquats">2026 m. spalio 3 d. IDN tyrime</a> atskirai nagrinėti naršyklės rodymo, navigacijos, registro ir el. pašto programų sprendimai. Tos datos rezultatai neprognozuoja dabartinės programos elgesio. Unicode forma, galiojantis TLS sertifikatas ir perspėjimo nebuvimas saugumo nepatvirtina.</>] },
   ],
-  correctionReport: <><span>Manote, kad įrašas neteisingas? </span><a href="mailto:info@hecavex.com?subject=HECAVEX%20Radar%20klaidingas%20teigiamas%20rezultatas">Praneškite apie klaidingai teigiamą rezultatą</a>.</>,
+  correctionReport: <><span>Manote, kad įrašas neteisingas? </span><a href="mailto:info@hecavex.com?subject=HECAVEX%20Radar%20klaidingas%20teigiamas%20rezultatas">Praneškite apie klaidingai teigiamą rezultatą</a> arba <a href="https://github.com/Hecavex/radar.hecavex.com/issues/new?template=false-positive.yml">sukurkite viešą GitHub pranešimą</a>.</>,
 };
 
 export function Methodology({ language = "en" }: { language?: SiteLanguage }) {

@@ -21,7 +21,7 @@ const englishStatuses: Record<SignalStatus, string> = {
   unknown: "Unknown",
 };
 
-const advancedFilterKeys = ["status", "source", "brand", "country", "minimumMatchScore", "evidence", "sort"] as const;
+const advancedFilterKeys = ["status", "source", "brand", "country", "minimumMatchScore", "evidence"] as const;
 
 export function FilterBar({
   signals,
@@ -112,6 +112,15 @@ export function FilterBar({
         />
         <kbd>/</kbd>
       </div>
+      <div className="sort-row">
+        <label htmlFor="signal-sort">{lt ? "Rikiuoti" : "Sort by"}</label>
+        <select id="signal-sort" value={filters.sort} onChange={(event) => update("sort", event.target.value as Filters["sort"])}>
+          <option value="last-seen-desc">{lt ? "Naujausias stebėjimas" : "Newest observation"}</option>
+          <option value="first-seen-desc">{lt ? "Naujausias aptikimas" : "Newest discovery"}</option>
+          <option value="match-score-desc">{lt ? "Didžiausias atitikties balas" : "Highest match score"}</option>
+          <option value="brand-asc">{lt ? "Prekių ženklas A–Ž" : "Brand A-Z"}</option>
+        </select>
+      </div>
       <details className="advanced-filter-shell" open={advancedOpen} onToggle={(event) => setAdvancedOpen(event.currentTarget.open)}>
         <summary><SlidersHorizontal aria-hidden="true" /> {lt ? "Išplėstiniai filtrai" : "Advanced filters"} {advancedFilterCount > 0 ? <span>{lt ? `${advancedFilterCount} ${advancedFilterCount === 1 ? "aktyvus" : "aktyvūs"}` : `${advancedFilterCount} active`}</span> : null}</summary>
         <div className="select-group" aria-label={lt ? "Kandidatų filtrai" : "Candidate filters"}>
@@ -165,15 +174,6 @@ export function FilterBar({
               <option value="urlscan">{lt ? "Yra URLScan kontekstas" : "Has URLScan context"}</option>
               <option value="hashes">{lt ? "Yra atsako kontrolinių sumų" : "Has response hashes"}</option>
               <option value="certstream-only">{lt ? "Tik CertStream" : "CertStream only"}</option>
-            </select>
-          </label>
-          <label>
-            <span>{lt ? "Rikiuoti kandidatus" : "Sort candidates"}</span>
-            <select aria-label={lt ? "Rikiuoti kandidatus" : "Sort candidates"} value={filters.sort} onChange={(event) => update("sort", event.target.value as Filters["sort"])}>
-              <option value="last-seen-desc">{lt ? "Naujausias stebėjimas" : "Newest observation"}</option>
-              <option value="first-seen-desc">{lt ? "Naujausias aptikimas" : "Newest discovery"}</option>
-              <option value="match-score-desc">{lt ? "Didžiausias atitikties balas" : "Highest match score"}</option>
-              <option value="brand-asc">{lt ? "Prekių ženklas A–Ž" : "Brand A-Z"}</option>
             </select>
           </label>
         </div>

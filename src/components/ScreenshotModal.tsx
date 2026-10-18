@@ -301,13 +301,13 @@ const reviewStateLabels: Record<SiteLanguage, Record<NonNullable<RadarSignal["re
 const relevanceLabels: Record<SiteLanguage, Record<NonNullable<RadarSignal["ltRelevance"]>, string>> = {
   en: {
     "lithuanian-targeting": "Lithuanian targeting",
-    "lithuanian-brand-relevance": "Lithuanian brand relevance",
+    "lithuanian-brand-relevance": "Brand is in Radar's reviewed Lithuanian scope",
     "global-brand-reference": "Global brand reference",
     unknown: "Unknown",
   },
   lt: {
     "lithuanian-targeting": "Taikymasis į Lietuvą",
-    "lithuanian-brand-relevance": "Sąsaja su Lietuvos prekės ženklu",
+    "lithuanian-brand-relevance": "Prekės ženklas yra peržiūrėtoje Lietuvos apimtyje",
     "global-brand-reference": "Pasaulinio prekės ženklo paminėjimas",
     unknown: "Nežinoma",
   },
