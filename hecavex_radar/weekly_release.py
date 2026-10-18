@@ -172,6 +172,7 @@ def select_release(
     if not DIGITS.fullmatch(manifest_bytes) or not 2 <= int(manifest_bytes) <= 262144:
         raise Refused("The selected feed manifest is empty or exceeds 256 KiB.")
     blob_status, blob = run(["git", "cat-file", "blob", manifest_object])
+    # Parse before checking status: the old `git | python` pipeline under pipefail reported the parser's failure first.
     snapshot_week = iso_week(blob)
     if blob_status != 0:
         raise CommandFailed(blob_status)
