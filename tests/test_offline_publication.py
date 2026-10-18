@@ -6,7 +6,6 @@ import shutil
 import socket
 import subprocess
 import sys
-import textwrap
 from contextlib import suppress
 from pathlib import Path
 
@@ -88,10 +87,9 @@ def test_code_free_weekly_export_uses_trusted_registry_and_rejects_tampered_idn_
     assert not (extracted / "data/brands-lt.json").exists()
     with pytest.raises(FileNotFoundError, match="brands-lt.json"):
         validate_publication(extracted)
-    workflow = (repository / ".github/workflows/release-weekly-dataset.yml").read_text(encoding="utf-8")
-    validation_code = textwrap.dedent(workflow.split("python - <<'PY'", 1)[1].split("\n          PY", 1)[0])
-    subprocess.run(  # noqa: S603 - reviewed local workflow snippet and fixed interpreter; no shell or network.
-        [sys.executable, "-c", validation_code], cwd=extracted, check=True, capture_output=True, text=True,
+    subprocess.run(  # noqa: S603 - the workflow's validation command with a fixed interpreter; no shell or network.
+        [sys.executable, "-m", "hecavex_radar.weekly_release", "validate"], cwd=extracted, check=True,
+        capture_output=True, text=True,
         env={**os.environ, "GITHUB_WORKSPACE": str(repository), "RELEASE_SOURCE_ROOT": str(extracted),
              "PYTHONPATH": str(repository)},
     )

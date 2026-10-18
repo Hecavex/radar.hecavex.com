@@ -18,7 +18,9 @@ export function verifyDeploymentTopology() {
   const domainContext = readFileSync(join(root, ".github", "workflows", "enrich-domain-context.yml"), "utf8");
   const healthEvaluator = readFileSync(join(root, ".github", "workflows", "evaluate-pipeline-health.yml"), "utf8");
   const livePublication = readFileSync(join(root, ".github", "workflows", "verify-live-publication.yml"), "utf8");
-  const weeklyRelease = readFileSync(join(root, ".github", "workflows", "release-weekly-dataset.yml"), "utf8");
+  const weeklyRelease =
+    readFileSync(join(root, ".github", "workflows", "release-weekly-dataset.yml"), "utf8") +
+    readFileSync(join(root, "hecavex_radar", "weekly_release.py"), "utf8");
   const sync = readFileSync(join(root, ".github", "workflows", "sync-radar.yml"), "utf8");
   const historyPublisher = readFileSync(join(root, "hecavex_radar", "history.py"), "utf8");
   const snapshotPublisher = readFileSync(join(root, "hecavex_radar", "sync.py"), "utf8");
@@ -71,10 +73,11 @@ export function verifyDeploymentTopology() {
       weeklyRelease.includes("ref: ${{ github.sha }}") &&
       !weeklyRelease.includes("ref: ${{ inputs.source_sha || github.sha }}") &&
       weeklyRelease.includes("python -m hecavex_radar.release_source") &&
-      weeklyRelease.includes('--source-repository "${RELEASE_SOURCE_ROOT}"') &&
-      weeklyRelease.includes('"sourceCommit": os.environ["SOURCE_SHA"]') &&
-      weeklyRelease.includes('"toolingCommit": os.environ["TRUSTED_TOOLING_SHA"]') &&
-      weeklyRelease.includes('--commit "${TRUSTED_TOOLING_SHA}"') &&
+      weeklyRelease.includes('"--source-repository", environ["RELEASE_SOURCE_ROOT"]') &&
+      weeklyRelease.includes('"sourceCommit": environ["SOURCE_SHA"]') &&
+      weeklyRelease.includes('"toolingCommit": environ["TRUSTED_TOOLING_SHA"]') &&
+      weeklyRelease.includes('"--commit", environ["TRUSTED_TOOLING_SHA"]') &&
+      !weeklyRelease.includes('"--commit", environ["SOURCE_SHA"]') &&
       !weeklyRelease.includes('--commit "${SOURCE_SHA}"'),
     "Weekly backfills must execute current trusted tooling against a separate data-only source.",
   );
