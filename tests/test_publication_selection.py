@@ -100,6 +100,14 @@ def test_real_offline_git_accepts_newer_health_data_but_rejects_newer_source(tmp
     git("push", "origin", "main")
     with pytest.raises(ValueError, match="advanced"):
         publication_selection.verify_current(repository, source, data, initial_data)
+    newer = git("rev-parse", "HEAD")
+    run = ["--repository", str(repository), "--source", newer, "--data", data]
+    # An older main completion, or data not yet regenerated for the current main, waits by design: exit 3.
+    assert publication_selection.main([*run, "--publication-source", newer, "--expected-source", source]) == 3
+    assert publication_selection.main([*run, "--publication-source", source, "--expected-source", newer]) == 3
+    # A revision outside main's history is never neutral.
+    assert publication_selection.main([*run, "--publication-source", newer, "--expected-source", data]) == 1
+    assert publication_selection.main([*run, "--publication-source", data, "--expected-source", newer]) == 1
 
 
 def test_dual_revision_live_identity_rejects_selected_data_drift() -> None:
@@ -149,7 +157,6 @@ def test_main_exits_3_only_when_superseded(monkeypatch: pytest.MonkeyPatch) -> N
     monkeypatch.setattr(publication_selection, "_git", lambda *args:
         f"{OLD}\trefs/heads/main\n{DATA}\trefs/heads/radar-data")
     assert publication_selection.main(argv) == publication_selection.SUPERSEDED_EXIT == 3
-    assert publication_selection.main([*argv[:-1], OLD]) == 1  # source mismatch stays a plain failure
     assert publication_selection.main(["--source", "x", *argv[2:]]) == 1  # malformed stays a plain failure
     # A head missing from ls-remote is a misconfiguration, never a neutral supersession.
     monkeypatch.setattr(publication_selection, "_git", lambda *args:

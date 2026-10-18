@@ -70,9 +70,18 @@ jobs:
           if [[ "${GITHUB_EVENT_NAME}" == "repository_dispatch" ]]; then
             args+=(--trigger-data "${TRIGGER_DATA_SHA}")
           fi
+          # Exit 3: an older main completion, or data not yet regenerated for the current main. Both wait for a
+          # newer run by design, so the deploy is skipped as neutral. Every other refusal still fails the job.
+          rc=0
           python -m hecavex_radar.publication_selection \
             --source "${SOURCE_SHA}" --data "${DATA_SHA}" \
-            --publication-source "${PUBLICATION_SOURCE_SHA}" --expected-source "${EXPECTED_SHA}" "${args[@]}"
+            --publication-source "${PUBLICATION_SOURCE_SHA}" --expected-source "${EXPECTED_SHA}" "${args[@]}" || rc=$?
+          if [[ "${rc}" -eq 3 ]]; then
+            echo "::notice::Deployment skipped: a newer source run or the next snapshot sync will publish."
+            exit 0
+          elif [[ "${rc}" -ne 0 ]]; then
+            exit "${rc}"
+          fi
           echo "revision=${SOURCE_SHA}" >> "${GITHUB_OUTPUT}"
           echo "should_deploy=true" >> "${GITHUB_OUTPUT}"
       - name: Set up Node.js

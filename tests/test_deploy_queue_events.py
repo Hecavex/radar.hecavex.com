@@ -99,3 +99,12 @@ def test_superseded_refusal_is_neutral_and_gates_every_publishing_step() -> None
     for step in later:
         assert "if: steps.guard.outputs.superseded != 'true'" in step, step.split("\n", 1)[0]
     assert "needs: build" in deploy and "\n  publish" not in deploy  # no further job to gate
+
+
+def test_build_waits_for_newer_runs_as_neutral_but_never_marks_them_deployable() -> None:
+    build = WORKFLOW.read_text().split("\n  build:\n", 1)[1].split("\n  deploy:\n", 1)[0]
+    step = "\n      - name: Reject stale source or unproven writer completions\n"
+    freshness = build.split(step, 1)[1].split("\n      - name: ", 1)[0]
+    neutral = freshness.index('"${rc}" -eq 3')
+    assert freshness.index("exit 0", neutral) < freshness.index('exit "${rc}"') < freshness.index("should_deploy=true")
+    assert "\n  deploy:\n    if: needs.build.outputs.should_deploy == 'true'" in WORKFLOW.read_text()
