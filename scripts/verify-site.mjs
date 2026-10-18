@@ -49,6 +49,7 @@ const pages = [
   { path: "/lt/dokumentacija/", marker: "HECAVEX Radaro techninis žinynas" },
   { path: "/404.html", marker: "This route has no signal." },
 ];
+const exactLabel = (label) => new RegExp(`^\\s*${label}\\s*$`, "u");
 const languageOf = (path) => (path.startsWith("/lt/") ? "lt" : "en");
 const portfolioNavigationFor = (path) => navigation.portfolio[languageOf(path)].map((item) => item.label);
 const sourceLabelFor = (path) => navigation.sourceLabel[languageOf(path)];
@@ -2751,7 +2752,7 @@ async function verifyInBrowser(healthOnly = false, researchOnly = false) {
           await summary.click();
           for (const label of expectedMobileNavigation) {
             assert(
-              await page.locator(".mobile-navigation-panel a", { hasText: label }).isVisible(),
+              await page.locator(".mobile-navigation-panel a", { hasText: exactLabel(label) }).isVisible(),
               `${entry.path} mobile navigation hides ${label} at ${width}px.`,
             );
           }
@@ -2759,13 +2760,13 @@ async function verifyInBrowser(healthOnly = false, researchOnly = false) {
         } else {
           for (const label of portfolioNavigationFor(entry.path)) {
             assert(
-              await page.locator(".portfolio-navigation a", { hasText: label }).isVisible(),
+              await page.locator(".portfolio-navigation a", { hasText: exactLabel(label) }).isVisible(),
               `${entry.path} desktop portfolio navigation hides ${label} at ${width}px.`,
             );
           }
           for (const label of productNavigationForPath(entry.path)) {
             assert(
-              await page.locator(".product-navigation a", { hasText: label }).isVisible(),
+              await page.locator(".product-navigation a", { hasText: exactLabel(label) }).isVisible(),
               `${entry.path} desktop product navigation hides ${label} at ${width}px.`,
             );
           }
