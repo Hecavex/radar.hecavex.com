@@ -41,7 +41,9 @@ def verify_current(repository: Path, source: str, data: str, trigger_data: str |
     validate_selection(source, data, source, source)
     heads = _git(repository, "ls-remote", "origin", "refs/heads/main", "refs/heads/radar-data")
     selected = {row.split()[1]: row.split()[0] for row in heads.splitlines() if len(row.split()) == 2}
-    if selected.get("refs/heads/main") != source or selected.get("refs/heads/radar-data") != data:
+    if "refs/heads/main" not in selected or "refs/heads/radar-data" not in selected:
+        raise ValueError("A protected branch head is missing from the remote; refuse deployment.")
+    if selected["refs/heads/main"] != source or selected["refs/heads/radar-data"] != data:
         raise SupersededError("Source or operational data advanced; refuse a stale deployment.")
     if trigger_data is not None:
         if re.fullmatch(r"[a-f0-9]{40}", trigger_data) is None:

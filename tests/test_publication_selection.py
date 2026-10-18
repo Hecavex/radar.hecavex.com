@@ -30,7 +30,7 @@ def test_current_selection_retains_distinct_source_and_data() -> None:
     publication_selection.validate_selection(SOURCE, DATA, SOURCE, SOURCE)
 
 
-@pytest.mark.parametrize("remote_source,remote_data", [(OLD, DATA), (SOURCE, OLD), (SOURCE, "")])
+@pytest.mark.parametrize("remote_source,remote_data", [(OLD, DATA), (SOURCE, OLD)])
 def test_source_or_data_advancing_during_build_refuses_deploy(
     monkeypatch: pytest.MonkeyPatch, remote_source: str, remote_data: str,
 ) -> None:
@@ -151,3 +151,10 @@ def test_main_exits_3_only_when_superseded(monkeypatch: pytest.MonkeyPatch) -> N
     assert publication_selection.main(argv) == publication_selection.SUPERSEDED_EXIT == 3
     assert publication_selection.main([*argv[:-1], OLD]) == 1  # source mismatch stays a plain failure
     assert publication_selection.main(["--source", "x", *argv[2:]]) == 1  # malformed stays a plain failure
+    # A head missing from ls-remote is a misconfiguration, never a neutral supersession.
+    monkeypatch.setattr(publication_selection, "_git", lambda *args:
+        f"{SOURCE}\trefs/heads/main\n\trefs/heads/radar-data")
+    with pytest.raises(ValueError, match="missing") as missing:
+        publication_selection.verify_current(Path.cwd(), SOURCE, DATA)
+    assert not isinstance(missing.value, publication_selection.SupersededError)
+    assert publication_selection.main(argv) == 1

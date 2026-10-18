@@ -272,5 +272,3 @@ def certificate_for_domain(
         for field in ("countryName", "issuer", "commonName", "notBefore", "notAfter", "serialNumberHex")
     ) or bool(payload["subjectAltNames"]) or any(value is not None for value in fingerprints.values())
     return payload if has_content else None
-
-
