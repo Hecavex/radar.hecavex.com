@@ -1,8 +1,8 @@
 {
   "schemaVersion": 2,
   "dataset": "live",
-  "generatedAt": "2026-10-18T10:43:09.625Z",
-  "lastSuccessfulSyncAt": "2026-10-18T11:11:03.668Z",
+  "generatedAt": "2026-10-18T11:58:08.087Z",
+  "lastSuccessfulSyncAt": "2026-10-18T11:58:08.087Z",
   "signals": [
     {
       "id": "27269c00a9bb7420347e",
@@ -70,30 +70,36 @@
       "id": "cbcca3932b65ef327574",
       "url": "hxxps://comms[.]delivery-dhl-uae[.]com",
       "domain": "comms[.]delivery-dhl-uae[.]com",
-      "firstSeen": "2026-10-18T05:49:52.770Z",
+      "firstSeen": "2026-10-18T04:40:58.226Z",
       "lastSeen": "2026-10-18T05:49:52.770Z",
       "sources": [
-        "CertStream"
+        "CertStream",
+        "URLScan"
       ],
       "status": "suspected",
       "brand": "DHL",
       "country": null,
       "host": null,
-      "screenshotUrl": null,
-      "referenceUrl": null,
+      "screenshotUrl": "https://urlscan.io/screenshots/01a14d4f-a1e7-7587-8328-29bf7f43d00d.png",
+      "referenceUrl": "https://urlscan.io/result/01a14d4f-a1e7-7587-8328-29bf7f43d00d/",
       "hashes": [],
       "matchScore": 90,
-      "evidenceTier": "name-only",
+      "evidenceTier": "corroborated",
       "reviewState": "unreviewed",
       "ltRelevance": "lithuanian-brand-relevance",
       "confidence": 90,
       "discoveredVia": [
-        "certstream-live"
+        "certstream-live",
+        "urlscan-public-report"
       ],
       "reasonCodes": [
         "brand-exact-token",
         "suspicious-context",
-        "multiple-hyphens"
+        "multiple-hyphens",
+        "brand-domain-match"
+      ],
+      "corroboratedBy": [
+        "urlscan-public-report"
       ],
       "detailAvailable": true
     },
@@ -3969,7 +3975,7 @@
     {
       "name": "CertStream",
       "homepage": "https://certstream.dev/",
-      "fetchedAt": "2026-10-18T11:11:03.668Z",
+      "fetchedAt": "2026-10-18T11:58:08.087Z",
       "records": 97,
       "state": "healthy",
       "note": "Open heuristic candidates from the last 7 days"
@@ -3977,15 +3983,15 @@
     {
       "name": "URLScan",
       "homepage": "https://urlscan.io/",
-      "fetchedAt": "2026-10-18T05:02:44.625Z",
-      "records": 42,
+      "fetchedAt": "2026-10-18T11:37:32.136Z",
+      "records": 43,
       "state": "healthy",
       "note": "Passive public results validated from the last 30 days; the latest scheduled hunt completed; 186 stable official asset hashes are pivot-eligible"
     },
     {
       "name": "HECAVEX",
       "homepage": "https://hecavex.com/",
-      "fetchedAt": "2026-10-18T11:11:03.668Z",
+      "fetchedAt": "2026-10-18T11:58:08.087Z",
       "records": 1,
       "state": "healthy",
       "note": "Sanitized local review export"
