@@ -10,9 +10,15 @@ from .models import SafeUrl
 
 SCHEME = re.compile(r"^[a-z][a-z\d+.-]*://", re.IGNORECASE)
 NESTED_URL = re.compile(r"(?:https?|hxxps?)://", re.IGNORECASE)
+# Deliberately over-matches. A label character is an ASCII letter/digit or any
+# non-ASCII, non-space character (Unicode labels); labels are joined by "." or
+# the IDNA ideographic/full-width stops; the last label starts with a letter and
+# may be an "xn--" label. A following hyphen or sentence/FQDN dot never blocks a
+# match. scripts/published-defanging.mjs mirrors this pattern for the deploy gate.
+HOST_SEPARATOR = re.compile(r"[.\u3002\uff0e\uff61]")
+_LABEL = r"[^\x00-\x2f\x3a-\x40\x5b-\x60\x7b-\x7f\s\u3002\uff0e\uff61]"
 DOMAIN_IN_TEXT = re.compile(
-    r"(?<![a-z\d.-])(?:[a-z\d](?:[a-z\d-]{0,61}[a-z\d])?\.)+[a-z]{2,63}(?![a-z\d.-])",
-    re.IGNORECASE,
+    rf"(?:{_LABEL}(?:{_LABEL}|-){{0,62}}{HOST_SEPARATOR.pattern})+[^\W\d_](?:{_LABEL}|-){{1,62}}"
 )
 HEX_TOKEN = re.compile(r"[a-f\d]{32,}", re.IGNORECASE)
 TOKEN_CHARACTERS = re.compile(r"[a-z\d_-]+", re.IGNORECASE)
@@ -84,7 +90,7 @@ def defang_host(hostname: str) -> str:
 
 
 def defang_domains_in_text(value: str) -> str:
-    return DOMAIN_IN_TEXT.sub(lambda match: defang_host(match.group(0)), value)
+    return DOMAIN_IN_TEXT.sub(lambda match: HOST_SEPARATOR.sub("[.]", match.group(0)), value)
 
 
 def _sensitive_path_value(value: str) -> bool:
