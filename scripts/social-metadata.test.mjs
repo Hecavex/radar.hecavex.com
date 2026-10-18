@@ -6,11 +6,12 @@ import { URL } from "node:url";
 import { JSDOM } from "jsdom";
 import { completeSocialMetadata } from "../src/lib/socialMetadata.ts";
 
-test("Radar Dataset exposes a typed named creator without an unresolved off-page reference", () => {
-  const document = new JSDOM(readFileSync(new URL("../index.html", import.meta.url), "utf8")).window.document;
+for (const [page, language] of [["../index.html", "en"], ["../lt/index.html", "lt"]]) test(`Radar Dataset in ${page} exposes a typed named creator without an unresolved off-page reference`, () => {
+  const document = new JSDOM(readFileSync(new URL(page, import.meta.url), "utf8")).window.document;
   const jsonLd = document.querySelector('script[type="application/ld+json"]').textContent;
   const dataset = JSON.parse(jsonLd)["@graph"].find((node) => node["@type"] === "Dataset");
   assert.ok(dataset, "Radar must retain its Dataset metadata");
+  assert.ok(JSON.parse(jsonLd)["@graph"].every((node) => node.inLanguage === language), "Every graph node declares its language");
   assert.deepEqual(dataset.creator, {
     "@id": "https://hecavex.com/#organization",
     "@type": "Organization",

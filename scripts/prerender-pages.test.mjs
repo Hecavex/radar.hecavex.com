@@ -1,8 +1,10 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { relative } from "node:path";
 import test from "node:test";
 import { fileURLToPath, URL } from "node:url";
+import { JSDOM } from "jsdom";
 import config from "../vite.config.ts";
 import {
   brandPages,
@@ -180,7 +182,26 @@ test("signal pages decorate canonical, alternate and lang for both languages", (
   const en = generated[0].html;
   assert.ok(en.includes('<html lang="en">'));
   assert.ok(en.includes(`<link rel="canonical" href="https://radar.hecavex.com/signals/${signal.id}/" />`));
-  assert.ok(en.includes("<title>example[.]test · HECAVEX Radar</title>"));
+  assert.ok(en.includes("<title>example[.]test — suspected impersonation domain · HECAVEX Radar</title>"));
+  assert.ok(lt.includes("<title>example[.]test — įtariamas apsimetinėjimo domenas · HECAVEX Radaras</title>"));
+  // Name-only and history-only records are noindex and leave the sitemap.
+  assert.deepEqual(generated.map((page) => page.indexable), [false, false, false, false]);
+  for (const page of generated) assert.ok(page.html.includes('<meta name="robots" content="noindex, follow" />'));
+  assert.equal(generated[2].lastmod, historical.lastSeen);
+});
+
+test("only current corroborated or reviewed signals are indexable", () => {
+  const corroborated = { ...signal, evidenceTier: "corroborated", brand: "Swedbank" };
+  const current = { ...snapshot, signals: [corroborated] };
+  const generated = [...signalPages({
+    template: signalTemplate, snapshot: current, history, allSignals: publishedSignals(current, history),
+    related: { nodes: [], edges: [] }, idnMatches: [], readDetail: () => undefined,
+    sourceRevision: "a".repeat(40), dataRevision: null, manifestSha256: () => "b".repeat(64),
+  }, renderers.renderSignalPage)];
+  assert.deepEqual(generated.map((page) => page.indexable), [true, true, false, false]);
+  assert.ok(generated[0].html.includes('<meta name="robots" content="index, follow, max-image-preview:large" />'));
+  assert.ok(generated[0].html.includes("<title>example[.]test — suspected Swedbank impersonation domain · HECAVEX Radar</title>"));
+  assert.ok(generated[1].html.includes("<title>example[.]test — įtariamas Swedbank apsimetinėjimo domenas · HECAVEX Radaras</title>"));
 });
 
 test("brand pages are generated in both languages with their feed root", () => {
@@ -190,12 +211,30 @@ test("brand pages are generated in both languages with their feed root", () => {
   assert.ok(generated[1].path.startsWith("/lt/"));
   assert.match(generated[0].html,
     /<link rel="alternate" type="application\/atom\+xml" title="[^"]+" href="https:\/\/radar\.hecavex\.com\/data\/brands\/[a-z0-9-]+\/events\.atom\.xml" \/>/u);
+  assert.match(generated[0].html, /<title>[^<]+ phishing &amp; lookalike domains · HECAVEX Radar<\/title>/u);
+  assert.match(generated[1].html, /<title>[^<]+ sukčiavimo \(phishing\) domenai ir netikros svetainės · HECAVEX Radaras<\/title>/u);
+  for (const page of generated.slice(0, 2)) {
+    const document = new JSDOM(page.html).window.document;
+    const jsonLd = document.querySelector('script[type="application/ld+json"]').textContent;
+    const breadcrumb = JSON.parse(jsonLd);
+    assert.equal(breadcrumb["@type"], "BreadcrumbList");
+    assert.equal(breadcrumb.itemListElement.at(-1).item, `https://radar.hecavex.com${page.path}`);
+    const digest = createHash("sha256").update(jsonLd, "utf8").digest("base64");
+    assert.ok(document.querySelector('meta[http-equiv="Content-Security-Policy"]').content.includes(`'sha256-${digest}'`),
+      "The page CSP must authorize its breadcrumb JSON-LD");
+  }
 });
 
 test("the sitemap lists the fixed routes and generated pages once, sorted", () => {
-  const sitemap = buildSitemap([`/signals/${signal.id}/`, "/", `/lt/signalai/${signal.id}/`]);
+  const sitemap = buildSitemap([
+    { path: `/signals/${signal.id}/`, indexable: true, lastmod: signal.lastSeen }, { path: "/" },
+    { path: `/lt/signalai/${signal.id}/`, indexable: true }, { path: "/signals/hidden/", indexable: false },
+  ], "2026-09-03T00:00:00Z");
   const locations = [...sitemap.matchAll(/<loc>https:\/\/radar\.hecavex\.com([^<]+)<\/loc>/gu)].map((match) => match[1]);
   assert.equal(locations.length, fixedSitemapRoutes.length + 2);
+  assert.ok(!locations.includes("/signals/hidden/"), "noindex pages stay out of the sitemap");
+  assert.ok(sitemap.includes(`<loc>https://radar.hecavex.com/signals/${signal.id}/</loc><lastmod>${signal.lastSeen}</lastmod>`));
+  assert.ok(sitemap.includes("<loc>https://radar.hecavex.com/changes/</loc><lastmod>2026-09-03T00:00:00Z</lastmod>"));
   assert.deepEqual(locations, [...locations].sort());
   for (const path of [...fixedSitemapRoutes, `/signals/${signal.id}/`, `/lt/signalai/${signal.id}/`]) {
     assert.ok(locations.includes(path), `sitemap misses ${path}`);
