@@ -8,12 +8,12 @@ Use semantic ownership rather than generated pages as the starting point for a c
 | --- | --- | --- |
 | Primary period totals, local search and matching JSON/CSV export (full panel on `/history/` and `/lt/istorija/`; the overview shows only the 30-day `ObservedHostnamesSummary`) | `src/components/PeriodOverview.tsx`, `src/lib/periodMetrics.ts` | `scripts/period-metrics.test.mjs`; complete cohort, failure/preview and no-JS browser checks |
 | Overview, snapshot loading and hydration | `src/main.tsx`, `src/App.tsx`, `src/lt/LtRadarApp.tsx` | Snapshot bootstrap contracts; browser refresh/error/no-JS checks |
-| Candidate view, filters and exports | `src/components/Dashboard.tsx`, `FilterBar.tsx`, `SignalTable.tsx`, `ExportActions.tsx` | `src/lib/dashboard.ts`, `src/lib/export.ts`; `scripts/verify-site.mjs` checks local query privacy, independent advanced disclosure, URL restoration and reset focus; row actions require 44px width and height |
+| Candidate view, filters and exports | `src/components/Dashboard.tsx`, `FilterBar.tsx`, `SignalTable.tsx`, `ExportActions.tsx` | `src/lib/dashboard.ts`, `src/lib/export.ts`; `scripts/verify-site/browser.mjs` checks local query privacy, independent advanced disclosure, URL restoration and reset focus; row actions require 44px width and height |
 | Changes feed and filter recovery | `src/pages/ChangesPage.tsx` | Changes EN/LT filtering, pagination and empty-state browser checks |
 | Discovery trends and coverage presentation | `src/pages/TrendsPage.tsx`, `src/lib/trendFreshness.ts`, `src/lib/staticPageBootstrap.ts` | Trend bounds, cutoff, partial-day, sparse-series, collection-warning and route-scoped bootstrap checks |
 | Static-route dispatcher, associations/tools/dataset | `src/StaticPages.tsx`, `src/staticPage.tsx` | Static-page bootstrap and route checks |
 | Canonical/social metadata and EN/LT record previews | `vite.config.ts` (`socialMetadataDefaultsPlugin`), `src/lib/socialMetadata.ts`, `templates/signal/index.html`, `templates/brand/index.html` | `scripts/social-metadata.test.mjs` checks adversarial encoding, actual canonical/locale, explicit overrides and idempotence; `pnpm verify:site` checks the built pages |
-| Overview Dataset creator and JSON-LD authorization | `index.html` (`Dataset.creator` and CSP hash) | `scripts/social-metadata.test.mjs` parses the source graph; `scripts/verify-site.mjs` checks the built graph and exact CSP digest. Preserve the existing typed/named HECAVEX Organization identity and dataset distributions; see `docs/DATA-CONTRACT.md` |
+| Overview Dataset creator and JSON-LD authorization | `index.html` (`Dataset.creator` and CSP hash) | `scripts/social-metadata.test.mjs` parses the source graph; `scripts/verify-site/html.mjs` checks the built graph and exact CSP digest. Preserve the existing typed/named HECAVEX Organization identity and dataset distributions; see `docs/DATA-CONTRACT.md` |
 | Shared static-page framing and UTC formatting | `src/components/ArtifactPageShell.tsx`, `src/lib/staticPageFormat.ts` | EN/LT route and source geometry assertions |
 | Local indicator analysis and relationships | `src/components/BrowserIocChecker.tsx`, `AssociationExplorer.tsx`, `src/lib/iocCheck.ts`, `relatedObservations.ts` | Local-only/network-boundary and relationship evidence tests |
 | History, signal and brand pages | `src/HistoryApp.tsx`, `SignalPage.tsx`, `BrandActivityPage.tsx`, `BrandScopePage.tsx` | History partitions, retained data and signal-detail checks |
@@ -41,7 +41,7 @@ Use semantic ownership rather than generated pages as the starting point for a c
 | `responsive-foundations.css`, `portfolio-geometry.css` | Responsive table/navigation/prose behavior and shared heading/spacing geometry |
 | `research-brief.css` | Local evidence-note draft controls |
 
-Import order is intentional: existing later refinements follow earlier component and responsive rules. Do not alphabetically reorder it. `scripts/verify-site.mjs` reads imports recursively, so the source geometry gate checks the actual complete entry rather than an unbundled copy. `src/components/intelligenceTools.css` owns the indicator/association tools, not the shared shell. Self-hosted type assets and licenses live under `public/fonts/`.
+Import order is intentional: existing later refinements follow earlier component and responsive rules. Do not alphabetically reorder it. `scripts/verify-site/identity.mjs` reads imports recursively, so the source geometry gate checks the actual complete entry rather than an unbundled copy. `src/components/intelligenceTools.css` owns the indicator/association tools, not the shared shell. Self-hosted type assets and licenses live under `public/fonts/`.
 
 See `docs/design-interface.md` for typography, layout and interaction invariants. Avoid adding route-specific shell widths or parallel copies of the same shared styles.
 
@@ -70,8 +70,15 @@ See `docs/design-interface.md` for typography, layout and interaction invariants
 
 ## Verification and delivery
 
-- `scripts/verify-site.mjs`: static routes, data semantics, font assets, layout geometry, responsive interactions, accessibility and performance budgets.
-- `scripts/published-defanging.mjs`: called by `verify-site.mjs static`; fails when any string in `dist/data/**/*.json|xml` holds a fanged hostname or URL outside its exact raw-field allowlist. Its host pattern mirrors `hecavex_radar/safety.py` `DOMAIN_IN_TEXT`; both are held to `tests/fixtures/defang-parity.json`, so change them together. Any file type other than JSON, XML or a checksum sidecar fails the sweep.
+- `scripts/verify-site.mjs`: thin entry point (`static`, `browser`, `health`, `research`, default `all`). It runs the surfaces below in a fixed order; keep check order and assertion text stable.
+  - `scripts/verify-site/shared.mjs`: repository/`dist` paths, public origin, analytics token, viewport widths, the prerendered page list, `assert`, file walking, route mapping and JSDOM release helpers.
+  - `scripts/verify-site/identity.mjs`: portfolio navigation labels (from `src/lib/navigation.json`), the shared layout-token source contract, self-hosted fonts and palette in built CSS, and identity artwork/icon digests.
+  - `scripts/verify-site/topology.mjs`: deployment and writer workflow topology, Python hash locks, `robots.txt`/`llms.txt` crawler policy and the sitemap route set.
+  - `scripts/verify-site/html.mjs`: every built HTML route (structure, metadata, CSP/JSON-LD, links and fragments, bootstrap payloads, EN/LT parity, prerendered markers) and the isolated reporting pack.
+  - `scripts/verify-site/stix.mjs`: STIX bundle projection, signal-detail sidecar tree, syndication feeds and the XML inventory, and the published-defanging sweep.
+  - `scripts/verify-site/budgets.mjs`: raw STIX/sidecar caps, gzip performance budgets and the deployment-capacity summary.
+  - `scripts/verify-site/browser.mjs`: the Vite preview + Chromium pass (responsive geometry, keyboard, CSP, hydration, no-JS, health, research brief and axe).
+- `scripts/published-defanging.mjs`: called by `verify-site.mjs static` (through `verify-site/stix.mjs`); fails when any string in `dist/data/**/*.json|xml` holds a fanged hostname or URL outside its exact raw-field allowlist. Its host pattern mirrors `hecavex_radar/safety.py` `DOMAIN_IN_TEXT`; both are held to `tests/fixtures/defang-parity.json`, so change them together. Any file type other than JSON, XML or a checksum sidecar fails the sweep.
 - `scripts/verify-snapshot-contract.mjs`: frontend snapshot/data invariants.
 - `scripts/*test.mjs` and `tests/`: history/deployment/gzip and collector/publication/security tests.
 - `pnpm check:frontend`: lint, typecheck, data contracts, production build and static/browser checks.
