@@ -4,7 +4,7 @@ import { SiteFooter } from "./components/SiteFooter.tsx";
 import { SiteHeader } from "./components/SiteHeader.tsx";
 import { brandPath, brandSlug, defangDomain } from "./lib/brandRegistry.ts";
 import { signalMatchScore } from "./lib/dashboard.ts";
-import { statusLt } from "./lt/formatLt.ts";
+import { categoryLt, statusLt } from "./lt/formatLt.ts";
 import { pluralize } from "./lib/format.ts";
 import { formatEventDateTime } from "./lib/staticPageFormat.ts";
 import type { BrandPageData } from "./lib/pageBootstrap.ts";
@@ -27,7 +27,7 @@ export function BrandActivityPage({ data }: { data: BrandPageData }) {
         <nav className="breadcrumb" aria-label={lt ? "Naršymo kelias" : "Breadcrumb"}><a href={lt ? "/lt/prekes-zenklai/" : "/brands/"}>← {lt ? "Prekių ženklų registras" : "Brand registry"}</a><span>/</span><span>{data.brand.brand}</span></nav>
         <header className="profile-hero brand-profile-hero">
           <div><p className="eyebrow"><ShieldCheck aria-hidden="true" /> {lt ? "Aptikimo apimties centras" : "Detection scope hub"}</p><h1>{data.brand.brand}</h1><p>{lt ? "Viešas veiklos vaizdas pagal peržiūrėtą oficialių domenų ir pavadinimų apimtį." : "Public activity scoped to a reviewed set of official properties and names."}</p></div>
-          <dl className="profile-summary"><div><dt>{lt ? "Kategorija" : "Category"}</dt><dd>{data.brand.category}</dd></div><div><dt>{lt ? "Dabartiniai kandidatai" : "Current candidates"}</dt><dd>{data.signals.length}</dd></div><div><dt>24h / 7d</dt><dd>{last24h} / {last7d}</dd></div><div><dt>{lt ? "Istoriniai įrašai" : "Historical records"}</dt><dd>{data.historyTotal ?? data.history.length}</dd></div></dl>
+          <dl className="profile-summary"><div><dt>{lt ? "Kategorija" : "Category"}</dt><dd>{lt ? categoryLt[data.brand.category] ?? data.brand.category : data.brand.category}</dd></div><div><dt>{lt ? "Dabartiniai kandidatai" : "Current candidates"}</dt><dd>{data.signals.length}</dd></div><div><dt>24h / 7d</dt><dd>{last24h} / {last7d}</dd></div><div><dt>{lt ? "Istoriniai įrašai" : "Historical records"}</dt><dd>{data.historyTotal ?? data.history.length}</dd></div></dl>
         </header>
 
         <section className="brand-hub-grid">

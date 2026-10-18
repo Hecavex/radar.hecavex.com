@@ -364,6 +364,8 @@ export function verifySitemap(htmlFiles) {
   );
   const expectedLocations = new Set(
     htmlFiles
+      // noindex pages (weak-evidence signal records, 404) are deliberately left out of the sitemap.
+      .filter((path) => !/<meta name="robots" content="noindex/u.test(readFileSync(path, "utf8")))
       .map((path) => routeForFile(path))
       .filter((route) => route !== "/404.html")
       .map((route) => `${publicOrigin}${route}`),

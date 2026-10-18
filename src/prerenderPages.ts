@@ -2,6 +2,7 @@
 // the sitemap. Pure functions over already-read data; vite.config.ts owns file I/O.
 // React rendering is injected (see src/prerender.ts) so Node's test runner can load this
 // module without a TSX loader.
+import { createHash } from "node:crypto";
 import { brandEntries, brandPath, brandSlug, findBrand } from "./lib/brandRegistry.ts";
 import { encodeHistoryBootstrap } from "./lib/historyBootstrap.ts";
 import { historyPreview } from "./lib/historyPreview.ts";
@@ -54,7 +55,8 @@ export type EntryPageData = {
   artifacts?: StaticPageArtifacts;
 };
 
-export type GeneratedPage = { path: string; html: string };
+/** `indexable: false` pages carry noindex and stay out of the sitemap; `lastmod` feeds the sitemap. */
+export type GeneratedPage = { path: string; html: string; indexable?: boolean; lastmod?: string };
 
 const SITE = "https://radar.hecavex.com";
 
@@ -206,7 +208,11 @@ export function decoratePage(template: string, options: {
   bootstrap: string;
   feedRoot?: string;
   feedTitle?: string;
+  robots?: string;
+  jsonLd?: unknown;
 }): string {
+  // "<" escaped so data can never close the script element; the hash authorizes these exact bytes.
+  const jsonLd = options.jsonLd === undefined ? "" : JSON.stringify(options.jsonLd).replaceAll("<", "\\u003c");
   const english = options.language === "en" ? options.canonical : options.alternate;
   const lithuanian = options.language === "lt" ? options.canonical : options.alternate;
   const values: Record<string, string> = {
@@ -219,7 +225,10 @@ export function decoratePage(template: string, options: {
     LITHUANIAN: lithuanian,
     LOCALE: options.language === "lt" ? "lt_LT" : "en_GB",
     ALTERNATE_LOCALE: options.language === "lt" ? "en_GB" : "lt_LT",
-    IMAGE_ALT: options.language === "lt" ? "HECAVEX Radar vieši tyrimo signalai" : "HECAVEX Radar public research signals",
+    IMAGE_ALT: options.language === "lt" ? "HECAVEX Radaras: vieši tyrimo signalai" : "HECAVEX Radar public research signals",
+    ROBOTS: options.robots ?? "index, follow, max-image-preview:large",
+    JSON_LD: jsonLd,
+    JSON_LD_HASH: `sha256-${createHash("sha256").update(jsonLd, "utf8").digest("base64")}`,
     FEED_ROOT: options.feedRoot ?? "",
     FEED_TITLE: escapeHtml(options.feedTitle ?? "HECAVEX Radar brand changes"),
   };
@@ -270,6 +279,14 @@ export type SignalPageInputs = {
   manifestSha256: () => string;
 };
 
+/**
+ * Only current, non-name-only records are search targets. Name-only and history-only
+ * records (publishedSignals marks the latter name-only) are near-template pages: noindex.
+ */
+export function isIndexableSignal(signal: RadarSignal, currentIds: ReadonlySet<string>): boolean {
+  return currentIds.has(signal.id) && (signal.evidenceTier === "corroborated" || signal.evidenceTier === "reviewed");
+}
+
 /** EN and LT signal record pages, in signal-id order. Lazy, so callers write one page at a time. */
 export function* signalPages(inputs: SignalPageInputs, render: typeof renderSignalPage): Generator<GeneratedPage> {
   const { template, snapshot, history, related } = inputs;
@@ -283,6 +300,7 @@ export function* signalPages(inputs: SignalPageInputs, render: typeof renderSign
     const attachedEdges = related.edges.filter((edge) => edge.source === signal.id || edge.target === signal.id);
     const attachedIds = new Set(attachedEdges.flatMap((edge) => [edge.source, edge.target]));
     const attachedNodes = [...attachedIds].map((id) => nodesById.get(id)).filter((node) => node !== undefined);
+    const indexable = isIndexableSignal(signal, currentIds);
     for (const language of ["en", "lt"] as const) {
       const path = signalPath(signal, language);
       const alternate = signalPath(signal, language === "en" ? "lt" : "en");
@@ -306,17 +324,21 @@ export function* signalPages(inputs: SignalPageInputs, render: typeof renderSign
       const description = language === "lt"
         ? `Išsaugotas galimo apsimetimo signalo įrašas: ${signal.domain}. Įrašas galioja viešos istorijos saugojimo laikotarpiu; tai automatinis tyrimo kandidatas, ne kenkėjiškumo verdiktas.`
         : `Durable potential impersonation signal record for ${signal.domain}. Retained under the public history policy; an automated research candidate, not a maliciousness verdict.`;
+      const brandName = signal.brand ? `${signal.brand} ` : "";
       const html = decoratePage(template, {
-        title: `${signal.domain} · HECAVEX Radar`,
+        title: language === "lt"
+          ? `${signal.domain} — įtariamas ${brandName}apsimetinėjimo domenas · HECAVEX Radaras`
+          : `${signal.domain} — suspected ${brandName}impersonation domain · HECAVEX Radar`,
         description,
         canonical: `${SITE}${path}`,
         alternate: `${SITE}${alternate}`,
         alternateLanguage: language === "en" ? "lt" : "en",
         language,
+        robots: indexable ? undefined : "noindex, follow",
         markup: render(data),
         bootstrap: encodePageBootstrap(data),
       });
-      yield { path, html };
+      yield { path, html, indexable, lastmod: signal.lastSeen };
     }
   }
 }
@@ -331,6 +353,8 @@ export function* brandPages(inputs: { template: string; snapshot: RadarSnapshot;
     const brandHistory = history.signals.filter((signal) => signal.brand === brand.brand)
       .sort((left, right) => Date.parse(right.lastSeen) - Date.parse(left.lastSeen));
     const feedRoot = `/data/brands/${brandSlug(brand.brand)}`;
+    const lastmod = [...currentSignals, ...brandHistory].map((signal) => signal.lastSeen)
+      .sort((left, right) => Date.parse(right) - Date.parse(left))[0];
     for (const language of ["en", "lt"] as const) {
       const path = brandPath(brand.brand, language);
       const alternate = brandPath(brand.brand, language === "en" ? "lt" : "en");
@@ -339,11 +363,17 @@ export function* brandPages(inputs: { template: string; snapshot: RadarSnapshot;
         history: historyPreview({ ...history, signals: brandHistory }).signals.slice(0, 50),
         historyTotal: brandHistory.length, language,
       };
-      const description = language === "lt"
-        ? `${brand.brand} vieša HECAVEX Radar aptikimo apimtis, naujausi galimo apsimetimo kandidatai ir pokyčių srautai.`
-        : `${brand.brand} public HECAVEX Radar detection scope, recent potential impersonation candidates, and change feeds.`;
+      const lt = language === "lt";
+      const description = lt
+        ? `Kaip sukčiai naudoja ${brand.brand} vardą: įtariami sukčiavimo (phishing) domenai ir netikros svetainės, aptikti HECAVEX Radaro. Gavote apgaulingą SMS? Peržiūrėkite naujausius kandidatus (automatiniai signalai, ne verdiktai).`
+        : `Suspected ${brand.brand} phishing and lookalike domains found by HECAVEX Radar: recent impersonation candidates, history and change feeds. Automated research leads, not verdicts.`;
+      const crumbs: [string, string][] = lt
+        ? [["HECAVEX Radaras", "/lt/"], ["Prekių ženklai", "/lt/prekes-zenklai/"], [brand.brand, path]]
+        : [["HECAVEX Radar", "/"], ["Brands", "/brands/"], [brand.brand, path]];
       const html = decoratePage(template, {
-        title: `${brand.brand} activity · HECAVEX Radar`,
+        title: lt
+          ? `${brand.brand} sukčiavimo (phishing) domenai ir netikros svetainės · HECAVEX Radaras`
+          : `${brand.brand} phishing & lookalike domains · HECAVEX Radar`,
         description,
         canonical: `${SITE}${path}`,
         alternate: `${SITE}${alternate}`,
@@ -353,14 +383,28 @@ export function* brandPages(inputs: { template: string; snapshot: RadarSnapshot;
         bootstrap: encodePageBootstrap(data),
         feedRoot: `${SITE}${feedRoot}`,
         feedTitle: `${brand.brand} HECAVEX Radar changes`,
+        jsonLd: {
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: crumbs.map(([name, href], index) => ({
+            "@type": "ListItem", position: index + 1, name, item: `${SITE}${href}`,
+          })),
+        },
       });
-      yield { path, html };
+      yield { path, html, lastmod };
     }
   }
 }
 
-/** sitemap.xml for the fixed routes plus `generatedPaths`, deduplicated and sorted. */
-export function buildSitemap(generatedPaths: Iterable<string>): string {
-  const urls = [...new Set([...fixedSitemapRoutes, ...generatedPaths])].sort();
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((path) => `  <url><loc>${SITE}${path}</loc></url>`).join("\n")}\n</urlset>\n`;
+/**
+ * sitemap.xml for the fixed routes (lastmod = `generatedAt`) plus the indexable generated
+ * pages, deduplicated and sorted. Noindex pages are left out.
+ */
+export function buildSitemap(generated: Iterable<Pick<GeneratedPage, "path" | "indexable" | "lastmod">>,
+  generatedAt?: string): string {
+  const entries = new Map<string, string | undefined>(fixedSitemapRoutes.map((path) => [path, generatedAt]));
+  for (const page of generated) if (page.indexable !== false) entries.set(page.path, page.lastmod);
+  const urls = [...entries].sort(([left], [right]) => left < right ? -1 : 1).map(([path, lastmod]) =>
+    `  <url><loc>${SITE}${path}</loc>${lastmod ? `<lastmod>${lastmod}</lastmod>` : ""}</url>`);
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join("\n")}\n</urlset>\n`;
 }

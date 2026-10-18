@@ -9,7 +9,7 @@ import { defineConfig } from "vite";
 import { completeSocialMetadata } from "./src/lib/socialMetadata.ts";
 import { loadPeriodOverview, periodOverviewPreview, type PeriodOverviewData } from "./src/lib/periodMetrics.ts";
 import {
-  brandPages, buildSitemap, entryRoute, needsPeriodPreview, publishedSignals, renderEntryPage, signalPages,
+  brandPages, buildSitemap, entryRoute, needsPeriodPreview, publishedSignals, renderEntryPage, signalPages, type GeneratedPage,
 } from "./src/prerenderPages.ts";
 
 const snapshotPath = fileURLToPath(new URL("./public/data/radar.json", import.meta.url));
@@ -246,11 +246,11 @@ function dynamicRoutesPlugin() {
       }
       const allSignals = publishedSignals(snapshot, history);
       parseEventArtifact(readJson(eventsPath), new Set(allSignals.keys()));
-      const generatedPaths: string[] = [];
-      const writePages = (generated: Iterable<{ path: string; html: string }>) => {
+      const generatedPages: { path: string; indexable?: boolean; lastmod?: string }[] = [];
+      const writePages = (generated: Iterable<GeneratedPage>) => {
         for (const page of generated) {
           writeGeneratedPage(`${page.path.slice(1)}index.html`, page.html);
-          generatedPaths.push(page.path);
+          generatedPages.push({ path: page.path, indexable: page.indexable, lastmod: page.lastmod });
         }
       };
       let manifestSha256: string | undefined;
@@ -274,7 +274,7 @@ function dynamicRoutesPlugin() {
       }
       rmSync(templateDirectory, { recursive: true, force: false });
 
-      writeGeneratedPage("sitemap.xml", buildSitemap(generatedPaths));
+      writeGeneratedPage("sitemap.xml", buildSitemap(generatedPages, snapshot.generatedAt));
       writeGeneratedPage(".well-known/security.txt", readFileSync(resolve("public", ".well-known", "security.txt"), "utf8"));
     },
   };
