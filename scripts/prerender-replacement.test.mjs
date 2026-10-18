@@ -25,3 +25,22 @@ test("rendered data containing String.replace $ patterns is inserted literally",
   assert.ok(html.includes("<title>Pay $` $' $&amp; · HECAVEX Radar</title>"));
   assert.ok(html.includes(`<meta name="description" content="Pay $\` $' $&amp;" />`));
 });
+
+test("a substituted value containing another placeholder name is not substituted again", () => {
+  const template = readFileSync(new URL("../templates/signal/index.html", import.meta.url), "utf8");
+  const canonical = "https://radar.hecavex.com/signals/0123456789abcdef0123/";
+  const html = decoratePage(template, {
+    title: "__CANONICAL__ __UNKNOWN__",
+    description: "__TITLE__",
+    canonical,
+    alternate: "https://radar.hecavex.com/lt/signalai/0123456789abcdef0123/",
+    alternateLanguage: "lt",
+    language: "en",
+    markup: "<p>record</p>",
+    bootstrap: "e30",
+  });
+  assert.ok(html.includes("<title>__CANONICAL__ __UNKNOWN__</title>"));
+  assert.ok(html.includes('<meta name="description" content="__TITLE__" />'));
+  assert.ok(html.includes(`<link rel="canonical" href="${canonical}" />`));
+  assert.ok(html.includes('<meta property="og:title" content="__CANONICAL__ __UNKNOWN__" />'));
+});

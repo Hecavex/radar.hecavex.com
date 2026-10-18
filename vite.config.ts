@@ -75,21 +75,25 @@ export function decoratePage(template: string, options: {
 }): string {
   const english = options.language === "en" ? options.canonical : options.alternate;
   const lithuanian = options.language === "lt" ? options.canonical : options.alternate;
-  // Fill placeholders before inserting rendered data; function replacers keep `$` patterns literal.
+  const values: Record<string, string> = {
+    TITLE: escapeHtml(options.title),
+    DESCRIPTION: escapeHtml(options.description),
+    CANONICAL: options.canonical,
+    ALTERNATE: options.alternate,
+    ALTERNATE_LANG: options.alternateLanguage,
+    ENGLISH: english,
+    LITHUANIAN: lithuanian,
+    LOCALE: options.language === "lt" ? "lt_LT" : "en_GB",
+    ALTERNATE_LOCALE: options.language === "lt" ? "en_GB" : "lt_LT",
+    IMAGE_ALT: options.language === "lt" ? "HECAVEX Radar vieši tyrimo signalai" : "HECAVEX Radar public research signals",
+    FEED_ROOT: options.feedRoot ?? "",
+    FEED_TITLE: escapeHtml(options.feedTitle ?? "HECAVEX Radar brand changes"),
+  };
+  // One pass, before inserting rendered data: substituted values (a title containing
+  // "__CANONICAL__" or "$&") are never expanded again. Unknown placeholders stay as-is.
   const filled = template
     .replace('<html lang="en">', () => `<html lang="${options.language}">`)
-    .replaceAll("__TITLE__", () => escapeHtml(options.title))
-    .replaceAll("__DESCRIPTION__", () => escapeHtml(options.description))
-    .replaceAll("__CANONICAL__", () => options.canonical)
-    .replaceAll("__ALTERNATE__", () => options.alternate)
-    .replaceAll("__ALTERNATE_LANG__", () => options.alternateLanguage)
-    .replaceAll("__ENGLISH__", () => english)
-    .replaceAll("__LITHUANIAN__", () => lithuanian)
-    .replaceAll("__LOCALE__", () => options.language === "lt" ? "lt_LT" : "en_GB")
-    .replaceAll("__ALTERNATE_LOCALE__", () => options.language === "lt" ? "en_GB" : "lt_LT")
-    .replaceAll("__IMAGE_ALT__", () => options.language === "lt" ? "HECAVEX Radar vieši tyrimo signalai" : "HECAVEX Radar public research signals")
-    .replaceAll("__FEED_ROOT__", () => options.feedRoot ?? "")
-    .replaceAll("__FEED_TITLE__", () => escapeHtml(options.feedTitle ?? "HECAVEX Radar brand changes"));
+    .replace(/__([A-Z]+(?:_[A-Z]+)*)__/g, (placeholder, key: string) => Object.hasOwn(values, key) ? values[key] : placeholder);
   return replacePageRoot(filled, options.markup, options.bootstrap);
 }
 
