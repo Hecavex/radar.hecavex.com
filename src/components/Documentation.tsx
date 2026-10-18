@@ -857,6 +857,12 @@ export function Documentation({ language = "en" }: { language?: "en" | "lt" }) {
           Report a false positive, sensitive value, attribution problem, or removal request to{" "}
           <a href="mailto:info@hecavex.com">info@hecavex.com</a>.
         </p>
+        <p className="docs-contact">
+          An accepted removal or correction filters the live projections (current snapshot, history, observed hostnames
+          and signal pages) and reaches feeds and exports from the next publication build. It cannot reach the public{" "}
+          <code>radar-data</code> Git history, the durable observation store, immutable weekly dataset releases and their
+          attestations, or copies that STIX or MISP consumers have already ingested.
+        </p>
       </section>
     </article>
   );
