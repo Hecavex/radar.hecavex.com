@@ -24,7 +24,7 @@ This command creates only the schema and append-only triggers at the private pat
 
 Four public Issue Forms accept sanitized false-positive, missed-candidate, registry-correction, and removal requests. Issue text is untrusted public input. It must never be passed to a shell, scanner, collector, or publication command.
 
-The maintainer-only `Prepare sanitized review proposal` workflow accepts a small set of controlled fields, verifies that the initiating actor has `maintain` or `admin` permission, requires a fully defanged domain, and opens a draft pull request below `data/review/proposals/`. It links the issue by number but never reads or executes its title or body. A proposal is not a decision. CODEOWNERS review and the private ledger remain required.
+The maintainer-only `Prepare sanitized review proposal` workflow accepts a small set of controlled fields, verifies that the initiating actor has `maintain` or `admin` permission, requires a fully defanged domain, and pushes a proposal branch below `data/review/proposals/`. A maintainer opens the draft pull request by hand from the compare URL in the job summary. It links the issue by number but never reads or executes its title or body. A proposal is not a decision. The private ledger remains required; CODEOWNERS review is advisory because `main` protection does not require an approving review.
 
 Generate the current stratified review worklist without a network request:
 

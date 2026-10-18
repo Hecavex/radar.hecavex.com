@@ -43,7 +43,6 @@ on:
 
 permissions:
   contents: write
-  pull-requests: write
 
 concurrency:
   group: radar-review-proposal
@@ -109,15 +108,20 @@ jobs:
           git add data/review/proposals/
           git commit -m "review: add sanitized proposal ${GITHUB_RUN_ID}"
           git push --set-upstream origin "$BRANCH"
-      - name: Open draft pull request
+      # Actions cannot create pull requests in this repository (setting off); a maintainer opens the draft.
+      - name: Print compare URL for a maintainer-opened draft pull request
         env:
-          GH_TOKEN: ${{ github.token }}
           BRANCH: review-proposal/${{ github.run_id }}-${{ github.run_attempt }}
           BASE_BRANCH: ${{ github.event.repository.default_branch }}
         run: |
-          gh pr create \
-            --base "$BASE_BRANCH" \
-            --head "$BRANCH" \
-            --draft \
-            --title "Review sanitized Radar proposal ${GITHUB_RUN_ID}" \
-            --body "Maintainer-generated sanitized proposal. This pull request does not execute issue content, scan the subject, or publish a review decision. CODEOWNERS review and CI are required before any separate decision export."
+          {
+            echo "## Sanitized review proposal pushed"
+            echo
+            echo "Open a **draft** pull request by hand:"
+            echo
+            echo "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/compare/${BASE_BRANCH}...${BRANCH}?expand=1"
+            echo
+            echo "Suggested title: Review sanitized Radar proposal ${GITHUB_RUN_ID}"
+            echo
+            echo "Suggested body: Maintainer-generated sanitized proposal. This pull request does not execute issue content, scan the subject, or publish a review decision. Let CI pass before merging. CODEOWNERS review is advisory: main branch protection does not require an approving review."
+          } >> "$GITHUB_STEP_SUMMARY"

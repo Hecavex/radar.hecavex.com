@@ -114,6 +114,7 @@ export function LtDocumentation() {
     <section className="docs-section" id="duomenu-salygos"><div className="docs-section-heading"><p className="eyebrow">Duomenų sąlygos</p><h2>Gynybinis tyrimas, ne reputacijos paslauga</h2><p>Duomenys skelbiami geriausiomis pastangomis ir be stebėjimo, pranešimo, reagavimo, pašalinimo ar pasiekiamumo SLA.</p></div>
       <div className="docs-callout"><strong>Naudokite kaip tyrimo kryptį</strong><p>Įtraukimas neįrodo kenkėjiškumo, o nebuvimas neįrodo saugumo. Prieš blokavimą ar viešą teiginį patikrinkite šaltinį, laiką, kontekstą ir įrodymų lygį.</p></div>
       <p className="methodology-report">Apie galimą klaidingą teigiamą rezultatą praneškite adresu <a href="mailto:info@hecavex.com?subject=HECAVEX%20Radar%20klaidingas%20teigiamas%20rezultatas">info@hecavex.com</a>, nurodydami signalo ID ir patikrinamą pagrindimą.</p>
+      <div className="docs-callout"><strong>Ką pasiekia pašalinimas</strong><p>Priėmus pašalinimo ar taisymo prašymą, dabartinės projekcijos (suvestinė, istorija, stebėti domenų vardai ir signalų puslapiai) filtruojamos, o srautus ir eksportus pakeitimas pasiekia nuo kito publikavimo. Jis negali pasiekti viešos <code>radar-data</code> Git istorijos, ilgalaikės stebėjimų saugyklos, nekeičiamų savaitinių duomenų laidų su jų atestacijomis ir kopijų, kurias jau perėmė STIX ar MISP naudotojai.</p></div>
     </section>
   </article>;
 }

@@ -1,0 +1,73 @@
+{
+  "description": "Shared host-pattern parity cases for hecavex_radar.safety.DOMAIN_IN_TEXT and scripts/published-defanging.mjs.",
+  "defanged": [
+    [
+      "see example.com today",
+      "see example[.]com today"
+    ],
+    [
+      "Login at example.com.",
+      "Login at example[.]com."
+    ],
+    [
+      "ns1.example.com.",
+      "ns1[.]example[.]com."
+    ],
+    [
+      "example.com-x",
+      "example[.]com-x"
+    ],
+    [
+      "example.com.1",
+      "example[.]com.1"
+    ],
+    [
+      "\u043f\u0440\u0438\u043c\u0435\u0440.\u0440\u0444",
+      "\u043f\u0440\u0438\u043c\u0435\u0440[.]\u0440\u0444"
+    ],
+    [
+      "\u0432\u0445\u043e\u0434 \u043d\u0430 \u043f\u0440\u0438\u043c\u0435\u0440.\u0440\u0444.",
+      "\u0432\u0445\u043e\u0434 \u043d\u0430 \u043f\u0440\u0438\u043c\u0435\u0440[.]\u0440\u0444."
+    ],
+    [
+      "example\u3002com",
+      "example[.]com"
+    ],
+    [
+      "example\uff0ecom",
+      "example[.]com"
+    ],
+    [
+      "example\uff61com",
+      "example[.]com"
+    ],
+    [
+      "\uff45\uff58\uff41\uff4d\uff50\uff4c\uff45\uff0e\uff43\uff4f\uff4d",
+      "\uff45\uff58\uff41\uff4d\uff50\uff4c\uff45[.]\uff43\uff4f\uff4d"
+    ],
+    [
+      "xn--e1afmkfd.xn--p1ai",
+      "xn--e1afmkfd[.]xn--p1ai"
+    ],
+    [
+      "login.xn--p1ai/path",
+      "login[.]xn--p1ai/path"
+    ],
+    [
+      "m\u00fcnchen.de",
+      "m\u00fcnchen[.]de"
+    ],
+    [
+      "evi.Skelbiu.lt.com",
+      "evi[.]Skelbiu[.]lt[.]com"
+    ]
+  ],
+  "unchanged": [
+    "Hello. World",
+    "version 1.25 and 10.0.0.1",
+    "e.g. this, i.e. that",
+    "already example[.]com",
+    "U.S.A.",
+    "DPD"
+  ]
+}

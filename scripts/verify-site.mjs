@@ -13,6 +13,7 @@ import { chromium } from "playwright-core";
 import { preview } from "vite";
 import { maximumOutputBytes, verifyDeploymentCapacity } from "./deployment-capacity.mjs";
 import navigation from "../src/lib/navigation.json" with { type: "json" };
+import { findFangedStrings } from "./published-defanging.mjs";
 
 const root = resolve(import.meta.dirname, "..");
 const output = join(root, "dist");
@@ -1987,6 +1988,28 @@ function verifySyndicationFeeds() {
     assertPublicFeedUrl(jsonFeed.feed_url, `${label} JSON Feed feed_url`);
     for (const item of jsonFeed.items) assertPublicFeedUrl(item.url, `${label} JSON Feed item URL`);
   }
+
+  // Pages serves XML without a CSP: only the global and per-brand feeds may be XML.
+  const feedXml = new Set(groups.flatMap((group) => [group.atom, group.rss]));
+  for (const path of feedXml) {
+    assert(/^\/data\/(?:brands\/[a-z0-9-]+\/)?events\.(?:atom|rss)\.xml$/u.test(path), `Unexpected feed XML path ${path}.`);
+  }
+  for (const path of walk(join(output, "data"))) {
+    const reference = `/${relative(output, path).split(sep).join("/")}`;
+    assert(!reference.endsWith(".xml") || feedXml.has(reference), `Unexpected XML file in the published data: ${reference}.`);
+  }
+}
+
+function verifyPublishedDefanging() {
+  const registry = JSON.parse(readFileSync(join(root, "data", "brands-lt.json"), "utf8"));
+  const findings = findFangedStrings(join(output, "data"), {
+    brandNames: registry.entries.map((entry) => entry.brand),
+    officialDomains: registry.entries.flatMap((entry) => entry.officialDomains),
+  });
+  assert(
+    findings.length === 0,
+    `Published data contains ${findings.length} fanged hostname or URL string(s) outside the raw-field allowlist:\n${findings.slice(0, 20).join("\n")}`,
+  );
 }
 
 function verifyPerformanceBudgets(signalDetails) {
@@ -2975,6 +2998,7 @@ if (["all", "static"].includes(verificationPhase)) {
   const signalDetails = verifySignalDetails();
   verifyStixBundle();
   verifySyndicationFeeds();
+  verifyPublishedDefanging();
   const performance = verifyPerformanceBudgets(signalDetails);
   process.stdout.write(
     `Measured production sizes: ${performance.totalBytes} bytes total; ` +

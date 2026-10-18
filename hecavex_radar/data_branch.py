@@ -20,6 +20,7 @@ PUBLICATION = "radar-publication.json"
 MAX_FILE = 32 * 1024 * 1024
 MAX_TOTAL = 256 * 1024 * 1024
 SHA = re.compile(r"[a-f0-9]{40}")
+FEED_XML = re.compile(r"public/data/(?:brands/[a-z0-9-]+/)?events\.(?:atom|rss)\.xml")
 WRITERS = {
     "certstream": ("data/certstream/", "public/data/collection-health.json"),
     "ct-search": ("data/certstream/", "data/ct-search/"),
@@ -51,6 +52,9 @@ def allowed(path: str) -> bool:
     if path in {MANIFEST, PUBLICATION}:
         return True
     if PurePosixPath(path).suffix not in {".json", ".ndjson", ".xml", ".sha256"}:
+        return False
+    # Pages serves XML without a CSP, so only the global and per-brand feeds may be XML.
+    if path.endswith(".xml") and FEED_XML.fullmatch(path) is None:
         return False
     return path.startswith(("public/data/", "data/certstream/", "data/ct-search/",
                             "data/enrichment/", "data/history/", "data/urlscan/")) or path in {
