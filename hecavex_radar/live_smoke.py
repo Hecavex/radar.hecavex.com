@@ -19,6 +19,8 @@ MAXIMUM_HTML_BYTES = 512 * 1024
 DEFAULT_BASE_URL = "https://radar.hecavex.com"
 DEFAULT_GRACE_MINUTES = 30
 DEFAULT_MAXIMUM_SYNC_AGE_MINUTES = 180
+# The custom 404 heading; deploy-pages.yml greps dist/404.html for the same markup.
+NOT_FOUND_MARKER = b'<h1 id="not-found-title">Page not found</h1>'
 IDENTITY_FINDING = "The live release identity does not match the deployed build revision."
 EXACT_PUBLICATION_FINDING = "The live manifest does not match the exact selected publication timestamp."
 ROLLOUT_FINDINGS = frozenset({IDENTITY_FINDING, EXACT_PUBLICATION_FINDING})
@@ -314,7 +316,7 @@ def main(argv: list[str] | None = None) -> int:
                     findings.append(f"Live route {route} did not expose its exact localized canonical URL.")
                 if b'id="main-content"' not in payload:
                     findings.append(f"Live route {route} did not contain the expected primary content landmark.")
-            if route == "/radar-live-smoke-not-found" and b"This route has no signal." not in payload:
+            if route == "/radar-live-smoke-not-found" and NOT_FOUND_MARKER not in payload:
                 findings.append("The live custom 404 response did not contain the expected safe page marker.")
     except (OSError, TimeoutError, ValueError, urllib.error.URLError) as error:
         findings.append(f"Live publication request failed safely: {error}")

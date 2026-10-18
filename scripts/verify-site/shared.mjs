@@ -32,7 +32,7 @@ export const pages = [
   { path: "/methodology/", marker: "How a signal reaches Radar" },
   { path: "/docs/", marker: "HECAVEX Radar technical reference" },
   { path: "/lt/dokumentacija/", marker: "HECAVEX Radaro techninis žinynas" },
-  { path: "/404.html", marker: "This route has no signal." },
+  { path: "/404.html", marker: "Page not found" },
 ];
 
 export function assert(condition, message) {

@@ -25,7 +25,7 @@ export function NotFoundPage() {
           <aside className="not-found-status" aria-label="Missing route status">
             <strong>404</strong>
             <span>NOT FOUND</span>
-            <p>This route has no signal. No candidate status or verdict can be inferred from a missing page.</p>
+            <p>No Radar page exists at this address. A missing page says nothing about any candidate&apos;s status or verdict.</p>
           </aside>
         </section>
 
