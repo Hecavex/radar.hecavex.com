@@ -274,7 +274,3 @@ def certificate_for_domain(
     return payload if has_content else None
 
 
-def domains_from_message(value: Any) -> list[str]:
-    """Compatibility wrapper for callers that only need certificate DNS names."""
-
-    return list(parse_message(value).domains)

@@ -510,23 +510,6 @@ def _metrics_fields(metrics: CollectionMetrics, listening_seconds: float | None 
     }
 
 
-def checkpoint_attempt(
-    metrics: CollectionMetrics,
-    path: str | Path | None = None,
-    *,
-    now: datetime | None = None,
-    listening_seconds: float | None = None,
-) -> Path:
-    artifact = read_collection_health(path, allow_running=True)
-    if artifact is None or artifact["latestAttempt"] is None or artifact["latestAttempt"]["outcome"] is not None:
-        raise ValueError("No running CertStream collection attempt is available to checkpoint.")
-    updated_at = _utc(now)
-    artifact["generatedAt"] = _timestamp(updated_at)
-    artifact["freshness"] = _freshness(artifact["lastSuccessAt"], updated_at, artifact["staleAfterSeconds"])
-    artifact["latestAttempt"].update(_metrics_fields(metrics, listening_seconds))
-    return _write_collection_health(artifact, path, allow_running=True)
-
-
 def _summary(outcome: CollectionOutcome) -> str:
     return {
         "healthy-empty": "Input was processed successfully; no candidate matched the publication heuristic.",
