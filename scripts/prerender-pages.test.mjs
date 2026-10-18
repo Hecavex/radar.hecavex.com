@@ -188,7 +188,8 @@ test("brand pages are generated in both languages with their feed root", () => {
   assert.ok(generated.length >= 2 && generated.length % 2 === 0);
   assert.ok(generated[0].path.startsWith("/brands/"));
   assert.ok(generated[1].path.startsWith("/lt/"));
-  assert.ok(generated[0].html.includes("https://radar.hecavex.com/data/brands/"));
+  assert.match(generated[0].html,
+    /<link rel="alternate" type="application\/atom\+xml" title="[^"]+" href="https:\/\/radar\.hecavex\.com\/data\/brands\/[a-z0-9-]+\/events\.atom\.xml" \/>/u);
 });
 
 test("the sitemap lists the fixed routes and generated pages once, sorted", () => {
