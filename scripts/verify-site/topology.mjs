@@ -254,6 +254,9 @@ export function verifyDeploymentTopology() {
     "Python public-artifact caps no longer match the bounded-artifact scenario.",
   );
   assert(!viteConfig.includes("Date.now()"), "Vite prerendering still uses a nondeterministic wall-clock timestamp.");
+  // Page assembly moved out of the config; the same determinism guard must cover it.
+  assert(!readFileSync(join(root, "src", "prerenderPages.ts"), "utf8").includes("Date.now()"),
+    "Prerendered page assembly uses a nondeterministic wall-clock timestamp.");
 }
 
 function inputPins(path) {
