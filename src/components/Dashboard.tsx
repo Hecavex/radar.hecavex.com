@@ -10,7 +10,7 @@ import { CollectionDisclosure } from "./CollectionDisclosure.tsx";
 import { ExportActions } from "./ExportActions.tsx";
 import { FilterBar } from "./FilterBar.tsx";
 import { SignalTable } from "./SignalTable.tsx";
-import { PeriodOverview } from "./PeriodOverview.tsx";
+import { ObservedHostnamesSummary } from "./PeriodOverview.tsx";
 import type { SiteLanguage } from "./SiteHeader.tsx";
 
 export function Dashboard({ snapshot, now = Date.now(), language = "en", refreshError = null, initialPeriodData }: {
@@ -35,6 +35,7 @@ export function Dashboard({ snapshot, now = Date.now(), language = "en", refresh
   const relativeTime = lt ? formatRelativeTimeLt : formatRelativeTime;
   const dateTime = lt ? formatDateTimeLt : formatDateTime;
   const signalsAnchor = lt ? "signalai" : "signals";
+  const observed30d = initialPeriodData?.metrics.windows.find((entry) => entry.key === "30d")?.uniqueHostnames;
 
   useEffect(() => {
     const updateFromLocation = () => {
@@ -67,7 +68,7 @@ export function Dashboard({ snapshot, now = Date.now(), language = "en", refresh
               : "Defanged potential phishing and impersonation domains discovered through sampled Certificate Transparency, URLScan, and sanitized HECAVEX inputs. Every row is a lead, never a verdict."}
           </p>
           <div className="hero-actions">
-            <a className="hero-action-primary" href="#observed-hostnames"><ArrowDown aria-hidden="true" /> {lt ? "Peržiūrėti stebėtus domenų vardus" : "Browse observed hostnames"}</a>
+            <a className="hero-action-primary" href={`#${signalsAnchor}`}><ArrowDown aria-hidden="true" /> {lt ? "Peržiūrėti kandidatų trumpąjį sąrašą" : "Browse the candidate shortlist"}</a>
             <a href={lt ? "/lt/metodologija/" : "/methodology/"}>{lt ? "Kaip renkami duomenys" : "How collection works"}</a>
           </div>
         </div>
@@ -94,8 +95,6 @@ export function Dashboard({ snapshot, now = Date.now(), language = "en", refresh
         </aside>
       </section>
 
-      <PeriodOverview initialData={initialPeriodData} language={language} />
-
       <section className="activity-strip" aria-label={lt ? "Dabartinio trumpojo sąrašo rodikliai" : "Secondary current shortlist metrics"}>
         <div><Database aria-hidden="true" /><span>{lt ? "Dabartinis trumpasis sąrašas" : "Current shortlist"}</span><strong>{number(summary.total)}</strong></div>
         <div><Clock3 aria-hidden="true" /><span title={lt ? "Naudojamas teikėjo stebėjimo laikas arba deklaruotas rinkiklio laikas. Istorinių laikų kilmė neišsami." : "Uses provider observation time or declared collector fallback. Historical timing provenance is incomplete."}>{lt ? "Pirmas stebėjimas per 24 val." : "Observation first seen 24h"}</span><strong>{number(newToday)}</strong></div>
@@ -106,12 +105,18 @@ export function Dashboard({ snapshot, now = Date.now(), language = "en", refresh
 
       <section className="signal-section" id={signalsAnchor} aria-labelledby="signals-title">
         <div className="section-heading">
-          <div><h2 id="signals-title">{lt ? "Dabartinis kandidatų trumpasis sąrašas" : "Current candidate shortlist"}</h2><p>{lt ? "Naujausių kandidatų atranka; šis skaičius nėra išsaugotos istorijos suma." : "A selection of recent candidates; this count is not the recorded history total."}</p></div>
+          <div><h2 id="signals-title">{lt ? "Dabartinis kandidatų trumpasis sąrašas" : "Current candidate shortlist"}</h2><p>{observed30d === undefined
+            ? (lt ? "Naujausių kandidatų atranka; šis skaičius nėra išsaugotos istorijos suma." : "A selection of recent candidates; this count is not the recorded history total.")
+            : lt
+              ? <>Trumpasis sąrašas: <strong>{snapshot.signals.length.toLocaleString("lt-LT")}</strong> dabartinių kandidatų, atrinktų peržiūrai. Per 30 dienų išsaugota unikalių domenų vardų: <strong>{observed30d.toLocaleString("lt-LT")}</strong>; jie skaičiuojami atskirai žemiau.</>
+              : <>Shortlist: <strong>{snapshot.signals.length.toLocaleString("en-GB")}</strong> current candidates selected for review. Last 30 days: <strong>{observed30d.toLocaleString("en-GB")}</strong> unique hostnames recorded, counted separately below.</>}</p></div>
           <div className="signal-heading-actions"><p>{lt ? <><strong>{number(filteredSignals.length)}</strong> atitinka iš {number(snapshot.signals.length)}</> : <><strong>{number(filteredSignals.length)}</strong> matching {number(snapshot.signals.length)}</>}</p><ExportActions signals={filteredSignals} snapshotGeneratedAt={snapshot.generatedAt} language={language} /></div>
         </div>
         <FilterBar signals={snapshot.signals} filters={filters} onChange={setFilters} language={language} />
         <SignalTable signals={filteredSignals} now={now} snapshotGeneratedAt={snapshot.generatedAt} onFacet={updateFacet} language={language} />
       </section>
+
+      <ObservedHostnamesSummary data={initialPeriodData} language={language} />
 
       <section className="radar-route-grid" aria-label={lt ? "Naršyti Radarą" : "Explore Radar"}>
         <a href={lt ? "/lt/pokyciai/" : "/changes/"}><Clock3 aria-hidden="true" /><span><strong>{lt ? "Pokyčiai" : "Changes"}</strong><small>{lt ? "Nauji, pakartotinai stebėti, pakeisti arba atšaukti" : "New, reobserved, changed, or retracted"}</small></span><ArrowRight aria-hidden="true" /></a>

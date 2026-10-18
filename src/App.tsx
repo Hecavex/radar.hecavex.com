@@ -2,7 +2,7 @@ import { AlertTriangle, RadioTower } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { Dashboard } from "./components/Dashboard.tsx";
-import { PeriodOverview } from "./components/PeriodOverview.tsx";
+import { ObservedHostnamesSummary } from "./components/PeriodOverview.tsx";
 import { SiteFooter } from "./components/SiteFooter.tsx";
 import { SiteHeader } from "./components/SiteHeader.tsx";
 import { loadSnapshot } from "./lib/data.ts";
@@ -49,7 +49,7 @@ export function App(
           <RadioTower className="state-icon pulse" aria-hidden="true" />
           <p className="eyebrow">Receiving snapshot</p>
           <h1>Loading recent signals</h1>
-          <PeriodOverview initialData={initialPeriodData} />
+          <ObservedHostnamesSummary data={initialPeriodData} />
         </main>
       )}
 
@@ -62,7 +62,7 @@ export function App(
           <button className="button" type="button" onClick={() => window.location.reload()}>
             Try again
           </button>
-          <PeriodOverview initialData={initialPeriodData} />
+          <ObservedHostnamesSummary data={initialPeriodData} />
         </main>
       )}
 

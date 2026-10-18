@@ -1014,17 +1014,28 @@ function verifyBuiltHtml() {
     }
     if (["/", "/lt/", "/history/", "/lt/istorija/"].includes(route)) {
       const periodMetricsPath = join(output, "data", "period-metrics-v1.json");
-      const primary = document.querySelector(".period-overview [data-period-count]");
+      // The overview carries only the headline; the history page owns the complete inventory, search and exports.
+      const overview = route === "/" || route === "/lt/";
+      const primary = document.querySelector(overview ? ".observed-summary [data-period-count]" : ".period-overview [data-period-count]");
       assert(primary, `${route} omits the recorded-hostname primary metric.`);
       if (existsSync(periodMetricsPath)) {
         const metrics = JSON.parse(readFileSync(periodMetricsPath, "utf8"));
         const defaultPeriod = metrics.windows.find((window) => window.key === "30d");
         assert(primary.getAttribute("data-period-count") === String(defaultPeriod.uniqueHostnames), `${route} uses a preview or shortlist count for the authoritative period headline.`);
-        assert(document.querySelector(".period-overview noscript"), `${route} omits authoritative period totals for readers without JavaScript.`);
+        if (!overview) assert(document.querySelector(".period-overview noscript"), `${route} omits authoritative period totals for readers without JavaScript.`);
       } else {
         assert(primary.getAttribute("data-period-count") === "unknown", `${route} turns an unavailable period inventory into zero.`);
       }
-      assert([...document.querySelectorAll(".period-overview .export-actions button")].every((button) => button.disabled), `${route} enables complete exports before verifying all hostname parts.`);
+      if (overview) {
+        const shortlist = document.querySelector(".signal-section");
+        const summary = document.querySelector(".observed-summary");
+        // 4 = Node.DOCUMENT_POSITION_FOLLOWING: the summary must come after the shortlist.
+        assert(shortlist && summary && (shortlist.compareDocumentPosition(summary) & 4), `${route} places the observed-hostname summary before the candidate shortlist.`);
+        assert(summary.querySelector(`a[href="${lithuanian ? "/lt/istorija/" : "/history/"}#observed-hostnames"]`), `${route} summary does not link to the complete hostname inventory.`);
+        assert(!document.querySelector(".period-overview, .period-table"), `${route} still embeds the complete observed-hostname table.`);
+      } else {
+        assert([...document.querySelectorAll(".period-overview .export-actions button")].every((button) => button.disabled), `${route} enables complete exports before verifying all hostname parts.`);
+      }
     }
     if (route === "/" || route === "/lt/") {
       const signalPrefix = lithuanian ? "/lt/signalai/" : "/signals/";
@@ -2470,7 +2481,7 @@ async function verifyInBrowser(healthOnly = false, researchOnly = false) {
           const heroIntroStyle = heroIntro ? getComputedStyle(heroIntro) : null;
           const radarHeroCopy = document.querySelector(".radar-hero .hero-copy")?.getBoundingClientRect();
           const radarFreshness = document.querySelector(".radar-hero .freshness-card")?.getBoundingClientRect();
-          const metricGrid = document.querySelector(".period-overview")?.getBoundingClientRect();
+          const metricGrid = document.querySelector(".activity-strip")?.getBoundingClientRect();
           const contentToc = document.querySelector(".methodology-toc, .docs-toc");
           const contentTocStyle = contentToc ? getComputedStyle(contentToc) : null;
           const longFormCopy = document.querySelector(".methodology-heading > p, .docs-heading > p");
@@ -2500,11 +2511,11 @@ async function verifyInBrowser(healthOnly = false, researchOnly = false) {
           const hostStyle = longestHost ? getComputedStyle(longestHost) : null;
           const overviewBlocks = [
             ["hero", ".radar-hero"],
-            ["recorded periods", ".period-overview"],
             ["activity", ".activity-strip"],
             ["filters", ".filter-shell"],
             ["table", ".table-panel"],
             ["exports", ".export-actions"],
+            ["recorded hostnames", ".observed-summary"],
             ["routes", ".radar-route-grid"],
             ["disclosure", ".collection-disclosure"],
           ].map(([name, selector]) => {
@@ -2812,18 +2823,18 @@ async function verifyInBrowser(healthOnly = false, researchOnly = false) {
           assert(await advanced.evaluate((element) => element.open), `${entry.path} reset unexpectedly collapsed the reader's open controls.`);
         }
 
-        if ((width === 390 || width === 1440) && overview && existsSync(join(output, "data", "period-metrics-v1.json"))) {
+        if ((width === 390 || width === 1440) && ["/history/", "/lt/istorija/"].includes(entry.path) && existsSync(join(output, "data", "period-metrics-v1.json"))) {
           const metrics = JSON.parse(readFileSync(join(output, "data", "period-metrics-v1.json"), "utf8"));
           const period = page.locator(".period-overview");
           await page.waitForFunction(() => document.querySelector(".period-overview .export-actions button")?.disabled === false);
-          await period.getByRole("button", { name: entry.path === "/lt/" ? "Visa išsaugota istorija" : "All recorded", exact: true }).click();
+          await period.getByRole("button", { name: entry.path.startsWith("/lt/") ? "Visa išsaugota istorija" : "All recorded", exact: true }).click();
           assert(await period.locator("[data-period-count]").getAttribute("data-period-count") === String(metrics.windows.find((window) => window.key === "all").uniqueHostnames), `${entry.path} does not select the complete recorded hostname period.`);
           await period.locator('input[type="search"]').fill("private inventory query");
           assert(!page.url().includes("private") && !page.url().includes("query="), `${entry.path} inventory search leaked into the URL.`);
           assert(await period.locator("tbody tr").count() === 0, `${entry.path} inventory search does not filter the selected population.`);
           assert(await period.locator("[data-period-count]").getAttribute("data-period-count") === String(metrics.windows.find((window) => window.key === "all").uniqueHostnames), `${entry.path} search overwrote the authoritative period headline.`);
           await period.locator('input[type="search"]').fill("");
-          await period.getByRole("button", { name: entry.path === "/lt/" ? "30 dienų" : "30 days", exact: true }).click();
+          await period.getByRole("button", { name: entry.path.startsWith("/lt/") ? "30 dienų" : "30 days", exact: true }).click();
           await period.evaluate((element) => element.scrollIntoView({ block: "start", behavior: "instant" }));
           const primaryPlacement = await page.evaluate(() => ({
             headerBottom: document.querySelector(".site-header").getBoundingClientRect().bottom,

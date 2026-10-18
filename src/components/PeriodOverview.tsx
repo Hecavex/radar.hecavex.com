@@ -1,3 +1,4 @@
+import { ArrowRight } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { downloadText } from "../lib/export.ts";
 import { foldSearchText } from "../lib/searchText.ts";
@@ -38,6 +39,27 @@ function HostnameEvidence({ row, language }: { row: ObservedHostnameRecord; lang
     <p>{t("Radar first recorded", "Pirmas įrašas Radare")}: {row.firstRecordedAt ?? unavailable}<br />{t("First verified publication receipt", "Pirmas patikrinto paskelbimo įrašas")}: {row.firstPublishedAt ?? unavailable}</p>
     {!row.recordAvailable && <p>{t("A separate detail page is unavailable for this retained hostname.", "Atskiras šio išsaugoto domeno vardo duomenų puslapis nepasiekiamas.")}</p>}
   </details>;
+}
+
+/** Overview headline only; the complete table, search and exports live on the history page. */
+export function ObservedHostnamesSummary({ data, language = "en" }: { data?: PeriodOverviewData; language?: SiteLanguage }) {
+  const lt = language === "lt";
+  const count = data?.metrics.windows.find((entry) => entry.key === "30d")?.uniqueHostnames;
+  return <section className="observed-summary" id="observed-hostnames" aria-labelledby="observed-hostnames-title">
+    <div className="period-heading">
+      <div>
+        <p className="eyebrow">{lt ? "Išsaugoti stebėjimai" : "Recorded observations"}</p>
+        <h2 id="observed-hostnames-title">{lt ? "Stebėti unikalūs domenų vardai" : "Unique hostnames observed"}</h2>
+        <p>{lt
+          ? "Kiekvienas per pastarąsias 30 dienų Radare išsaugotas domeno vardas skaičiuojamas vieną kartą, atskirai nuo trumpojo sąrašo. Istorijos puslapyje yra 90 dienų, metų ir visos istorijos vaizdai."
+          : "Every hostname Radar recorded in the last 30 days, counted once and separately from the shortlist. The history page also has 90-day, one-year and all-recorded views."}</p>
+        <a className="observed-summary-link" href={lt ? "/lt/istorija/#observed-hostnames" : "/history/#observed-hostnames"}>
+          {lt ? "Naršyti, ieškoti ir eksportuoti visus išsaugotus domenų vardus" : "Browse, search and export all recorded hostnames"} <ArrowRight aria-hidden="true" />
+        </a>
+      </div>
+      <div className="period-primary"><strong data-period-count={count ?? "unknown"}>{count === undefined ? "—" : count.toLocaleString(lt ? "lt-LT" : "en-GB")}</strong><span>{lt ? "30 dienų" : "30 days"}</span></div>
+    </div>
+  </section>;
 }
 
 export function PeriodOverview({ initialData, language = "en" }: { initialData?: PeriodOverviewData; language?: SiteLanguage }) {
@@ -88,6 +110,10 @@ export function PeriodOverview({ initialData, language = "en" }: { initialData?:
 
   const periodLabel = (key: string) => key === "all" ? t("All recorded", "Visa išsaugota istorija") : key === "custom" ? t("Selected UTC dates", "Pasirinktos UTC datos") : key.startsWith("month:") ? key.slice(6) : key.startsWith("year:") ? key.slice(5) : t(`${key.slice(0, -1)} days`, `${key.slice(0, -1)} dienų`);
   const unavailable = t("Unavailable", "Nepasiekiama");
+  // A null clock count means this window starts before that clock was tracked; say so instead of "Unavailable".
+  const clockPending = (trackedFrom: string | null) => <dd className="period-clock-pending">{trackedFrom
+    ? `${t("Tracked from", "Skaičiuojama nuo")} ${new Intl.DateTimeFormat(lt ? "lt-LT" : "en-GB", { dateStyle: "medium", timeZone: "UTC" }).format(Date.parse(trackedFrom))}`
+    : t("Not tracked yet", "Dar neskaičiuojama")}</dd>;
   const exportRows = (kind: "json" | "csv") => {
     if (!data?.complete || !window) return;
     const contents = kind === "json" ? observedHostnamesAsJson(filtered, data, window) : observedHostnamesAsCsv(filtered, data, window);
@@ -116,10 +142,10 @@ export function PeriodOverview({ initialData, language = "en" }: { initialData?:
     {!data ? <p role="status">{error ? t("Recorded observation counts are unavailable. No zero count is assumed.", "Išsaugotų stebėjimų skaičiai nepasiekiami. Tai nelaikoma nuliniu rezultatu.") : t("Loading recorded observation counts…", "Kraunami išsaugotų stebėjimų skaičiai…")}</p> : <>
       <p className="period-cutoff">{t("Observation time window", "Stebėjimo laiko intervalas")}: <code>{window?.startInclusive ?? t("all recorded history", "visa išsaugota istorija")}</code> ≤ {t("time", "laikas")} &lt; <code>{window?.endExclusive}</code>.<br />{t("Data cutoff", "Duomenų riba")}: <time dateTime={data.metrics.asOf}>{data.metrics.asOf}</time>. {t(data.metrics.coverage.collectionComplete ? "Exact within recorded public-eligible observations; declared collection coverage is complete." : "Exact within recorded public-eligible observations; collection is incomplete.", data.metrics.coverage.collectionComplete ? "Tikslu tarp išsaugotų viešai tinkamų stebėjimų; deklaruota rinkimo aprėptis pilna." : "Tikslu tarp išsaugotų viešai tinkamų stebėjimų; rinkimo aprėptis nepilna.")}</p>
       <dl className="period-secondary">
-        <div><dt>{t("Private PSL domain groups", "Domenų grupės pagal privatų PSL")}</dt><dd>{number(window?.domainGroups ?? 0)}</dd></div>
+        <div><dt>{t("Registrable-domain groups (public-suffix list, incl. private suffixes)", "Registruojamų domenų grupės (viešųjų priesagų sąrašas su privačiomis priesagomis)")}</dt><dd>{number(window?.domainGroups ?? 0)}</dd></div>
         <div><dt>{t("Hostname-days observed", "Stebėto domeno vardo dienos")}</dt><dd>{number(window?.candidateDays ?? 0)}</dd></div>
-        <div><dt>{t("First recorded by Radar", "Pirmą kartą įrašyta Radare")}</dt><dd>{window?.firstRecordedHostnames == null ? unavailable : number(window.firstRecordedHostnames)}</dd></div>
-        <div><dt>{t("First verified publication receipts", "Pirmi patikrinto paskelbimo įrašai")}</dt><dd>{window?.firstPublishedHostnames == null ? unavailable : number(window.firstPublishedHostnames)}</dd></div>
+        <div><dt>{t("First recorded by Radar", "Pirmą kartą įrašyta Radare")}</dt>{window?.firstRecordedHostnames == null ? clockPending(data.metrics.coverage.recordedFrom) : <dd>{number(window.firstRecordedHostnames)}</dd>}</div>
+        <div><dt>{t("First verified publication receipts", "Pirmi patikrinto paskelbimo įrašai")}</dt>{window?.firstPublishedHostnames == null ? clockPending(data.metrics.coverage.publicationRecordedFrom) : <dd>{number(window.firstPublishedHostnames)}</dd>}</div>
       </dl>
       <details className="period-coverage"><summary>{t("Coverage and count definitions", "Aprėptis ir skaičių reikšmės")}</summary>
         <p>{t("Available source history begins", "Turima šaltinių istorija prasideda")}: <code>{data.metrics.coverage.availableFrom ?? unavailable}</code>. {t("All recorded is a retained inventory under the current public eligibility policy, not a complete lifetime census.", "Visa išsaugota istorija yra įrašų rinkinys pagal dabartinę viešinimo politiką, o ne pilna visų laikų apskaita.")}</p>

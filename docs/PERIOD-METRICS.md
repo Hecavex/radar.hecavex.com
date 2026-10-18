@@ -9,7 +9,7 @@ complete-cohort reader or export. Durable identity and clocks are defined in
 | Period queries, exact day membership and clock completeness | `hecavex_radar/period_metrics.py` | `tests/test_period_metrics.py` |
 | Public records, coverage and current eligibility | `hecavex_radar/observation_runtime.py` | `tests/test_observation_runtime.py` |
 | Public index/parts and schemas | `hecavex_radar/observation_publication.py`, `observation_schemas.py` | `tests/test_observation_publication.py` |
-| Browser cohort verification and overview | `src/lib/periodMetrics.ts`, `src/components/PeriodOverview.tsx` | `scripts/period-metrics.test.mjs` |
+| Browser cohort verification and overview (full panel on the history pages; 30-day summary on the overview, which embeds metrics without records) | `src/lib/periodMetrics.ts`, `src/components/PeriodOverview.tsx` | `scripts/period-metrics.test.mjs` |
 
 ## Population and time basis
 

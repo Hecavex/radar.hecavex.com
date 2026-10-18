@@ -15,6 +15,10 @@
 .period-secondary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; margin: 1.5rem 0; padding: 1.2rem 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .period-secondary dt { color: var(--muted); font-size: .75rem; line-height: 1.5; }
 .period-secondary dd { margin: .45rem 0 0; color: var(--text-soft); font: 500 1.1rem var(--mono); }
+.period-secondary dd.period-clock-pending { color: var(--muted); font: .8rem/1.5 var(--sans); }
+.observed-summary { margin: 0 0 3.5rem; padding: 1.75rem 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); scroll-margin-top: calc(var(--header-offset) + 1rem); }
+.observed-summary-link { display: inline-flex; align-items: center; gap: .45rem; min-height: 2.75rem; color: var(--ember-bright); font-weight: 600; }
+.observed-summary-link svg { width: 1rem; height: 1rem; }
 .period-coverage { max-width: 92ch; margin: 1.2rem 0; color: var(--muted); font-size: .8rem; line-height: 1.7; overflow-wrap: anywhere; }
 .period-coverage summary, .period-custom summary { min-height: 2.75rem; color: var(--text-soft); cursor: pointer; line-height: 2.75rem; }
 .period-list-heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 2rem; }
