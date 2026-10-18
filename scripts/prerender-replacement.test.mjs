@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 import { URL } from "node:url";
-import { decoratePage } from "../vite.config.ts";
+import { decoratePage } from "../src/prerenderPages.ts";
 
 test("rendered data containing String.replace $ patterns is inserted literally", () => {
   const template = readFileSync(new URL("../templates/signal/index.html", import.meta.url), "utf8");
