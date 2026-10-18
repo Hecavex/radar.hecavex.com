@@ -31,8 +31,8 @@ export function ChangesPage({ data, language = "en" }: { data: StaticPageData; l
   const chooseWindow = (value: WindowValue) => {
     const url = new URL(window.location.href);
     if (value === "30d") url.searchParams.delete("window"); else url.searchParams.set("window", value);
-    // Re-selecting the current window must not add a dead Back entry.
-    if (url.href !== window.location.href) window.history.pushState(null, "", url);
+    // Re-selecting the current window must not add a dead Back entry; compare the window, not the re-serialised URL.
+    if (windowFromSearch(window.location.search) !== value) window.history.pushState(null, "", url);
     setWindowValue(value);
     setPage(1);
   };
