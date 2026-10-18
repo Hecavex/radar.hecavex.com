@@ -160,7 +160,7 @@ export function SignalPage({ data }: { data: SignalPageData }) {
             <section className="profile-section" aria-labelledby="context-title">
               <p className="eyebrow"><Network aria-hidden="true" /> 04 / {text.context}</p>
               <h2 id="context-title">{text.context}</h2>
-              {data.detail ? <div className="detail-observations">{data.detail.observations.map((observation) => <ObservationDetail observation={observation} key={observation.source} language={language} />)}{data.detail.domainContext ? <DomainContext context={data.detail.domainContext} language={language} /> : null}{data.detail.contextChanges?.length ? <ContextChanges changes={data.detail.contextChanges} language={language} /> : null}</div> : <p>{text.none}</p>}
+              {data.detail ? <div className="detail-observations"><h3 className="sr-only">{language === "lt" ? "Stebėjimų kontekstas" : "Observation context"}</h3>{data.detail.observations.map((observation) => <ObservationDetail observation={observation} key={observation.source} language={language} />)}{data.detail.domainContext ? <DomainContext context={data.detail.domainContext} language={language} /> : null}{data.detail.contextChanges?.length ? <ContextChanges changes={data.detail.contextChanges} language={language} /> : null}</div> : <p>{text.none}</p>}
             </section>
 
             <section className="profile-section" aria-labelledby="related-title">

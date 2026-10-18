@@ -118,6 +118,29 @@
   font: .75rem var(--mono);
 }
 
+.sort-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .75rem;
+  padding: .5rem 1rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.sort-row label {
+  color: var(--muted);
+  font: 600 .8125rem/1.5 var(--sans);
+}
+
+.sort-row select {
+  min-height: 2.75rem;
+  padding: .5rem .75rem;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--text);
+  font: 500 .875rem var(--sans);
+}
+
 .select-group {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));

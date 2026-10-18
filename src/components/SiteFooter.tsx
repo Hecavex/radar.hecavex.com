@@ -1,42 +1,25 @@
+import navigation from "../lib/navigation.json";
 import type { SiteLanguage } from "./SiteHeader.tsx";
 
 export function SiteFooter({ language = "en" }: { language?: SiteLanguage }) {
   const lt = language === "lt";
-  const links = lt
-    ? [
-        ["Research", "https://hecavex.com/lt/tyrimai/"],
-        ["Radar", "/lt/"],
-        ["Data", "https://hecavex.com/data/"],
-        ["Pokyčiai", "/lt/pokyciai/"],
-        ["Prekių ženklai", "/lt/prekes-zenklai/"],
-        ["Tendencijos", "/lt/tendencijos/"],
-        ["Sąsajos", "/lt/sasajos/"],
-        ["Įrankiai", "/lt/irankiai/"],
-        ["Duomenys", "/lt/duomenys/"],
-        ["Metodologija", "/lt/metodologija/"],
-        ["Dokumentacija", "/lt/dokumentacija/"],
-        ["Saugumas", "/.well-known/security.txt"],
-        ["Pranešti apie klaidingą rezultatą", "mailto:info@hecavex.com?subject=HECAVEX%20Radar%20klaidingas%20teigiamas%20rezultatas"],
-        ["Privatumas", "https://hecavex.com/lt/privatumas/"],
-        ["Duomenų sąlygos", "/lt/dokumentacija/#duomenu-salygos"],
-      ]
-    : [
-        ["Research", "https://hecavex.com/en/research/"],
-        ["Radar", "/"],
-        ["Data", "https://hecavex.com/data/"],
-        ["Changes", "/changes/"],
-        ["Brands", "/brands/"],
-        ["Trends", "/trends/"],
-        ["Associations", "/associations/"],
-        ["Tools", "/tools/"],
-        ["Dataset", "/dataset/"],
-        ["Methodology", "/methodology/"],
-        ["Docs", "/docs/"],
-        ["Security", "/.well-known/security.txt"],
-        ["Report a false positive", "mailto:info@hecavex.com?subject=HECAVEX%20Radar%20false%20positive"],
-        ["Privacy", "https://hecavex.com/en/privacy/"],
-        ["Data terms", "/docs/#data-terms"],
-      ];
+  const links = [
+    ...navigation.portfolio[language].map(({ label, href }) => [label, href]),
+    ...navigation.product[language].slice(1).map(({ label, href }) => [label, href]),
+    ...(lt
+      ? [
+          ["Saugumas", "/.well-known/security.txt"],
+          ["Pranešti apie klaidingą rezultatą", "mailto:info@hecavex.com?subject=HECAVEX%20Radar%20klaidingas%20teigiamas%20rezultatas"],
+          ["Privatumas", "https://hecavex.com/lt/privatumas/"],
+          ["Duomenų sąlygos", "/lt/dokumentacija/#duomenu-salygos"],
+        ]
+      : [
+          ["Security", "/.well-known/security.txt"],
+          ["Report a false positive", "mailto:info@hecavex.com?subject=HECAVEX%20Radar%20false%20positive"],
+          ["Privacy", "https://hecavex.com/en/privacy/"],
+          ["Data terms", "/docs/#data-terms"],
+        ]),
+  ];
 
   return (
     <footer className="site-footer">

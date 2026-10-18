@@ -1,4 +1,4 @@
-import { ArrowLeft, BookOpenText, History, Languages } from "lucide-react";
+import { ArrowLeft, BookOpenText, History, Languages, Store } from "lucide-react";
 
 import { SiteFooter } from "./components/SiteFooter.tsx";
 import { SiteHeader } from "./components/SiteHeader.tsx";
@@ -10,21 +10,22 @@ export function NotFoundPage() {
       <main className="not-found-page" id="main-content">
         <section className="not-found-hero" aria-labelledby="not-found-title">
           <div className="not-found-copy">
-            <p className="eyebrow">404 / Route unavailable</p>
-            <h1 id="not-found-title">This route has no signal.</h1>
+            <p className="eyebrow">404 / Page not found</p>
+            <h1 id="not-found-title">Page not found</h1>
             <p>
               The address may be incomplete, mistyped, or tied to a record that is no longer published. Radar does not
-              redirect missing records because an absent page should stay visibly absent.
+              redirect missing pages because an absent page should stay visibly absent.
             </p>
             <div className="hero-actions">
-              <a className="hero-action-primary" href="/"><ArrowLeft aria-hidden="true" /> Return to Radar</a>
-              <a href="/history/"><History aria-hidden="true" /> Browse signal history</a>
+              <a className="hero-action-primary" href="/"><ArrowLeft aria-hidden="true" /> Overview</a>
+              <a href="/changes/"><History aria-hidden="true" /> Changes</a>
+              <a href="/brands/"><Store aria-hidden="true" /> Brands</a>
             </div>
           </div>
           <aside className="not-found-status" aria-label="Missing route status">
             <strong>404</strong>
             <span>NOT FOUND</span>
-            <p>No candidate status or verdict can be inferred from a missing route.</p>
+            <p>This route has no signal. No candidate status or verdict can be inferred from a missing page.</p>
           </aside>
         </section>
 

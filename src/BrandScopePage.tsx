@@ -120,7 +120,7 @@ export function BrandScopePage() {
               </tbody>
             </table>
           </div>
-          {filteredEntries.length === 0 ? <p className="registry-empty">No registry entry matches this local search.</p> : null}
+          {filteredEntries.length === 0 ? <p className="registry-empty">No registry entry matches this search, so this brand is not in Radar's scope. Brands are added only after review. <a href="mailto:info@hecavex.com?subject=HECAVEX%20Radar%20brand%20scope%20request">Request a brand by email</a>.</p> : null}
         </section>
       </main>
       <SiteFooter />

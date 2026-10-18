@@ -1,9 +1,18 @@
 import { Archive, CalendarClock, Rss } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArtifactHero, PageShell, type StaticPageLanguage } from "../components/ArtifactPageShell.tsx";
 import { formatEventDateTime } from "../lib/staticPageFormat.ts";
 import { signalPath } from "../lib/signalRoutes.ts";
 import type { StaticPageData } from "../lib/staticPageBootstrap.ts";
+
+const windows = [
+  { value: "24h", hours: 24, en: "24 hours", lt: "24 val." },
+  { value: "7d", hours: 7 * 24, en: "7 days", lt: "7 d." },
+  { value: "30d", hours: 30 * 24, en: "30 days", lt: "30 d." },
+] as const;
+type WindowValue = (typeof windows)[number]["value"];
+
+const windowFromSearch = (search: string): WindowValue => windows.find((item) => item.value === new URLSearchParams(search).get("window"))?.value ?? "30d";
 
 export function ChangesPage({ data, language = "en" }: { data: StaticPageData; language?: StaticPageLanguage }) {
   const lt = language === "lt";
@@ -11,7 +20,23 @@ export function ChangesPage({ data, language = "en" }: { data: StaticPageData; l
   const [brand, setBrand] = useState("all");
   const [since, setSince] = useState("");
   const [page, setPage] = useState(1);
-  const filtered = data.events.events.filter((event) => (type === "all" || event.type === type) && (brand === "all" || event.brand === brand) && (!since || event.occurredAt >= `${since}T00:00:00.000Z`));
+  const [windowValue, setWindowValue] = useState<WindowValue>("30d");
+  // Read the URL after hydration so the prerendered default markup always matches.
+  useEffect(() => {
+    const restore = () => { setWindowValue(windowFromSearch(window.location.search)); setPage(1); };
+    restore();
+    window.addEventListener("popstate", restore);
+    return () => window.removeEventListener("popstate", restore);
+  }, []);
+  const chooseWindow = (value: WindowValue) => {
+    const url = new URL(window.location.href);
+    if (value === "30d") url.searchParams.delete("window"); else url.searchParams.set("window", value);
+    window.history.pushState(null, "", url);
+    setWindowValue(value);
+    setPage(1);
+  };
+  const windowStart = Date.parse(data.events.generatedAt) - windows.find((item) => item.value === windowValue)!.hours * 3_600_000;
+  const filtered = data.events.events.filter((event) => (type === "all" || event.type === type) && (brand === "all" || event.brand === brand) && (!since || event.occurredAt >= `${since}T00:00:00.000Z`) && (windowValue === "30d" || Date.parse(event.occurredAt) >= windowStart));
   const pages = Math.max(1, Math.ceil(filtered.length / 25));
   const visible = filtered.slice((page - 1) * 25, page * 25);
   const brands = [...new Set(data.events.events.map((event) => event.brand))].sort();
@@ -29,6 +54,14 @@ export function ChangesPage({ data, language = "en" }: { data: StaticPageData; l
     />
     <section className="feed-strip" aria-label={lt ? "Pokyčių srautai" : "Change feeds"}><div><Rss aria-hidden="true" /><span>{lt ? "Prenumeruoti neatsisiunčiant visos suvestinės" : "Subscribe without polling the full snapshot"}</span></div><a href="/data/events.atom.xml">Atom</a><a href="/data/events.rss.xml">RSS</a><a href="/data/events.feed.json">{lt ? "JSON srautas" : "JSON Feed"}</a><a href="/data/events.json">{lt ? "Įvykių JSON" : "Event JSON"}</a></section>
     <section className="event-section" aria-labelledby="events-title"><div className="section-heading"><div><p className="eyebrow">{lt ? "Publikavimo žurnalas" : "Publication log"}</p><h2 id="events-title">{lt ? "Naujausi įvykiai" : "Recent events"}</h2></div><p><strong>{data.events.events.length}</strong> {lt ? `įkelta · ${data.events.window.days} dienų langas` : `loaded · ${data.events.window.days}-day window`}</p></div>
+      <div className="filter-shell">
+        <div className="quick-filter-row">
+          <span>{lt ? "Laikotarpis" : "Window"}</span>
+          <div role="group" aria-label={lt ? "Įvykių laikotarpis" : "Event time window"}>
+            {windows.map((item) => <button key={item.value} type="button" className={windowValue === item.value ? "active" : undefined} aria-pressed={windowValue === item.value} onClick={() => chooseWindow(item.value)}>{lt ? item.lt : item.en}</button>)}
+          </div>
+        </div>
+      </div>
       <div className="filter-shell event-filters">
         <label>
           <span>{lt ? "Įvykio tipas" : "Event type"}</span>
@@ -56,7 +89,7 @@ export function ChangesPage({ data, language = "en" }: { data: StaticPageData; l
         <p>{!data.events.events.length
           ? (lt ? "Dabartiniame viešame lange įvykių nėra." : "No event falls inside the current public window.")
           : (lt ? "Pasirinktus filtrus atitinkančių įvykių nėra. Pakeiskite filtrus arba juos išvalykite." : "No events match these filters. Broaden your selection or clear the filters.")}</p>
-        {data.events.events.length > 0 ? <button className="button" type="button" onClick={() => { setType("all"); setBrand("all"); setSince(""); setPage(1); }}>{lt ? "Išvalyti filtrus" : "Clear filters"}</button> : null}
+        {data.events.events.length > 0 ? <button className="button" type="button" onClick={() => { setType("all"); setBrand("all"); setSince(""); chooseWindow("30d"); }}>{lt ? "Išvalyti filtrus" : "Clear filters"}</button> : null}
       </div> : null}
     </section>
     <section className="related-route-card"><div><p className="eyebrow"><Archive aria-hidden="true" /> {lt ? "Išsaugotas archyvas" : "Retained archive"}</p><h2>{lt ? "Reikia visos kandidato laiko juostos?" : "Need the full candidate timeline?"}</h2><p>{lt ? "Istorijos vaizde saugomas ribotas pirmo ir paskutinio stebėjimo laikas, stebėjimų skaičius ir būsenos perėjimai už šio srauto lango ribų." : "The history view preserves bounded first-seen, last-seen, observation counts and status transitions beyond this feed window."}</p></div><a href={lt ? "/lt/istorija/" : "/history/"}>{lt ? "Atverti kandidatų istoriją" : "Open candidate history"} →</a></section>

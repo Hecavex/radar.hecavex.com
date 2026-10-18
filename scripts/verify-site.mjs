@@ -12,6 +12,7 @@ import { JSDOM } from "jsdom";
 import { chromium } from "playwright-core";
 import { preview } from "vite";
 import { maximumOutputBytes, verifyDeploymentCapacity } from "./deployment-capacity.mjs";
+import navigation from "../src/lib/navigation.json" with { type: "json" };
 
 const root = resolve(import.meta.dirname, "..");
 const output = join(root, "dist");
@@ -48,20 +49,20 @@ const pages = [
   { path: "/lt/dokumentacija/", marker: "HECAVEX Radaro techninis žinynas" },
   { path: "/404.html", marker: "This route has no signal." },
 ];
-const portfolioNavigation = ["Research", "Radar", "Data"];
-const productNavigation = ["Overview", "Changes", "Brands", "Trends", "Associations", "Tools", "Methodology", "Docs"];
-const lithuanianProductNavigation = ["Apžvalga", "Pokyčiai", "Prekių ženklai", "Tendencijos", "Sąsajos", "Įrankiai", "Metodologija", "Dokumentacija"];
+const languageOf = (path) => (path.startsWith("/lt/") ? "lt" : "en");
+const portfolioNavigationFor = (path) => navigation.portfolio[languageOf(path)].map((item) => item.label);
+const sourceLabelFor = (path) => navigation.sourceLabel[languageOf(path)];
 
 function productNavigationForPath(path) {
-  return path.startsWith("/lt/") ? lithuanianProductNavigation : productNavigation;
+  return navigation.product[languageOf(path)].map((item) => item.label);
 }
 
 function mobileNavigationForPath(path) {
   return [
     ...productNavigationForPath(path),
     path.startsWith("/lt/") ? "English" : "Lietuviškai",
-    "Source",
-    ...portfolioNavigation,
+    sourceLabelFor(path),
+    ...portfolioNavigationFor(path),
   ];
 }
 const stixBundleRawBytes = 2 * 1024 * 1024;
@@ -893,10 +894,10 @@ function verifyBuiltHtml() {
     assert(visibleBrandName && accessibleBrandName.includes(visibleBrandName), `${route} brand link accessible name omits its visible text.`);
     assert(document.querySelector(`.product-identity[href="${lithuanian ? "/lt/" : "/"}"]`), `${route} does not link the Radar identity to its localized overview.`);
     assert(
-      document.querySelectorAll(".portfolio-navigation a").length === portfolioNavigation.length,
+      document.querySelectorAll(".portfolio-navigation a").length === portfolioNavigationFor(route).length,
       `${route} does not expose the complete portfolio navigation.`,
     );
-    assert(document.querySelectorAll(".product-navigation a").length === 8, `${route} exposes the wrong Radar navigation set.`);
+    assert(document.querySelectorAll(".product-navigation a").length === productNavigationForPath(route).length, `${route} exposes the wrong Radar navigation set.`);
     assert(document.querySelector(".header-utility .source-link"), `${route} has no fixed Source utility.`);
     const analyticsLoaders = [...document.querySelectorAll("script:not([src])")].filter((script) =>
       script.textContent.includes("https://static.cloudflareinsights.com/beacon.min.js"),
@@ -915,7 +916,7 @@ function verifyBuiltHtml() {
     }
     const portfolioLabels = [...document.querySelectorAll(".portfolio-navigation a")].map((anchor) => anchor.textContent?.trim());
     const productLabels = [...document.querySelectorAll(".product-navigation a")].map((anchor) => anchor.textContent?.trim());
-    assert(JSON.stringify(portfolioLabels) === JSON.stringify(portfolioNavigation), `${route} changes the portfolio navigation order.`);
+    assert(JSON.stringify(portfolioLabels) === JSON.stringify(portfolioNavigationFor(route)), `${route} changes the portfolio navigation order.`);
     const expectedProductNavigation = productNavigationForPath(route);
     assert(JSON.stringify(productLabels) === JSON.stringify(expectedProductNavigation), `${route} changes the Radar navigation order.`);
     const expectedLocalPage = new Map([
@@ -933,8 +934,8 @@ function verifyBuiltHtml() {
       ["/lt/sasajos/", "Sąsajos"],
       ["/tools/", "Tools"],
       ["/lt/irankiai/", "Įrankiai"],
-      ["/dataset/", "Docs"],
-      ["/lt/duomenys/", "Dokumentacija"],
+      ["/dataset/", "Dataset"],
+      ["/lt/duomenys/", "Duomenys"],
       ["/methodology/", "Methodology"],
       ["/lt/metodologija/", "Metodologija"],
       ["/docs/", "Docs"],
@@ -951,7 +952,7 @@ function verifyBuiltHtml() {
               : undefined
     );
     assert(
-      document.querySelector('.portfolio-navigation a[aria-current="page"]')?.textContent?.trim() === "Radar",
+      document.querySelector('.portfolio-navigation a[aria-current="page"]')?.textContent?.trim() === portfolioNavigationFor(route)[1],
       `${route} does not identify Radar as the active portfolio product.`,
     );
     if (!notFound) assert(document.querySelector('.product-navigation a[aria-current="page"]')?.textContent?.trim() === expectedLocalPage, `${route} does not identify ${expectedLocalPage} as the active Radar page.`);
@@ -2756,7 +2757,7 @@ async function verifyInBrowser(healthOnly = false, researchOnly = false) {
           }
           await summary.click();
         } else {
-          for (const label of portfolioNavigation) {
+          for (const label of portfolioNavigationFor(entry.path)) {
             assert(
               await page.locator(".portfolio-navigation a", { hasText: label }).isVisible(),
               `${entry.path} desktop portfolio navigation hides ${label} at ${width}px.`,
