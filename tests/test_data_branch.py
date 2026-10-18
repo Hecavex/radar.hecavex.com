@@ -214,6 +214,21 @@ def test_path_boundary(path: str) -> None:
     assert not transport.allowed(path)
 
 
+@pytest.mark.parametrize("path", ["public/data/x.xml", "public/data/brands/x.xml", "data/history/x.xml",
+                                  "public/data/brands/a/b/events.atom.xml", "public/data/brands/a/events.xml",
+                                  "public/data/signals/ab/events.atom.xml", "data/certstream/events.rss.xml"])
+def test_xml_only_at_feed_paths(path: str) -> None:
+    assert not transport.allowed(path)
+
+
+@pytest.mark.parametrize("path", ["public/data/events.atom.xml", "public/data/events.rss.xml",
+                                  "public/data/brands/skelbiu-lt/events.atom.xml",
+                                  "public/data/brands/skelbiu-lt/events.rss.xml",
+                                  "public/data/brands/skelbiu-lt/events.atom.xml.sha256"])
+def test_feed_xml_paths_remain_allowed(path: str) -> None:
+    assert transport.allowed(path)
+
+
 def test_manifest_tamper_fails_before_overlay(repo: Path, tmp_path: Path) -> None:
     base = bootstrap(repo)
     files = transport.blobs(repo, base)

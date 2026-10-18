@@ -71,6 +71,7 @@ See `docs/design-interface.md` for typography, layout and interaction invariants
 ## Verification and delivery
 
 - `scripts/verify-site.mjs`: static routes, data semantics, font assets, layout geometry, responsive interactions, accessibility and performance budgets.
+- `scripts/published-defanging.mjs`: called by `verify-site.mjs static`; fails when any string in `dist/data/**/*.json|xml` holds a fanged hostname or URL outside its exact raw-field allowlist. Its host pattern mirrors `hecavex_radar/safety.py` `DOMAIN_IN_TEXT`; change both together.
 - `scripts/verify-snapshot-contract.mjs`: frontend snapshot/data invariants.
 - `scripts/*test.mjs` and `tests/`: history/deployment/gzip and collector/publication/security tests.
 - `pnpm check:frontend`: lint, typecheck, data contracts, production build and static/browser checks.
