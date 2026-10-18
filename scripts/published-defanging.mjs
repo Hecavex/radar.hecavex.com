@@ -1,22 +1,32 @@
 // Fail-closed sweep: every string in every published JSON/XML file must be
 // defanged unless it sits in an explicitly allowlisted raw field.
 import { readFileSync, readdirSync } from "node:fs";
-import { join, relative, sep } from "node:path";
+import { basename, join, relative, sep } from "node:path";
 import { JSDOM } from "jsdom";
 
-// Mirrors hecavex_radar.safety.DOMAIN_IN_TEXT: whatever the defanger would rewrite is fanged.
+// Mirrors hecavex_radar.safety.DOMAIN_IN_TEXT (including the 127-label bound that
+// keeps matching linear): whatever the defanger would rewrite is fanged. Both are
+// held to tests/fixtures/defang-parity.json.
 const label = String.raw`[^\x00-\x2f\x3a-\x40\x5b-\x60\x7b-\x7f\s\u3002\uff0e\uff61]`;
-const fangedHost = new RegExp(String.raw`(?:${label}(?:${label}|-){0,62}[.\u3002\uff0e\uff61])+\p{L}(?:${label}|-){1,62}`, "u");
+const fangedHost = new RegExp(String.raw`(?:${label}(?:${label}|-){0,62}[.\u3002\uff0e\uff61]){1,127}\p{L}(?:${label}|-){1,62}`, "gu");
 const liveUrl = /(?<![a-z\d])(?:https?|ftp|wss?):\/\//iu;
 
+export function containsFangedHost(text, brandNames = new Set()) {
+  // A reviewed registry brand name (for example "Skelbiu.lt") is allowed only as a whole match.
+  for (const match of text.matchAll(fangedHost)) if (!brandNames.has(match[0])) return true;
+  return false;
+}
+
 const uuid = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
+const dataPath = String.raw`/data/(?:[a-z0-9-]+/)*[a-z0-9-]+(?:\.(?:atom|rss|feed|stix|index|schema))?\.(?:json|xml)`;
+const schemaPath = String.raw`^\$(?:\.\$defs\.[\w-]+|\.items|\.properties\.[\w-]+|\.allOf\[\]\.then)*`;
 const matches = (pattern) => (value) => pattern.test(value);
 const exact = (...values) => (value) => values.includes(value);
-const typed = (type) => (_value, parent) => parent?.type === type;
-const any = () => true;
-const ownOrigin = matches(/^https:\/\/radar\.hecavex\.com\/[\w./~%-]*$/u);
-const ownDataPath = matches(/^\/data\/[\w./-]+$/u);
+const typed = (type, check = () => true) => (value, parent) => parent?.type === type && check(value);
+const ownOrigin = matches(new RegExp(String.raw`^https://radar\.hecavex\.com(?:/|/changes/|/brands/[a-z0-9-]+/|/signals/[a-f\d]{20}/|${dataPath})$`, "u"));
+const ownDataPath = matches(new RegExp(`^${dataPath}$`, "u"));
 const partPath = matches(/^(?:\/data\/)?(?:history|observed-hostnames)-parts\/[a-f\d]{64}\.json$/u);
+const bareHostname = matches(/^(?:[a-z\d](?:[a-z\d-]{0,61}[a-z\d])?\.)+(?:[a-z]{2,63}|xn--[a-z\d-]{1,59})$/u);
 const urlscanReport = matches(new RegExp(`^https://urlscan\\.io/result/${uuid}/$`, "u"));
 const urlscanScreenshot = matches(new RegExp(`^https://urlscan\\.io/screenshots/${uuid}\\.png$`, "u"));
 const sourceHomepages = ["https://certstream.dev/", "https://urlscan.io/", "https://hecavex.com/"];
@@ -50,35 +60,27 @@ export const rawFieldAllowlist = [
   [snapshot, /^\$\.signals\[\]\.screenshotUrl$/u, urlscanScreenshot],
   [/^signals\/[a-f\d]{2}\/[a-f\d]{20}\.json$/u, /^\$\.contextChanges\[\]\.source\.referenceUrl$/u, (value) => contextReferences.includes(value) || urlscanReport(value)],
   [/^radar\.stix\.json$/u, /^\$\.objects\[\]\.external_references\[\]\.url$/u, urlscanReport],
-  [/^radar\.stix\.json$/u, /^\$\.objects\[\]\.value$/u, typed("domain-name")],
+  [/^radar\.stix\.json$/u, /^\$\.objects\[\]\.value$/u, typed("domain-name", bareHostname)],
   [/^radar-reviewed\.stix\.json$/u, /^\$\.objects\[\]\.(?:name|pattern)$/u, typed("indicator")],
-  [new RegExp(`^misp/${uuid}\\.json$`, "u"), /^\$\.Event\.Attribute\[\]\.value$/u, typed("domain")],
-  [/^misp-warninglists\/hecavex-official-domains\/list\.json$/u, /^\$\.list\[\]$/u, any],
+  [new RegExp(`^misp/${uuid}\\.json$`, "u"), /^\$\.Event\.Attribute\[\]\.value$/u, typed("domain", bareHostname)],
+  [/^misp-warninglists\/hecavex-official-domains\/list\.json$/u, /^\$\.list\[\]$/u, (value, _parent, context) => context.officialDomains.has(value)],
   [/^pipeline-health\.json$/u, /\.ctSearch\.provider$/u, exact("crt.sh")],
   [/^changes\.json$/u, /^\$\.privacy$/u, exact(changesPrivacy)],
-  [schema, /\.\$schema$/u, exact("https://json-schema.org/draft/2020-12/schema")],
-  [schema, /\.\$id$/u, ownOrigin],
-  [schema, /\.pattern$/u, any],
-  [schema, /\.const$/u, exact(jsonFeedVersion, "crt.sh", changesPrivacy, ...sourceHomepages)],
+  [schema, new RegExp(String.raw`${schemaPath}\.\$schema$`, "u"), exact("https://json-schema.org/draft/2020-12/schema")],
+  [schema, new RegExp(String.raw`${schemaPath}\.\$id$`, "u"), ownOrigin],
+  [schema, new RegExp(String.raw`${schemaPath}\.pattern$`, "u"), (_value, parent) => [parent?.type].flat().includes("string")],
+  [schema, new RegExp(String.raw`${schemaPath}\.const$`, "u"), exact(jsonFeedVersion, "crt.sh", changesPrivacy, ...sourceHomepages)],
 ];
-
-const looksFanged = (text) => fangedHost.test(text) || liveUrl.test(text);
-
-function fanged(value, brandNames) {
-  if (!/[.:\u3002\uff0e\uff61]/u.test(value) || !looksFanged(value)) return false;
-  // Reviewed registry brand names (for example "Skelbiu.lt") are trusted source labels.
-  let text = value;
-  for (const name of brandNames) text = text.replaceAll(name, " ");
-  return looksFanged(text);
-}
 
 const defangForLog = (value) => value.slice(0, 120).replace(/[.\u3002\uff0e\uff61]/gu, "[.]").replace(/:\/\//gu, "[:]//");
 
-export function findFangedStrings(dataRoot, brandNames = []) {
+export function findFangedStrings(dataRoot, { brandNames = [], officialDomains = [] } = {}) {
+  const context = { brandNames: new Set(brandNames), officialDomains: new Set(officialDomains) };
   const findings = [];
   const check = (file, path, value, parent) => {
-    if (!fanged(value, brandNames)) return;
-    if (rawFieldAllowlist.some(([files, fields, allowed]) => files.test(file) && fields.test(path) && allowed(value, parent))) return;
+    if (!/[.:\u3002\uff0e\uff61]/u.test(value)) return;
+    if (!containsFangedHost(value, context.brandNames) && !liveUrl.test(value)) return;
+    if (rawFieldAllowlist.some(([files, fields, allowed]) => files.test(file) && fields.test(path) && allowed(value, parent, context))) return;
     findings.push(`${file} ${path}: ${defangForLog(value)}`);
   };
   const walkJson = (file, value, path, parent) => {
@@ -92,10 +94,17 @@ export function findFangedStrings(dataRoot, brandNames = []) {
     }
   };
   const walkXml = (file, node, path) => {
-    for (const attribute of node.attributes ?? []) check(file, `${path}@${attribute.name}`, attribute.value, null);
+    for (const attribute of node.attributes ?? []) {
+      check(file, `${path}#attribute-name`, attribute.name, null);
+      check(file, `${path}@${attribute.name}`, attribute.value, null);
+    }
     for (const child of node.childNodes) {
-      if (child.nodeType === child.ELEMENT_NODE) walkXml(file, child, path ? `${path}>${child.localName}` : child.localName);
-      else if (child.nodeValue?.trim()) {
+      if (child.nodeType === child.DOCUMENT_TYPE_NODE) {
+        findings.push(`${file}: DOCTYPE is not allowed in published XML.`);
+      } else if (child.nodeType === child.ELEMENT_NODE) {
+        check(file, `${path}#element-name`, child.nodeName, null);
+        walkXml(file, child, path ? `${path}>${child.localName}` : child.localName);
+      } else if (child.nodeValue?.trim()) {
         const kind = child.nodeType === child.TEXT_NODE || child.nodeType === child.CDATA_SECTION_NODE ? "text" : "other";
         check(file, `${path}#${kind}`, child.nodeValue, null);
       }
@@ -103,7 +112,7 @@ export function findFangedStrings(dataRoot, brandNames = []) {
   };
   const parser = new (new JSDOM("").window.DOMParser)();
   const files = readdirSync(dataRoot, { recursive: true, withFileTypes: true })
-    .filter((entry) => entry.isFile() && /\.(?:json|xml)$/u.test(entry.name))
+    .filter((entry) => entry.isFile())
     .map((entry) => join(entry.parentPath, entry.name))
     .sort();
   for (const path of files) {
@@ -111,10 +120,17 @@ export function findFangedStrings(dataRoot, brandNames = []) {
     const text = readFileSync(path, "utf8");
     if (file.endsWith(".json")) {
       walkJson(file, JSON.parse(text), "$", null);
-    } else {
+    } else if (file.endsWith(".xml")) {
       const document = parser.parseFromString(text, "text/xml");
       if (document.querySelector("parsererror")) throw new Error(`${file} is not well-formed XML.`);
       walkXml(file, document, "");
+    } else if (file.endsWith(".sha256")) {
+      // A checksum sidecar holds exactly "<sha256>  <sibling file name>".
+      if (!new RegExp(`^[a-f\\d]{64}  ${basename(file, ".sha256").replace(/[.]/gu, "\\.")}\\r?\\n?$`, "u").test(text)) {
+        findings.push(`${file}: unexpected checksum sidecar content.`);
+      }
+    } else {
+      findings.push(`${file}: file type is not understood by the defanging sweep.`);
     }
   }
   return findings;

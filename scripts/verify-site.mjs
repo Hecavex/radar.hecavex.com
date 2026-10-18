@@ -2002,7 +2002,10 @@ function verifySyndicationFeeds() {
 
 function verifyPublishedDefanging() {
   const registry = JSON.parse(readFileSync(join(root, "data", "brands-lt.json"), "utf8"));
-  const findings = findFangedStrings(join(output, "data"), registry.entries.map((entry) => entry.brand));
+  const findings = findFangedStrings(join(output, "data"), {
+    brandNames: registry.entries.map((entry) => entry.brand),
+    officialDomains: registry.entries.flatMap((entry) => entry.officialDomains),
+  });
   assert(
     findings.length === 0,
     `Published data contains ${findings.length} fanged hostname or URL string(s) outside the raw-field allowlist:\n${findings.slice(0, 20).join("\n")}`,
