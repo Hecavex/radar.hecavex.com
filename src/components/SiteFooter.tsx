@@ -1,4 +1,4 @@
-import navigation from "../lib/navigation.json";
+import navigation from "../lib/navigation.json" with { type: "json" };
 import type { SiteLanguage } from "./SiteHeader.tsx";
 
 export function SiteFooter({ language = "en" }: { language?: SiteLanguage }) {

@@ -1,7 +1,7 @@
 import { Code2, Languages, Menu, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-import navigation from "../lib/navigation.json";
+import navigation from "../lib/navigation.json" with { type: "json" };
 
 export type SitePage =
   | "radar"
