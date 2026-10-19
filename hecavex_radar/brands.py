@@ -324,6 +324,8 @@ def load_brand_registry(path: Path | None = None) -> BrandRegistry:
 
 
 def _canonical(value: str) -> str:
+    if value.isascii():  # NFKD, casefold and the skeleton leave ASCII unchanged apart from case
+        return "".join(filter(str.isalnum, value.lower()))
     translated = _uts39_skeleton(unicodedata.normalize("NFKD", value).casefold())
     return "".join(
         character
