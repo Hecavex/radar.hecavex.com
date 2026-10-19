@@ -57,7 +57,7 @@ def allowed(path: str) -> bool:
     # Pages serves XML without a CSP, so only the global and per-brand feeds may be XML.
     if path.endswith(".xml") and FEED_XML.fullmatch(path) is None:
         return False
-    return path.startswith(("public/data/", "data/certstream/", "data/ct-search/",
+    return path.startswith(("public/data/", "data/certstream/", "data/ct-search/", "data/ct-logs/",
                             "data/enrichment/", "data/history/", "data/urlscan/")) or path in {
         "data/coverage/brand-coverage.json", "data/review/review-queue.json",
     }
