@@ -19,6 +19,7 @@ from .models import CandidateMatch
 
 LABEL = re.compile(r"^[a-z\d](?:[a-z\d-]{0,61}[a-z\d])?$", re.IGNORECASE)
 EXTRACT = tldextract.TLDExtract(suffix_list_urls=(), cache_dir=None, include_psl_private_domains=True)
+MARKET_MARKERS = frozenset({"lt", "lv", "ee", "ltu", "lietuva", "lietuvos", "lithuania"})
 SUSPICIOUS_WORDS = {
     "access",
     "account",
@@ -67,7 +68,47 @@ SUSPICIOUS_WORDS = {
     "update",
     "verify",
     "wallet",
+    # Lithuanian lure vocabulary, ASCII-folded as _canonical folds diacritics.
+    "apmokejimas", "apmoketi", "atnaujinimas", "akcija", "bauda", "blokuota", "deklaracija", "dovana",
+    "dovanos", "duomenys", "ebankas", "grazinimas", "grazinti", "ibankas", "internetas", "ismoka",
+    "ismokos", "kodas", "kompensacija", "kreditas", "kurjeris", "laimejimas", "mokejimai", "mokestis",
+    "mokesciai", "muitas", "muitine", "nuolaida", "paketas", "paskola", "pastomatas", "patikra",
+    "patvirtinimas", "pinigai", "pranesimas", "prisijunk", "pristatymas", "prizas", "saskaitos",
+    "savitarna", "siuntinys", "siuntos", "skola", "sumoketi", "sutartis", "tikrinimas", "uzblokuota",
+    # English lure vocabulary seen in kits beyond the original set.
+    "alert", "blocked", "bonus", "check", "courier", "credit", "crypto", "customer", "customers", "customs",
+    "debt", "ebank", "fee", "fine", "gift", "help", "ibank", "invest", "kyc", "loan", "netbank", "notice",
+    "order", "otp", "pickup", "prize", "promo", "redelivery", "reschedule", "reward", "sso", "status",
+    "suspend", "suspended", "tax", "unlock", "verification", "app", "web",
+    # Delivery and payment lure words of multinational parcel kits (DE, FR, ES, PT, PL, IT).
+    "zustellung", "zustellservice", "sendung", "paket", "lieferung", "frankierung",
+    "livraison", "relivraison", "colis", "douane", "dedouanement", "paiement",
+    "rastreo", "envio", "paquete", "entrega", "aduana", "rastreio", "encomenda", "suporte",
+    "przesylka", "paczka", "doplata", "spedizione", "pacco", "consegna",
+    # Marketplace kits.
+    "seller", "sellers", "buyer",
+    # Lithuanian market markers: brand-lt and brandlt imitate the official .lt name.
+    *MARKET_MARKERS,
 }
+# Inflected and derived forms (verification, prisijungimo) share a stem with a reviewed word.
+# A reviewed word of 5+ characters that starts a token gives context (trackparcel, loginapp); a
+# partial shared stem must reach 6 characters (prisijungimo) so mobil- and confi- stay ordinary text.
+CONTEXT_PREFIX_MINIMUM = 5
+CONTEXT_STEM_MINIMUM = 6
+# Generic words that also name ordinary product hosts (eso-app, ergo-web, order-bite) only give
+# context to long aliases, inside the alias label.
+WEAK_CONTEXT_WORDS = frozenset({"app", "web", "order", "check", "status", "tax"})
+CONTEXT_STEM_WORDS: dict[str, tuple[str, ...]] = {}
+for _word in sorted(SUSPICIOUS_WORDS):
+    if len(_word) >= CONTEXT_PREFIX_MINIMUM:
+        CONTEXT_STEM_WORDS[_word[:CONTEXT_PREFIX_MINIMUM]] = (
+            *CONTEXT_STEM_WORDS.get(_word[:CONTEXT_PREFIX_MINIMUM], ()),
+            _word,
+        )
+# Bare and cross-label admission skip ccTLDs and the generic TLDs where brands hold their own names.
+BRAND_HELD_GENERIC_TLDS = frozenset({"com", "net", "org", "eu", "info", "biz", "bank", "group"})
+# CDN CNAME targets that embed the official host (revolut.com.cdn.cloudflare.net) are first-party.
+OFFICIAL_PROXY_SUFFIXES = frozenset({"cdn.cloudflare.net", "first-party-js.datadome.co"})
 KNOWN_CT_REWRITE_SUFFIXES = {
     "admin-mcas-df.ms",
     "admin-mcas-gov-df.ms",
@@ -473,6 +514,12 @@ def is_brand_collision(value: str, brand: str, registry: BrandRegistry) -> bool:
     return bool(excluded.intersection(candidate_parts))
 
 
+def _abuse_prone_suffix(domain: str) -> bool:
+    suffix = EXTRACT(domain).suffix
+    last = suffix.rsplit(".", 1)[-1]
+    return bool(suffix) and len(last) > 2 and last not in BRAND_HELD_GENERIC_TLDS
+
+
 def _registrable_domain(domain: str) -> str:
     extracted = EXTRACT(domain)
     if not extracted.suffix:
@@ -514,20 +561,65 @@ def _contains_sequence(parts: list[str], sequence: list[str]) -> bool:
     return any(parts[index : index + len(sequence)] == sequence for index in range(len(parts) - len(sequence) + 1))
 
 
-def _context_words(parts: list[str], alias_parts: set[str]) -> list[str]:
-    return [part for part in parts if part in SUSPICIOUS_WORDS and part not in alias_parts]
+def _is_context_word(part: str) -> bool:
+    if part in SUSPICIOUS_WORDS:
+        return True
+    # Every match shares the first CONTEXT_PREFIX_MINIMUM characters, so index by them.
+    for word in CONTEXT_STEM_WORDS.get(part[:CONTEXT_PREFIX_MINIMUM], ()):
+        if part.startswith(word):
+            if len(part) - len(word) <= 7:
+                return True
+            continue
+        common = 0
+        while common < min(len(part), len(word)) and part[common] == word[common]:
+            common += 1
+        # Truncations (confi- of confirm) are ordinary text; allow at most one dropped trailing character.
+        if (
+            common >= CONTEXT_STEM_MINIMUM
+            and len(word) - common <= 2
+            and len(part) - common <= 7
+            and len(part) >= len(word) - 1
+        ):
+            return True
+    return False
+
+
+def _context_words(parts: list[str], alias_parts: set[str], *, strong_only: bool = False) -> list[str]:
+    return [
+        part
+        for part in parts
+        if _is_context_word(part)
+        and part not in alias_parts
+        and not (strong_only and part in WEAK_CONTEXT_WORDS)
+    ]
+
+
+def _affix_words(text: str) -> list[str] | None:
+    """Split a joined affix into reviewed words and short digit runs; None if any remainder is unknown."""
+    if not text:
+        return []
+    if _is_context_word(text):
+        return [text]
+    best: list[list[str] | None] = [[], *([None] * len(text))]
+    for end in range(1, len(text) + 1):
+        for start in range(max(0, end - 16), end):
+            piece = text[start:end]
+            if best[start] is not None and (piece in SUSPICIOUS_WORDS or (piece.isdigit() and len(piece) <= 4)):
+                best[end] = [*best[start], piece]  # type: ignore[misc]
+                break
+    return best[-1]
 
 
 def _suspicious_affix(token: str, alias: str) -> str | None:
-    if token.startswith(alias) and token != alias:
-        suffix = token[len(alias) :]
-        if suffix in SUSPICIOUS_WORDS:
-            return suffix
-    if token.endswith(alias) and token != alias:
-        prefix = token[: -len(alias)]
-        if prefix in SUSPICIOUS_WORDS:
-            return prefix
-    return None
+    """Return the joined lure text around one alias occurrence, e.g. secure+login in securerevolutlogin."""
+    index = token.find(alias)
+    if index < 0 or token == alias:
+        return None
+    prefix = _affix_words(token[:index])
+    suffix = _affix_words(token[index + len(alias) :])
+    if prefix is None or suffix is None or all(piece.isdigit() for piece in [*prefix, *suffix]):
+        return None
+    return ", ".join([*prefix, *suffix])
 
 
 def resolve_brand_name(value: str | None, registry: BrandRegistry) -> str | None:
@@ -592,7 +684,12 @@ def _score_domain_matches(value: str, registry: BrandRegistry) -> list[Candidate
                 index for index, group in enumerate(grouped_parts) if _contains_sequence(group, alias_parts)
             ]
             exact_context_by_group = {
-                index: _context_words(grouped_parts[index], set(alias_parts)) for index in exact_groups
+                index: _context_words(
+                    grouped_parts[index],
+                    set(alias_parts),
+                    strong_only=len(alias) <= SHORT_ALIAS_MAXIMUM_LENGTH,
+                )
+                for index in exact_groups
             }
             unicode_evidence_by_group = {
                 index: _unicode_evidence(decoded_labels[index], raw_alias) for index in exact_groups
@@ -643,6 +740,40 @@ def _score_domain_matches(value: str, registry: BrandRegistry) -> list[Candidate
                         for code in unicode_evidence_by_group[index]
                     }
                 continue
+
+            # A threat word in another label of the same host also gives context for a long alias
+            # (login.revolut.click, revolut.secure-zone.example). It does not when the alias is the
+            # whole registrable label under a ccTLD or a common generic TLD, where brands hold
+            # unlisted names of their own (customer.dk.<brand>.net), nor under a first-party CDN
+            # target (sso.<brand>.com.cdn.cloudflare.net). Short aliases keep same-label context.
+            if exact_groups and len(alias) > SHORT_ALIAS_MAXIMUM_LENGTH and base < 80:
+                cross_groups = [
+                    index
+                    for index in exact_groups
+                    if not (
+                        index == len(grouped_parts) - 1
+                        and label_compacts[index] == alias
+                        and not _abuse_prone_suffix(domain)
+                    )
+                ]
+                cross_context = [
+                    word
+                    for index, group in enumerate(grouped_parts)
+                    if index not in exact_groups
+                    for word in _context_words(group, set(alias_parts), strong_only=True)
+                    # vinted.lt.<cdn> names an official host; markers only count beside the alias.
+                    if word not in MARKET_MARKERS
+                ]
+                if cross_groups and cross_context and not _is_official(domain, set(OFFICIAL_PROXY_SUFFIXES)):
+                    matched_groups = cross_groups
+                    base = 80
+                    match_reason = f"brand text match: {raw_alias}"
+                    attached_context = list(dict.fromkeys(cross_context))
+                    matched_punycode = any(punycode_labels[index] for index in matched_groups)
+                    matched_unicode_evidence = {
+                        code for index in matched_groups for code in unicode_evidence_by_group[index]
+                    }
+                    continue
 
             affix = next(
                 (
