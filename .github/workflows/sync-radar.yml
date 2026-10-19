@@ -131,7 +131,8 @@ jobs:
         shell: bash
         run: |
           if grep -q "Writer inputs changed" "${{ runner.temp }}/publish.log"; then
-            gh workflow run sync-radar.yml --repo "${{ github.repository }}" --ref main
+            gh workflow run sync-radar.yml --repo "${{ github.repository }}" --ref main \
+              -f allow_small_snapshot="${{ inputs.allow_small_snapshot || false }}"
             echo "Dispatched a fresh snapshot sync after a stale-input refusal."
           fi
       - name: Notify bounded writer completion
