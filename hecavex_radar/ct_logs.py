@@ -13,12 +13,12 @@ It covers the configured logs only, not every public CT log.
 from __future__ import annotations
 
 import argparse
-import gzip
 import json
 import os
 import sys
 import tempfile
 import time
+import zlib
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
@@ -83,7 +83,10 @@ def fetch(url: str, *, maximum: int = MAXIMUM_TILE_BYTES, tries: int = 4) -> byt
                 if len(body) > maximum:
                     raise ValueError("CT log response exceeds its size limit.")
                 if response.headers.get("Content-Encoding") == "gzip":
-                    body = gzip.decompress(body)
+                    inflater = zlib.decompressobj(wbits=31)
+                    body = inflater.decompress(body, maximum + 1)
+                    if len(body) > maximum or inflater.unconsumed_tail:
+                        raise ValueError("Decompressed CT log response exceeds its size limit.")
                 return body
         except HTTPError as error:
             if error.code not in {429, 500, 502, 503, 504} or attempt == tries - 1:
@@ -286,7 +289,7 @@ def poll(
     planned: set[str] = set()
     for shard in shards:
         logs[shard.url] = {"name": shard.name, "next": checkpoints.get(shard.url), "treeSize": None,
-                           "skipped": 0, "entries": 0, "dnsNames": 0, "matches": 0, "unrepresentable": 0,
+                           "skipped": 0, "badTiles": 0, "entries": 0, "dnsNames": 0, "matches": 0, "unrepresentable": 0,
                            "error": None}
     with ThreadPoolExecutor(8) as pool:
         while clock() < deadline:
@@ -308,8 +311,8 @@ def poll(
                     urls = [shard.url + tile_path(index) for index in batch]
                     for index, raw in zip(batch, pool.map(fetcher, urls), strict=True):
                         entries = parse_tile(raw)
-                        if len(entries) != TILE_WIDTH:
-                            raise ValueError(f"Full tile {index} decoded {len(entries)} entries.")
+                        # A tile that does not decode fully is counted and passed, never retried forever.
+                        record["badTiles"] += len(entries) != TILE_WIDTH
                         for entry in entries[record["next"] - index * TILE_WIDTH :]:
                             record["entries"] += 1
                             candidates.extend(_candidates(entry, registry, prefilter, minimum_confidence, record))
@@ -337,7 +340,7 @@ def read_state(path: str | Path) -> dict[str, Any]:
         raise ValueError("CT log state exceeds its size limit.")
     state = json.loads(body)
     logs = state.get("logs") if isinstance(state, dict) else None
-    if state.get("schemaVersion") != 1 or not isinstance(logs, dict) or not all(
+    if not isinstance(logs, dict) or state.get("schemaVersion") != 1 or not all(
         isinstance(url, str) and urlsplit(url).scheme == "https" and isinstance(value, dict)
         and type(value.get("next")) is int and value["next"] >= 0
         for url, value in logs.items()
@@ -365,6 +368,8 @@ def ingest(results: list[dict[str, Any]], state_path: str | Path, archive_root: 
     now = _timestamp(datetime.now(UTC))
     for result in results:
         for url, record in result["logs"].items():
+            if record.get("next") is None:  # never reached this run; keep its checkpoint
+                continue
             if urlsplit(url).scheme != "https" or type(record.get("next")) is not int or record["next"] < 0:
                 raise ValueError("CT log result is invalid.")
             previous = state["logs"].get(url, {})

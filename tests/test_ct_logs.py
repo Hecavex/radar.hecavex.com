@@ -163,6 +163,23 @@ def test_poll_resumes_mid_tile_and_survives_a_failing_log() -> None:
     assert failed["next"] == 300 and failed["error"].startswith("TimeoutError")
 
 
+def test_ingest_keeps_checkpoints_of_logs_never_reached(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.chdir(tmp_path)
+    state = Path("data/ct-logs/state.json")
+    ct_logs.write_state({"schemaVersion": 1, "generatedAt": None, "logs": {"https://a.example/": {"next": 7}}}, state)
+    unreached = {"logs": {"https://a.example/": {"name": "A", "next": None, "error": "TimeoutError: x"},
+                          "https://b.example/": {"name": "B", "next": 512}}, "candidates": []}
+    ct_logs.ingest([unreached], state, "data/certstream")
+    logs = ct_logs.read_state(state)["logs"]
+    assert (logs["https://a.example/"]["next"], logs["https://b.example/"]["next"]) == (7, 512)
+
+
+def test_a_tile_that_does_not_decode_fully_is_counted_and_passed() -> None:
+    tiles = {0: FILLER * 255 + bytes(10), 1: FILLER * 256}
+    record = run_poll(fake_log(tiles, 512), {"https://willow.example/": 0})["logs"]["https://willow.example/"]
+    assert (record["next"], record["badTiles"], record["error"]) == (512, 1, None)
+
+
 @pytest.mark.parametrize("domain", [
     "swedbank-grazinimas.example", "login.revolut.click", "lumnor-login.example",
     "secureloginrevolut.example", "dpd-trackparcel.example", "revolutt-login.example",
