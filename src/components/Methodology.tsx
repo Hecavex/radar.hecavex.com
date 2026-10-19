@@ -118,6 +118,14 @@ const englishCopy: MethodologyCopy = {
       ],
     },
     {
+      eyebrow: "Direct CT log polling",
+      title: "Checkpointed log tail",
+      paragraphs: [
+        "A separate collector reads three tiled CT logs from different operators (Let's Encrypt Willow, Google PlumbersArms, IPng Halloumi), following the current shards named in Google's CT log list. It keeps one entry-index checkpoint per log, so a delayed or dropped run resumes where the last one stopped instead of losing the gap, and scores every DNS name with the same matcher before writing to the same CT archive.",
+        "Together these logs saw about 92% of newly logged certificates in a short measured window. Certificates logged only elsewhere are missed, a backlog beyond the per-run cap keeps only the newest entries, and log availability remains an external limit.",
+      ],
+    },
+    {
       eyebrow: "Existing public reports",
       title: "URLScan",
       paragraphs: [
@@ -281,6 +289,14 @@ const lithuanianCopy: MethodologyCopy = {
       paragraphs: [
         "Kas valandą vykdoma crt.sh paieška rotuoja per peržiūrėtus prekių ženklų terminus ir kiekvienai užklausai išsaugo skaitinį žymeklį. Ji pradeda nuo riboto naujausio laikotarpio, pakartotinai tikrina nedidelę persidengiančią dalį dėl vėlyvo indeksavimo, prieš rotuodama tęsia aiškiai nustatytą atsilikimą, iš naujo taiko tą pačią atitikties sistemą ir CT archyve išsaugo aptikimo kilmę.",
         "Taip galima atkurti indeksuotus rezultatus, kuriuos praleido gyvo srauto atranka, tačiau tai nėra visų CT žurnalų surašymas. Paslaugos pasiekiamumas, indeksavimas, rezultatų ribos ir sąmoningai apribotas užklausų rinkinys vis tiek riboja aprėptį.",
+      ],
+    },
+    {
+      eyebrow: "Tiesioginis CT žurnalų skaitymas",
+      title: "Žurnalų sekimas su kontroliniais taškais",
+      paragraphs: [
+        "Atskiras rinktuvas skaito tris skirtingų operatorių plytelių CT žurnalus (Let's Encrypt Willow, Google PlumbersArms, IPng Halloumi) ir seka dabartines jų dalis pagal Google CT žurnalų sąrašą. Kiekvienam žurnalui jis išsaugo įrašo indekso kontrolinį tašką, todėl vėlavęs ar praleistas paleidimas tęsia nuo ten, kur sustojo ankstesnis, o ne praranda tarpą. Kiekvienas DNS vardas vertinamas ta pačia atitikties sistema ir įrašomas į tą patį CT archyvą.",
+        "Trumpame matavimo lange šie žurnalai kartu matė apie 92 proc. naujai įrašytų sertifikatų. Sertifikatai, įrašyti tik kituose žurnaluose, praleidžiami, per didelis atsilikimas už vieno paleidimo ribos palieka tik naujausius įrašus, o žurnalų pasiekiamumas lieka išorine riba.",
       ],
     },
     {

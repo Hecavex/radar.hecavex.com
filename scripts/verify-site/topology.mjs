@@ -301,6 +301,7 @@ export function verifyPythonAutomationLocks() {
     ["hunt-urlscan.yml", runtimeLock],
     ["hunt-brand-assets.yml", runtimeLock],
     ["poll-ct-search.yml", runtimeLock],
+    ["poll-ct-logs.yml", runtimeLock],
     ["enrich-domain-context.yml", runtimeLock],
     ["sync-radar.yml", runtimeLock],
   ]);

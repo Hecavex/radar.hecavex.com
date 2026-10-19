@@ -254,9 +254,10 @@ def test_unchanged_bootstrap_snapshot_still_establishes_publication(repo: Path, 
     assert transport.PUBLICATION in transport.blobs(repo, selected)
 
 
-def test_all_seven_writers_fail_closed_and_never_push_source() -> None:
+def test_all_writers_fail_closed_and_never_push_source() -> None:
     root = Path(__file__).resolve().parents[1]
     writers = {"collect-certstream": "certstream", "sync-radar": "snapshot", "poll-ct-search": "ct-search",
+               "poll-ct-logs": "ct-logs",
                "hunt-urlscan": "urlscan", "hunt-brand-assets": "brand-assets",
                "enrich-domain-context": "domain-context", "refresh-passive-context": "passive-context"}
     for name, writer in writers.items():

@@ -172,6 +172,7 @@ def _signal_definition() -> dict[str, object]:
                     "enum": [
                         "certstream-live",
                         "ct-search-api",
+                        "ct-log-poll",
                         "urlscan-public-report",
                         "hecavex-public-export",
                         "hecavex-review",

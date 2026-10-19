@@ -299,7 +299,7 @@ def _is_candidate(value: Any, expected_day: str | None = None) -> bool:
         or not isinstance(reasons, list)
         or not 1 <= len(reasons) <= MAXIMUM_REASONS
         or not all(_bounded_text(reason, MAXIMUM_REASON_CHARACTERS) for reason in reasons)
-        or value.get("collectionMethod", "certstream-live") not in {"certstream-live", "ct-search-api"}
+        or value.get("collectionMethod", "certstream-live") not in {"certstream-live", "ct-search-api", "ct-log-poll"}
         or (
             "certificate" in value
             and (
