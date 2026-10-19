@@ -161,6 +161,10 @@ export function verifyDeploymentTopology() {
     hunter.includes("group: radar-archive-writer") && sync.includes("group: radar-archive-writer"),
     "URLScan archive and snapshot writers are no longer serialized.",
   );
+  assert(
+    sync.includes('grep -q "Writer inputs changed"') && sync.includes("gh workflow run sync-radar.yml"),
+    "A snapshot sync refused for stale inputs no longer starts a fresh sync.",
+  );
   for (const [name, workflow] of [
     ["CertStream collection", collector],
     ["URLScan hunt", hunter],

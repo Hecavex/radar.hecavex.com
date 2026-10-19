@@ -15,6 +15,7 @@ env:
   HECAVEX_IDN_VISUAL_MATCHING: ${{ vars.HECAVEX_IDN_VISUAL_MATCHING || 'true' }}
 
 permissions:
+  actions: write
   contents: write
 
 concurrency:
@@ -119,7 +120,21 @@ jobs:
           python -m hecavex_radar.data_branch publish --repository . \
             --state-file "${{ runner.temp }}/radar-data-base.json" \
             --writer snapshot --message "data: publish snapshot state" \
-            --github-output "$GITHUB_OUTPUT"
+            --github-output "$GITHUB_OUTPUT" 2>&1 | tee "${{ runner.temp }}/publish.log"
+      # Another writer published between materialize and publish (CT writers hold a separate
+      # lock). The refusal is correct; start one fresh sync so it re-materializes the newer data.
+      # Each retry needs another intervening publication, so it cannot loop on its own.
+      - name: Retry a sync refused for stale inputs
+        if: failure() && steps.commit.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          if grep -q "Writer inputs changed" "${{ runner.temp }}/publish.log"; then
+            gh workflow run sync-radar.yml --repo "${{ github.repository }}" --ref main \
+              -f allow_small_snapshot="${{ inputs.allow_small_snapshot || false }}"
+            echo "Dispatched a fresh snapshot sync after a stale-input refusal."
+          fi
       - name: Notify bounded writer completion
         if: always()
         env:
