@@ -275,3 +275,10 @@ def test_executable_data_blob_refused(repo: Path) -> None:
     transport.git(repo, "commit", "-m", "invalid executable data")
     with pytest.raises(ValueError, match="non-executable regular blob"):
         transport.blobs(repo, transport.head(repo), source_tree=True)
+
+
+def test_every_writer_scope_survives_transport() -> None:
+    # A scope outside allowed() is dropped silently on materialize, losing that writer's state.
+    for scope in transport.WRITERS.values():
+        for prefix in scope:
+            assert transport.allowed(prefix + "state.json" if prefix.endswith("/") else prefix), prefix
