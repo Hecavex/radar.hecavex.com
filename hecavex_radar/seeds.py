@@ -28,6 +28,14 @@ PHISHDESTROY_URL = (
     "refs/heads/main/rootlist/formats/primary_active/domains.txt"
 )
 CERTPL_URL = "https://hole.cert.pl/domains/v2/domains.txt"
+PHISHING_DATABASE_URL = (
+    "https://raw.githubusercontent.com/Phishing-Database/Phishing.Database/"
+    "master/phishing-domains-ACTIVE.txt"
+)
+# GPL-3.0 data: matched in memory as a transient hint, never copied into data/ or published.
+HAGEZI_NRD_URL = "https://raw.githubusercontent.com/hagezi/nrd/main/domains/nrd7.txt"
+# Seven days of newly registered domains is ~3.6M rows; other feeds keep the default limit.
+MAXIMUM_NRD_RECORDS = 6_000_000
 
 BytesFetcher = Callable[[str, dict[str, str], tuple[str, ...]], bytes]
 
@@ -110,7 +118,7 @@ def _fetch_bytes(url: str, headers: dict[str, str], allowed_hosts: tuple[str, ..
     return body
 
 
-def parse_text_feed(body: bytes) -> list[SeedObservation]:
+def parse_text_feed(body: bytes, maximum: int = MAXIMUM_FEED_RECORDS) -> list[SeedObservation]:
     try:
         text = body.decode("utf-8", errors="strict")
     except UnicodeDecodeError as error:
@@ -120,7 +128,7 @@ def parse_text_feed(body: bytes) -> list[SeedObservation]:
         line = raw_line.strip()
         if line and not line.startswith(("#", "!")):
             observations.append(SeedObservation(indicator=line))
-        if len(observations) >= MAXIMUM_FEED_RECORDS:
+        if len(observations) >= maximum:
             break
     return observations
 
@@ -205,6 +213,16 @@ def _may_match_reviewed_brand(domain: str, prefilter: _BrandPrefilter) -> bool:
     )
 
 
+def _may_reach_matcher(indicator: str, prefilter: _BrandPrefilter) -> bool:
+    text = indicator.strip().lower()
+    # A bare ASCII hostname has the same labels before and after IDNA normalization, so the
+    # cheap prefilter can reject it first; IDNA costs ~50 us per row on multi-million-row feeds.
+    if text.isascii() and "/" not in text and not _may_match_reviewed_brand(text, prefilter):
+        return False
+    domain = _hostname(indicator)
+    return domain is not None and _may_match_reviewed_brand(domain, prefilter)
+
+
 def _seed_from_observation(
     observation: SeedObservation,
     registry: BrandRegistry,
@@ -280,6 +298,7 @@ def load_intelligence_seeds(
         return SeedLoadResult([], 0, 0, 0)
 
     observations: list[SeedObservation] = []
+    prefilter = _compile_brand_prefilter(registry)
     configured = 0
     completed = 0
     failed = 0
@@ -296,7 +315,11 @@ def load_intelligence_seeds(
             return
         configured += 1
         try:
-            observations.extend(parser(fetcher(url, headers, hosts)))
+            # Keep only rows that can reach the matcher, so a multi-million-row feed is not held.
+            observations.extend(
+                observation for observation in parser(fetcher(url, headers, hosts))
+                if _may_reach_matcher(observation.indicator, prefilter)
+            )
             completed += 1
         except (OSError, RuntimeError, ValueError):
             failed += 1
@@ -314,6 +337,20 @@ def load_intelligence_seeds(
         {"Accept": "text/plain", "User-Agent": "hecavex-radar/0.1"},
         ("hole.cert.pl",),
         parse_text_feed,
+    )
+    load(
+        _enabled("PHISHING_DATABASE_SEED_ENABLED", default=True),
+        PHISHING_DATABASE_URL,
+        {"Accept": "text/plain", "User-Agent": "hecavex-radar/0.1"},
+        ("raw.githubusercontent.com",),
+        parse_text_feed,
+    )
+    load(
+        _enabled("HAGEZI_NRD_SEED_ENABLED", default=True),
+        HAGEZI_NRD_URL,
+        {"Accept": "text/plain", "User-Agent": "hecavex-radar/0.1"},
+        ("raw.githubusercontent.com",),
+        lambda body: parse_text_feed(body, MAXIMUM_NRD_RECORDS),
     )
 
     return SeedLoadResult(

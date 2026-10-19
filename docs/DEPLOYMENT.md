@@ -169,7 +169,7 @@ Store credentials as repository secrets and feature switches as repository varia
 | `HECAVEX_ENABLED` | Variable | Optional | Set to `true` to include the configured HECAVEX export in snapshot synchronization. |
 | `HECAVEX_FEED_URL` | Secret | `HECAVEX_ENABLED=true` | Production HTTPS endpoint implementing the [public data contract](DATA-CONTRACT.md). The HTTP loopback exception exists only for local maintainer validation. |
 | `HECAVEX_FEED_TOKEN` | Secret | Optional with HECAVEX | Read-only bearer token for the HECAVEX endpoint. |
-| `PHISHDESTROY_SEED_ENABLED`, `CERTPL_SEED_ENABLED` | Variables | Optional | Set either to `false` to disable that transient URLScan seed adapter. Seeds never publish directly or appear as source labels. |
+| `PHISHDESTROY_SEED_ENABLED`, `CERTPL_SEED_ENABLED`, `PHISHING_DATABASE_SEED_ENABLED`, `HAGEZI_NRD_SEED_ENABLED` | Variables | Optional | Set any of them to `false` to disable that transient URLScan seed adapter. Seeds never publish directly or appear as source labels. |
 | `RADAR_HISTORY_DETAIL_DAYS` | Variable | Optional | Detailed daily history retention, 30 days by default and bounded from 7 to 90. |
 | `RADAR_HISTORY_SUMMARY_DAYS` | Variable | Optional | Compacted history retention, 730 days by default and bounded from 30 to 3,650. |
 | `RADAR_HISTORY_MAX_SIGNALS` | Variable | Optional | Public history row cap, 5,000 by default and bounded from 1 to 25,000. |

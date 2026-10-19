@@ -2,11 +2,14 @@
 multi-word joined affixes and reviewed one-edit aliases. Reserved synthetic names only."""
 from __future__ import annotations
 
+import unicodedata
 from pathlib import Path
 
 import pytest
+from hypothesis import given
+from hypothesis import strategies as st
 
-from hecavex_radar.brands import load_brand_registry, score_domain
+from hecavex_radar.brands import _canonical, _uts39_skeleton, load_brand_registry, score_domain
 
 ROOT = Path(__file__).resolve().parents[1]
 REGISTRY = load_brand_registry(ROOT / "data" / "brands-lt.json")
@@ -67,3 +70,13 @@ def test_recall_extension_admits(domain: str, brand: str) -> None:
 )
 def test_recall_extension_rejects(domain: str) -> None:
     assert score_domain(domain, REGISTRY) is None
+
+
+@given(st.text(alphabet=st.characters(max_codepoint=127)))
+def test_ascii_canonical_fast_path_matches_the_unicode_path(value: str) -> None:
+    slow = "".join(
+        character
+        for character in _uts39_skeleton(unicodedata.normalize("NFKD", value).casefold())
+        if not unicodedata.combining(character) and character.isascii() and character.isalnum()
+    )
+    assert _canonical(value) == slow
