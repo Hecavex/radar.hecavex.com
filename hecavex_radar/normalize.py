@@ -38,6 +38,7 @@ DISCOVERY_METHODS: frozenset[DiscoveryMethod] = frozenset(
     {
         "certstream-live",
         "ct-search-api",
+        "ct-log-poll",
         "urlscan-public-report",
         "hecavex-public-export",
         "hecavex-review",

@@ -1,0 +1,139 @@
+name: Poll CT logs directly
+
+on:
+  schedule:
+    # Safety net only: each completed run dispatches the next one, so polling is continuous.
+    # Offset from collect-certstream (8,23,38,53) and poll-ct-search (43).
+    - cron: "3 * * * *"
+  workflow_dispatch:
+
+env:
+  HECAVEX_IDN_VISUAL_MATCHING: ${{ vars.HECAVEX_IDN_VISUAL_MATCHING || 'true' }}
+
+permissions:
+  contents: read
+
+# Runs are serial so each poll starts from the previous run's published checkpoints.
+concurrency:
+  group: radar-ct-logs
+  cancel-in-progress: false
+
+jobs:
+  poll:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    strategy:
+      fail-fast: false
+      # Tiled logs of three operators cover ~92% of issuance (notes: union coverage, 2026-10-19).
+      # One process per operator; each follows that operator's current shards from the log list.
+      matrix:
+        log: ["Let's Encrypt Willow", "Google PlumbersArms", "IPng Networks Halloumi"]
+    steps:
+      - name: Check out main
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            pyproject.toml
+            requirements/automation-runtime-py312.lock
+      - name: Materialize trusted operational data
+        id: data
+        run: >-
+          python -m hecavex_radar.data_branch materialize --repository .
+          --state-file "${{ runner.temp }}/radar-data-base.json"
+          --github-output "$GITHUB_OUTPUT"
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --disable-pip-version-check --require-hashes -r requirements/automation-runtime-py312.lock
+          python -m pip install --disable-pip-version-check --no-deps --no-build-isolation .
+      - name: Tail the log's current shards
+        env:
+          LOG_NAME: ${{ matrix.log }}
+          CT_LOGS_STATE_PATH: data/ct-logs/state.json
+          CT_LOGS_DEADLINE_SECONDS: ${{ vars.CT_LOGS_DEADLINE_SECONDS || '2400' }}
+          CERTSTREAM_MIN_CONFIDENCE: ${{ vars.CERTSTREAM_MIN_CONFIDENCE }}
+        run: python -m hecavex_radar.ct_logs poll --log "$LOG_NAME" --out "${{ runner.temp }}/ct-logs/result.json"
+      - name: Keep the results for publication
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: ct-logs-${{ strategy.job-index }}
+          path: ${{ runner.temp }}/ct-logs/result.json
+          retention-days: 2
+          if-no-files-found: error
+
+  publish:
+    needs: poll
+    # A failed operator must not discard the others' progress; operators that failed upload nothing.
+    if: always() && github.ref == 'refs/heads/main' && needs.poll.result != 'cancelled'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      actions: write
+      contents: write
+    concurrency:
+      group: radar-certstream-writer
+      cancel-in-progress: false
+      queue: max
+    steps:
+      - name: Check out main
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            pyproject.toml
+            requirements/automation-runtime-py312.lock
+      # Materialize inside the writer lock so the archive append starts from the newest data.
+      - name: Materialize trusted operational data
+        id: data
+        run: >-
+          python -m hecavex_radar.data_branch materialize --repository .
+          --state-file "${{ runner.temp }}/radar-data-base.json"
+          --github-output "$GITHUB_OUTPUT"
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --disable-pip-version-check --require-hashes -r requirements/automation-runtime-py312.lock
+          python -m pip install --disable-pip-version-check --no-deps --no-build-isolation .
+      - name: Download poll results
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: ct-logs-*
+          path: ${{ runner.temp }}/ct-logs
+      - name: Archive candidates and advance checkpoints
+        id: ingest
+        env:
+          CT_LOGS_STATE_PATH: data/ct-logs/state.json
+          CERTSTREAM_ARCHIVE_ROOT: data/certstream
+        shell: bash
+        run: python -m hecavex_radar.ct_logs ingest "${{ runner.temp }}"/ct-logs/*/result.json
+      - name: Commit checkpoint and candidates atomically
+        if: steps.data.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          gh auth setup-git
+          python -m hecavex_radar.data_branch publish --repository . \
+            --state-file "${{ runner.temp }}/radar-data-base.json" \
+            --writer ct-logs --message "data: publish ct-logs state" \
+            --github-output "$GITHUB_OUTPUT"
+      # Scheduled events are often dropped; only a run that published dispatches the next,
+      # so a broken poller falls back to the hourly schedule instead of looping.
+      - name: Dispatch the next poll
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run poll-ct-logs.yml --repo "${{ github.repository }}" --ref main

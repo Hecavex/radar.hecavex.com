@@ -25,6 +25,7 @@ LithuanianRelevance = Literal[
 DiscoveryMethod = Literal[
     "certstream-live",
     "ct-search-api",
+    "ct-log-poll",
     "urlscan-public-report",
     "hecavex-public-export",
     "hecavex-review",
@@ -304,6 +305,6 @@ class CertStreamCandidate(TypedDict):
     brand: str
     confidence: int
     reasons: list[str]
-    collectionMethod: NotRequired[Literal["certstream-live", "ct-search-api"]]
+    collectionMethod: NotRequired[Literal["certstream-live", "ct-search-api", "ct-log-poll"]]
     certificate: NotRequired[CertificateDetail]
     sourceTimeEvidence: NotRequired[list[SourceTimeEvidence]]

@@ -59,6 +59,7 @@ LT_RELEVANCE = {
 DISCOVERY_METHODS = {
     "certstream-live",
     "ct-search-api",
+    "ct-log-poll",
     "urlscan-public-report",
     "hecavex-public-export",
     "hecavex-review",
@@ -382,7 +383,10 @@ def _retain_only_unrefreshed_sources(
                 method
                 for method in retained_signal.get("discoveredVia", [])
                 if (
-                    (method in {"certstream-live", "ct-search-api"} and "CertStream" in remaining_sources)
+                    (
+                        method in {"certstream-live", "ct-search-api", "ct-log-poll"}
+                        and "CertStream" in remaining_sources
+                    )
                     or (method == "urlscan-public-report" and "URLScan" in remaining_sources)
                     or (method in {"hecavex-public-export", "hecavex-review"} and "HECAVEX" in remaining_sources)
                 )

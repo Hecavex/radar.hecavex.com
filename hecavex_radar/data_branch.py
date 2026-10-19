@@ -24,6 +24,7 @@ FEED_XML = re.compile(r"public/data/(?:brands/[a-z0-9-]+/)?events\.(?:atom|rss)\
 WRITERS = {
     "certstream": ("data/certstream/", "public/data/collection-health.json"),
     "ct-search": ("data/certstream/", "data/ct-search/"),
+    "ct-logs": ("data/certstream/", "data/ct-logs/"),
     "urlscan": ("data/urlscan/",),
     "brand-assets": ("data/urlscan/",),
     "domain-context": ("data/enrichment/domain-context.json", "data/history/context/"),

@@ -35,6 +35,14 @@ This is replayable coverage only for the declared keyword queries and for record
 
 `data/ct-search/state.json` is capped at 128 KiB. It contains the provider name, rotating query position, reviewed brand/query labels, per-query result ID and timestamps, and aggregate latest-run counters including the number of backlogged queries. It contains no unpublished certificate name or candidate domain. The workflow writes `completed`, `partial`, or `failed` state and stages the state plus any accepted CT archive rows before its final step reports a polling failure. Archive-cap failures do not advance a query checkpoint. A hard cancellation, checkout outage, or exhausted Git push retry remains outside what the stopped workflow can record.
 
+### Direct CT log polling
+
+`poll-ct-logs.yml` reads three tiled ([static-ct](https://c2sp.org/static-ct-api)) logs from different operators: Let's Encrypt Willow, Google PlumbersArms and IPng Networks Halloumi. In a measured 81-second window these three logs together held about 92% of newly logged certificates. Each name is a prefix: every run reads Google's [CT log list](https://www.gstatic.com/ct/log_list/v3/log_list.json) and follows the usable or qualified shards whose expiry interval overlaps the next 100 days, so the half-year shard rollover needs no code change.
+
+One job per operator tails its shards for up to 40 minutes outside the shared writer lock and reads only full data tiles. `data/ct-logs/state.json` keeps one entry-index checkpoint per log URL, so a late or dropped run resumes from the last checkpoint instead of losing the gap. A new log starts at its current head; a backlog beyond 2,000,000 entries keeps only the newest entries and adds the skipped count to `skippedTotal`. Each DNS name passes the seed-feed brand prefilter and then the same matcher, threshold, archive schema and deduplication as CertStream. Accepted rows remain `CertStream` source observations with `discoveredVia` `ct-log-poll`; their provider time is the log entry timestamp. A short publish job then archives candidates before advancing checkpoints inside the writer lock, and dispatches the next poll, so polling is continuous even when scheduled events are dropped. The hourly schedule is only a fallback.
+
+This covers the configured logs only. Certificates logged solely in other logs are missed, checkpoint signatures are not verified, and log availability remains an external limit.
+
 The public registry is [`data/brands-lt.json`](../data/brands-lt.json). Official domains, subdomains, and reviewed `excludedDomains` are suppressed before scoring. See [Detection rules](DETECTION.md) for matching and archive revalidation.
 
 ## URLScan

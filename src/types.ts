@@ -56,6 +56,7 @@ export type LithuanianRelevance = (typeof LT_RELEVANCE_VALUES)[number];
 export const DISCOVERY_METHODS = [
   "certstream-live",
   "ct-search-api",
+  "ct-log-poll",
   "urlscan-public-report",
   "hecavex-public-export",
   "hecavex-review",
