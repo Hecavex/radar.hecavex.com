@@ -1,18 +1,13 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-related-observations",
-  "generatedAt": "2026-10-19T20:53:00.310Z",
+  "generatedAt": "2026-10-19T21:05:43.424Z",
   "semantics": "Shared evidence is a bounded association between public observations. It is not campaign, operator, malware, infrastructure ownership, or threat-actor attribution.",
   "nodes": [
     {
       "signalId": "0673afb14f8e32ae369d",
       "domain": "douaxsme[.]xn--tl2mobile-b4ab[.]fr",
       "clusterId": "ea9773853e964c7c"
-    },
-    {
-      "signalId": "0f0b85604a52dd29d990",
-      "domain": "daclsv-dl-client-dpd-ext[.]us-east-1[.]aws[.]snowflake[.]app",
-      "clusterId": "f381643171cbda07"
     },
     {
       "signalId": "1496d0776ed9706234ca",
@@ -27,7 +22,7 @@
     {
       "signalId": "3a7f0bac7dfe66accec9",
       "domain": "service-information-dhl[.]com",
-      "clusterId": "c86553016282b8a7"
+      "clusterId": "5aca6502061e2464"
     },
     {
       "signalId": "3e51d4c252a41023a46c",
@@ -90,16 +85,6 @@
       "clusterId": "322fce3bc8d5d323"
     },
     {
-      "signalId": "7ccb3ccb57d1df508600",
-      "domain": "service-dhl[.]com",
-      "clusterId": "c86553016282b8a7"
-    },
-    {
-      "signalId": "9bafcf13420a64e14466",
-      "domain": "daclsv-dl-client-dpd-ext[.]us-east-1[.]aws[.]privatelink[.]snowflake[.]app",
-      "clusterId": "f381643171cbda07"
-    },
-    {
       "signalId": "9d59d066a17114ad5d87",
       "domain": "revolut-mobile[.]net",
       "clusterId": "d1d6e3980a28ed93"
@@ -157,22 +142,10 @@
     {
       "signalId": "f5b4c5db6fa05fc7c40a",
       "domain": "revolutpayment[.]com",
-      "clusterId": "c86553016282b8a7"
+      "clusterId": "5aca6502061e2464"
     }
   ],
   "edges": [
-    {
-      "id": "d27170270dd2f197a13b",
-      "source": "0f0b85604a52dd29d990",
-      "target": "9bafcf13420a64e14466",
-      "strength": "strong",
-      "evidence": [
-        {
-          "type": "certificate-sha256",
-          "value": "1eb02aa62cfb45f83361bc84a5e129fa1ce3f189e0c46acffaaef4f759edee38"
-        }
-      ]
-    },
     {
       "id": "a5e9769e2f7f337b4d71",
       "source": "1496d0776ed9706234ca",
@@ -514,30 +487,6 @@
       ]
     },
     {
-      "id": "33d748e0e12ffe279e6b",
-      "source": "3a7f0bac7dfe66accec9",
-      "target": "7ccb3ccb57d1df508600",
-      "strength": "shared-context",
-      "evidence": [
-        {
-          "type": "dns-a",
-          "value": "216[.]198[.]79[.]1"
-        },
-        {
-          "type": "dns-a",
-          "value": "64[.]29[.]17[.]1"
-        },
-        {
-          "type": "dns-ns",
-          "value": "ns1[.]vercel-dns[.]com"
-        },
-        {
-          "type": "dns-ns",
-          "value": "ns2[.]vercel-dns[.]com"
-        }
-      ]
-    },
-    {
       "id": "a39c6873fe9da71d817d",
       "source": "3e51d4c252a41023a46c",
       "target": "e92abb8d76774feec61e",
@@ -588,26 +537,6 @@
     {
       "id": "1f7f78821b47c49d950b",
       "source": "3a7f0bac7dfe66accec9",
-      "target": "f5b4c5db6fa05fc7c40a",
-      "strength": "shared-context",
-      "evidence": [
-        {
-          "type": "dns-a",
-          "value": "216[.]198[.]79[.]1"
-        },
-        {
-          "type": "dns-ns",
-          "value": "ns1[.]vercel-dns[.]com"
-        },
-        {
-          "type": "dns-ns",
-          "value": "ns2[.]vercel-dns[.]com"
-        }
-      ]
-    },
-    {
-      "id": "ab73825361091950aec5",
-      "source": "7ccb3ccb57d1df508600",
       "target": "f5b4c5db6fa05fc7c40a",
       "strength": "shared-context",
       "evidence": [
