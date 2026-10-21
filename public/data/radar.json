@@ -1,14 +1,86 @@
 {
   "schemaVersion": 2,
   "dataset": "live",
-  "generatedAt": "2026-10-21T05:44:08.298Z",
-  "lastSuccessfulSyncAt": "2026-10-21T05:44:08.298Z",
+  "generatedAt": "2026-10-21T06:15:35.296Z",
+  "lastSuccessfulSyncAt": "2026-10-21T06:15:35.296Z",
   "signals": [
+    {
+      "id": "291e306b61b250dbbd60",
+      "url": "hxxps://www[.]revolut-service[.]ph",
+      "domain": "www[.]revolut-service[.]ph",
+      "firstSeen": "2026-10-21T06:13:16.487Z",
+      "lastSeen": "2026-10-21T06:13:16.487Z",
+      "sources": [
+        "CertStream"
+      ],
+      "status": "suspected",
+      "brand": "Revolut",
+      "country": null,
+      "host": null,
+      "screenshotUrl": null,
+      "referenceUrl": null,
+      "hashes": [],
+      "matchScore": 100,
+      "evidenceTier": "name-only",
+      "reviewState": "unreviewed",
+      "ltRelevance": "lithuanian-brand-relevance",
+      "confidence": 100,
+      "discoveredVia": [
+        "certstream-live"
+      ],
+      "reasonCodes": [
+        "brand-exact-token",
+        "suspicious-context",
+        "different-tld"
+      ],
+      "detailAvailable": true
+    },
+    {
+      "id": "5124a900672935266346",
+      "url": "hxxps://dhl-password-fedexsubdelive[.]com[.]ph",
+      "domain": "dhl-password-fedexsubdelive[.]com[.]ph",
+      "firstSeen": "2026-10-20T03:37:27.968Z",
+      "lastSeen": "2026-10-21T05:46:31.088Z",
+      "sources": [
+        "CertStream",
+        "URLScan"
+      ],
+      "status": "suspected",
+      "brand": "DHL",
+      "country": "US",
+      "host": "AS63949 · AKAMAI-LINODE-AP - Akamai Connected Cloud, SG · 45[.]79[.]222[.]138",
+      "screenshotUrl": "https://urlscan.io/screenshots/01a1576f-6681-74ca-b34e-50e31e1f927a.png",
+      "referenceUrl": "https://urlscan.io/result/01a1576f-6681-74ca-b34e-50e31e1f927a/",
+      "hashes": [
+        "b7cdd6975d5b87a6ef3899a774ebb0e0e6345a0f2c3247034aec69e78845f22a"
+      ],
+      "matchScore": 95,
+      "evidenceTier": "corroborated",
+      "reviewState": "unreviewed",
+      "ltRelevance": "lithuanian-brand-relevance",
+      "confidence": 95,
+      "discoveredVia": [
+        "ct-log-poll",
+        "certstream-live",
+        "urlscan-public-report"
+      ],
+      "reasonCodes": [
+        "brand-exact-token",
+        "suspicious-context",
+        "different-tld",
+        "multiple-hyphens",
+        "brand-domain-match"
+      ],
+      "corroboratedBy": [
+        "urlscan-public-report"
+      ],
+      "detailAvailable": true
+    },
     {
       "id": "91db4e07bcbb897349d3",
       "url": "hxxps://dhl-invoice[.]intricateinlays[.]com",
       "domain": "dhl-invoice[.]intricateinlays[.]com",
-      "firstSeen": "2026-10-21T05:39:38.946Z",
+      "firstSeen": "2026-10-21T05:39:37.088Z",
       "lastSeen": "2026-10-21T05:39:38.946Z",
       "sources": [
         "CertStream"
@@ -26,7 +98,8 @@
       "ltRelevance": "lithuanian-brand-relevance",
       "confidence": 85,
       "discoveredVia": [
-        "certstream-live"
+        "certstream-live",
+        "ct-log-poll"
       ],
       "reasonCodes": [
         "brand-exact-token",
@@ -5863,47 +5936,6 @@
         "suspicious-context",
         "different-tld",
         "multiple-hyphens"
-      ],
-      "detailAvailable": true
-    },
-    {
-      "id": "5124a900672935266346",
-      "url": "hxxps://dhl-password-fedexsubdelive[.]com[.]ph",
-      "domain": "dhl-password-fedexsubdelive[.]com[.]ph",
-      "firstSeen": "2026-10-20T03:37:27.968Z",
-      "lastSeen": "2026-10-20T03:51:26.542Z",
-      "sources": [
-        "CertStream",
-        "URLScan"
-      ],
-      "status": "suspected",
-      "brand": "DHL",
-      "country": "US",
-      "host": "AS63949 · AKAMAI-LINODE-AP - Akamai Connected Cloud, SG · 45[.]79[.]222[.]138",
-      "screenshotUrl": "https://urlscan.io/screenshots/01a1576f-6681-74ca-b34e-50e31e1f927a.png",
-      "referenceUrl": "https://urlscan.io/result/01a1576f-6681-74ca-b34e-50e31e1f927a/",
-      "hashes": [
-        "b7cdd6975d5b87a6ef3899a774ebb0e0e6345a0f2c3247034aec69e78845f22a"
-      ],
-      "matchScore": 95,
-      "evidenceTier": "corroborated",
-      "reviewState": "unreviewed",
-      "ltRelevance": "lithuanian-brand-relevance",
-      "confidence": 95,
-      "discoveredVia": [
-        "certstream-live",
-        "ct-log-poll",
-        "urlscan-public-report"
-      ],
-      "reasonCodes": [
-        "brand-exact-token",
-        "suspicious-context",
-        "different-tld",
-        "multiple-hyphens",
-        "brand-domain-match"
-      ],
-      "corroboratedBy": [
-        "urlscan-public-report"
       ],
       "detailAvailable": true
     },
@@ -12416,8 +12448,8 @@
     {
       "name": "CertStream",
       "homepage": "https://certstream.dev/",
-      "fetchedAt": "2026-10-21T05:44:08.298Z",
-      "records": 315,
+      "fetchedAt": "2026-10-21T06:15:35.296Z",
+      "records": 316,
       "state": "healthy",
       "note": "Open heuristic candidates from the last 7 days"
     },
@@ -12432,7 +12464,7 @@
     {
       "name": "HECAVEX",
       "homepage": "https://hecavex.com/",
-      "fetchedAt": "2026-10-21T05:44:08.298Z",
+      "fetchedAt": "2026-10-21T06:15:35.296Z",
       "records": 1,
       "state": "healthy",
       "note": "Sanitized local review export"
