@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-stratified-review-queue",
-  "generatedAt": "2026-10-22T02:35:12.331Z",
+  "generatedAt": "2026-10-22T02:51:26.575Z",
   "samplingPolicy": {
     "method": "deterministic-greedy-facet-balancing",
     "dimensions": [
@@ -15,7 +15,7 @@
     "excludes": "Signals already represented by a sanitized assessment.",
     "semantics": "A review worklist, not a random or prevalence-representative sample."
   },
-  "availableUnreviewed": 443,
+  "availableUnreviewed": 445,
   "selected": 24,
   "candidates": [
     {
@@ -229,35 +229,37 @@
       "firstSeen": "2026-10-12T11:35:11.011Z"
     },
     {
-      "signalId": "59a565bdba48dcf42f88",
-      "recordPath": "/signals/59a565bdba48dcf42f88/",
-      "brand": "Telia",
+      "signalId": "6c59dc7a7d09e0dc5126",
+      "recordPath": "/signals/6c59dc7a7d09e0dc5126/",
+      "brand": "Sodra",
       "sources": [
-        "URLScan"
+        "CertStream"
       ],
       "scoreBand": "95-100",
       "evidenceTier": "name-only",
       "reasonCodes": [
-        "brand-domain-match"
+        "brand-exact-token",
+        "different-tld",
+        "punycode",
+        "unicode-confusable"
       ],
       "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-10-21T08:45:47.778Z"
+      "firstSeen": "2026-10-22T02:43:34.114Z"
     },
     {
-      "signalId": "278fe44decfd896e42be",
-      "recordPath": "/signals/278fe44decfd896e42be/",
-      "brand": "DPD",
+      "signalId": "aad8e9e29ad35a362a62",
+      "recordPath": "/signals/aad8e9e29ad35a362a62/",
+      "brand": "VMI",
       "sources": [
-        "CertStream"
+        "URLScan"
       ],
       "scoreBand": "85-94",
       "evidenceTier": "name-only",
       "reasonCodes": [
-        "brand-exact-token",
-        "suspicious-context"
+        "brand-domain-match"
       ],
-      "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-10-17T11:24:48.078Z"
+      "candidateAgeBand": "8-30d",
+      "firstSeen": "2026-10-12T08:02:57.940Z"
     },
     {
       "signalId": "ec5394df337333de25bc",
@@ -292,9 +294,9 @@
       "firstSeen": "2026-10-20T14:29:40.074Z"
     },
     {
-      "signalId": "574727000d15bca5fad2",
-      "recordPath": "/signals/574727000d15bca5fad2/",
-      "brand": "DHL",
+      "signalId": "d4aed23d464ce2c1d71f",
+      "recordPath": "/signals/d4aed23d464ce2c1d71f/",
+      "brand": "DPD",
       "sources": [
         "URLScan"
       ],
@@ -303,28 +305,12 @@
       "reasonCodes": [
         "brand-domain-match"
       ],
-      "candidateAgeBand": "8-30d",
-      "firstSeen": "2026-10-09T01:56:35.569Z"
+      "candidateAgeBand": "2-7d",
+      "firstSeen": "2026-10-15T12:46:54.332Z"
     },
     {
-      "signalId": "51e6a7e55e3c4da80f86",
-      "recordPath": "/signals/51e6a7e55e3c4da80f86/",
-      "brand": "Vinted",
-      "sources": [
-        "URLScan"
-      ],
-      "scoreBand": "95-100",
-      "evidenceTier": "corroborated",
-      "reasonCodes": [
-        "brand-title-match",
-        "provider-verdict"
-      ],
-      "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-10-21T01:03:29.708Z"
-    },
-    {
-      "signalId": "08c6e90a368afa37017e",
-      "recordPath": "/signals/08c6e90a368afa37017e/",
+      "signalId": "5a051aa96778f9751214",
+      "recordPath": "/signals/5a051aa96778f9751214/",
       "brand": "Lidl Lietuva",
       "sources": [
         "CertStream"
@@ -335,40 +321,8 @@
         "brand-exact-token",
         "suspicious-context"
       ],
-      "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-10-19T13:36:59.697Z"
-    },
-    {
-      "signalId": "aad8e9e29ad35a362a62",
-      "recordPath": "/signals/aad8e9e29ad35a362a62/",
-      "brand": "VMI",
-      "sources": [
-        "URLScan"
-      ],
-      "scoreBand": "85-94",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-domain-match"
-      ],
-      "candidateAgeBand": "8-30d",
-      "firstSeen": "2026-10-12T08:02:57.940Z"
-    },
-    {
-      "signalId": "af665d3027c1a77a5660",
-      "recordPath": "/signals/af665d3027c1a77a5660/",
-      "brand": "Bigbank",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "85-94",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-lookalike-edit",
-        "different-tld",
-        "suspicious-context"
-      ],
       "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-10-20T12:24:29.847Z"
+      "firstSeen": "2026-10-20T16:20:09.950Z"
     },
     {
       "signalId": "833fdae562171ccd774f",
@@ -400,6 +354,56 @@
       ],
       "candidateAgeBand": "8-30d",
       "firstSeen": "2026-10-13T11:43:00.942Z"
+    },
+    {
+      "signalId": "9ba9ea1488ff1e5b8041",
+      "recordPath": "/signals/9ba9ea1488ff1e5b8041/",
+      "brand": "Smart-ID",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "85-94",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-joined-affix",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-10-20T17:05:37.801Z"
+    },
+    {
+      "signalId": "a266442af55f84355f08",
+      "recordPath": "/signals/a266442af55f84355f08/",
+      "brand": "Vinted",
+      "sources": [
+        "URLScan"
+      ],
+      "scoreBand": "95-100",
+      "evidenceTier": "corroborated",
+      "reasonCodes": [
+        "brand-title-match",
+        "provider-verdict"
+      ],
+      "candidateAgeBand": "2-7d",
+      "firstSeen": "2026-10-18T17:36:08.906Z"
+    },
+    {
+      "signalId": "9eac19184c93585aa60c",
+      "recordPath": "/signals/9eac19184c93585aa60c/",
+      "brand": "Sodra",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "95-100",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-exact-token",
+        "different-tld",
+        "punycode",
+        "unicode-confusable"
+      ],
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-10-22T02:43:34.114Z"
     }
   ]
 }
