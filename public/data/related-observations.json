@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-related-observations",
-  "generatedAt": "2026-10-22T07:21:22.216Z",
+  "generatedAt": "2026-10-22T08:20:54.861Z",
   "semantics": "Shared evidence is a bounded association between public observations. It is not campaign, operator, malware, infrastructure ownership, or threat-actor attribution.",
   "nodes": [
     {
@@ -13,6 +13,11 @@
       "signalId": "66e7dd3d131c0e88a629",
       "domain": "mojebonboniera[.]cz",
       "clusterId": "cb59ba876b36e7a9"
+    },
+    {
+      "signalId": "6eaebcca623900768a04",
+      "domain": "daclsv-dl-client-dpd[.]us-east-1[.]aws[.]snowflake[.]app",
+      "clusterId": "9120798e20ab4bcb"
     },
     {
       "signalId": "7f59b89fd401c70463cd",
@@ -55,6 +60,11 @@
       "clusterId": "d3a9c15f276b13c2"
     },
     {
+      "signalId": "f09222bbfa008b1e99dd",
+      "domain": "daclsv-dl-client-dpd[.]us-east-1[.]aws[.]privatelink[.]snowflake[.]app",
+      "clusterId": "9120798e20ab4bcb"
+    },
+    {
       "signalId": "f37eceb501fe17f3c63e",
       "domain": "revolut-mobile[.]com",
       "clusterId": "d1d6e3980a28ed93"
@@ -70,6 +80,18 @@
         {
           "type": "primary-html-sha256",
           "value": "c2993cebb37c5d03f2ab4295f3af45d6e36da5a622220f3e9ea5b95c11791ac4"
+        }
+      ]
+    },
+    {
+      "id": "1d0fba6a4f00ba3db1c6",
+      "source": "6eaebcca623900768a04",
+      "target": "f09222bbfa008b1e99dd",
+      "strength": "strong",
+      "evidence": [
+        {
+          "type": "certificate-sha256",
+          "value": "e9a1827c7ea69cd84f28da6e4bd9be0ab9854a612e87cc971a4144553a199462"
         }
       ]
     },
