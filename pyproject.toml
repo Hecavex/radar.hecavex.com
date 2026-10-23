@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools==84.0.0"]
+requires = ["setuptools==84.2.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -17,15 +17,15 @@ dependencies = [
   "jsonschema==4.26.0",
   "tldextract==5.4.0",
   "tzdata==2026.5",
-  "websockets==17.2",
+  "websockets==17.3",
 ]
 
 [project.optional-dependencies]
 dev = [
-  "hypothesis==6.169.4",
+  "hypothesis==6.170.5",
   "mypy==2.4.0",
   "pytest==9.1.1",
-  "ruff==0.17.0",
+  "ruff==0.17.1",
   # The 3.3.1 wheel omits the bundled schemas required by validate_file().
   "stix2-validator==3.2.0",
 ]
