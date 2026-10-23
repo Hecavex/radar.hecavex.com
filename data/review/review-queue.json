@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dataset": "radar-stratified-review-queue",
-  "generatedAt": "2026-10-23T09:49:56.824Z",
+  "generatedAt": "2026-10-23T11:05:01.062Z",
   "samplingPolicy": {
     "method": "deterministic-greedy-facet-balancing",
     "dimensions": [
@@ -15,7 +15,7 @@
     "excludes": "Signals already represented by a sanitized assessment.",
     "semantics": "A review worklist, not a random or prevalence-representative sample."
   },
-  "availableUnreviewed": 545,
+  "availableUnreviewed": 548,
   "selected": 24,
   "candidates": [
     {
@@ -290,7 +290,7 @@
         "brand-domain-match",
         "provider-verdict"
       ],
-      "candidateAgeBand": "2-7d",
+      "candidateAgeBand": "8-30d",
       "firstSeen": "2026-10-15T09:58:28.844Z"
     },
     {
@@ -308,6 +308,53 @@
       ],
       "candidateAgeBand": "0-1d",
       "firstSeen": "2026-10-22T03:24:02.088Z"
+    },
+    {
+      "signalId": "833fdae562171ccd774f",
+      "recordPath": "/signals/833fdae562171ccd774f/",
+      "brand": "Vinted",
+      "sources": [
+        "URLScan"
+      ],
+      "scoreBand": "95-100",
+      "evidenceTier": "corroborated",
+      "reasonCodes": [
+        "brand-title-match",
+        "provider-verdict"
+      ],
+      "candidateAgeBand": "2-7d",
+      "firstSeen": "2026-10-18T17:35:39.203Z"
+    },
+    {
+      "signalId": "e428cb263164e1eb9363",
+      "recordPath": "/signals/e428cb263164e1eb9363/",
+      "brand": "Bigbank",
+      "sources": [
+        "URLScan"
+      ],
+      "scoreBand": "85-94",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-domain-match"
+      ],
+      "candidateAgeBand": "0-1d",
+      "firstSeen": "2026-10-22T21:01:16.376Z"
+    },
+    {
+      "signalId": "88f79e82200e3314bad2",
+      "recordPath": "/signals/88f79e82200e3314bad2/",
+      "brand": "Omniva",
+      "sources": [
+        "CertStream"
+      ],
+      "scoreBand": "85-94",
+      "evidenceTier": "name-only",
+      "reasonCodes": [
+        "brand-joined-affix",
+        "suspicious-context"
+      ],
+      "candidateAgeBand": "2-7d",
+      "firstSeen": "2026-10-20T14:29:40.074Z"
     },
     {
       "signalId": "401a2254794b3273229e",
@@ -341,68 +388,22 @@
       "firstSeen": "2026-10-12T08:02:57.940Z"
     },
     {
-      "signalId": "88f79e82200e3314bad2",
-      "recordPath": "/signals/88f79e82200e3314bad2/",
-      "brand": "Omniva",
+      "signalId": "9eac19184c93585aa60c",
+      "recordPath": "/signals/9eac19184c93585aa60c/",
+      "brand": "Sodra",
       "sources": [
         "CertStream"
-      ],
-      "scoreBand": "85-94",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-joined-affix",
-        "suspicious-context"
-      ],
-      "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-10-20T14:29:40.074Z"
-    },
-    {
-      "signalId": "574727000d15bca5fad2",
-      "recordPath": "/signals/574727000d15bca5fad2/",
-      "brand": "DHL",
-      "sources": [
-        "URLScan"
       ],
       "scoreBand": "95-100",
       "evidenceTier": "name-only",
       "reasonCodes": [
-        "brand-domain-match"
-      ],
-      "candidateAgeBand": "8-30d",
-      "firstSeen": "2026-10-09T01:56:35.569Z"
-    },
-    {
-      "signalId": "833fdae562171ccd774f",
-      "recordPath": "/signals/833fdae562171ccd774f/",
-      "brand": "Vinted",
-      "sources": [
-        "URLScan"
-      ],
-      "scoreBand": "95-100",
-      "evidenceTier": "corroborated",
-      "reasonCodes": [
-        "brand-title-match",
-        "provider-verdict"
-      ],
-      "candidateAgeBand": "2-7d",
-      "firstSeen": "2026-10-18T17:35:39.203Z"
-    },
-    {
-      "signalId": "72f529b457ed90bcd412",
-      "recordPath": "/signals/72f529b457ed90bcd412/",
-      "brand": "Tele2",
-      "sources": [
-        "CertStream"
-      ],
-      "scoreBand": "85-94",
-      "evidenceTier": "name-only",
-      "reasonCodes": [
-        "brand-lookalike-edit",
+        "brand-exact-token",
         "different-tld",
-        "suspicious-context"
+        "punycode",
+        "unicode-confusable"
       ],
       "candidateAgeBand": "0-1d",
-      "firstSeen": "2026-10-21T10:16:04.496Z"
+      "firstSeen": "2026-10-22T02:43:34.114Z"
     }
   ]
 }
