@@ -1,15 +1,46 @@
 {
   "schemaVersion": 2,
   "dataset": "live",
-  "generatedAt": "2026-10-24T09:11:07.239Z",
-  "lastSuccessfulSyncAt": "2026-10-24T09:11:07.239Z",
+  "generatedAt": "2026-10-24T10:09:44.183Z",
+  "lastSuccessfulSyncAt": "2026-10-24T10:09:44.183Z",
   "signals": [
+    {
+      "id": "fcdd8fdeb15754cb30ad",
+      "url": "hxxps://vinted-check[.]info",
+      "domain": "vinted-check[.]info",
+      "firstSeen": "2026-10-24T10:01:35.197Z",
+      "lastSeen": "2026-10-24T10:01:35.197Z",
+      "sources": [
+        "CertStream"
+      ],
+      "status": "suspected",
+      "brand": "Vinted",
+      "country": null,
+      "host": null,
+      "screenshotUrl": null,
+      "referenceUrl": null,
+      "hashes": [],
+      "matchScore": 100,
+      "evidenceTier": "name-only",
+      "reviewState": "unreviewed",
+      "ltRelevance": "lithuanian-brand-relevance",
+      "confidence": 100,
+      "discoveredVia": [
+        "certstream-live"
+      ],
+      "reasonCodes": [
+        "brand-exact-token",
+        "suspicious-context",
+        "different-tld"
+      ],
+      "detailAvailable": true
+    },
     {
       "id": "50af65f0628b06afdbcf",
       "url": "hxxps://auth[.]gcp-project-orchestrator-test[.]telia-gcp[.]cloud",
       "domain": "auth[.]gcp-project-orchestrator-test[.]telia-gcp[.]cloud",
       "firstSeen": "2026-10-24T09:05:24.583Z",
-      "lastSeen": "2026-10-24T09:05:24.583Z",
+      "lastSeen": "2026-10-24T09:05:26.631Z",
       "sources": [
         "CertStream"
       ],
@@ -26,7 +57,8 @@
       "ltRelevance": "lithuanian-brand-relevance",
       "confidence": 100,
       "discoveredVia": [
-        "certstream-live"
+        "certstream-live",
+        "ct-log-poll"
       ],
       "reasonCodes": [
         "brand-exact-token",
@@ -18401,43 +18433,14 @@
         "brand-title-match"
       ],
       "detailAvailable": true
-    },
-    {
-      "id": "a78cb24fc20a65f1ba1f",
-      "url": "hxxps://cpam93[.]eso-online[.]fr",
-      "domain": "cpam93[.]eso-online[.]fr",
-      "firstSeen": "2026-10-13T11:43:00.942Z",
-      "lastSeen": "2026-10-13T11:43:00.942Z",
-      "sources": [
-        "URLScan"
-      ],
-      "status": "suspected",
-      "brand": "ESO",
-      "country": "FR",
-      "host": "AS36351 · SOFTLAYER - IBM Cloud, US · 159[.]8[.]105[.]201",
-      "screenshotUrl": "https://urlscan.io/screenshots/01a13512-9a2d-7715-8314-c93f4e6e41ef.png",
-      "referenceUrl": "https://urlscan.io/result/01a13512-9a2d-7715-8314-c93f4e6e41ef/",
-      "hashes": [],
-      "matchScore": 90,
-      "evidenceTier": "name-only",
-      "reviewState": "unreviewed",
-      "ltRelevance": "lithuanian-brand-relevance",
-      "confidence": 90,
-      "discoveredVia": [
-        "urlscan-public-report"
-      ],
-      "reasonCodes": [
-        "brand-domain-match"
-      ],
-      "detailAvailable": true
     }
   ],
   "sources": [
     {
       "name": "CertStream",
       "homepage": "https://certstream.dev/",
-      "fetchedAt": "2026-10-24T09:11:07.239Z",
-      "records": 486,
+      "fetchedAt": "2026-10-24T10:09:44.183Z",
+      "records": 487,
       "state": "healthy",
       "note": "Open heuristic candidates from the last 7 days"
     },
@@ -18445,14 +18448,14 @@
       "name": "URLScan",
       "homepage": "https://urlscan.io/",
       "fetchedAt": "2026-10-24T04:57:54.473Z",
-      "records": 127,
+      "records": 126,
       "state": "healthy",
       "note": "Passive public results validated from the last 30 days; the latest scheduled hunt completed; 171 stable official asset hashes are pivot-eligible"
     },
     {
       "name": "HECAVEX",
       "homepage": "https://hecavex.com/",
-      "fetchedAt": "2026-10-24T09:11:07.239Z",
+      "fetchedAt": "2026-10-24T10:09:44.183Z",
       "records": 0,
       "state": "healthy",
       "note": "Sanitized local review export"
