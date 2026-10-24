@@ -1,9 +1,40 @@
 {
   "schemaVersion": 2,
   "dataset": "live",
-  "generatedAt": "2026-10-24T13:25:22.769Z",
-  "lastSuccessfulSyncAt": "2026-10-24T13:25:22.769Z",
+  "generatedAt": "2026-10-24T13:55:37.676Z",
+  "lastSuccessfulSyncAt": "2026-10-24T13:55:37.676Z",
   "signals": [
+    {
+      "id": "bfca4f516c3390c051e0",
+      "url": "hxxps://telia-servicecanada[.]ph",
+      "domain": "telia-servicecanada[.]ph",
+      "firstSeen": "2026-10-24T13:53:23.606Z",
+      "lastSeen": "2026-10-24T13:53:23.606Z",
+      "sources": [
+        "CertStream"
+      ],
+      "status": "suspected",
+      "brand": "Telia",
+      "country": null,
+      "host": null,
+      "screenshotUrl": null,
+      "referenceUrl": null,
+      "hashes": [],
+      "matchScore": 100,
+      "evidenceTier": "name-only",
+      "reviewState": "unreviewed",
+      "ltRelevance": "lithuanian-brand-relevance",
+      "confidence": 100,
+      "discoveredVia": [
+        "certstream-live"
+      ],
+      "reasonCodes": [
+        "brand-exact-token",
+        "suspicious-context",
+        "different-tld"
+      ],
+      "detailAvailable": true
+    },
     {
       "id": "b92bea37dd46791d523c",
       "url": "hxxps://dhl-help[.]net",
@@ -40,7 +71,7 @@
       "url": "hxxps://revolut-kasyna-online[.]pl",
       "domain": "revolut-kasyna-online[.]pl",
       "firstSeen": "2026-10-24T13:23:18.063Z",
-      "lastSeen": "2026-10-24T13:23:18.063Z",
+      "lastSeen": "2026-10-24T13:23:20.088Z",
       "sources": [
         "CertStream"
       ],
@@ -57,7 +88,8 @@
       "ltRelevance": "lithuanian-brand-relevance",
       "confidence": 100,
       "discoveredVia": [
-        "certstream-live"
+        "certstream-live",
+        "ct-log-poll"
       ],
       "reasonCodes": [
         "brand-exact-token",
@@ -18440,45 +18472,14 @@
         "brand-domain-match"
       ],
       "detailAvailable": true
-    },
-    {
-      "id": "19b192c53afa4dab80f2",
-      "url": "hxxp://www[.]revolutbank[.]info",
-      "domain": "www[.]revolutbank[.]info",
-      "firstSeen": "2026-10-14T04:00:45.391Z",
-      "lastSeen": "2026-10-14T04:00:45.391Z",
-      "sources": [
-        "URLScan"
-      ],
-      "status": "suspected",
-      "brand": "Revolut",
-      "country": null,
-      "host": null,
-      "screenshotUrl": null,
-      "referenceUrl": "https://urlscan.io/result/01a13891-a057-76ec-bcfd-fd59cd9e8b39/",
-      "hashes": [
-        "1525114f5dc49bc736d199c87877b5264a80afcbd57b2a97bab81254e2027123"
-      ],
-      "matchScore": 98,
-      "evidenceTier": "name-only",
-      "reviewState": "unreviewed",
-      "ltRelevance": "lithuanian-brand-relevance",
-      "confidence": 98,
-      "discoveredVia": [
-        "urlscan-public-report"
-      ],
-      "reasonCodes": [
-        "brand-domain-match"
-      ],
-      "detailAvailable": true
     }
   ],
   "sources": [
     {
       "name": "CertStream",
       "homepage": "https://certstream.dev/",
-      "fetchedAt": "2026-10-24T13:25:22.769Z",
-      "records": 494,
+      "fetchedAt": "2026-10-24T13:55:37.676Z",
+      "records": 495,
       "state": "healthy",
       "note": "Open heuristic candidates from the last 7 days"
     },
@@ -18486,14 +18487,14 @@
       "name": "URLScan",
       "homepage": "https://urlscan.io/",
       "fetchedAt": "2026-10-24T11:30:33.936Z",
-      "records": 122,
+      "records": 121,
       "state": "healthy",
       "note": "Passive public results validated from the last 30 days; the latest scheduled hunt completed; 171 stable official asset hashes are pivot-eligible"
     },
     {
       "name": "HECAVEX",
       "homepage": "https://hecavex.com/",
-      "fetchedAt": "2026-10-24T13:25:22.769Z",
+      "fetchedAt": "2026-10-24T13:55:37.676Z",
       "records": 0,
       "state": "healthy",
       "note": "Sanitized local review export"
